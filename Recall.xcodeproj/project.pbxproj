@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C91BCEF22A618435003C6DD6 /* RecallApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCEF12A618435003C6DD6 /* RecallApp.swift */; };
-		C91BCEF42A618435003C6DD6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCEF32A618435003C6DD6 /* ContentView.swift */; };
+		C91BCEF42A618435003C6DD6 /* RecallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCEF32A618435003C6DD6 /* RecallView.swift */; };
 		C91BCEF62A618437003C6DD6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C91BCEF52A618437003C6DD6 /* Assets.xcassets */; };
 		C91BCEFA2A618437003C6DD6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C91BCEF92A618437003C6DD6 /* Preview Assets.xcassets */; };
 		C91BCF042A618437003C6DD6 /* RecallTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF032A618437003C6DD6 /* RecallTests.swift */; };
@@ -16,6 +16,16 @@
 		C91BCF102A618437003C6DD6 /* RecallUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF0F2A618437003C6DD6 /* RecallUITestsLaunchTests.swift */; };
 		C91BCF1E2A618601003C6DD6 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C91BCF1D2A618601003C6DD6 /* Realm */; };
 		C91BCF202A618601003C6DD6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C91BCF1F2A618601003C6DD6 /* RealmSwift */; };
+		C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF212A61C374003C6DD6 /* RealmManager.swift */; };
+		C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */; };
+		C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */; };
+		C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */; };
+		C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF2E2A61DD69003C6DD6 /* UIUniversals.swift */; };
+		C91BCF312A61DDBA003C6DD6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF302A61DDBA003C6DD6 /* Constants.swift */; };
+		C91BCF332A61DE55003C6DD6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF322A61DE55003C6DD6 /* Extensions.swift */; };
+		C91BCF352A61DE65003C6DD6 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF342A61DE65003C6DD6 /* ViewModifiers.swift */; };
+		C91BCF372A61DED5003C6DD6 /* UniversalButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF362A61DED5003C6DD6 /* UniversalButtons.swift */; };
+		C91BCF392A61E0EB003C6DD6 /* CalendarComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF382A61E0EB003C6DD6 /* CalendarComponent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +48,7 @@
 /* Begin PBXFileReference section */
 		C91BCEEE2A618435003C6DD6 /* Recall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Recall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91BCEF12A618435003C6DD6 /* RecallApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallApp.swift; sourceTree = "<group>"; };
-		C91BCEF32A618435003C6DD6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C91BCEF32A618435003C6DD6 /* RecallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallView.swift; sourceTree = "<group>"; };
 		C91BCEF52A618437003C6DD6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C91BCEF72A618437003C6DD6 /* Recall.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Recall.entitlements; sourceTree = "<group>"; };
 		C91BCEF92A618437003C6DD6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -47,6 +57,16 @@
 		C91BCF092A618437003C6DD6 /* RecallUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecallUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91BCF0D2A618437003C6DD6 /* RecallUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallUITests.swift; sourceTree = "<group>"; };
 		C91BCF0F2A618437003C6DD6 /* RecallUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		C91BCF212A61C374003C6DD6 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
+		C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
+		C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallModel.swift; sourceTree = "<group>"; };
+		C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFlexibleRealmView.swift; sourceTree = "<group>"; };
+		C91BCF2E2A61DD69003C6DD6 /* UIUniversals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIUniversals.swift; sourceTree = "<group>"; };
+		C91BCF302A61DDBA003C6DD6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		C91BCF322A61DE55003C6DD6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		C91BCF342A61DE65003C6DD6 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
+		C91BCF362A61DED5003C6DD6 /* UniversalButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalButtons.swift; sourceTree = "<group>"; };
+		C91BCF382A61E0EB003C6DD6 /* CalendarComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarComponent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,8 +119,9 @@
 		C91BCEF02A618435003C6DD6 /* Recall */ = {
 			isa = PBXGroup;
 			children = (
-				C91BCEF12A618435003C6DD6 /* RecallApp.swift */,
-				C91BCEF32A618435003C6DD6 /* ContentView.swift */,
+				C91BCF2D2A61DD51003C6DD6 /* Universals */,
+				C91BCF232A61C380003C6DD6 /* Main */,
+				C91BCF3A2A61E0F0003C6DD6 /* Calendar */,
 				C91BCEF52A618437003C6DD6 /* Assets.xcassets */,
 				C91BCEF72A618437003C6DD6 /* Recall.entitlements */,
 				C91BCEF82A618437003C6DD6 /* Preview Content */,
@@ -131,6 +152,47 @@
 				C91BCF0F2A618437003C6DD6 /* RecallUITestsLaunchTests.swift */,
 			);
 			path = RecallUITests;
+			sourceTree = "<group>";
+		};
+		C91BCF232A61C380003C6DD6 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				C91BCEF12A618435003C6DD6 /* RecallApp.swift */,
+				C91BCF2A2A61DCD8003C6DD6 /* Authentication */,
+				C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */,
+				C91BCEF32A618435003C6DD6 /* RecallView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		C91BCF2A2A61DCD8003C6DD6 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				C91BCF212A61C374003C6DD6 /* RealmManager.swift */,
+				C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */,
+				C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		C91BCF2D2A61DD51003C6DD6 /* Universals */ = {
+			isa = PBXGroup;
+			children = (
+				C91BCF2E2A61DD69003C6DD6 /* UIUniversals.swift */,
+				C91BCF302A61DDBA003C6DD6 /* Constants.swift */,
+				C91BCF322A61DE55003C6DD6 /* Extensions.swift */,
+				C91BCF342A61DE65003C6DD6 /* ViewModifiers.swift */,
+				C91BCF362A61DED5003C6DD6 /* UniversalButtons.swift */,
+			);
+			path = Universals;
+			sourceTree = "<group>";
+		};
+		C91BCF3A2A61E0F0003C6DD6 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				C91BCF382A61E0EB003C6DD6 /* CalendarComponent.swift */,
+			);
+			path = Calendar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -270,8 +332,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C91BCEF42A618435003C6DD6 /* ContentView.swift in Sources */,
+				C91BCEF42A618435003C6DD6 /* RecallView.swift in Sources */,
+				C91BCF332A61DE55003C6DD6 /* Extensions.swift in Sources */,
+				C91BCF372A61DED5003C6DD6 /* UniversalButtons.swift in Sources */,
+				C91BCF392A61E0EB003C6DD6 /* CalendarComponent.swift in Sources */,
 				C91BCEF22A618435003C6DD6 /* RecallApp.swift in Sources */,
+				C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */,
+				C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */,
+				C91BCF352A61DE65003C6DD6 /* ViewModifiers.swift in Sources */,
+				C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */,
+				C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */,
+				C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */,
+				C91BCF312A61DDBA003C6DD6 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
