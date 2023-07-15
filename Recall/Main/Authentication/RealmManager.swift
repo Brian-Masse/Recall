@@ -29,17 +29,12 @@ class RealmManager: ObservableObject {
     @Published var realmLoaded: Bool = false
     @Published var hasProfile: Bool = false
     
-    var notificationToken: NotificationToken?
-    
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
-//    lazy var profileQuery: (QueryPermission<EcheveriaProfile>)        = QueryPermission { query in query.ownerID == self.user!.id }
-//    lazy var groupQuery: (QueryPermission<EcheveriaGroup>)!           = QueryPermission { query in query.members.contains(self.user!.id) }
-//    lazy var gamesQuery: (QueryPermission<EcheveriaGame>)!            = QueryPermission { query in query.ownerID == self.user!.id }
-//    lazy var gameDataNodesQuery: (QueryPermission<GameDataNode>)!     = QueryPermission { query in query.ownerID == self.user!.id }
+    lazy var calendarComponentQuery: (QueryPermission<RecallCalendarComponent>) = QueryPermission {query in query.ownerID == query.ownerID }
     
     @MainActor
     init() {
-//        self.checkLogin()
+        self.checkLogin()
     }
     
 //    MARK: Authentication Functions
@@ -120,7 +115,7 @@ class RealmManager: ObservableObject {
 //    if not the profile objcet on EcheveriaModel will remain nil and the UI will show
     func checkProfile() async {
 //     the only place the subscription is added is when they create a profile
-        if !self.checkSubscription(name: QuerySubKey.account.rawValue) { await self.addProfileSubscription() }
+//        if !self.checkSubscription(name: QuerySubKey.account.rawValue) { await self.addProfileSubscription() }
         
 //        DispatchQueue.main.sync {
 //            let profile = realm.objects(EcheveriaProfile.self).where { queryObject in
@@ -152,19 +147,12 @@ class RealmManager: ObservableObject {
 
 //    MARK: Realm-Loaded Functions
 //    Called once the realm is loaded in OpenSyncedRealmView
+    @MainActor
     func authRealm(realm: Realm) async {
         self.realm = realm
         await self.addSubcriptions()
         
-        DispatchQueue.main.sync {
-            self.setupNotificationTokens()
-            self.realmLoaded = true
-        }
-    }
-    
-    private func setupNotificationTokens() {
-//            Take action from an observed change, more than simple UI refresh
-//            See the quickStart docs for implementation: https://www.mongodb.com/docs/realm/sdk/swift/quick-start/
+        self.realmLoaded = true
     }
     
     private func addSubcriptions() async {
@@ -176,9 +164,7 @@ class RealmManager: ObservableObject {
 
         await self.removeAllNonBaseSubscriptions()
         
-//        let _:EcheveriaGroup? = await self.addGenericSubcriptions(name: QuerySubKey.groups.rawValue, query: groupQuery.baseQuery)
-//        let _:EcheveriaGame? = await self.addGenericSubcriptions(name: QuerySubKey.games.rawValue, query: gamesQuery.baseQuery)
-//        let _:GameDataNode? = await self.addGenericSubcriptions(name: QuerySubKey.gameDataNodes.rawValue, query: gameDataNodesQuery.baseQuery)
+        let _:RecallCalendarComponent? = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarComponentQuery.baseQuery )
         
     }
     
@@ -224,13 +210,6 @@ class RealmManager: ObservableObject {
     func removeAllNonBaseSubscriptions() async {
         
         if let realm = self.realm {
-            
-            DispatchQueue.main.sync {
-                if RecallModel.realmManager.hasProfile {
-//                    EcheveriaModel.shared.profile.loaded = false
-                }
-            }
-            
             if realm.subscriptions.count > 0 {
                 for subscription in realm.subscriptions {
                     if !QuerySubKey.allCases.contains(where: { key in

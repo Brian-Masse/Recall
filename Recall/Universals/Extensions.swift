@@ -40,3 +40,11 @@ extension Color {
         )
     }
 }
+
+extension Date {
+    
+    func getHoursFromStartOfDay() -> Double {
+        let comps = Calendar.current.dateComponents([.minute, .hour], from: self)
+        return Double(comps.minute ?? 0) / Constants.MinuteTime + Double(comps.hour ?? 0)
+    }
+}

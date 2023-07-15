@@ -22,8 +22,9 @@ struct ContentView: View {
             
         }else if !realmManager.realmLoaded {
             OpenFlexibleSyncRealmView()
-            
-        } 
+        }else {
+            CalendarView()
+        }
         
     }
 }

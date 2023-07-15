@@ -9,15 +9,7 @@ import Foundation
 import RealmSwift
 
 enum QuerySubKey: String, CaseIterable {
-    case testObject = "testObject"
-    case account = "Account"
-    case profileSearch = "ProfileSearch"
-    
-    case groups = "Groups"
-    case groupSearch = "GroupSearch"
-    
-    case games = "Games"
-    case gameDataNodes = "GameDataNodes"
+    case calendarComponent
 }
 
 class QueryPermission<T: Object> {

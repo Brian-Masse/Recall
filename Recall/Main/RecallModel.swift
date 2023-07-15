@@ -14,6 +14,8 @@ struct RecallModel {
     static let shared: RecallModel = RecallModel()
     static let realmManager: RealmManager = RealmManager()
     
+    static var ownerID: String { RecallModel.realmManager.user?.id ?? "" }
+    
     let activeColor: Color = Colors.main
     
 }
