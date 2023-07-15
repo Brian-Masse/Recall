@@ -15,7 +15,7 @@ import RealmSwift
 //
 //}
 
-class RecallCalendarComponent: Object, Identifiable, PlaceableCalendarComponent  {
+class RecallCalendarComponent: Object, Identifiable  {
     
     @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var ownerID: String
@@ -38,7 +38,13 @@ class RecallCalendarComponent: Object, Identifiable, PlaceableCalendarComponent 
             thawed.startTime = startDate
             thawed.endTime = endDate
         }
-        
+    }
+    
+    func updateDate(startDate: Date, endDate: Date) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.startTime = startDate
+            thawed.endTime = endDate
+        }
     }
     
 //    MARK: Class Methods

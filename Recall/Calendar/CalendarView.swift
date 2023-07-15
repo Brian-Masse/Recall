@@ -22,27 +22,13 @@ struct CalendarPieces: ViewModifier {
             content
             
             ForEach( components, id: \.self ) { component in
-            
-                let startTime = component.getStartDate().getHoursFromStartOfDay()
-                let endTime = component.getEndDate().getHoursFromStartOfDay()
-                let length = endTime - startTime
-                
-                VStack {
-                    
-                    UniversalText( component.title, size: Constants.UISubHeaderTextSize, true )
-                    UniversalText( component.ownerID, size: Constants.UIDefaultTextSize )
-                    
-                }
-                .padding()
-                .opaqueRectangularBackground()
-                .offset(y: CGFloat(startTime) * spacing)
-                .frame(height: CGFloat(length) * spacing)
-                .onTapGesture { showingComponent = true }
-                .fullScreenCover(isPresented: $showingComponent) {
-                    CalendarComponentView(component: component,
-                                          startDate: component.startTime,
-                                          endDate: component.endTime)
-                }
+                CalendarComponentPreviewView(component: component, spacing: spacing)
+//                    .onTapGesture { showingComponent = true }
+                    .fullScreenCover(isPresented: $showingComponent) {
+                        CalendarComponentView(component: component,
+                                              startDate: component.startTime,
+                                              endDate: component.endTime)
+                    }
             }
         }
     }
@@ -77,7 +63,6 @@ struct CalendarContainer: View {
             }
         }
         .modifier( CalendarPieces(components: components, spacing: spacing) )
-        
         .frame(height: height)
     }
 }

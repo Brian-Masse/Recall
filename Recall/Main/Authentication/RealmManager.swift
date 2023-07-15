@@ -30,7 +30,8 @@ class RealmManager: ObservableObject {
     @Published var hasProfile: Bool = false
     
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
-    lazy var calendarComponentQuery: (QueryPermission<RecallCalendarComponent>) = QueryPermission {query in query.ownerID == query.ownerID }
+    @MainActor
+    lazy var calendarComponentQuery: (QueryPermission<RecallCalendarComponent>) = QueryPermission {query in query.ownerID == RecallModel.ownerID }
     
     @MainActor
     init() {
