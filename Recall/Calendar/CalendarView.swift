@@ -15,6 +15,7 @@ struct CalendarPieces: ViewModifier {
     let spacing: CGFloat
     
     @State var showingComponent: Bool = false
+    @Binding var dragging: Bool
     
     func body(content: Content) -> some View {
         
@@ -22,8 +23,8 @@ struct CalendarPieces: ViewModifier {
             content
             
             ForEach( components, id: \.self ) { component in
-                CalendarComponentPreviewView(component: component, spacing: spacing)
-//                    .onTapGesture { showingComponent = true }
+                CalendarComponentPreviewView(component: component, spacing: spacing, dragging: $dragging)
+                    .onTapGesture { showingComponent = true }
                     .fullScreenCover(isPresented: $showingComponent) {
                         CalendarComponentView(component: component,
                                               startDate: component.startTime,
@@ -41,6 +42,7 @@ struct CalendarContainer: View {
     let height: CGFloat
     let components: [RecallCalendarComponent]
     
+    @Binding var dragging: Bool
     
     var body: some View {
         
@@ -62,7 +64,7 @@ struct CalendarContainer: View {
                 }
             }
         }
-        .modifier( CalendarPieces(components: components, spacing: spacing) )
+        .modifier( CalendarPieces(components: components, spacing: spacing, dragging: $dragging) )
         .frame(height: height)
     }
 }
@@ -72,39 +74,19 @@ struct CalendarView: View {
     @ObservedResults( RecallCalendarComponent.self ) var components
     
     @State var name: String = "name"
+    @State var dragging: Bool = false
     
     var body: some View {
         
         GeometryReader { geo in
             ZStack(alignment: .top) {
                 
-                CalendarContainer(height: geo.size.height, components: Array( components ))
-                
-            
-                
-//                VStack(alignment: .leading) {
-//
-//                    Spacer()
-//
-//                    ForEach( components, id: \._id.stringValue ) { comp in
-//                        HStack {
-//                            Spacer()
-//                            UniversalText(comp.title, size: Constants.UISubHeaderTextSize, true)
-//                            UniversalText(comp.ownerID, size: Constants.UIDefaultTextSize)
-//                            Spacer()
-//                        }
-//                        .padding()
-//                        .opaqueRectangularBackground()
-//                    }
-//
-//                    TextField("name", text: $name)
-//                    RoundedButton(label: "add", icon: "plus") {
-//                        let comp = RecallCalendarComponent(ownerID: RecallModel.ownerID, title: name)
-//                        RealmManager.addObject(comp)
-//                    }
-//
-//                    Spacer()
-//                }
+                ScrollView {
+                    CalendarContainer(height: geo.size.height, components: Array( components), dragging: $dragging)
+                }
+                .scrollDisabled(dragging)
+                .frame(height: geo.size.height / 2)
+                .background(.red.opacity(0.5))
             }
         }.universalBackground()
     }

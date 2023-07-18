@@ -158,5 +158,25 @@ extension View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     #endif
+    
+    func delayTouches() -> some View {
+        Button(action: {}) {
+            highPriorityGesture(TapGesture())
+        }
+        .buttonStyle(NoButtonStyle())
+    }
+    
+    @ViewBuilder
+    func `if`<Content: View>( _ condition: Bool, contentBuilder: (Self) -> Content ) -> some View {
+        if condition {
+            contentBuilder(self)
+        } else { self }
+    }
 }
 
+
+struct NoButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+    }
+}

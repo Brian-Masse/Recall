@@ -40,10 +40,10 @@ class RecallCalendarComponent: Object, Identifiable  {
         }
     }
     
-    func updateDate(startDate: Date, endDate: Date) {
+    func updateDate(startDate: Date? = nil, endDate: Date? = nil) {
         RealmManager.updateObject(self) { thawed in
-            thawed.startTime = startDate
-            thawed.endTime = endDate
+            thawed.startTime = startDate ?? thawed.startTime
+            thawed.endTime = endDate ?? thawed.endTime
         }
     }
     

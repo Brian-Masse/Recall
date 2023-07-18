@@ -18,37 +18,75 @@ struct CalendarComponentPreviewView: View {
         case querter = 4
     }
     
+    enum ResizeDirection: Int {
+        case up = 1
+        case down = -1
+    }
+    
+    let blockCoordinateSpaceKey: String = "blockCOordinateSpace"
+    
     @Environment(\.colorScheme) var colorScheme
+    @GestureState var isDetectingLongPress = false
     
     @ObservedRealmObject var component: RecallCalendarComponent
     let spacing: CGFloat
     
     @State var startDate: Date = .now
     @State var endDate: Date = .now
-    @State var roundedStartDate: Date = .now
-    @State var roundedEndDate: Date = .now
-    
-    @State var offSet: CGFloat = 0  //is a position
     @State var length: CGFloat = 0  //measured in hours
     
-    @State var dragging: Bool = false
+    @State var roundedStartDate: Date = .now
     
+    @Binding var dragging: Bool
+    @State var resizing: Bool = false //used to block the movement gesture while resizing
+    
+    private func getOffset(from startDate: Date) -> CGFloat {
+        CGFloat(startDate.getHoursFromStartOfDay()) * spacing
+    }
+    
+    private func clampPosition(_ pos: CGFloat ) -> CGFloat {
+        min( max( 0, pos ), (24 * spacing) - 1 )
+    }
+    
+//    MARK: Drag
     private var drag: some Gesture {
-        DragGesture(minimumDistance: 10)
+        DragGesture(coordinateSpace: .named(blockCoordinateSpaceKey))
             .onChanged { dragGesture in
-                dragging = true
-                offSet = dragGesture.location.y
-                
-                startDate = getTime(from: dragGesture.location.y)
+                if !dragging || resizing { return }
+                startDate = getTime(from: clampPosition(dragGesture.location.y))
                 endDate   = startDate + (length * Constants.HourTime)
                 
-                roundedStartDate = getNearestTime(from: dragGesture.location.y, to: .halfHour)
-                roundedEndDate   = roundedStartDate + (length * Constants.HourTime)
+                roundedStartDate = getNearestTime(from: clampPosition(dragGesture.location.y), to: .halfHour)
+            }
+            .onEnded { dragGesture in
+                if dragging && !resizing {
+                    dragging = false
+                    component.updateDate(startDate: roundedStartDate, endDate: roundedStartDate + ( length * Constants.HourTime ) )
+                }
+            }
+    }
+    
+//    MARK: Resize
+    private func resizeGesture(_ direction: ResizeDirection) -> some Gesture {
+        DragGesture( coordinateSpace: .named(blockCoordinateSpaceKey) )
+            .onChanged { dragGesture in
+                if !dragging || !resizing { return }
+                if direction == .up {
+                    startDate        = min(getTime(from: clampPosition(dragGesture.location.y)), endDate - Constants.HourTime)
+                    roundedStartDate = min(getNearestTime(from: clampPosition(dragGesture.location.y), to: .halfHour), endDate - Constants.HourTime)
+                    length           = endDate.timeIntervalSince(startDate) / Constants.HourTime
+                } else {
+                    endDate             = max(getTime(from: clampPosition(dragGesture.location.y)), startDate + Constants.HourTime)
+                    let roundedEndDate  = max(getNearestTime(from: clampPosition(dragGesture.location.y), to: .halfHour, roundingRule: .up), startDate + Constants.HourTime)
+                    length              = endDate.timeIntervalSince(startDate) / Constants.HourTime
+                    roundedStartDate    = roundedEndDate - length * Constants.HourTime
+                }
             }
             .onEnded { dragGesture in
                 dragging = false
-                
-                component.updateDate(startDate: roundedStartDate, endDate: roundedEndDate)
+                resizing = false
+                if direction == .up { component.updateDate(startDate: roundedStartDate)
+                } else { component.updateDate(endDate: roundedStartDate + length * Constants.HourTime ) }
             }
     }
     
@@ -59,14 +97,18 @@ struct CalendarComponentPreviewView: View {
         return Calendar.current.date(bySettingHour: Int(hour), minute: Int(minutes), second: 0, of: startDate) ?? .now
     }
     
-    private func getNearestTime(from position: CGFloat, to timeRounding: TimeRounding) -> Date {
-        let hour = (position / spacing).rounded(.down)
+    private func getNearestTime(from position: CGFloat, to timeRounding: TimeRounding, roundingRule: FloatingPointRoundingRule = .down ) -> Date {
+        var hour = (position / spacing).rounded(.down)
         let minutes = ((position / spacing) - hour)
-        let roundedMinutes = ((minutes * CGFloat(timeRounding.rawValue)).rounded(.down) / CGFloat(timeRounding.rawValue)) * CGFloat(Constants.MinuteTime)
+        var roundedMinutes = ((minutes * CGFloat(timeRounding.rawValue)).rounded(roundingRule) / CGFloat(timeRounding.rawValue)) * CGFloat(Constants.MinuteTime)
+        
+        if roundedMinutes == 60 {
+            roundedMinutes = 0
+            hour += 1
+        }
         
         return Calendar.current.date(bySettingHour: Int(hour), minute: Int(roundedMinutes), second: 0, of: startDate) ?? .now
     }
-    
     
     private func setup() {
         startDate = component.startTime
@@ -75,11 +117,20 @@ struct CalendarComponentPreviewView: View {
         let startTime = component.startTime.getHoursFromStartOfDay()
         let endTime = component.endTime.getHoursFromStartOfDay()
         length = endTime - startTime
-        offSet = CGFloat(startTime) * spacing
+    }
+    
+//    MARK: Body
+    @ViewBuilder
+    private func makeLengthHandle(_ direction: ResizeDirection) -> some View {
+        Rectangle()
+            .foregroundColor(.blue)
+            .onTapGesture { }
+            .onLongPressGesture(minimumDuration: 1) { dragging = true; resizing = true }
+            .simultaneousGesture(resizeGesture( direction ))
+            .frame(height: 20)
     }
     
     var body: some View {
-            
         ZStack {
             
             if dragging {
@@ -87,33 +138,48 @@ struct CalendarComponentPreviewView: View {
                     .foregroundColor(.red.opacity(0.5))
                     .cornerRadius(Constants.UIDefaultCornerRadius)
                     .frame(height: CGFloat(length) * spacing)
-                    .offset(y: roundedStartDate.getHoursFromStartOfDay() * spacing)
+                    .offset(y: getOffset(from: roundedStartDate))
             }
             
-            VStack {
-                UniversalText( component.title, size: Constants.UISubHeaderTextSize, true )
-                UniversalText( component.ownerID, size: Constants.UIDefaultTextSize )
-                
-                HStack {
+            ZStack {
+                VStack {
+                    UniversalText( component.title, size: Constants.UISubHeaderTextSize, true )
+                    UniversalText( component.ownerID, size: Constants.UIDefaultTextSize )
                     
-                    UniversalText( startDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
-                    Spacer()
-                    UniversalText( endDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
+                    HStack {
+                        UniversalText( startDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
+                        Spacer()
+                        UniversalText( endDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
+                    }
                 }
                 
+                VStack {
+                    makeLengthHandle(.up)
+                    Spacer()
+                    makeLengthHandle(.down)
+                }
             }
             .padding()
             .frame(height: CGFloat(length) * spacing)
             .background(colorScheme == .light ? .white : Colors.darkGrey )
             .cornerRadius(Constants.UIDefaultCornerRadius)
-            .offset(y: offSet)
-            .gesture(drag)
+            .offset(y: getOffset(from: startDate))
+            
+            .onTapGesture { } //this is to prevent the longPressGesture from blocking the ScrollView
+            .onLongPressGesture(minimumDuration: 1 ) { dragging = true }
+            .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
+            
+            .coordinateSpace(name: blockCoordinateSpaceKey)
             .onAppear { setup() }
+            .shadow(radius: dragging ? 10 : 0)
+            
         }
+        
     }
 }
 
 
+//MARK: Full Screen View
 struct CalendarComponentView: View {
     
     @Environment( \.presentationMode ) var presentationMode
