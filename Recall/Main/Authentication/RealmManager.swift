@@ -31,7 +31,9 @@ class RealmManager: ObservableObject {
     
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
     @MainActor
-    lazy var calendarComponentQuery: (QueryPermission<RecallCalendarComponent>) = QueryPermission {query in query.ownerID == RecallModel.ownerID }
+    lazy var calendarComponentQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission {query in query.ownerID == RecallModel.ownerID }
+    @MainActor
+    lazy var categoryQuery: (QueryPermission<RecallCategory>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     
     @MainActor
     init() {
@@ -165,7 +167,8 @@ class RealmManager: ObservableObject {
 
         await self.removeAllNonBaseSubscriptions()
         
-        let _:RecallCalendarComponent? = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarComponentQuery.baseQuery )
+        let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarComponentQuery.baseQuery )
+        let _:RecallCategory?       = await self.addGenericSubcriptions(name: QuerySubKey.category.rawValue, query: categoryQuery.baseQuery )
         
     }
     

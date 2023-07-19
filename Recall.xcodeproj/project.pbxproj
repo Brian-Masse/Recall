@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C915A0072A67213F009F6C84 /* EventCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0062A67213F009F6C84 /* EventCategory.swift */; };
+		C915A0092A67217A009F6C84 /* CalendarContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0082A67217A009F6C84 /* CalendarContainerView.swift */; };
+		C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A00A2A672586009F6C84 /* EventCreationView.swift */; };
 		C91BCEF22A618435003C6DD6 /* RecallApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCEF12A618435003C6DD6 /* RecallApp.swift */; };
 		C91BCEF42A618435003C6DD6 /* RecallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCEF32A618435003C6DD6 /* RecallView.swift */; };
 		C91BCEF62A618437003C6DD6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C91BCEF52A618437003C6DD6 /* Assets.xcassets */; };
@@ -25,9 +28,11 @@
 		C91BCF332A61DE55003C6DD6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF322A61DE55003C6DD6 /* Extensions.swift */; };
 		C91BCF352A61DE65003C6DD6 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF342A61DE65003C6DD6 /* ViewModifiers.swift */; };
 		C91BCF372A61DED5003C6DD6 /* UniversalButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF362A61DED5003C6DD6 /* UniversalButtons.swift */; };
-		C91BCF392A61E0EB003C6DD6 /* CalendarComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF382A61E0EB003C6DD6 /* CalendarComponent.swift */; };
-		C91BCF3C2A61E3EE003C6DD6 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF3B2A61E3EE003C6DD6 /* CalendarView.swift */; };
-		C91BCF3E2A6209B9003C6DD6 /* CalendarComponentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF3D2A6209B9003C6DD6 /* CalendarComponentView.swift */; };
+		C91BCF392A61E0EB003C6DD6 /* RecallCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF382A61E0EB003C6DD6 /* RecallCalendarEvent.swift */; };
+		C91BCF3C2A61E3EE003C6DD6 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */; };
+		C91BCF3E2A6209B9003C6DD6 /* CalendarEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF3D2A6209B9003C6DD6 /* CalendarEventView.swift */; };
+		C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F102A688855007E8537 /* UniversalForm.swift */; };
+		C94B1F142A6888C1007E8537 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = C94B1F132A6888C1007E8537 /* SymbolPicker */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +53,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C915A0062A67213F009F6C84 /* EventCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCategory.swift; sourceTree = "<group>"; };
+		C915A0082A67217A009F6C84 /* CalendarContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarContainerView.swift; sourceTree = "<group>"; };
+		C915A00A2A672586009F6C84 /* EventCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCreationView.swift; sourceTree = "<group>"; };
 		C91BCEEE2A618435003C6DD6 /* Recall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Recall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91BCEF12A618435003C6DD6 /* RecallApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallApp.swift; sourceTree = "<group>"; };
 		C91BCEF32A618435003C6DD6 /* RecallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallView.swift; sourceTree = "<group>"; };
@@ -68,9 +76,10 @@
 		C91BCF322A61DE55003C6DD6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		C91BCF342A61DE65003C6DD6 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
 		C91BCF362A61DED5003C6DD6 /* UniversalButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalButtons.swift; sourceTree = "<group>"; };
-		C91BCF382A61E0EB003C6DD6 /* CalendarComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarComponent.swift; sourceTree = "<group>"; };
-		C91BCF3B2A61E3EE003C6DD6 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
-		C91BCF3D2A6209B9003C6DD6 /* CalendarComponentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarComponentView.swift; sourceTree = "<group>"; };
+		C91BCF382A61E0EB003C6DD6 /* RecallCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCalendarEvent.swift; sourceTree = "<group>"; };
+		C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		C91BCF3D2A6209B9003C6DD6 /* CalendarEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventView.swift; sourceTree = "<group>"; };
+		C94B1F102A688855007E8537 /* UniversalForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +89,7 @@
 			files = (
 				C91BCF202A618601003C6DD6 /* RealmSwift in Frameworks */,
 				C91BCF1E2A618601003C6DD6 /* Realm in Frameworks */,
+				C94B1F142A6888C1007E8537 /* SymbolPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,6 +194,7 @@
 			children = (
 				C91BCF2E2A61DD69003C6DD6 /* UIUniversals.swift */,
 				C91BCF302A61DDBA003C6DD6 /* Constants.swift */,
+				C94B1F102A688855007E8537 /* UniversalForm.swift */,
 				C91BCF322A61DE55003C6DD6 /* Extensions.swift */,
 				C91BCF342A61DE65003C6DD6 /* ViewModifiers.swift */,
 				C91BCF362A61DED5003C6DD6 /* UniversalButtons.swift */,
@@ -194,8 +205,9 @@
 		C91BCF3A2A61E0F0003C6DD6 /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
-				C91BCF382A61E0EB003C6DD6 /* CalendarComponent.swift */,
+				C91BCF382A61E0EB003C6DD6 /* RecallCalendarEvent.swift */,
 				C91BCF3F2A6209C3003C6DD6 /* Views */,
+				C915A0062A67213F009F6C84 /* EventCategory.swift */,
 			);
 			path = Calendar;
 			sourceTree = "<group>";
@@ -203,8 +215,10 @@
 		C91BCF3F2A6209C3003C6DD6 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C91BCF3B2A61E3EE003C6DD6 /* CalendarView.swift */,
-				C91BCF3D2A6209B9003C6DD6 /* CalendarComponentView.swift */,
+				C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */,
+				C915A00A2A672586009F6C84 /* EventCreationView.swift */,
+				C915A0082A67217A009F6C84 /* CalendarContainerView.swift */,
+				C91BCF3D2A6209B9003C6DD6 /* CalendarEventView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -228,6 +242,7 @@
 			packageProductDependencies = (
 				C91BCF1D2A618601003C6DD6 /* Realm */,
 				C91BCF1F2A618601003C6DD6 /* RealmSwift */,
+				C94B1F132A6888C1007E8537 /* SymbolPicker */,
 			);
 			productName = Recall;
 			productReference = C91BCEEE2A618435003C6DD6 /* Recall.app */;
@@ -303,6 +318,7 @@
 			mainGroup = C91BCEE52A618434003C6DD6;
 			packageReferences = (
 				C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
 			);
 			productRefGroup = C91BCEEF2A618435003C6DD6 /* Products */;
 			projectDirPath = "";
@@ -349,14 +365,18 @@
 				C91BCEF42A618435003C6DD6 /* RecallView.swift in Sources */,
 				C91BCF332A61DE55003C6DD6 /* Extensions.swift in Sources */,
 				C91BCF372A61DED5003C6DD6 /* UniversalButtons.swift in Sources */,
-				C91BCF392A61E0EB003C6DD6 /* CalendarComponent.swift in Sources */,
+				C91BCF392A61E0EB003C6DD6 /* RecallCalendarEvent.swift in Sources */,
 				C91BCEF22A618435003C6DD6 /* RecallApp.swift in Sources */,
+				C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */,
+				C915A0072A67213F009F6C84 /* EventCategory.swift in Sources */,
 				C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */,
-				C91BCF3C2A61E3EE003C6DD6 /* CalendarView.swift in Sources */,
+				C91BCF3C2A61E3EE003C6DD6 /* MainView.swift in Sources */,
+				C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */,
 				C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */,
-				C91BCF3E2A6209B9003C6DD6 /* CalendarComponentView.swift in Sources */,
+				C91BCF3E2A6209B9003C6DD6 /* CalendarEventView.swift in Sources */,
 				C91BCF352A61DE65003C6DD6 /* ViewModifiers.swift in Sources */,
 				C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */,
+				C915A0092A67217A009F6C84 /* CalendarContainerView.swift in Sources */,
 				C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */,
 				C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */,
 				C91BCF312A61DDBA003C6DD6 /* Constants.swift in Sources */,
@@ -721,6 +741,14 @@
 				kind = branch;
 			};
 		};
+		C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xnth97/SymbolPicker.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -733,6 +761,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		C94B1F132A6888C1007E8537 /* SymbolPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
+			productName = SymbolPicker;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

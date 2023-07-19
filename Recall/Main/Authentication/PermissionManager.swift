@@ -10,6 +10,7 @@ import RealmSwift
 
 enum QuerySubKey: String, CaseIterable {
     case calendarComponent
+    case category
 }
 
 class QueryPermission<T: Object> {

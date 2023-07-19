@@ -15,7 +15,7 @@ import RealmSwift
 //
 //}
 
-class RecallCalendarComponent: Object, Identifiable  {
+class RecallCalendarEvent: Object, Identifiable  {
     
     @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var ownerID: String
@@ -25,10 +25,20 @@ class RecallCalendarComponent: Object, Identifiable  {
     @Persisted var startTime: Date = .now
     @Persisted var endTime:   Date = .now + Constants.HourTime
     
-    convenience init(ownerID: String, title: String) {
+    @Persisted var category: RecallCategory? = nil
+    
+    convenience init(ownerID: String, title: String, startTime: Date, endTime: Date, categoryID: ObjectId) {
         self.init()
         self.ownerID = ownerID
+        
         self.title = title
+        self.startTime = startTime
+        self.endTime = endTime
+        
+        if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) {
+            self.category = retrievedCategory
+        }
+        
     }
     
     func update( title: String, startDate: Date, endDate: Date ) {

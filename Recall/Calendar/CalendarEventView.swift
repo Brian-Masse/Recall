@@ -10,35 +10,35 @@ import SwiftUI
 import RealmSwift
 
 //Should only be placed ontop of a caldndar container
-struct CalendarComponentPreviewView: View {
+struct CalendarEventPreviewView: View {
     
-    enum TimeRounding: Int {
+    private let blockCoordinateSpaceKey: String = "blockCOordinateSpace"
+    private let holdDuration: Double = 0.5
+    
+    private enum TimeRounding: Int {
         case hour = 1
         case halfHour = 2
         case querter = 4
     }
     
-    enum ResizeDirection: Int {
+    private enum ResizeDirection: Int {
         case up = 1
         case down = -1
     }
     
-    let blockCoordinateSpaceKey: String = "blockCOordinateSpace"
-    
     @Environment(\.colorScheme) var colorScheme
-    @GestureState var isDetectingLongPress = false
+    @ObservedRealmObject var component: RecallCalendarEvent
     
-    @ObservedRealmObject var component: RecallCalendarComponent
     let spacing: CGFloat
     
     @State var startDate: Date = .now
     @State var endDate: Date = .now
     @State var length: CGFloat = 0  //measured in hours
-    
     @State var roundedStartDate: Date = .now
     
     @Binding var dragging: Bool
     @State var resizing: Bool = false //used to block the movement gesture while resizing
+    @State var showingComponent: Bool = false
     
     private func getOffset(from startDate: Date) -> CGFloat {
         CGFloat(startDate.getHoursFromStartOfDay()) * spacing
@@ -125,7 +125,7 @@ struct CalendarComponentPreviewView: View {
         Rectangle()
             .foregroundColor(.blue)
             .onTapGesture { }
-            .onLongPressGesture(minimumDuration: 1) { dragging = true; resizing = true }
+            .onLongPressGesture(minimumDuration: holdDuration) { dragging = true; resizing = true }
             .simultaneousGesture(resizeGesture( direction ))
             .frame(height: 20)
     }
@@ -142,16 +142,24 @@ struct CalendarComponentPreviewView: View {
             }
             
             ZStack {
-                VStack {
-                    UniversalText( component.title, size: Constants.UISubHeaderTextSize, true )
-                    UniversalText( component.ownerID, size: Constants.UIDefaultTextSize )
+                VStack(alignment: .leading) {
                     
                     HStack {
-                        UniversalText( startDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
+                        UniversalText( component.title, size: Constants.UISubHeaderTextSize, true )
                         Spacer()
-                        UniversalText( endDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
+                        UniversalText( "\(component.category?.label ?? "?"), \(component.category?.productivity ?? 0)", size: Constants.UIDefaultTextSize )
                     }
-                }
+                    
+//                    UniversalText( component.ownerID, size: Constants.UIDefaultTextSize )
+
+                    
+                    Spacer()
+
+                    UniversalText( startDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
+                    Spacer()
+                    UniversalText( endDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
+                    
+                }.padding()
                 
                 VStack {
                     makeLengthHandle(.up)
@@ -159,19 +167,23 @@ struct CalendarComponentPreviewView: View {
                     makeLengthHandle(.down)
                 }
             }
-            .padding()
-            .frame(height: CGFloat(length) * spacing)
+            .frame(height: max(CGFloat(length) * spacing, 5))
             .background(colorScheme == .light ? .white : Colors.darkGrey )
             .cornerRadius(Constants.UIDefaultCornerRadius)
             .offset(y: getOffset(from: startDate))
             
-            .onTapGesture { } //this is to prevent the longPressGesture from blocking the ScrollView
-            .onLongPressGesture(minimumDuration: 1 ) { dragging = true }
+            .onTapGesture { showingComponent = true }
+            .onLongPressGesture(minimumDuration: holdDuration ) { dragging = true }
             .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
             
             .coordinateSpace(name: blockCoordinateSpaceKey)
             .onAppear { setup() }
             .shadow(radius: dragging ? 10 : 0)
+            .fullScreenCover(isPresented: $showingComponent) {
+                CalendarEventView(component: component,
+                                      startDate: component.startTime,
+                                      endDate: component.endTime)
+            }
             
         }
         
@@ -180,10 +192,10 @@ struct CalendarComponentPreviewView: View {
 
 
 //MARK: Full Screen View
-struct CalendarComponentView: View {
+struct CalendarEventView: View {
     
     @Environment( \.presentationMode ) var presentationMode
-    @ObservedRealmObject var component: RecallCalendarComponent
+    @ObservedRealmObject var component: RecallCalendarEvent
  
     @State var editing: Bool = false
     
