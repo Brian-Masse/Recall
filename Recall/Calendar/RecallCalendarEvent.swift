@@ -26,8 +26,10 @@ class RecallCalendarEvent: Object, Identifiable  {
     @Persisted var endTime:   Date = .now + Constants.HourTime
     
     @Persisted var category: RecallCategory? = nil
+    @Persisted var goalRatings: List< GoalNode> = List()
     
-    convenience init(ownerID: String, title: String, startTime: Date, endTime: Date, categoryID: ObjectId) {
+    @MainActor
+    convenience init(ownerID: String, title: String, startTime: Date, endTime: Date, categoryID: ObjectId, goalRatings: Dictionary<String, String>) {
         self.init()
         self.ownerID = ownerID
         
@@ -35,9 +37,9 @@ class RecallCalendarEvent: Object, Identifiable  {
         self.startTime = startTime
         self.endTime = endTime
         
-        if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) {
-            self.category = retrievedCategory
-        }
+        if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) { self.category = retrievedCategory }
+        self.goalRatings = translateGoalRatingDictionary(goalRatings)
+        
         
     }
     
@@ -58,6 +60,19 @@ class RecallCalendarEvent: Object, Identifiable  {
     }
     
 //    MARK: Class Methods
+    
+    func delete() {
+        RealmManager.deleteObject(self) { event in event._id == self._id }
+    }
+    
+    @MainActor
+    private func translateGoalRatingDictionary(_ dictionary: Dictionary<String, String>) -> List<GoalNode> {
+        let list: List<GoalNode> = List()
+        list.append(objectsIn: dictionary.map { (key: String, data: String) in
+            GoalNode(ownerID: RecallModel.ownerID, key: key, data: data)
+        })
+        return list
+    }
     
 }
 

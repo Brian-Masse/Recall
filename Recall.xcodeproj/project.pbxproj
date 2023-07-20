@@ -35,6 +35,8 @@
 		C94B1F142A6888C1007E8537 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = C94B1F132A6888C1007E8537 /* SymbolPicker */; };
 		C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F152A6891E9007E8537 /* CalendarPageView.swift */; };
 		C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F172A68931F007E8537 /* GoalsPageView.swift */; };
+		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
+		C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D172A68AF750023EBC0 /* GoalCreationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +86,8 @@
 		C94B1F102A688855007E8537 /* UniversalForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalForm.swift; sourceTree = "<group>"; };
 		C94B1F152A6891E9007E8537 /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageView.swift; sourceTree = "<group>"; };
 		C94B1F172A68931F007E8537 /* GoalsPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsPageView.swift; sourceTree = "<group>"; };
+		C9E49D152A68AC820023EBC0 /* RecallGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoal.swift; sourceTree = "<group>"; };
+		C9E49D172A68AF750023EBC0 /* GoalCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCreationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +236,7 @@
 			isa = PBXGroup;
 			children = (
 				C915A0062A67213F009F6C84 /* RecallCategory.swift */,
+				C9E49D152A68AC820023EBC0 /* RecallGoal.swift */,
 				C94B1F1A2A689335007E8537 /* Views */,
 			);
 			path = Goals;
@@ -241,6 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				C94B1F172A68931F007E8537 /* GoalsPageView.swift */,
+				C9E49D172A68AF750023EBC0 /* GoalCreationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -385,6 +391,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C91BCEF42A618435003C6DD6 /* RecallView.swift in Sources */,
+				C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */,
 				C91BCF332A61DE55003C6DD6 /* Extensions.swift in Sources */,
 				C91BCF372A61DED5003C6DD6 /* UniversalButtons.swift in Sources */,
 				C91BCF392A61E0EB003C6DD6 /* RecallCalendarEvent.swift in Sources */,
@@ -395,6 +402,7 @@
 				C91BCF3C2A61E3EE003C6DD6 /* MainView.swift in Sources */,
 				C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */,
 				C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */,
+				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
 				C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */,
 				C91BCF3E2A6209B9003C6DD6 /* CalendarEventView.swift in Sources */,
 				C91BCF352A61DE65003C6DD6 /* ViewModifiers.swift in Sources */,

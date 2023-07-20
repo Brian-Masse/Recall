@@ -32,7 +32,7 @@ struct MainView: View {
                 CalendarPageView().tag( MainPage.calendar )
                 GoalsPageView().tag( MainPage.goals )
 
-            }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+            }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             
         }
         .padding()

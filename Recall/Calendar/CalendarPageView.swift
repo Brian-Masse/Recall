@@ -24,7 +24,7 @@ struct CalendarPageView: View {
         VStack {
             GeometryReader { geo2 in
                 ScrollView {
-                    CalendarContainer(geo: geo2, components: Array( components), dragging: $dragging)
+                    CalendarContainer(geo: geo2, events: Array( components), dragging: $dragging)
                 }
                 .scrollDisabled(dragging)
             }
@@ -36,7 +36,6 @@ struct CalendarPageView: View {
                 ShortRoundedButton( "Add Category", icon: "lanyardcard" ) { showingCreateCategoryView = true }
             }
         }
-        .padding()
         .sheet(isPresented: $showingCreateEventView) { CalendarEventCreationView() }
         .sheet(isPresented: $showingCreateCategoryView) { CategoryCreationView() }
         

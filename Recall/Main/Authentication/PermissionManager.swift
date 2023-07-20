@@ -11,6 +11,8 @@ import RealmSwift
 enum QuerySubKey: String, CaseIterable {
     case calendarComponent
     case category
+    case goal
+    case goalNode
 }
 
 class QueryPermission<T: Object> {

@@ -26,7 +26,6 @@ class RecallCategory: Object, Identifiable {
     }
     
 //    MARK: Convenience Functions
-    
     static func getCategoryObject(from id: ObjectId) -> RecallCategory? {
         let results: Results<RecallCategory> = RealmManager.retrieveObject { query in query._id == id }
         guard let first = results.first else { print("no Category exists with given id: \(id.stringValue)"); return nil }

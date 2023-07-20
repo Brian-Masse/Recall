@@ -184,7 +184,6 @@ struct CalendarEventPreviewView: View {
                                       startDate: component.startTime,
                                       endDate: component.endTime)
             }
-            
         }
         
     }
@@ -195,6 +194,7 @@ struct CalendarEventPreviewView: View {
 struct CalendarEventView: View {
     
     @Environment( \.presentationMode ) var presentationMode
+    
     @ObservedRealmObject var component: RecallCalendarEvent
  
     @State var editing: Bool = false
@@ -204,21 +204,31 @@ struct CalendarEventView: View {
     
     var body: some View {
         
-        VStack {
+        VStack(alignment: .leading) {
                 
             HStack {
                 
-                ShortRoundedButton("Dismiss", icon: "chevron.down") { presentationMode.wrappedValue.dismiss() }
+                UniversalText( component.title, size: Constants.UITitleTextSize, true )
                 Spacer()
-                UniversalText( component.title, size: Constants.UISubHeaderTextSize, true )
-//                Spacer()
-//                ShortRoundedButton("Edit", to: "Done", icon: "pencil", to: "checkmark.seal", completed: { editing }) { editing.toggle() }
+                ShortRoundedButton("Dismiss", icon: "chevron.down") { presentationMode.wrappedValue.dismiss() }
                 
             }
             
             DatePicker(selection: $startDate, displayedComponents: [.hourAndMinute]) { Text("Start Date") }
-            
             DatePicker(selection: $endDate, displayedComponents: [.hourAndMinute]) { Text("End Date") }
+            
+            UniversalText( component.category?.label ?? "?", size: Constants.UIDefaultTextSize, true )
+            
+            ForEach( component.goalRatings ) { node in
+                HStack {
+                    UniversalText( node.key, size: Constants.UIDefaultTextSize, true )
+                    Spacer()
+                    UniversalText( node.data, size: Constants.UIDefaultTextSize )
+                }
+                
+            }
+            
+            Spacer()
             
             RoundedButton(label: "Done", icon: "checkmark.seal") {
                 component.update(title: component.title, startDate: startDate, endDate: endDate)

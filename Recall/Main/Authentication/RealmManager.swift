@@ -30,10 +30,10 @@ class RealmManager: ObservableObject {
     @Published var hasProfile: Bool = false
     
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
-    @MainActor
-    lazy var calendarComponentQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission {query in query.ownerID == RecallModel.ownerID }
-    @MainActor
-    lazy var categoryQuery: (QueryPermission<RecallCategory>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var calendarComponentQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission {query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var categoryQuery: (QueryPermission<RecallCategory>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var goalsQuery: (QueryPermission<RecallGoal>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var goalsNodeQuery: (QueryPermission<GoalNode>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     
     @MainActor
     init() {
@@ -169,6 +169,8 @@ class RealmManager: ObservableObject {
         
         let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarComponentQuery.baseQuery )
         let _:RecallCategory?       = await self.addGenericSubcriptions(name: QuerySubKey.category.rawValue, query: categoryQuery.baseQuery )
+        let _:RecallGoal?           = await self.addGenericSubcriptions(name: QuerySubKey.goal.rawValue, query: goalsQuery.baseQuery )
+        let _:GoalNode?             = await self.addGenericSubcriptions(name: QuerySubKey.goalNode.rawValue, query: goalsNodeQuery.baseQuery )
         
     }
     
@@ -254,6 +256,12 @@ class RealmManager: ObservableObject {
     static func retrieveObject<T:Object>( where query: ( (Query<T>) -> Query<Bool> )? = nil ) -> Results<T> {
         if query == nil { return RecallModel.realmManager.realm.objects(T.self) }
         else { return RecallModel.realmManager.realm.objects(T.self).where(query!) }
+    }
+    
+    static func retrieveObjects<T: Object>(where query: ( (T) -> Bool )? = nil ) -> [T] {
+        if query == nil { return Array(RecallModel.realmManager.realm.objects(T.self)) }
+        else { return Array(RecallModel.realmManager.realm.objects(T.self).filter(query!)  ) }
+        
         
     }
     
