@@ -80,6 +80,16 @@ private struct ReversedUniversalTextStyle: ViewModifier {
     }
 }
 
+private struct UniversalTextField: ViewModifier {
+    
+    func body(content: Content) -> some View {
+        content
+            .tint(Colors.tint)
+            .font(Font.custom(ProvidedFont.renoMono.rawValue, size: Constants.UIDefaultTextSize))
+    }
+}
+
+//MARK: Rectangular Backgrounds
 private struct RectangularBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
@@ -108,6 +118,18 @@ private struct OpaqueRectangularBackground: ViewModifier {
         content
             .padding()
             .background(colorScheme == .light ? .white : Colors.darkGrey )
+            .cornerRadius(Constants.UIDefaultCornerRadius)
+    }
+}
+
+private struct AccentBackground: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
+            .padding(25)
+            .foregroundColor(.black)
+            .background( Colors.tint )
             .cornerRadius(Constants.UIDefaultCornerRadius)
     }
 }
@@ -184,6 +206,10 @@ extension View {
         modifier(ReversedUniversalTextStyle())
     }
     
+    func universalTextField() -> some View {
+        modifier(UniversalTextField())
+    }
+    
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape( RoundedCorner(radius: radius, corners: corners) )
     }
@@ -198,6 +224,10 @@ extension View {
     
     func secondaryOpaqueRectangularBackground() -> some View {
         modifier(SecondaryOpaqueRectangularBackground())
+    }
+    
+    func accentRectangularBackground() -> some View {
+        modifier(AccentBackground())
     }
     
     func onBecomingVisible(perform action: @escaping () -> Void) -> some View {

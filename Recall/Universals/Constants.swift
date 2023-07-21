@@ -48,4 +48,7 @@ class Constants {
     static let HourTime: Double = 3600
     static let DayTime: Double = 86400
     
+    static let titleFont: ProvidedFont = .syneHeavy
+    static let mainFont: ProvidedFont = .renoMono
+    
 }

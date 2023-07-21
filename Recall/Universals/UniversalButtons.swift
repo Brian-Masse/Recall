@@ -180,19 +180,15 @@ struct LargeRoundedButton: View {
         HStack {
             if label != "" {
                 UniversalText(label, size: Constants.UISubHeaderTextSize, font: .syneHeavy)
-                    .foregroundColor(.black)
                     .minimumScaleFactor(0.7)
                     .lineLimit(1)
             }
             
             if completedIcon != "" {
                 Image(systemName: completedIcon)
-                    .foregroundColor(.black)
             }
         }
-        .padding(25)
-        .background(Colors.tint)
-        .cornerRadius(Constants.UILargeCornerRadius)
+        .accentRectangularBackground()
         .animation(.default, value: completed() )
         .onTapGesture { action() }
     }

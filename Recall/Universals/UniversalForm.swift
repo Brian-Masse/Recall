@@ -135,11 +135,11 @@ struct MultiPicker<ListType:Collection>: View where ListType:RangeReplaceableCol
                 ResizeableIcon(icon: "chevron.up.chevron.down", size: Constants.UIDefaultTextSize)
             }.foregroundColor( Colors.tint )
                 
-//            if #available(iOS 16.4, *) {
-//                menu.menuActionDismissBehavior(.disabled)
-//            } else {
-//                menu
-//            }
+            if #available(iOS 16.4, *) {
+                menu.menuActionDismissBehavior(.disabled)
+            } else {
+                menu
+            }
             
         }.padding(.vertical, 3)
     }

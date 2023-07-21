@@ -35,6 +35,14 @@ struct GoalsPageView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingGoalCreationView) { GoalCreationView() }
+        .sheet(isPresented: $showingGoalCreationView) {
+            GoalCreationView(editing: false,
+                             goal: nil,
+                             label: "",
+                             description: "",
+                             frequence: .daily,
+                             targetHours: 0)
+            
+        }
     }
 }

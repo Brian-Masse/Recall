@@ -23,10 +23,10 @@ struct GoalView: View {
         
         HStack {
             Image(systemName: icon)
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: mainFont, true)
+            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont, true)
             
             Spacer()
-            UniversalText(data, size: Constants.UIDefaultTextSize, font: mainFont )
+            UniversalText(data, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
         }
         
     }
@@ -34,49 +34,63 @@ struct GoalView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedRealmObject var goal: RecallGoal
+    let events: [RecallCalendarEvent]
     
-    private let titleFont: ProvidedFont = .syneHeavy
-    private let mainFont: ProvidedFont = .renoMono
+    @State var showingEditingScreen: Bool = false
     
     var body: some View {
         
         VStack(alignment: .leading) {
             
             HStack {
-                UniversalText(goal.label, size: Constants.UITitleTextSize, font: titleFont, true)
-                
+                UniversalText(goal.label, size: Constants.UITitleTextSize, font: Constants.titleFont, true)
                 Spacer()
-                
-                LargeRoundedButton("Edit", icon: "") {  }
+                LargeRoundedButton("Edit", icon: "") { showingEditingScreen = true }
                 LargeRoundedButton("", icon: "arrow.down") { presentationMode.wrappedValue.dismiss() }
             }
             
-            VStack(alignment: .leading) {
-                
-                UniversalText("overview", size: Constants.UISubHeaderTextSize, font: titleFont, true)
-                
-                HStack {
-                   
-                    UniversalText( goal.goalDescription, size: Constants.UISmallTextSize, font: mainFont )
-                        .frame(width: 100)
+            ScrollView(.vertical) {
+                VStack(alignment: .leading) {
                     
-                    makeSeperator()
+                    UniversalText("overview", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
                     
-                    VStack {
-                        makeOverViewDataView(title: "tag", icon: "wallet.pass", data: "test")
-                        makeOverViewDataView(title: "period", icon: "calendar.day.timeline.leading", data: RecallGoal.GoalFrequence.getType(from: goal.frequency))
-                        makeOverViewDataView(title: "goal", icon: "scope", data: "\(goal.targetHours)")
+                    HStack {
+                        UniversalText( goal.goalDescription, size: Constants.UISmallTextSize, font: Constants.mainFont )
+                            .frame(width: 100)
                         
+                        makeSeperator()
+                        
+                        VStack {
+                            makeOverViewDataView(title: "tag", icon: "wallet.pass", data: "test")
+                            makeOverViewDataView(title: "period", icon: "calendar.day.timeline.leading", data: RecallGoal.GoalFrequence.getType(from: goal.frequency))
+                            makeOverViewDataView(title: "goal", icon: "scope", data: "\(goal.targetHours)")
+                        }
                     }
                 }
+                .secondaryOpaqueRectangularBackground()
+                .padding(.bottom)
+                
+                UniversalText("Goal Review", size: Constants.UITitleTextSize, font: Constants.titleFont, true)
+                    .padding(.bottom)
+                
+                ActivityPerDay(goal: goal, events: events)
+                    .frame(height: 200)
+                
+                
             }
-            .secondaryOpaqueRectangularBackground()
-            
             Spacer()
+        }
+        .padding()
+        .universalBackground()
+        .sheet(isPresented: $showingEditingScreen) {
+            GoalCreationView(editing: true,
+                             goal: goal,
+                             label: goal.label,
+                             description: goal.goalDescription,
+                             frequence: RecallGoal.GoalFrequence.getRawType(from: goal.frequency),
+                             targetHours: Float(goal.targetHours))
             
         }
-            .padding()
-            .universalBackground()
     }
     
 }

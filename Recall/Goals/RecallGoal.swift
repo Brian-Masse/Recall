@@ -50,6 +50,12 @@ class RecallGoal: Object, Identifiable {
             if frequence == RecallGoal.GoalFrequence.daily.numericValue { return "daily goal" }
             return "?"
         }
+        
+        static func getRawType(from frequence: Int) -> GoalFrequence {
+            if frequence == RecallGoal.GoalFrequence.weekly.numericValue { return .weekly }
+            if frequence == RecallGoal.GoalFrequence.daily.numericValue { return .daily }
+            return .daily
+        }
     }
     
     @Persisted(primaryKey: true) var _id: ObjectId
@@ -69,6 +75,16 @@ class RecallGoal: Object, Identifiable {
         self.goalDescription = description
         self.frequency = frequency
         self.targetHours = targetHours
+    }
+    
+    func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int ) {
+        
+        RealmManager.updateObject(self) { thawed in
+            thawed.label = label
+            thawed.goalDescription = goalDescription
+            thawed.frequency = frequency.numericValue
+            thawed.targetHours = targetHours
+        }
     }
     
 //    MARK: Convenience Functions

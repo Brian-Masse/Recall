@@ -109,7 +109,7 @@ struct GoalPreviewView: View {
         .padding(7)
         .shadow(color: Colors.tint.opacity(0.2), radius: 50)
         .onTapGesture { showingGoalView = true }
-        .fullScreenCover(isPresented: $showingGoalView) { GoalView(goal: goal) }
+        .fullScreenCover(isPresented: $showingGoalView) { GoalView(goal: goal, events: events) }
     }
     
 }
