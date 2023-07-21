@@ -10,6 +10,30 @@ import SwiftUI
 import RealmSwift
 
 
+struct GoalRatingsView: View {
+    
+    @Binding var goalRatings: Dictionary<String, String>
+    
+    let goals: [RecallGoal]
+    
+    private func createBinding(forKey key: String, defaultValue: String = "") -> Binding<String> {
+        Binding { goalRatings[ key ] ?? defaultValue }
+        set: { newValue, _ in goalRatings[key] = newValue }
+    }
+    
+    var body: some View {
+        ForEach( goals ) { goal in
+            HStack {
+                Text( goal.label )
+                Spacer()
+                TextField("Rating", text: createBinding(forKey: goal.getEncryptionKey() ))
+//                    .keyboardType(.numberPad)
+                
+            }
+        }
+    }
+}
+
 struct CalendarEventCreationView: View {
     
     @Environment(\.presentationMode) var presentationMode
@@ -44,11 +68,6 @@ struct CalendarEventCreationView: View {
         endTime = Calendar.current.date(bySettingHour: endComps.hour!, minute: endComps.minute!, second: endComps.second!, of: day + ( requestingNewDay ? Constants.DayTime : 0  ) )!
     }
     
-    private func createBinding(forKey key: String, defaultValue: String = "") -> Binding<String> {
-        Binding { goalRatings[ key ] ?? defaultValue }
-        set: { newValue, _ in goalRatings[key] = newValue }
-    }
-    
     var body: some View {
     
         VStack {
@@ -69,16 +88,7 @@ struct CalendarEventCreationView: View {
                 }
                 
                 Section( "Productivity" ) {
-                    
-                    ForEach( goals ) { goal in
-                        HStack {
-                            Text( goal.label )
-                            Spacer()
-                            TextField("Rating", text: createBinding(forKey: goal.getEncryptionKey() ))
-                                .keyboardType(.numberPad)
-                            
-                        }
-                    }
+                    GoalRatingsView(goalRatings: $goalRatings, goals: Array( goals ))
                 }
             }
             
@@ -97,6 +107,10 @@ struct CalendarEventCreationView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
+        .onChange(of: category) { newValue in
+            goalRatings = RecallCalendarEvent.translateGoalRatingList(newValue.goalRatings)
+        }
+        
         .alert(isPresented: $showingAlert) {
             Alert(title: Text(alertTitle), message: Text(alertMessage))
         }
@@ -105,8 +119,10 @@ struct CalendarEventCreationView: View {
 
 struct CategoryCreationView: View {
     
+    @ObservedResults( RecallGoal.self ) var goals
+    
     @State var label: String = ""
-    @State var productivity: Float = 0
+    @State var goalRatings: Dictionary<String, String> = Dictionary()
     
     var body: some View {
         
@@ -115,15 +131,17 @@ struct CategoryCreationView: View {
                 Section( "Basic Info" ) {
                     
                     TextField("Label", text: $label)
-                    
-                    Text("Productivity")
-                    Slider(value: $productivity, in: -3...3)
-                    
+                }
+                
+                Section( "Productivity" ) {
+                    GoalRatingsView(goalRatings: $goalRatings, goals: Array( goals ))
                 }
             }
             
             RoundedButton(label: "Create Label", icon: "lanyardcard") {
-                let category = RecallCategory(ownerID: RecallModel.ownerID, label: label, productivity: productivity)
+                let category = RecallCategory(ownerID: RecallModel.ownerID,
+                                              label: label,
+                                              goalRatings: goalRatings)
                 RealmManager.addObject(category)
             }
         }

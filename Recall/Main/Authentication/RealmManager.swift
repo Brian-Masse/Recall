@@ -22,6 +22,8 @@ class RealmManager: ObservableObject {
     var app = RealmSwift.App(id: RealmManager.appID)
     var configuration: Realm.Configuration!
     
+    var index: RecallIndex!
+    
 //    This is the realm profile that signed into the app
     var user: User?
     
@@ -34,6 +36,7 @@ class RealmManager: ObservableObject {
     @MainActor lazy var categoryQuery: (QueryPermission<RecallCategory>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     @MainActor lazy var goalsQuery: (QueryPermission<RecallGoal>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     @MainActor lazy var goalsNodeQuery: (QueryPermission<GoalNode>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var indexQuery: (QueryPermission<RecallIndex>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     
     @MainActor
     init() {
@@ -156,6 +159,15 @@ class RealmManager: ObservableObject {
         await self.addSubcriptions()
         
         self.realmLoaded = true
+        
+//        This should be done during the create profile phase of the authentication process, but because that doesnt really exist right now, its just going to run automatically here
+        let results: Results<RecallIndex> = RealmManager.retrieveObject()
+        if let index = results.first {
+            self.index = index
+        } else {
+            self.index = RecallIndex(ownerID: user!.id)
+            RealmManager.addObject(self.index)
+        }
     }
     
     private func addSubcriptions() async {
@@ -171,6 +183,7 @@ class RealmManager: ObservableObject {
         let _:RecallCategory?       = await self.addGenericSubcriptions(name: QuerySubKey.category.rawValue, query: categoryQuery.baseQuery )
         let _:RecallGoal?           = await self.addGenericSubcriptions(name: QuerySubKey.goal.rawValue, query: goalsQuery.baseQuery )
         let _:GoalNode?             = await self.addGenericSubcriptions(name: QuerySubKey.goalNode.rawValue, query: goalsNodeQuery.baseQuery )
+        let _:RecallIndex?          = await self.addGenericSubcriptions(name: QuerySubKey.index.rawValue, query: indexQuery.baseQuery )
         
     }
     

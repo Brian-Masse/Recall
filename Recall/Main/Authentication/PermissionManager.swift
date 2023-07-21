@@ -13,6 +13,7 @@ enum QuerySubKey: String, CaseIterable {
     case category
     case goal
     case goalNode
+    case index
 }
 
 class QueryPermission<T: Object> {

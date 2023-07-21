@@ -13,7 +13,7 @@ import RealmSwift
 struct CalendarEventPreviewView: View {
     
     private let blockCoordinateSpaceKey: String = "blockCOordinateSpace"
-    private let holdDuration: Double = 0.5
+    private let holdDuration: Double = 0.1
     
     private enum TimeRounding: Int {
         case hour = 1
@@ -30,6 +30,9 @@ struct CalendarEventPreviewView: View {
     @ObservedRealmObject var component: RecallCalendarEvent
     
     let spacing: CGFloat
+    let geo: GeometryProxy
+    
+    var overlapData: RecallCalendarEvent.OverlapData { component.getOverlapData(in: geo.size.width - 20) }
     
     @State var startDate: Date = .now
     @State var endDate: Date = .now
@@ -37,22 +40,45 @@ struct CalendarEventPreviewView: View {
     @State var roundedStartDate: Date = .now
     
     @Binding var dragging: Bool
+    @State var moving: Bool = false
     @State var resizing: Bool = false //used to block the movement gesture while resizing
     @State var showingComponent: Bool = false
     
-    private func getOffset(from startDate: Date) -> CGFloat {
+    
+//    MARK: Convenience Functions
+    
+    private func getVerticalOffset(from startDate: Date) -> CGFloat {
         CGFloat(startDate.getHoursFromStartOfDay()) * spacing
+    }
+    
+    private func getHorizontalOffset( ) -> CGFloat {
+        overlapData.offset
     }
     
     private func clampPosition(_ pos: CGFloat ) -> CGFloat {
         min( max( 0, pos ), (24 * spacing) - 1 )
     }
     
+    private func beginMoving() {
+        dragging = true
+        moving = true
+    }
+    
+    private func beginResizing() {
+        dragging = true
+        resizing = true
+    }
+    
+    private func getWidth() -> CGFloat {
+        overlapData.width
+    }
+    
+    
 //    MARK: Drag
     private var drag: some Gesture {
         DragGesture(coordinateSpace: .named(blockCoordinateSpaceKey))
             .onChanged { dragGesture in
-                if !dragging || resizing { return }
+                if !moving || resizing { return }
                 startDate = getTime(from: clampPosition(dragGesture.location.y))
                 endDate   = startDate + (length * Constants.HourTime)
                 
@@ -61,6 +87,7 @@ struct CalendarEventPreviewView: View {
             .onEnded { dragGesture in
                 if dragging && !resizing {
                     dragging = false
+                    moving = false
                     component.updateDate(startDate: roundedStartDate, endDate: roundedStartDate + ( length * Constants.HourTime ) )
                 }
             }
@@ -89,6 +116,13 @@ struct CalendarEventPreviewView: View {
                 } else { component.updateDate(endDate: roundedStartDate + length * Constants.HourTime ) }
             }
     }
+    
+//    When a user begins dragging or resizing the box that appears to show them where it will be snapped to needs to make sure that its initial position is correct
+    private func prepareMovementSnapping() {
+        roundedStartDate = startDate
+    }
+    
+//    MARK: Struct Methods
     
     private func getTime(from position: CGFloat) -> Date {
         let hour = (position / spacing).rounded(.down)
@@ -125,61 +159,57 @@ struct CalendarEventPreviewView: View {
         Rectangle()
             .foregroundColor(.blue)
             .onTapGesture { }
-            .onLongPressGesture(minimumDuration: holdDuration) { dragging = true; resizing = true }
+            .onLongPressGesture(minimumDuration: holdDuration) { beginResizing() }
             .simultaneousGesture(resizeGesture( direction ))
-            .frame(height: 20)
+            .frame(minHeight: 10, maxHeight: 20)
     }
     
     var body: some View {
         ZStack {
             
-            if dragging {
+            if moving || resizing {
                 Rectangle()
                     .foregroundColor(.red.opacity(0.5))
                     .cornerRadius(Constants.UIDefaultCornerRadius)
-                    .frame(height: CGFloat(length) * spacing)
-                    .offset(y: getOffset(from: roundedStartDate))
+                    .frame(width: getWidth(), height: CGFloat(length) * spacing)
+                    .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: roundedStartDate))
             }
-            
-            ZStack {
-                VStack(alignment: .leading) {
-                    
-                    HStack {
-                        UniversalText( component.title, size: Constants.UISubHeaderTextSize, true )
-                        Spacer()
-                        UniversalText( "\(component.category?.label ?? "?"), \(component.category?.productivity ?? 0)", size: Constants.UIDefaultTextSize )
-                    }
-                    
-//                    UniversalText( component.ownerID, size: Constants.UIDefaultTextSize )
-
-                    
-                    Spacer()
-
-                    UniversalText( startDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
-                    Spacer()
-                    UniversalText( endDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
-                    
-                }.padding()
+        
+            VStack(alignment: .leading) {
                 
-                VStack {
-                    makeLengthHandle(.up)
+                HStack {
+                    UniversalText( component.title, size: Constants.UISubHeaderTextSize, true )
                     Spacer()
-                    makeLengthHandle(.down)
+                    UniversalText( "\(component.category?.label ?? "?"), \(component.category?.productivity ?? 0)", size: Constants.UIDefaultTextSize )
                 }
+                
+                Spacer()
+
+                UniversalText( startDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
+                Spacer()
+                UniversalText( endDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
+                
             }
-            .frame(height: max(CGFloat(length) * spacing, 5))
+            .padding()
+            .frame(width: getWidth(), height: max(CGFloat(length) * spacing, 20))
+            .overlay(VStack {
+                makeLengthHandle(.up)
+                Spacer()
+                makeLengthHandle(.down)
+            })
             .background(colorScheme == .light ? .white : Colors.darkGrey )
             .cornerRadius(Constants.UIDefaultCornerRadius)
-            .offset(y: getOffset(from: startDate))
+            .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
             
             .onTapGesture { showingComponent = true }
-            .onLongPressGesture(minimumDuration: holdDuration ) { dragging = true }
+            .onLongPressGesture(minimumDuration: holdDuration ) { beginMoving() }
             .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
             
             .coordinateSpace(name: blockCoordinateSpaceKey)
             .onAppear { setup() }
-            .shadow(radius: dragging ? 10 : 0)
-            .fullScreenCover(isPresented: $showingComponent) {
+            .onChange(of: dragging) { newValue in prepareMovementSnapping() }
+            .shadow(radius: (resizing || moving) ? 10 : 0)
+            .sheet(isPresented: $showingComponent) {
                 CalendarEventView(component: component,
                                       startDate: component.startTime,
                                       endDate: component.endTime)
@@ -225,7 +255,6 @@ struct CalendarEventView: View {
                     Spacer()
                     UniversalText( node.data, size: Constants.UIDefaultTextSize )
                 }
-                
             }
             
             Spacer()

@@ -89,18 +89,17 @@ struct CalendarContainer: View {
                 Image(systemName: "chevron.right").rectangularBackgorund().onTapGesture { currentDay += Constants.DayTime }
             }
             
-            ZStack(alignment: .top) {
+            ZStack(alignment: .topLeading) {
                 
                 CalendarView(day: currentDay, hoursToDisplay: hoursToDisplay, spacing: spacing)
                 
                 ForEach( filterEvents(), id: \.self ) { component in
-                    CalendarEventPreviewView(component: component, spacing: spacing, dragging: $dragging)
+                    CalendarEventPreviewView(component: component, spacing: spacing, geo: geo, dragging: $dragging)
                 }
                 .padding(.horizontal)
                 .padding(.leading)
             }
             .frame(height: height)
-            .gesture(swipeGesture)
         }
     }
 }

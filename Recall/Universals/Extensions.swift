@@ -47,4 +47,20 @@ extension Date {
         let comps = Calendar.current.dateComponents([.minute, .hour], from: self)
         return Double(comps.minute ?? 0) / Constants.MinuteTime + Double(comps.hour ?? 0)
     }
+    
+    func resetToStartOfDay() -> Date {
+        Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self) ?? self
+    }
+    
+    func matches(_ secondDate: Date, to component: Calendar.Component) -> Bool {
+        Calendar.current.isDate(self, equalTo: secondDate, toGranularity: component)
+    }
+}
+
+extension Collection {
+    
+    func countAll(where query: ( Self.Element ) -> Bool ) -> Int {
+        self.filter(query).count
+    }
+    
 }

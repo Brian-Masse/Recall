@@ -12,7 +12,7 @@ import RealmSwift
 struct GoalsPageView: View {
     
     @ObservedResults( RecallGoal.self ) var goals
-    
+    @ObservedResults( RecallCategory.self ) var categories
     
     @State var showingGoalCreationView: Bool = false
     
@@ -21,8 +21,6 @@ struct GoalsPageView: View {
         VStack(alignment: .leading) {
             
             UniversalText( "Productivity", size: Constants.UITitleTextSize, true )
-            
-            Spacer()
             
             UniversalText( "Goals", size: Constants.UIHeaderTextSize, true )
             
@@ -38,18 +36,16 @@ struct GoalsPageView: View {
                         
                         
                     }
-                    
                     ProgressView(value: goal.getCurrentProgressTowardsGoal(), total: 1)
                         .progressViewStyle(.linear)
-                    
-                    
                 }
-                
-                
                 .padding()
                 .rectangularBackgorund()
-                
             }
+            
+            
+            ActivitiesPerDay(categories: Array(categories))
+            
             
             Spacer()
             

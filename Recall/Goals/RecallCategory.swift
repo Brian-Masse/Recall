@@ -15,14 +15,18 @@ class RecallCategory: Object, Identifiable {
     @Persisted var ownerID: String  = ""
     
     @Persisted var label: String    = ""
-    @Persisted var productivity: Float = 0
+    @Persisted var productivity: Float = 0      //This does not do anything, and should be deleted, thats just a whole process with the scheme and I don't feel like doing it
     
-    convenience init(ownerID: String, label: String, productivity: Float) {
+    @Persisted var goalRatings: List<GoalNode> = List()
+    
+    @MainActor
+    convenience init(ownerID: String, label: String, goalRatings: Dictionary<String, String>) {
         self.init()
         
         self.ownerID = ownerID
         self.label = label
-        self.productivity = productivity
+        
+        self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
     }
     
 //    MARK: Convenience Functions

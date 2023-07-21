@@ -36,6 +36,8 @@ struct CalendarPageView: View {
                 ShortRoundedButton( "Add Category", icon: "lanyardcard" ) { showingCreateCategoryView = true }
             }
         }
+        .padding()
+        
         .sheet(isPresented: $showingCreateEventView) { CalendarEventCreationView() }
         .sheet(isPresented: $showingCreateCategoryView) { CategoryCreationView() }
         
