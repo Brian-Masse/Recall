@@ -55,6 +55,10 @@ extension Date {
     func matches(_ secondDate: Date, to component: Calendar.Component) -> Bool {
         Calendar.current.isDate(self, equalTo: secondDate, toGranularity: component)
     }
+    
+    func day() -> Int {
+        Calendar.current.component(.day, from: self)
+    }
 }
 
 extension Collection {

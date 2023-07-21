@@ -10,13 +10,14 @@ import SwiftUI
 
 class Colors {
     static var tint: Color { RecallModel.shared.activeColor }
-    static var main: Color { .blue }
-    static var groupMain: Color { .gray }
+    static var main: Color { accentGreen }
     
     static let colorOptions: [Color] = [.blue]
     
     static let lightGrey = Color(red: 0.95, green: 0.95, blue: 0.95)
     static let darkGrey = Color(red: 0.1, green: 0.1, blue: 0.1).opacity(0.9)
+    static let accentGreen = makeColor(95, 255, 135)
+    
     static let forestGreen = makeColor(80, 120, 87)
     static let deepPurple = makeColor( 91, 45, 234 )
     static let roseGold =  makeColor( 223, 143, 133 )
@@ -40,6 +41,7 @@ class Constants {
     static let UISmallTextSize: CGFloat     = 11
     
     static let UIDefaultCornerRadius: CGFloat = 15
+    static let UILargeCornerRadius: CGFloat = 30
     static let UIFormSpacing        : CGFloat = 10
     
     static let MinuteTime: Double = 60

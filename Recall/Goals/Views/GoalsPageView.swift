@@ -14,41 +14,27 @@ struct GoalsPageView: View {
     @ObservedResults( RecallGoal.self ) var goals
     @ObservedResults( RecallCategory.self ) var categories
     
+    let events: [RecallCalendarEvent]
+    
     @State var showingGoalCreationView: Bool = false
     
     var body: some View {
         
         VStack(alignment: .leading) {
             
-            UniversalText( "Productivity", size: Constants.UITitleTextSize, true )
+            HStack {
+                UniversalText( "Goals", size: Constants.UITitleTextSize, font: .syneHeavy, true )
+                Spacer()
+                LargeRoundedButton("Add Goal", icon: "arrow.up") { showingGoalCreationView = true }
+            }.padding(7)
             
-            UniversalText( "Goals", size: Constants.UIHeaderTextSize, true )
-            
-            ShortRoundedButton("Add Goal", icon: "gauge.medium.badge.plus") { showingGoalCreationView = true }
-            
-            ForEach( goals ) { goal in
-                
-                VStack {
-                    HStack {
-                        UniversalText( goal.label, size: Constants.UIDefaultTextSize, true )
-                        Spacer()
-                        UniversalText( "\(goal.frequency)", size: Constants.UIDefaultTextSize )
-                        
-                        
-                    }
-                    ProgressView(value: goal.getCurrentProgressTowardsGoal(), total: 1)
-                        .progressViewStyle(.linear)
+            ScrollView(.vertical) {
+                ForEach( goals ) { goal in
+                    GoalPreviewView(goal: goal, events: events)
+                        .padding(.bottom)
                 }
-                .padding()
-                .rectangularBackgorund()
             }
-            
-            
-            ActivitiesPerDay(categories: Array(categories))
-            
-            
-            Spacer()
-            
-        }.sheet(isPresented: $showingGoalCreationView) { GoalCreationView() }
+        }
+        .sheet(isPresented: $showingGoalCreationView) { GoalCreationView() }
     }
 }

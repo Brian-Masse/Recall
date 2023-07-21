@@ -89,9 +89,7 @@ class RecallCalendarEvent: Object, Identifiable  {
     }
     
     
-    
 //    MARK: Class Methods
-    
     func delete() {
         RealmManager.deleteObject(self) { event in event._id == self._id }
     }
@@ -102,9 +100,23 @@ class RecallCalendarEvent: Object, Identifiable  {
         }
     }
 
+    func getLengthInHours() -> Double {
+        endTime.timeIntervalSince(startTime) / Constants.HourTime
+    }
+    
+//    This checks to see if this event has a multiplier for a specifc goal (ie. coding should have 'productive')
+    func getGoalMultiplier(from goal: RecallGoal) -> Double {
+        let key = goal.getEncryptionKey()
+        let data = self.goalRatings.first { node in node.key == key }?.data ?? "0"
+        return Double(data) ?? 0
+    }
+    
+    func getGoalPrgress(_ goal: RecallGoal) -> Double {
+        getLengthInHours() * getGoalMultiplier(from: goal)
+    }
     
 //    When calendar events are layed out on top of each other, this function detects that so they can resize their width appropriatley
-
+//    All of the below functions handle layering and overlaps
     private func getOverlapNodes() -> [RecallCalendarEvent] {
         func checkFirstOverlap( with event: RecallCalendarEvent ) -> Bool {
             (event.startTime > self.startTime && event.startTime < self.endTime) || (event.endTime) > self.startTime && event.endTime < self.endTime
@@ -135,7 +147,7 @@ class RecallCalendarEvent: Object, Identifiable  {
             
         }else {
             let firstMatchingCount = sortedOverlapCounts.first { i in sortedOverlapCounts.countAll { f in f == i } > 1 }
-            return (fullWidth - 20) / CGFloat((firstMatchingCount ?? 0) + 1)
+            return (fullWidth - 45) / CGFloat((firstMatchingCount ?? 0) + 1)
         }
     }
     

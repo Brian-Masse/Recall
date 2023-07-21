@@ -9,13 +9,20 @@ import Foundation
 import SwiftUI
 
 //MARK: View Modifiers
+
+
+
+//MARK: Backgrounds
 private struct UniversalBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
 
     let padding: Bool
     
     func body(content: Content) -> some View {
-        content.padding( padding ? 15 : 0 ).background(colorScheme == .light ? Colors.lightGrey : .black)
+        GeometryReader { geo in
+            content
+        }
+        .background(colorScheme == .light ? Colors.lightGrey : .black)
     }
 }
 
@@ -58,10 +65,18 @@ private struct UniversalForeground: ViewModifier {
     }
 }
 
+//MARK: TextStyle
 private struct UniversalTextStyle: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     func body(content: Content) -> some View {
         content.foregroundColor(colorScheme == .light ? .black : .white)
+    }
+}
+
+private struct ReversedUniversalTextStyle: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    func body(content: Content) -> some View {
+        content.foregroundColor(colorScheme == .light ? .white : .black)
     }
 }
 
@@ -97,6 +112,18 @@ private struct OpaqueRectangularBackground: ViewModifier {
     }
 }
 
+private struct SecondaryOpaqueRectangularBackground: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
+            .padding()
+            .background( colorScheme == .dark ? .black : .white )
+            .cornerRadius(Constants.UIDefaultCornerRadius)
+            .shadow(color: Colors.tint.opacity( colorScheme == .dark ? 0.2 : 0.4), radius: 50)
+    }
+}
+
 private struct BecomingVisible: ViewModifier {
     @State var action: (() -> Void)?
 
@@ -124,6 +151,18 @@ private struct BecomingVisible: ViewModifier {
     }
 }
 
+private struct RoundedCorner: Shape {
+    
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
+}
+
+//MARK: Extension
 extension View {
     func universalBackground(padding: Bool = true) -> some View {
         modifier(UniversalBackground( padding: padding ))
@@ -141,12 +180,24 @@ extension View {
         modifier(UniversalTextStyle())
     }
     
+    func reversedUniversalTextStyle() -> some View {
+        modifier(ReversedUniversalTextStyle())
+    }
+    
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape( RoundedCorner(radius: radius, corners: corners) )
+    }
+    
     func rectangularBackgorund(rounded: Bool = false, radius: CGFloat? = nil) -> some View {
         modifier(RectangularBackground(rounded: rounded, radius: radius))
     }
     
     func opaqueRectangularBackground() -> some View {
         modifier(OpaqueRectangularBackground())
+    }
+    
+    func secondaryOpaqueRectangularBackground() -> some View {
+        modifier(SecondaryOpaqueRectangularBackground())
     }
     
     func onBecomingVisible(perform action: @escaping () -> Void) -> some View {

@@ -12,6 +12,7 @@ import RealmSwift
 struct GoalCreationView: View {
     
     @State var label: String = ""
+    @State var description: String = ""
     @State var frequence: RecallGoal.GoalFrequence = .daily
     @State var targetHours: Float = 0
     
@@ -31,6 +32,7 @@ struct GoalCreationView: View {
                 Section( "Basic Info" ) {
                   
                     TextField("Label", text: $label)
+                    TextField("Description", text: $description)
                     
                     BasicPicker(title: "Time Period",
                                 noSeletion: "",
@@ -48,7 +50,11 @@ struct GoalCreationView: View {
             Spacer()
             
             RoundedButton(label: "Add Goal", icon: "gauge.medium.badge.plus") {
-                let goal = RecallGoal(ownerID: RecallModel.ownerID, label: label, frequency: getFrequence(from: frequence), targetHours: Int(targetHours))
+                let goal = RecallGoal(ownerID: RecallModel.ownerID,
+                                      label: label,
+                                      description: description,
+                                      frequency: getFrequence(from: frequence),
+                                      targetHours: Int(targetHours))
                 RealmManager.addObject(goal)
             }
             

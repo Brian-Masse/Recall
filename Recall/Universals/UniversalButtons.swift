@@ -149,5 +149,51 @@ struct LargeFormRoundedButton: View {
         .onTapGesture { action() }
         
     }
+}
+
+//MARK: LargeRoundedButton
+struct LargeRoundedButton: View {
     
+    let label: String
+    let completedLabel: String
+    let icon: String
+    let completedIcon: String
+    
+    let completed: () -> Bool
+    let action: () -> Void
+    
+    @State var tempCompletion: Bool = false
+    
+    init( _ label: String, to completedLabel: String = "", icon: String, to completedIcon: String = "", completed: @escaping () -> Bool = {false}, action: @escaping () -> Void ) {
+        self.label = label
+        self.completedLabel = completedLabel
+        self.icon = icon
+        self.completedIcon = completedIcon
+        self.completed = completed
+        self.action = action
+    }
+    
+    var body: some View {
+        let label: String = (self.completed() || tempCompletion ) ? completedLabel : label
+        let completedIcon: String = (self.completed() || tempCompletion ) ? completedIcon : icon
+        
+        HStack {
+            if label != "" {
+                UniversalText(label, size: Constants.UISubHeaderTextSize, font: .syneHeavy)
+                    .foregroundColor(.black)
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+            }
+            
+            if completedIcon != "" {
+                Image(systemName: completedIcon)
+                    .foregroundColor(.black)
+            }
+        }
+        .padding(25)
+        .background(Colors.tint)
+        .cornerRadius(Constants.UILargeCornerRadius)
+        .animation(.default, value: completed() )
+        .onTapGesture { action() }
+    }
 }

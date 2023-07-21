@@ -36,8 +36,19 @@ class RecallGoal: Object, Identifiable {
         case daily
         case weekly
         
-        var id: String {
-            self.rawValue
+        var id: String { self.rawValue }
+        
+        var numericValue: Int {
+            switch self {
+            case .weekly: return 7
+            case .daily: return 1
+            }
+        }
+        
+        static func getType(from frequence: Int) -> String {
+            if frequence == RecallGoal.GoalFrequence.weekly.numericValue { return "weekly goal" }
+            if frequence == RecallGoal.GoalFrequence.daily.numericValue { return "daily goal" }
+            return "?"
         }
     }
     
@@ -46,14 +57,16 @@ class RecallGoal: Object, Identifiable {
     @Persisted var ownerID: String = ""
     
     @Persisted var label: String = ""
+    @Persisted var goalDescription: String = ""
     @Persisted var frequency: Int = 1
     @Persisted var targetHours: Int = 0
     
-    convenience init( ownerID: String, label: String, frequency: Int, targetHours: Int ) {
+    convenience init( ownerID: String, label: String, description: String, frequency: Int, targetHours: Int) {
         self.init()
         
         self.ownerID = ownerID
         self.label = label
+        self.goalDescription = description
         self.frequency = frequency
         self.targetHours = targetHours
     }
@@ -65,20 +78,27 @@ class RecallGoal: Object, Identifiable {
     
     
 //    MARK: Data Aggregators
-    func getCurrentProgressTowardsGoal() -> CGFloat {
-       
+    @MainActor
+    func getProgressTowardsGoal(from events: [RecallCalendarEvent]) -> Int {
+        
         let isSunday = Calendar.current.component(.weekday, from: .now) == 1
         let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: .now) ?? .now) - (isSunday ? 0 : 7 * Constants.DayTime)
         
-        let objects: [RecallCalendarEvent] = RealmManager.retrieveObjects { event in event.startTime > lastSunday }
-        let aggregateRatings = objects.reduce(0) { partialResult, event in
-            if let ratingNode = event.goalRatings.first(where: { node in node.key == self.getEncryptionKey() }) {
-                return partialResult + (Int(ratingNode.data) ?? 0)
-            }
-            return partialResult
-        }
         
-        return CGFloat(aggregateRatings) / CGFloat(self.targetHours)
+        
+        let filtered = events.filter { event in event.startTime > Date.now.resetToStartOfDay() }
+        return filtered.reduce(0) { partialResult, event in
+            partialResult + Int( event.getGoalPrgress(self) )
+        }
+    }
+    
+    @MainActor
+    func countGoalMet(from events : [RecallCalendarEvent]) -> (Int, Int) {
+        
+        let total = Date.now.timeIntervalSince( RecallModel.index.earliestEventDate ) / Constants.DayTime
+        let count = events.filter { event in Int(event.getGoalPrgress(self)) >= targetHours }.count
+        
+        return ( count, Int(total) - count )
         
     }
     

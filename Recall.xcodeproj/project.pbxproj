@@ -35,6 +35,10 @@
 		C94B1F142A6888C1007E8537 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = C94B1F132A6888C1007E8537 /* SymbolPicker */; };
 		C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F152A6891E9007E8537 /* CalendarPageView.swift */; };
 		C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F172A68931F007E8537 /* GoalsPageView.swift */; };
+		C94F06762A6AD9F200C99EA0 /* GoalPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F06752A6AD9F200C99EA0 /* GoalPreviewView.swift */; };
+		C94F06792A6AF84200C99EA0 /* RenoMono.otf in Resources */ = {isa = PBXBuildFile; fileRef = C94F06782A6AF84200C99EA0 /* RenoMono.otf */; };
+		C94F067C2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */; };
+		C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F067D2A6B215400C99EA0 /* GoalView.swift */; };
 		C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */; };
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
 		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
@@ -88,6 +92,11 @@
 		C94B1F102A688855007E8537 /* UniversalForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalForm.swift; sourceTree = "<group>"; };
 		C94B1F152A6891E9007E8537 /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageView.swift; sourceTree = "<group>"; };
 		C94B1F172A68931F007E8537 /* GoalsPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsPageView.swift; sourceTree = "<group>"; };
+		C94F06752A6AD9F200C99EA0 /* GoalPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalPreviewView.swift; sourceTree = "<group>"; };
+		C94F06782A6AF84200C99EA0 /* RenoMono.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = RenoMono.otf; sourceTree = "<group>"; };
+		C94F067A2A6AF90600C99EA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Syne-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		C94F067D2A6B215400C99EA0 /* GoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalView.swift; sourceTree = "<group>"; };
 		C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCharts.swift; sourceTree = "<group>"; };
 		C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIndex.swift; sourceTree = "<group>"; };
 		C9E49D152A68AC820023EBC0 /* RecallGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoal.swift; sourceTree = "<group>"; };
@@ -145,6 +154,8 @@
 		C91BCEF02A618435003C6DD6 /* Recall */ = {
 			isa = PBXGroup;
 			children = (
+				C94F067A2A6AF90600C99EA0 /* Info.plist */,
+				C94F06772A6AF82000C99EA0 /* Fonts */,
 				C91BCF2D2A61DD51003C6DD6 /* Universals */,
 				C91BCF232A61C380003C6DD6 /* Main */,
 				C91BCF3A2A61E0F0003C6DD6 /* Calendar */,
@@ -251,10 +262,21 @@
 			isa = PBXGroup;
 			children = (
 				C94B1F172A68931F007E8537 /* GoalsPageView.swift */,
+				C94F06752A6AD9F200C99EA0 /* GoalPreviewView.swift */,
+				C94F067D2A6B215400C99EA0 /* GoalView.swift */,
 				C9E49D172A68AF750023EBC0 /* GoalCreationView.swift */,
 				C9D8C5052A69B656005ADA0B /* Charts */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		C94F06772A6AF82000C99EA0 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				C94F06782A6AF84200C99EA0 /* RenoMono.otf */,
+				C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		C9D8C5052A69B656005ADA0B /* Charts */ = {
@@ -378,6 +400,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C94F067C2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf in Resources */,
+				C94F06792A6AF84200C99EA0 /* RenoMono.otf in Resources */,
 				C91BCEFA2A618437003C6DD6 /* Preview Assets.xcassets in Resources */,
 				C91BCEF62A618437003C6DD6 /* Assets.xcassets in Resources */,
 			);
@@ -407,6 +431,7 @@
 				C91BCEF42A618435003C6DD6 /* RecallView.swift in Sources */,
 				C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */,
 				C91BCF332A61DE55003C6DD6 /* Extensions.swift in Sources */,
+				C94F06762A6AD9F200C99EA0 /* GoalPreviewView.swift in Sources */,
 				C91BCF372A61DED5003C6DD6 /* UniversalButtons.swift in Sources */,
 				C91BCF392A61E0EB003C6DD6 /* RecallCalendarEvent.swift in Sources */,
 				C91BCEF22A618435003C6DD6 /* RecallApp.swift in Sources */,
@@ -426,6 +451,7 @@
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,
 				C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */,
+				C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */,
 				C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */,
 				C91BCF312A61DDBA003C6DD6 /* Constants.swift in Sources */,
 			);
@@ -586,6 +612,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Recall/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -624,6 +651,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Recall/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

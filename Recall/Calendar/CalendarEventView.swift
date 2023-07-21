@@ -47,14 +47,6 @@ struct CalendarEventPreviewView: View {
     
 //    MARK: Convenience Functions
     
-    private func getVerticalOffset(from startDate: Date) -> CGFloat {
-        CGFloat(startDate.getHoursFromStartOfDay()) * spacing
-    }
-    
-    private func getHorizontalOffset( ) -> CGFloat {
-        overlapData.offset
-    }
-    
     private func clampPosition(_ pos: CGFloat ) -> CGFloat {
         min( max( 0, pos ), (24 * spacing) - 1 )
     }
@@ -71,6 +63,18 @@ struct CalendarEventPreviewView: View {
     
     private func getWidth() -> CGFloat {
         overlapData.width
+    }
+    
+    private func getHeight() -> CGFloat {
+        max(CGFloat(length) * spacing, 20)
+    }
+    
+    private func getVerticalOffset(from startDate: Date) -> CGFloat {
+        CGFloat(startDate.getHoursFromStartOfDay()) * spacing
+    }
+    
+    private func getHorizontalOffset( ) -> CGFloat {
+        overlapData.offset
     }
     
     
@@ -171,7 +175,7 @@ struct CalendarEventPreviewView: View {
                 Rectangle()
                     .foregroundColor(.red.opacity(0.5))
                     .cornerRadius(Constants.UIDefaultCornerRadius)
-                    .frame(width: getWidth(), height: CGFloat(length) * spacing)
+                    .frame(width: getWidth(), height: getHeight())
                     .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: roundedStartDate))
             }
         
@@ -191,13 +195,13 @@ struct CalendarEventPreviewView: View {
                 
             }
             .padding()
-            .frame(width: getWidth(), height: max(CGFloat(length) * spacing, 20))
+            .frame(width: getWidth(), height: getHeight())
             .overlay(VStack {
                 makeLengthHandle(.up)
                 Spacer()
                 makeLengthHandle(.down)
             })
-            .background(colorScheme == .light ? .white : Colors.darkGrey )
+            .background(colorScheme == .light ? Colors.lightGrey : .black )
             .cornerRadius(Constants.UIDefaultCornerRadius)
             .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
             

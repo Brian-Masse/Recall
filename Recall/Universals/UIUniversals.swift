@@ -9,6 +9,13 @@ import Foundation
 import SwiftUI
 import Charts
 
+enum ProvidedFont: String {
+    case renoMono = "RenoMono-Regular"
+    case helvetica = "helvetica"
+    case syneHeavy = "Syne-Bold"
+    
+}
+
 //MARK: UniversalText
 struct UniversalText: View {
     @Environment(\.dynamicTypeSize) var dynamicTypeSize
@@ -19,14 +26,16 @@ struct UniversalText: View {
     let wrap: Bool
     let lighter: Bool
     let fixed: Bool
+    let font: String
     
-    init(_ text: String, size: CGFloat, wrap: Bool = true, lighter: Bool = false, _ bold: Bool = false, fixed: Bool = false) {
+    init(_ text: String, size: CGFloat, font: ProvidedFont = .helvetica, wrap: Bool = true, lighter: Bool = false, _ bold: Bool = false, fixed: Bool = false) {
         self.text = text
         self.size = size
         self.bold = bold
         self.wrap = wrap
         self.lighter = lighter
         self.fixed = fixed
+        self.font = font.rawValue
     }
     
     var body: some View {
@@ -36,8 +45,8 @@ struct UniversalText: View {
     
             .lineSpacing(5)
             .minimumScaleFactor(wrap ? 1 : 0.5)
-            .lineLimit(wrap ? 5 : 1)
-            .font( fixed ? Font.custom("Helvetica", fixedSize: size) : Font.custom("Helvetica", size: size) )
+            .lineLimit(wrap ? 10 : 1)
+            .font( fixed ? Font.custom(font, fixedSize: size) : Font.custom(font, size: size) )
             .bold(bold)
             .opacity(lighter ? 0.8 : 1)
     }
