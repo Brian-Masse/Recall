@@ -14,19 +14,19 @@ import RealmSwift
 //    The data will be the goal rating for that event (ie. 5 points of "productivity" or 0 points of "social")
 class GoalNode: Object, Identifiable {
    
-   @Persisted(primaryKey: true) var _id: ObjectId
+    @Persisted(primaryKey: true) var _id: ObjectId
    
-   @Persisted var ownerID: String = ""
-   @Persisted var key: String = ""
-   @Persisted var data: String = ""
+    @Persisted var ownerID: String = ""
+    @Persisted var key: String = ""
+    @Persisted var data: String = ""
    
-   convenience init( ownerID: String, key: String, data: String ) {
-       self.init()
+    convenience init( ownerID: String, key: String, data: String ) {
+        self.init()
        
-       self.ownerID = ownerID
-       self.key = key
-       self.data = data
-   }
+        self.ownerID = ownerID
+        self.key = key
+        self.data = data
+    }
 }
 
 //    MARK: RecallGoal
@@ -92,6 +92,13 @@ class RecallGoal: Object, Identifiable {
         label + _id.stringValue
     }
     
+    static func getGoalFromKey(_ key: String) -> RecallGoal? {
+        let goals: [RecallGoal] = RealmManager.retrieveObjects { goal in
+            goal.getEncryptionKey() == key
+        }
+        return goals.first
+    }
+    
     
 //    MARK: Data Aggregators
     @MainActor
@@ -117,5 +124,5 @@ class RecallGoal: Object, Identifiable {
         return ( count, Int(total) - count )
         
     }
-    
+
 }

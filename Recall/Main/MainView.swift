@@ -16,6 +16,7 @@ struct MainView: View {
         case calendar
         case goals
         case data
+        case categories
         
         var id: String {
             self.rawValue
@@ -54,6 +55,8 @@ struct MainView: View {
                 Spacer()
                 TabBarIcon(selection: $pageSelection, page: .goals, title: "Goals", icon: "checkmark.seal")
                 Spacer()
+                TabBarIcon(selection: $pageSelection, page: .categories, title: "Categories", icon: "wallet.pass")
+                Spacer()
                 TabBarIcon(selection: $pageSelection, page: .data, title: "Data", icon: "chart.bar")
                 Spacer()
             }
@@ -76,6 +79,7 @@ struct MainView: View {
             TabView(selection: $currentPage) {
                 CalendarPageView().tag( MainPage.calendar )
                 GoalsPageView(events: Array(events) ).tag( MainPage.goals )
+                CategoriesPageView(events: Array(events) ).tag( MainPage.categories )
             }
             
             TabBar(pageSelection: $currentPage)

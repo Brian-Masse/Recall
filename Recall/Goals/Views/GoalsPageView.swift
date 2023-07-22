@@ -35,6 +35,7 @@ struct GoalsPageView: View {
                 }
             }
         }
+        .universalBackground()
         .sheet(isPresented: $showingGoalCreationView) {
             GoalCreationView(editing: false,
                              goal: nil,

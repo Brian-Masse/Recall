@@ -43,6 +43,8 @@
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
 		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
 		C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D172A68AF750023EBC0 /* GoalCreationView.swift */; };
+		C9EA0EE52A6B48F200E36EF1 /* CategoriesPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA0EE42A6B48F200E36EF1 /* CategoriesPageView.swift */; };
+		C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA0EE62A6B556300E36EF1 /* CategoryCreationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +103,8 @@
 		C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIndex.swift; sourceTree = "<group>"; };
 		C9E49D152A68AC820023EBC0 /* RecallGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoal.swift; sourceTree = "<group>"; };
 		C9E49D172A68AF750023EBC0 /* GoalCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCreationView.swift; sourceTree = "<group>"; };
+		C9EA0EE42A6B48F200E36EF1 /* CategoriesPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesPageView.swift; sourceTree = "<group>"; };
+		C9EA0EE62A6B556300E36EF1 /* CategoryCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCreationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +163,7 @@
 				C91BCF2D2A61DD51003C6DD6 /* Universals */,
 				C91BCF232A61C380003C6DD6 /* Main */,
 				C91BCF3A2A61E0F0003C6DD6 /* Calendar */,
+				C9EA0EE22A6B48CF00E36EF1 /* Categories */,
 				C94B1F192A689329007E8537 /* Goals */,
 				C91BCEF52A618437003C6DD6 /* Assets.xcassets */,
 				C91BCEF72A618437003C6DD6 /* Recall.entitlements */,
@@ -251,7 +256,6 @@
 		C94B1F192A689329007E8537 /* Goals */ = {
 			isa = PBXGroup;
 			children = (
-				C915A0062A67213F009F6C84 /* RecallCategory.swift */,
 				C9E49D152A68AC820023EBC0 /* RecallGoal.swift */,
 				C94B1F1A2A689335007E8537 /* Views */,
 			);
@@ -285,6 +289,24 @@
 				C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */,
 			);
 			path = Charts;
+			sourceTree = "<group>";
+		};
+		C9EA0EE22A6B48CF00E36EF1 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				C915A0062A67213F009F6C84 /* RecallCategory.swift */,
+				C9EA0EE32A6B48E600E36EF1 /* Views */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		C9EA0EE32A6B48E600E36EF1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C9EA0EE42A6B48F200E36EF1 /* CategoriesPageView.swift */,
+				C9EA0EE62A6B556300E36EF1 /* CategoryCreationView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -439,6 +461,7 @@
 				C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */,
 				C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */,
 				C91BCF3C2A61E3EE003C6DD6 /* MainView.swift in Sources */,
+				C9EA0EE52A6B48F200E36EF1 /* CategoriesPageView.swift in Sources */,
 				C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */,
 				C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */,
 				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
@@ -450,6 +473,7 @@
 				C915A0092A67217A009F6C84 /* CalendarContainerView.swift in Sources */,
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,
+				C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */,
 				C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */,
 				C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */,
 				C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */,

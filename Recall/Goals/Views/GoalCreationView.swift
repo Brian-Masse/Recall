@@ -17,7 +17,7 @@ struct GoalCreationView: View {
             UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
             
             TextField("", text: binding)
-                .opaqueRectangularBackground()
+                .secondaryOpaqueRectangularBackground()
                 .universalTextField()
         }
     }
@@ -32,7 +32,7 @@ struct GoalCreationView: View {
             .if(frequence != selection) { view in
                 view
                     .padding(10)
-                    .opaqueRectangularBackground()
+                    .secondaryOpaqueRectangularBackground()
             }
     }
     
@@ -96,7 +96,7 @@ struct GoalCreationView: View {
                             .tint(Colors.tint)
                         
                         TextField("", text: hoursBinding)
-                            .opaqueRectangularBackground()
+                            
                             .universalTextField()
                             .frame(width: 60)
                         
@@ -107,7 +107,7 @@ struct GoalCreationView: View {
                 }
                 .padding(5)
                 .universalTextStyle()
-                .secondaryOpaqueRectangularBackground()
+                .opaqueRectangularBackground()
             }
         }
         .padding(5)

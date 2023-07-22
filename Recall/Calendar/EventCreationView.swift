@@ -116,37 +116,3 @@ struct CalendarEventCreationView: View {
         }
     }
 }
-
-struct CategoryCreationView: View {
-    
-    @ObservedResults( RecallGoal.self ) var goals
-    
-    @State var label: String = ""
-    @State var goalRatings: Dictionary<String, String> = Dictionary()
-    
-    var body: some View {
-        
-        VStack(alignment: .leading) {
-            Form {
-                Section( "Basic Info" ) {
-                    
-                    TextField("Label", text: $label)
-                }
-                
-                Section( "Productivity" ) {
-                    GoalRatingsView(goalRatings: $goalRatings, goals: Array( goals ))
-                }
-            }
-            
-            RoundedButton(label: "Create Label", icon: "lanyardcard") {
-                let category = RecallCategory(ownerID: RecallModel.ownerID,
-                                              label: label,
-                                              goalRatings: goalRatings)
-                RealmManager.addObject(category)
-            }
-        }
-        
-        Spacer()
-    }
-    
-}

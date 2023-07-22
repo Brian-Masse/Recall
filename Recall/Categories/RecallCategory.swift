@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import SwiftUI
 
 class RecallCategory: Object, Identifiable {
     
@@ -15,16 +16,21 @@ class RecallCategory: Object, Identifiable {
     @Persisted var ownerID: String  = ""
     
     @Persisted var label: String    = ""
-    @Persisted var productivity: Float = 0      //This does not do anything, and should be deleted, thats just a whole process with the scheme and I don't feel like doing it
+    @Persisted var productivity: Float = 0 //This does not do anything, and should be deleted, thats just a whole process with the scheme and I don't feel like doing it
     
-    @Persisted var goalRatings: List<GoalNode> = List()
+    @Persisted var r: Double = 0
+    @Persisted var g: Double = 0
+    @Persisted var b: Double = 0
+    
+    @Persisted var goalRatings: RealmSwift.List<GoalNode> = List()
     
     @MainActor
-    convenience init(ownerID: String, label: String, goalRatings: Dictionary<String, String>) {
+    convenience init(ownerID: String, label: String, goalRatings: Dictionary<String, String>, color: Color) {
         self.init()
         
         self.ownerID = ownerID
         self.label = label
+        self.setColor(with: color)
         
         self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
     }
@@ -34,6 +40,17 @@ class RecallCategory: Object, Identifiable {
         let results: Results<RecallCategory> = RealmManager.retrieveObject { query in query._id == id }
         guard let first = results.first else { print("no Category exists with given id: \(id.stringValue)"); return nil }
         return first
+    }
+    
+    func setColor(with color: Color) {
+        let comps = color.components
+        self.r = comps.red
+        self.g = comps.green
+        self.b = comps.blue
+    }
+    
+    func getColor() -> Color {
+        Color(red: r, green: g, blue: b)
     }
 
 }

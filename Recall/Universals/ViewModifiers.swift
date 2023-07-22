@@ -117,9 +117,31 @@ private struct OpaqueRectangularBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding()
-            .background(colorScheme == .light ? .white : Colors.darkGrey )
+            .background(colorScheme == .light ? .white : .black )
             .cornerRadius(Constants.UIDefaultCornerRadius)
     }
+}
+
+private struct SecondaryOpaqueRectangularBackground: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
+            .padding()
+            .background( colorScheme == .dark ? Colors.darkGrey : Colors.lightGrey )
+            .cornerRadius(Constants.UIDefaultCornerRadius)
+//            .shadow(color: Colors.tint.opacity( colorScheme == .dark ? 0.2 : 0.4), radius: 50)
+    }
+}
+
+private struct RectnagularGlow: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
+            .shadow(color: colorScheme == .dark ? Colors.tint.opacity(0.2) : Colors.tint.opacity(0.5), radius: 50)
+    }
+    
 }
 
 private struct AccentBackground: ViewModifier {
@@ -131,18 +153,6 @@ private struct AccentBackground: ViewModifier {
             .foregroundColor(.black)
             .background( Colors.tint )
             .cornerRadius(Constants.UIDefaultCornerRadius)
-    }
-}
-
-private struct SecondaryOpaqueRectangularBackground: ViewModifier {
-    @Environment(\.colorScheme) var colorScheme
-    
-    func body(content: Content) -> some View {
-        content
-            .padding()
-            .background( colorScheme == .dark ? .black : .white )
-            .cornerRadius(Constants.UIDefaultCornerRadius)
-            .shadow(color: Colors.tint.opacity( colorScheme == .dark ? 0.2 : 0.4), radius: 50)
     }
 }
 
@@ -228,6 +238,10 @@ extension View {
     
     func accentRectangularBackground() -> some View {
         modifier(AccentBackground())
+    }
+    
+    func rectangularGlow() -> some View {
+        modifier(RectnagularGlow())
     }
     
     func onBecomingVisible(perform action: @escaping () -> Void) -> some View {
