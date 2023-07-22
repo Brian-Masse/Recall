@@ -48,6 +48,9 @@ struct TagPreviewView: View {
                 UniversalText(tag.label, size: Constants.UISubHeaderTextSize, font: Constants.mainFont)
                 
                 Spacer()
+                
+                Image(systemName: tag.isFavorite ? "checkmark.seal" : "seal")
+                    .onTapGesture { tag.toggleFavorite() }
             }
             
             HStack {

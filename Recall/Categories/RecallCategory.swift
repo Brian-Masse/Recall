@@ -17,6 +17,7 @@ class RecallCategory: Object, Identifiable {
     
     @Persisted var label: String    = ""
     @Persisted var productivity: Float = 0 //This does not do anything, and should be deleted, thats just a whole process with the scheme and I don't feel like doing it
+    @Persisted var isFavorite: Bool = false
     
     @Persisted var r: Double = 0
     @Persisted var g: Double = 0
@@ -41,6 +42,13 @@ class RecallCategory: Object, Identifiable {
             thawed.label = label            
             thawed.setColor(with: color)
             thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+        }
+    }
+    
+//    MARK: Class Methods:
+    func toggleFavorite() {
+        RealmManager.updateObject(self) { thawed in
+            thawed.isFavorite = true
         }
     }
     

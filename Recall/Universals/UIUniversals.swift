@@ -130,7 +130,6 @@ struct HeadedBackground<C1: View, C2: View>: View {
         .background( colorScheme == .dark ? .black : .white )
         .cornerRadius(Constants.UILargeCornerRadius)
         .padding(7)
-        .rectangularGlow()
         
     }
     
