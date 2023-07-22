@@ -54,7 +54,8 @@ struct GoalCreationView: View {
             goal!.update(label: label,
                         description: description,
                         frequency: frequence,
-                        targetHours: Int(targetHours))
+                         targetHours: Int(targetHours)
+            )
         }
         presentationMode.wrappedValue.dismiss()
     }

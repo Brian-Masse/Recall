@@ -44,9 +44,12 @@ class Constants {
     static let UILargeCornerRadius: CGFloat = 30
     static let UIFormSpacing        : CGFloat = 10
     
+    static let UICircularProgressWidth: CGFloat = 12
+    
     static let MinuteTime: Double = 60
     static let HourTime: Double = 3600
     static let DayTime: Double = 86400
+    static let WeekTime: Double = 604800
     
     static let titleFont: ProvidedFont = .syneHeavy
     static let mainFont: ProvidedFont = .renoMono

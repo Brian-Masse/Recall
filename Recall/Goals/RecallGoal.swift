@@ -61,6 +61,7 @@ class RecallGoal: Object, Identifiable {
     @Persisted(primaryKey: true) var _id: ObjectId
     
     @Persisted var ownerID: String = ""
+    @Persisted var creationDate: Date = .now
     
     @Persisted var label: String = ""
     @Persisted var goalDescription: String = ""
@@ -87,6 +88,10 @@ class RecallGoal: Object, Identifiable {
         }
     }
     
+    func delete() {
+        RealmManager.deleteObject(self) { goal in goal._id == self._id }
+    }
+    
 //    MARK: Convenience Functions
     func getEncryptionKey() -> String {
         label + _id.stringValue
@@ -99,15 +104,18 @@ class RecallGoal: Object, Identifiable {
         return goals.first
     }
     
+    @MainActor
+    func getStartDate() -> Date {
+        max( RecallModel.index.earliestEventDate.resetToStartOfDay(), creationDate.resetToStartOfDay() )
+    }
+    
     
 //    MARK: Data Aggregators
     @MainActor
     func getProgressTowardsGoal(from events: [RecallCalendarEvent]) -> Int {
         
-        let isSunday = Calendar.current.component(.weekday, from: .now) == 1
-        let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: .now) ?? .now) - (isSunday ? 0 : 7 * Constants.DayTime)
-        
-        
+//        let isSunday = Calendar.current.component(.weekday, from: .now) == 1
+//        let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: .now) ?? .now) - (isSunday ? 0 : 7 * Constants.DayTime)
         
         let filtered = events.filter { event in event.startTime > Date.now.resetToStartOfDay() }
         return filtered.reduce(0) { partialResult, event in
@@ -118,11 +126,20 @@ class RecallGoal: Object, Identifiable {
     @MainActor
     func countGoalMet(from events : [RecallCalendarEvent]) -> (Int, Int) {
         
-        let total = Date.now.timeIntervalSince( RecallModel.index.earliestEventDate ) / Constants.DayTime
+        let total = (Date.now.timeIntervalSince( getStartDate() ) / Constants.DayTime).rounded(.up)
         let count = events.filter { event in Int(event.getGoalPrgress(self)) >= targetHours }.count
         
         return ( count, Int(total) - count )
-        
     }
-
+    
+    @MainActor
+    func getAverage(from events: [RecallCalendarEvent]) -> (Float) {
+        let rawFrequence = GoalFrequence.getRawType(from: frequency)
+        let numberOfTimePeriods = Date.now.timeIntervalSince( getStartDate() ) / ( rawFrequence == .daily ? Constants.DayTime : Constants.WeekTime)
+        
+        let allEvents = events.reduce(0) { partialResult, event in partialResult + event.getGoalPrgress(self) }
+        
+        return Float(allEvents) / max(Float( numberOfTimePeriods * ( rawFrequence == .daily ? 1 : 7 ) ) , 1)
+    }
 }
+

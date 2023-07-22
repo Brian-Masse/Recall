@@ -132,5 +132,40 @@ struct HeadedBackground<C1: View, C2: View>: View {
         .padding(7)
         
     }
+}
+
+//MARK: CircularProgressBar
+
+struct CircularProgressView: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
+    let currentValue: Float
+    let totalValue: Float
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(
+                    colorScheme == .dark ? .black : .white,
+                    lineWidth: Constants.UICircularProgressWidth
+                )
+            Circle()
+                .trim(from: 0, to: CGFloat(currentValue / totalValue) )
+                .stroke(
+                    Colors.tint,
+                    style: StrokeStyle(
+                        lineWidth: Constants.UICircularProgressWidth,
+                        lineCap: .round
+                    )
+                )
+                .rotationEffect(.degrees(-90))
+            
+            VStack {
+                UniversalText("\(Int(currentValue)) / \(Int(totalValue))", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                    .padding(.bottom, 5)
+                UniversalText("\(((currentValue / totalValue) * 100).round(to: 2)  )%", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            }
+        }
+    }
 }

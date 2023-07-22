@@ -62,9 +62,13 @@ extension Date {
 }
 
 extension Collection {
-    
     func countAll(where query: ( Self.Element ) -> Bool ) -> Int {
         self.filter(query).count
     }
-    
+}
+
+extension Float {
+    func round(to digits: Int) -> Float {
+        (self * pow(10, Float(digits))).rounded(.down) / ( pow(10, Float(digits)) )
+    }
 }

@@ -23,6 +23,7 @@ struct GoalPreviewView: View {
     @ObservedRealmObject var goal: RecallGoal
     
     @State var showingGoalView: Bool = false
+    @State var showingEditingView: Bool = false
     
     let textFont: ProvidedFont = .renoMono
     
@@ -62,7 +63,7 @@ struct GoalPreviewView: View {
                     
                     makeSeperator()
                     
-                    ActivityPerDay(goal: goal, events: events, showYAxis: false)
+                    ActivityPerDay(title: "", goal: goal, events: events, showYAxis: false)
                         .frame(height: 100)
 
                 }
@@ -81,7 +82,7 @@ struct GoalPreviewView: View {
                         
                         Rectangle()
                             .foregroundColor(Colors.tint)
-                            .frame(width: min(Double(progressData) / Double(goal.targetHours) * geo.size.width, geo.size.width) )
+                            .frame(width: max(min(Double(progressData) / Double(goal.targetHours) * geo.size.width, geo.size.width),0) )
                             .cornerRadius(Constants.UIDefaultCornerRadius)
                     }
                 }
@@ -100,9 +101,20 @@ struct GoalPreviewView: View {
         
         .background( colorScheme == .dark ? .black : .white )
         .cornerRadius(Constants.UILargeCornerRadius)
-
         .onTapGesture { showingGoalView = true }
+        .contextMenu {
+            Button("edit") { showingEditingView = true  }
+            Button("delete") { goal.delete()  }
+        }
         .fullScreenCover(isPresented: $showingGoalView) { GoalView(goal: goal, events: events) }
+        .sheet(isPresented: $showingEditingView) {
+            GoalCreationView(editing: true,
+                             goal: goal,
+                             label: goal.label,
+                             description: goal.goalDescription,
+                             frequence: RecallGoal.GoalFrequence.getRawType(from: goal.frequency),
+                             targetHours: Float(goal.targetHours))
+        }
     }
     
 }

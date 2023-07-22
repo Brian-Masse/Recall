@@ -28,6 +28,19 @@ struct GoalView: View {
             Spacer()
             UniversalText(data, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
         }
+    }
+    
+    @ViewBuilder
+    func makeCircularProgressWidget(title: String, value: Int, total: Int) -> some View {
+        
+        VStack {
+            UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                .padding(.bottom, 5)
+            CircularProgressView(currentValue: Float(value), totalValue: Float( total ))
+        }
+        .padding(5)
+        .frame(width: 115)
+        .secondaryOpaqueRectangularBackground()
         
     }
     
@@ -40,19 +53,21 @@ struct GoalView: View {
     
     var body: some View {
         
+        let progressData = goal.getProgressTowardsGoal(from: events)
+        let averageData = goal.getAverage(from: events)
+        let goalMetData = goal.countGoalMet(from: events)
+        
         VStack(alignment: .leading) {
-            
             HStack {
                 UniversalText(goal.label, size: Constants.UITitleTextSize, font: Constants.titleFont, true)
                 Spacer()
-                LargeRoundedButton("Edit", icon: "") { showingEditingScreen = true }
                 LargeRoundedButton("", icon: "arrow.down") { presentationMode.wrappedValue.dismiss() }
             }
             
             ScrollView(.vertical) {
                 VStack(alignment: .leading) {
                     
-                    UniversalText("overview", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
+                    UniversalText("overview", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
                     
                     HStack {
                         UniversalText( goal.goalDescription, size: Constants.UISmallTextSize, font: Constants.mainFont )
@@ -66,22 +81,51 @@ struct GoalView: View {
                             makeOverViewDataView(title: "goal", icon: "scope", data: "\(goal.targetHours)")
                         }
                     }
-                }
-                .secondaryOpaqueRectangularBackground()
-                .padding(.bottom)
-                
-                UniversalText("Goal Review", size: Constants.UITitleTextSize, font: Constants.titleFont, true)
+                    .secondaryOpaqueRectangularBackground()
                     .padding(.bottom)
-                
-                ActivityPerDay(goal: goal, events: events, showYAxis: true)
-                    .frame(height: 200)
-                
-                
+                    
+                    UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                    ScrollView(.horizontal) {
+                        HStack {
+                            LargeRoundedButton("edit", icon: "arrow.up.forward") { showingEditingScreen = true }
+                            LargeRoundedButton("delete", icon: "arrow.up.forward") { goal.delete() }
+                            LargeRoundedButton("change goal target", icon: "arrow.up.forward") { showingEditingScreen = true }
+                        }
+                    }
+                    .secondaryOpaqueRectangularBackground()
+                    .padding(.bottom)
+                    
+                    UniversalText("Goal Review", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                        .padding(.bottom)
+                    
+                    ScrollView(.horizontal) {
+                        HStack {
+                            makeCircularProgressWidget(title: "Current Progress", value: progressData, total: goal.targetHours)
+                            
+                            makeCircularProgressWidget(title: "Average Activity", value: Int(averageData), total: goal.targetHours)
+                            
+                            makeCircularProgressWidget(title: "Number of Times met", value: Int(goalMetData.0), total: goalMetData.1 + goalMetData.0)
+                        }
+                    }
+                    
+                    
+                    VStack(alignment: .leading) {
+                        UniversalText("Activties", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
+                        ActivityPerDay(title: "activites per day", goal: goal, events: events, showYAxis: true)
+                            .frame(height: 160)
+                        
+                        TotalActivites(title: "total activities", goal: goal, events: events, showYAxis: true)
+                            .frame(height: 160)
+                    }
+                    .padding(5)
+                    .secondaryOpaqueRectangularBackground()
+                    
+                }
             }
             Spacer()
         }
-        .padding()
-        .universalBackground()
+        .padding(7)
+        .universalColoredBackground(Colors.tint)
         .sheet(isPresented: $showingEditingScreen) {
             GoalCreationView(editing: true,
                              goal: goal,
