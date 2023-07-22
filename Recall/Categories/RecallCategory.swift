@@ -30,9 +30,18 @@ class RecallCategory: Object, Identifiable {
         
         self.ownerID = ownerID
         self.label = label
-        self.setColor(with: color)
         
+        self.setColor(with: color)
         self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+    }
+    
+    @MainActor
+    func update(label: String, goalRatings: Dictionary<String, String>, color: Color ) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.label = label            
+            thawed.setColor(with: color)
+            thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+        }
     }
     
 //    MARK: Convenience Functions

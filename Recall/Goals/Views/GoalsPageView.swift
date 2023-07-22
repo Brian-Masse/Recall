@@ -26,7 +26,7 @@ struct GoalsPageView: View {
                 UniversalText( "Goals", size: Constants.UITitleTextSize, font: .syneHeavy, true )
                 Spacer()
                 LargeRoundedButton("Add Goal", icon: "arrow.up") { showingGoalCreationView = true }
-            }.padding(7)
+            }
             
             ScrollView(.vertical) {
                 ForEach( goals ) { goal in
@@ -35,7 +35,8 @@ struct GoalsPageView: View {
                 }
             }
         }
-        .universalBackground()
+        .padding(7)
+        .universalColoredBackground(Colors.tint)
         .sheet(isPresented: $showingGoalCreationView) {
             GoalCreationView(editing: false,
                              goal: nil,

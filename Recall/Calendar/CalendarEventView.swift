@@ -201,7 +201,7 @@ struct CalendarEventPreviewView: View {
                 Spacer()
                 makeLengthHandle(.down)
             })
-            .background(colorScheme == .light ? Colors.lightGrey : .black )
+            .background( component.category?.getColor() ?? .white )
             .cornerRadius(Constants.UIDefaultCornerRadius)
             .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
             

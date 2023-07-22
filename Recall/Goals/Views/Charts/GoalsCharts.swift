@@ -61,6 +61,7 @@ struct ActivityPerDay: View {
     
     let goal: RecallGoal
     let events: [RecallCalendarEvent]
+    let showYAxis: Bool 
     
     private func getData() -> [DataNode] {
         events.filter { event in event.startTime > .now - timePeriod }.compactMap { event in
@@ -82,7 +83,7 @@ struct ActivityPerDay: View {
                 BarMark(x: .value("date", datum.date, unit: .day ),
                         y: .value("count", datum.count))
                 .foregroundStyle(Colors.tint)
-                .cornerRadius(Constants.UIDefaultCornerRadius)
+                .cornerRadius(Constants.UIDefaultCornerRadius - 10)
             }
             
             RuleMark(y: .value("Goal", goal.targetHours) )
@@ -101,7 +102,7 @@ struct ActivityPerDay: View {
         .chartYAxis {
             AxisMarks { value in
                 if let count = value.as(Int.self) {
-                    AxisValueLabel( "\(count) HR" )
+                    if showYAxis { AxisValueLabel( "\(count) HR" ) }
                 }
             }
         }

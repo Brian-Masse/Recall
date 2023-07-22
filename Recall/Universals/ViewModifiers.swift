@@ -37,14 +37,14 @@ private struct UniversalColoredBackground: ViewModifier {
                 .background(
                     GeometryReader { geo in
                         VStack {
-                            if colorScheme == .light {
-                                LinearGradient(colors: [color.opacity(0.8), .clear], startPoint: .top, endPoint: .bottom )
+                            if colorScheme == .dark {
+                                LinearGradient(colors: [color.opacity(0.1), .clear], startPoint: .top, endPoint: .bottom )
                                     .frame(maxHeight: 800)
                                 Spacer()
                             }
-                            else if colorScheme == .dark {
+                            else if colorScheme == .light {
                                 Spacer()
-                                LinearGradient(colors: [color.opacity(0.4), .clear], startPoint: .bottom, endPoint: .top )
+                                LinearGradient(colors: [color.opacity(0.5), .clear], startPoint: .bottom, endPoint: .top )
                                     .frame(maxHeight: 800)
                             }
                         }

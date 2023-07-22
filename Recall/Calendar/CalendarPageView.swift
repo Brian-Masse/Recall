@@ -37,7 +37,6 @@ struct CalendarPageView: View {
         }
         .padding()
         .sheet(isPresented: $showingCreateEventView) { CalendarEventCreationView() }
-        .sheet(isPresented: $showingCreateCategoryView) { CategoryCreationView() }
         .universalBackground()
         
     }

@@ -73,7 +73,7 @@ struct GoalView: View {
                 UniversalText("Goal Review", size: Constants.UITitleTextSize, font: Constants.titleFont, true)
                     .padding(.bottom)
                 
-                ActivityPerDay(goal: goal, events: events)
+                ActivityPerDay(goal: goal, events: events, showYAxis: true)
                     .frame(height: 200)
                 
                 
