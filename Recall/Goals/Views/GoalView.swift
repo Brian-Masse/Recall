@@ -76,7 +76,7 @@ struct GoalView: View {
                         makeSeperator()
                         
                         VStack {
-                            makeOverViewDataView(title: "tag", icon: "wallet.pass", data: "test")
+                            makeOverViewDataView(title: "priority", icon: "wallet.pass", data: goal.priority)
                             makeOverViewDataView(title: "period", icon: "calendar.day.timeline.leading", data: RecallGoal.GoalFrequence.getType(from: goal.frequency))
                             makeOverViewDataView(title: "goal", icon: "scope", data: "\(goal.targetHours)")
                         }
@@ -132,7 +132,8 @@ struct GoalView: View {
                              label: goal.label,
                              description: goal.goalDescription,
                              frequence: RecallGoal.GoalFrequence.getRawType(from: goal.frequency),
-                             targetHours: Float(goal.targetHours))
+                             targetHours: Float(goal.targetHours),
+                             priority: RecallGoal.Priority.getRawType(from: goal.priority))
             
         }
     }

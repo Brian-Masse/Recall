@@ -58,6 +58,18 @@ class RecallGoal: Object, Identifiable {
         }
     }
     
+    enum Priority: String, Identifiable {
+        case high
+        case medium
+        case low
+        
+        var id: String { self.rawValue }
+        
+        static func getRawType(from priority: String) -> Priority {
+            Priority(rawValue: priority) ?? .medium
+        }
+    }
+    
     @Persisted(primaryKey: true) var _id: ObjectId
     
     @Persisted var ownerID: String = ""
@@ -67,8 +79,9 @@ class RecallGoal: Object, Identifiable {
     @Persisted var goalDescription: String = ""
     @Persisted var frequency: Int = 1
     @Persisted var targetHours: Int = 0
+    @Persisted var priority: String = ""
     
-    convenience init( ownerID: String, label: String, description: String, frequency: Int, targetHours: Int) {
+    convenience init( ownerID: String, label: String, description: String, frequency: Int, targetHours: Int, priority: Priority) {
         self.init()
         
         self.ownerID = ownerID
@@ -76,15 +89,17 @@ class RecallGoal: Object, Identifiable {
         self.goalDescription = description
         self.frequency = frequency
         self.targetHours = targetHours
+        self.priority = priority.rawValue
     }
     
-    func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int ) {
+    func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority) {
         
         RealmManager.updateObject(self) { thawed in
             thawed.label = label
             thawed.goalDescription = goalDescription
             thawed.frequency = frequency.numericValue
             thawed.targetHours = targetHours
+            thawed.priority = priority.rawValue
         }
     }
     

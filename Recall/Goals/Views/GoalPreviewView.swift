@@ -113,7 +113,8 @@ struct GoalPreviewView: View {
                              label: goal.label,
                              description: goal.goalDescription,
                              frequence: RecallGoal.GoalFrequence.getRawType(from: goal.frequency),
-                             targetHours: Float(goal.targetHours))
+                             targetHours: Float(goal.targetHours),
+                             priority: RecallGoal.Priority.getRawType(from: goal.priority))
         }
     }
     

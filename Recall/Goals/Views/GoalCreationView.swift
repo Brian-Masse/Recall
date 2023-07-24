@@ -22,14 +22,27 @@ struct GoalCreationView: View {
         }
     }
     
+//    TODO: These two should likley be one function, but for now I've seperated them into two for conveinience
     @ViewBuilder func makePickerOptions(label: String, selection: RecallGoal.GoalFrequence) -> some View {
-        
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { frequence = selection }
             .if(frequence == selection) { view in
                 view.accentRectangularBackground()
             }
             .if(frequence != selection) { view in
+                view
+                    .padding(10)
+                    .secondaryOpaqueRectangularBackground()
+            }
+    }
+    
+    @ViewBuilder func makePriorityPickerOptions(label: String, selection: RecallGoal.Priority) -> some View {
+        UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            .onTapGesture { priority = selection }
+            .if(priority == selection) { view in
+                view.accentRectangularBackground()
+            }
+            .if(priority != selection) { view in
                 view
                     .padding(10)
                     .secondaryOpaqueRectangularBackground()
@@ -48,13 +61,15 @@ struct GoalCreationView: View {
                                   label: label,
                                   description: description,
                                   frequency: frequence.numericValue,
-                                  targetHours: Int(targetHours))
+                                  targetHours: Int(targetHours),
+                                  priority: priority)
             RealmManager.addObject(goal)
         } else {
             goal!.update(label: label,
                         description: description,
                         frequency: frequence,
-                         targetHours: Int(targetHours)
+                         targetHours: Int(targetHours),
+                         priority: priority
             )
         }
         presentationMode.wrappedValue.dismiss()
@@ -69,6 +84,7 @@ struct GoalCreationView: View {
     @State var description: String
     @State var frequence: RecallGoal.GoalFrequence
     @State var targetHours: Float
+    @State var priority: RecallGoal.Priority
     
     var body: some View {
         
@@ -102,6 +118,14 @@ struct GoalCreationView: View {
                             .frame(width: 60)
                         
                     }.padding(.bottom)
+                    
+                    UniversalText("How would you like to prioritize this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                    
+                    HStack {
+                        makePriorityPickerOptions(label: "High", selection: .high)
+                        makePriorityPickerOptions(label: "Medium", selection: .medium)
+                        makePriorityPickerOptions(label: "Low", selection: .low)
+                    }
                     
                     LargeRoundedButton("Done", icon: "arrow.down") { submit() }
                     

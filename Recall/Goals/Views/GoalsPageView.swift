@@ -43,7 +43,8 @@ struct GoalsPageView: View {
                              label: "",
                              description: "",
                              frequence: .daily,
-                             targetHours: 0)
+                             targetHours: 0,
+                             priority: .medium)
             
         }
     }
