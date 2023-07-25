@@ -135,7 +135,7 @@ struct GoalCreationView: View {
                 .opaqueRectangularBackground()
             }
         }
-        .padding(5)
+        .padding(Constants.UIFormPagePadding)
         .background(Colors.tint)
         .universalBackground()
     }

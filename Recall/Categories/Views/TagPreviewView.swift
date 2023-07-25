@@ -12,7 +12,6 @@ import RealmSwift
 struct TagPreviewView: View {
     
     struct GoalTag: View {
-        
         @State var showingGoalView: Bool = false
         
         let events: [RecallCalendarEvent]

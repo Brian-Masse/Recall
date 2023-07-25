@@ -110,6 +110,7 @@ private struct RectangularBackground: ViewModifier {
     }
 }
 
+//This is black and white
 private struct OpaqueRectangularBackground: ViewModifier {
     
     @Environment(\.colorScheme) var colorScheme
@@ -122,6 +123,7 @@ private struct OpaqueRectangularBackground: ViewModifier {
     }
 }
 
+//This is the white accent and dark accent
 private struct SecondaryOpaqueRectangularBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
@@ -134,16 +136,20 @@ private struct SecondaryOpaqueRectangularBackground: ViewModifier {
     }
 }
 
-private struct RectnagularGlow: ViewModifier {
+//This is the titn background
+private struct TintBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
     func body(content: Content) -> some View {
         content
-            .shadow(color: colorScheme == .dark ? Colors.tint.opacity(0.2) : Colors.tint.opacity(0.5), radius: 50)
+            .padding()
+            .foregroundColor(.black)
+            .background( Colors.tint )
+            .cornerRadius(Constants.UIDefaultCornerRadius)
     }
-    
 }
 
+//This adds extra padding to the tint background
 private struct AccentBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
@@ -224,6 +230,7 @@ extension View {
         clipShape( RoundedCorner(radius: radius, corners: corners) )
     }
     
+//    MARK: Rectangular Backgrounds (extension)
     func rectangularBackgorund(rounded: Bool = false, radius: CGFloat? = nil) -> some View {
         modifier(RectangularBackground(rounded: rounded, radius: radius))
     }
@@ -240,8 +247,8 @@ extension View {
         modifier(AccentBackground())
     }
     
-    func rectangularGlow() -> some View {
-        modifier(RectnagularGlow())
+    func tintRectangularBackground() -> some View {
+        modifier(TintBackground())
     }
     
     func onBecomingVisible(perform action: @escaping () -> Void) -> some View {
