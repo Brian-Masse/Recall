@@ -69,5 +69,11 @@ class RecallCategory: Object, Identifiable {
     func getColor() -> Color {
         Color(red: r, green: g, blue: b)
     }
+    
+    func delete() {
+        RealmManager.deleteObject(self) { category in
+            category._id == self._id
+        }
+    }
 
 }

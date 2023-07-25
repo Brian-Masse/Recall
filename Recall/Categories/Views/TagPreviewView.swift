@@ -67,7 +67,10 @@ struct TagPreviewView: View {
         .padding(.horizontal)
         .padding(.vertical, 5)
         .background( colorScheme == .light ? .white : .black )
-        .contextMenu { Button("edit") { showingEditTagView = true } }
+        .contextMenu {
+            Button("edit") { showingEditTagView = true }
+            Button("delete") { tag.delete() }
+        }
         .sheet(isPresented: $showingEditTagView) {
             CategoryCreationView(editing: true,
                                  tag: tag,
