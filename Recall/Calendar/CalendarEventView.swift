@@ -163,7 +163,6 @@ struct CalendarEventPreviewView: View {
         Rectangle()
             .foregroundColor(.blue)
             .onTapGesture { }
-            .onLongPressGesture(minimumDuration: holdDuration) { beginResizing() }
             .simultaneousGesture(resizeGesture( direction ))
             .frame(minHeight: 10, maxHeight: 20)
     }
@@ -203,10 +202,16 @@ struct CalendarEventPreviewView: View {
             })
             .background( component.category?.getColor() ?? .white )
             .cornerRadius(Constants.UIDefaultCornerRadius)
+            .contextMenu {
+                Button { beginMoving()  }  label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
+                Button {beginResizing() } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
+                Button {showingComponent = true } label: { Label("show event", systemImage: "newspaper") }
+            }
+            
             .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
             
             .onTapGesture { showingComponent = true }
-            .onLongPressGesture(minimumDuration: holdDuration ) { beginMoving() }
+//            .onLongPressGesture(minimumDuration: holdDuration ) { beginMoving() }
             .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
             
             .coordinateSpace(name: blockCoordinateSpaceKey)

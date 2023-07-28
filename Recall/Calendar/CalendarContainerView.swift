@@ -24,6 +24,7 @@ struct CalendarContainer: View {
                         .frame(height: 1)
                         .foregroundColor(color)
                 }
+                .id( Int(hour.rounded(.down)) )
                 .offset(y: CGFloat(hour) * spacing )
                 Spacer()
             }
@@ -129,20 +130,27 @@ struct CalendarContainer: View {
                 
                 DatesPreview(currentDay: $currentDay)
                 
-                ScrollView {
-                    ZStack(alignment: .topLeading) {
-                        
-                        CalendarView(day: currentDay, hoursToDisplay: hoursToDisplay, spacing: spacing)
-                        
-                        ForEach( filterEvents(), id: \.self ) { component in
-                            CalendarEventPreviewView(component: component, spacing: spacing, geo: geo, dragging: $dragging)
+                ScrollViewReader { value in
+                    ScrollView {
+                        ZStack(alignment: .topLeading) {
+                            
+                            CalendarView(day: currentDay, hoursToDisplay: hoursToDisplay, spacing: spacing)
+                            
+                            ForEach( filterEvents(), id: \.self ) { component in
+                                CalendarEventPreviewView(component: component, spacing: spacing, geo: geo, dragging: $dragging)
+                            }
+    //                        .padding(.horizontal)
+                            .padding(.leading, 20)
                         }
-//                        .padding(.horizontal)
-                        .padding(.leading, 20)
+    //                    .highPriorityGesture(swipeGesture)
+                        .frame(height: height)
                     }
-//                    .highPriorityGesture(swipeGesture)
-                    .frame(height: height)
-                }.scrollDisabled(dragging)
+                    .scrollDisabled(dragging)
+                    .onAppear() {
+                        let id = Int(Date.now.getHoursFromStartOfDay().rounded(.down) )
+                        value.scrollTo( id, anchor: .center )
+                    }
+                }
             }
             .padding(7)
             .opaqueRectangularBackground()
