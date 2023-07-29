@@ -162,15 +162,18 @@ struct LargeRoundedButton: View {
     let completed: () -> Bool
     let action: () -> Void
     
+    let wide: Bool
+    
     @State var tempCompletion: Bool = false
     
-    init( _ label: String, to completedLabel: String = "", icon: String, to completedIcon: String = "", completed: @escaping () -> Bool = {false}, action: @escaping () -> Void ) {
+    init( _ label: String, to completedLabel: String = "", icon: String, to completedIcon: String = "", wide: Bool = false, completed: @escaping () -> Bool = {false}, action: @escaping () -> Void ) {
         self.label = label
         self.completedLabel = completedLabel
         self.icon = icon
         self.completedIcon = completedIcon
         self.completed = completed
         self.action = action
+        self.wide = wide
     }
     
     var body: some View {
@@ -178,6 +181,7 @@ struct LargeRoundedButton: View {
         let completedIcon: String = (self.completed() || tempCompletion ) ? completedIcon : icon
         
         HStack {
+            if wide { Spacer() }
             if label != "" {
                 UniversalText(label, size: Constants.UISubHeaderTextSize, font: .syneHeavy)
                     .minimumScaleFactor(0.7)
@@ -187,6 +191,7 @@ struct LargeRoundedButton: View {
             if completedIcon != "" {
                 Image(systemName: completedIcon)
             }
+            if wide { Spacer() }
         }
         .accentRectangularBackground()
         .animation(.default, value: completed() )

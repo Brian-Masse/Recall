@@ -9,18 +9,20 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-struct TagPreviewView: View {
+//MARK: GoalTags
+struct GoalTags: View {
     
     struct GoalTag: View {
         @State var showingGoalView: Bool = false
         
         let events: [RecallCalendarEvent]
         let goal: RecallGoal
+        let multiplier: Int
         
         var body: some View {
             HStack {
                 Image( systemName: "arrow.up.forward" )
-                UniversalText( goal.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                UniversalText( goal.label + (multiplier <= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             }
             .secondaryOpaqueRectangularBackground()
             .onTapGesture { showingGoalView = true }
@@ -30,6 +32,27 @@ struct TagPreviewView: View {
             }
         }
     }
+    
+    let goalRatings: [GoalNode]
+    let events: [RecallCalendarEvent]
+    
+    var body: some View {
+        HStack {
+            ForEach( goalRatings ) { node in
+                if Int(node.data) ?? 0 != 0 {
+                    if let goal = RecallGoal.getGoalFromKey( node.key ) {
+                        GoalTag(events: events, goal: goal, multiplier: Int(node.data)! )
+                    }
+                }
+            }
+            Spacer()
+        }.padding(.leading)
+    }
+    
+}
+
+//MARK: TagPreviewView
+struct TagPreviewView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -52,16 +75,7 @@ struct TagPreviewView: View {
                     .onTapGesture { tag.toggleFavorite() }
             }
             
-            HStack {
-                ForEach( tag.goalRatings ) { node in
-                    if Int(node.data) ?? 0 != 0 {
-                        if let goal = RecallGoal.getGoalFromKey( node.key ) {
-                            GoalTag(events: events, goal: goal)
-                        }
-                    }
-                }
-                Spacer()
-            }.padding(.leading)
+            GoalTags(goalRatings: Array(tag.goalRatings), events: events)
             
         }
         .padding(.horizontal)

@@ -107,6 +107,15 @@ struct CalendarContainer: View {
             }
     }
     
+    private func makeZoomGesture(geo: GeometryProxy) -> some Gesture {
+        MagnificationGesture()
+            .onChanged { scaleValue in
+                dragging = true
+                height = min(max(geo.size.height, geo.size.height * 2 * scaleValue), geo.size.height * 4)
+            }
+            .onEnded { value in dragging = false }
+    }
+    
     private func filterEvents() -> [RecallCalendarEvent] {
         events.filter { event in
             Calendar.current.isDate(event.startTime, equalTo: currentDay, toGranularity: .day)
@@ -119,12 +128,12 @@ struct CalendarContainer: View {
     
     @State var dragging: Bool = false
     @State var currentDay: Date = .now
+    @State var height: CGFloat = 0
     
     var body: some View {
         GeometryReader { geo in
             VStack {
-                
-                let height = geo.size.height * 2
+            
                 let hoursToDisplay:CGFloat = 24
                 let spacing = height / hoursToDisplay
                 
@@ -137,23 +146,24 @@ struct CalendarContainer: View {
                             CalendarView(day: currentDay, hoursToDisplay: hoursToDisplay, spacing: spacing)
                             
                             ForEach( filterEvents(), id: \.self ) { component in
-                                CalendarEventPreviewView(component: component, spacing: spacing, geo: geo, dragging: $dragging)
+                                CalendarEventPreviewView(component: component, spacing: spacing, geo: geo, events: events, dragging: $dragging)
                             }
-    //                        .padding(.horizontal)
-                            .padding(.leading, 20)
+                            .padding(.leading, 40)
                         }
-    //                    .highPriorityGesture(swipeGesture)
+                        .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
+                        .highPriorityGesture(makeZoomGesture(geo: geo))
                         .frame(height: height)
                     }
                     .scrollDisabled(dragging)
                     .onAppear() {
                         let id = Int(Date.now.getHoursFromStartOfDay().rounded(.down) )
                         value.scrollTo( id, anchor: .center )
+                        
+                        height = geo.size.height * 2
                     }
                 }
             }
             .padding(7)
-            .opaqueRectangularBackground()
         }
     }
 }

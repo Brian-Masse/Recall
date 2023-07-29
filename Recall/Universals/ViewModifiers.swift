@@ -38,7 +38,7 @@ private struct UniversalColoredBackground: ViewModifier {
                     GeometryReader { geo in
                         VStack {
                             if colorScheme == .dark {
-                                LinearGradient(colors: [color.opacity(0.1), .clear], startPoint: .top, endPoint: .bottom )
+                                LinearGradient(colors: [color.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom )
                                     .frame(maxHeight: 800)
                                 Spacer()
                             }
@@ -162,6 +162,7 @@ private struct AccentBackground: ViewModifier {
     }
 }
 
+//MARK: Utitilities
 private struct BecomingVisible: ViewModifier {
     @State var action: (() -> Void)?
 

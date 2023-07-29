@@ -31,6 +31,7 @@ struct CalendarEventPreviewView: View {
     
     let spacing: CGFloat
     let geo: GeometryProxy
+    let events: [RecallCalendarEvent]
     
     var overlapData: RecallCalendarEvent.OverlapData { component.getOverlapData(in: geo.size.width - 20) }
     
@@ -42,7 +43,10 @@ struct CalendarEventPreviewView: View {
     @Binding var dragging: Bool
     @State var moving: Bool = false
     @State var resizing: Bool = false //used to block the movement gesture while resizing
+    
     @State var showingComponent: Bool = false
+    @State var showingEditingView: Bool = false
+    
     
     
 //    MARK: Convenience Functions
@@ -205,7 +209,9 @@ struct CalendarEventPreviewView: View {
             .contextMenu {
                 Button { beginMoving()  }  label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
                 Button {beginResizing() } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
-                Button {showingComponent = true } label: { Label("show event", systemImage: "newspaper") }
+                Button {showingEditingView = true } label: { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
+                Button(role: .destructive) { component.delete() } label: { Label("delete", systemImage: "trash") }
+                
             }
             
             .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
@@ -219,9 +225,7 @@ struct CalendarEventPreviewView: View {
             .onChange(of: dragging) { newValue in prepareMovementSnapping() }
             .shadow(radius: (resizing || moving) ? 10 : 0)
             .sheet(isPresented: $showingComponent) {
-                CalendarEventView(component: component,
-                                      startDate: component.startTime,
-                                      endDate: component.endTime)
+                CalendarEventView(event: component, events: events)
             }
         }
         
@@ -232,48 +236,94 @@ struct CalendarEventPreviewView: View {
 //MARK: Full Screen View
 struct CalendarEventView: View {
     
+    @ViewBuilder
+    private func makeOverviewMetadataLabel(title: String, icon: String) -> some View {
+        ZStack {
+            Rectangle()
+                .foregroundColor(colorScheme == .dark ? Colors.darkGrey : Colors.lightGrey)
+                .cornerRadius(Constants.UIDefaultCornerRadius)
+            
+            VStack {
+                ResizeableIcon(icon: icon, size: Constants.UISubHeaderTextSize)
+                    .padding(5)
+                UniversalText(title, size: Constants.UISmallTextSize, font: Constants.mainFont)
+            }.padding(7)
+        }
+    }
+    
+    @ViewBuilder
+    private func makeOverviewView() -> some View {
+        VStack {
+            HStack {
+                makeOverviewMetadataLabel(title: "\( event.getLengthInHours().round(to: 2) ) HRs", icon: "deskclock")
+                makeOverviewMetadataLabel(title: "Tempalte", icon: "doc.plaintext")
+                makeOverviewMetadataLabel(title: "\(event.category?.label ?? "No Tag")", icon: "tag")
+            }
+
+            Rectangle()
+                .opacity(0.5)
+                .frame(height: 1)
+                .padding(.bottom, 5)
+            
+            UniversalText( event.notes, size: Constants.UISmallTextSize, font: Constants.mainFont )
+                .padding(.horizontal, 5)
+        }.opaqueRectangularBackground()
+        
+    }
+    
     @Environment( \.presentationMode ) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
     
-    @ObservedRealmObject var component: RecallCalendarEvent
+    @ObservedRealmObject var event: RecallCalendarEvent
+    let events: [RecallCalendarEvent]
  
-    @State var editing: Bool = false
-    
-    @State var startDate: Date
-    @State var endDate: Date
+    @State var showingEditingScreen: Bool = false
     
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack {
+            ScrollView(.vertical) {
                 
-            HStack {
+                let fullDate = event.startTime.formatted(date: .complete, time: .omitted)
+                let times = "from \( event.startTime.formatted( .dateTime.hour() ) ) to \( event.endTime.formatted( .dateTime.hour() ) )"
                 
-                UniversalText( component.title, size: Constants.UITitleTextSize, true )
-                Spacer()
-                ShortRoundedButton("Dismiss", icon: "chevron.down") { presentationMode.wrappedValue.dismiss() }
+                VStack(alignment: .leading) {
                 
-            }
-            
-            DatePicker(selection: $startDate, displayedComponents: [.hourAndMinute]) { Text("Start Date") }
-            DatePicker(selection: $endDate, displayedComponents: [.hourAndMinute]) { Text("End Date") }
-            
-            UniversalText( component.category?.label ?? "?", size: Constants.UIDefaultTextSize, true )
-            
-            ForEach( component.goalRatings ) { node in
-                HStack {
-                    UniversalText( node.key, size: Constants.UIDefaultTextSize, true )
-                    Spacer()
-                    UniversalText( node.data, size: Constants.UIDefaultTextSize )
+                    UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, true ).padding(.bottom, 3)
+                    UniversalText( fullDate, size: Constants.UIDefaultTextSize, font: Constants.mainFont ).padding(.bottom, 2)
+                    UniversalText( times, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                    
+                    
+                        .padding([.bottom, .trailing])
+                    
+                    UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                    ScrollView(.horizontal) {
+                        HStack {
+                            LargeRoundedButton("edit", icon: "arrow.up.forward")                { showingEditingScreen = true }
+                            LargeRoundedButton("delete", icon: "arrow.up.forward")              { event.delete() }
+                            LargeRoundedButton("make template", icon: "arrow.up.forward")       {  }
+                            
+                        }
+                    }
+                    .opaqueRectangularBackground()
+                    .padding(.bottom)
+                    
+                    UniversalText("Overview", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                    makeOverviewView()
+                        .padding(.bottom)
+                    
+                    UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                    GoalTags(goalRatings: Array(event.goalRatings), events: events)
+                    
+                    
                 }
             }
             
-            Spacer()
-            
-            RoundedButton(label: "Done", icon: "checkmark.seal") {
-                component.update(title: component.title, startDate: startDate, endDate: endDate)
-            }
-            
+            LargeRoundedButton("", icon: "arrow.down", wide: true) { presentationMode.wrappedValue.dismiss() }
+                .padding(.horizontal)
         }
-        .padding()
-        .universalBackground()
+        .padding(7)
+        .sheet(isPresented: $showingEditingScreen) { CalendarEventCreationView() }
+        .universalColoredBackground(Colors.tint)
     }
 }

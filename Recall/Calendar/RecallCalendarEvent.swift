@@ -8,19 +8,15 @@
 import Foundation
 import RealmSwift
 
-//class RecallCalendar: Object {
-//
-//    @Persisted(primaryKey: true) var _id: ObjectId
-//    @Persisted var ownerID: String
-//
-//}
-
 class RecallCalendarEvent: Object, Identifiable  {
     
     @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var ownerID: String
     
     @Persisted var title: String = ""
+    @Persisted var notes: String = ""
+    @Persisted var isTemplate: Bool = false
+    
     @Persisted var startTime: Date = .now
     @Persisted var endTime:   Date = .now + Constants.HourTime
     
@@ -114,7 +110,8 @@ class RecallCalendarEvent: Object, Identifiable  {
     func getGoalPrgress(_ goal: RecallGoal) -> Double {
         getLengthInHours() * getGoalMultiplier(from: goal)
     }
-    
+
+//    MARK: Layout functions
 //    When calendar events are layed out on top of each other, this function detects that so they can resize their width appropriatley
 //    All of the below functions handle layering and overlaps
     private func getOverlapNodes() -> [RecallCalendarEvent] {

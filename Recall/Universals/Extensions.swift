@@ -72,3 +72,9 @@ extension Float {
         (self * pow(10, Float(digits))).rounded(.down) / ( pow(10, Float(digits)) )
     }
 }
+
+extension Double {
+    func round(to digits: Int) -> Double {
+        (self * pow(10, Double(digits))).rounded(.down) / ( pow(10, Double(digits)) )
+    }
+}
