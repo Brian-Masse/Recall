@@ -1,5 +1,5 @@
 //
-//  CalendarComponent.swift
+//  RecallCalendarEvent.swift
 //  Recall
 //
 //  Created by Brian Masse on 7/14/23.

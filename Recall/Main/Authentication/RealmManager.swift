@@ -32,7 +32,7 @@ class RealmManager: ObservableObject {
     @Published var hasProfile: Bool = false
     
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
-    @MainActor lazy var calendarComponentQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission {query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission {query in query.ownerID == RecallModel.ownerID }
     @MainActor lazy var categoryQuery: (QueryPermission<RecallCategory>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     @MainActor lazy var goalsQuery: (QueryPermission<RecallGoal>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     @MainActor lazy var goalsNodeQuery: (QueryPermission<GoalNode>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
@@ -179,7 +179,7 @@ class RealmManager: ObservableObject {
 
         await self.removeAllNonBaseSubscriptions()
         
-        let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarComponentQuery.baseQuery )
+        let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarEventQuery.baseQuery )
         let _:RecallCategory?       = await self.addGenericSubcriptions(name: QuerySubKey.category.rawValue, query: categoryQuery.baseQuery )
         let _:RecallGoal?           = await self.addGenericSubcriptions(name: QuerySubKey.goal.rawValue, query: goalsQuery.baseQuery )
         let _:GoalNode?             = await self.addGenericSubcriptions(name: QuerySubKey.goalNode.rawValue, query: goalsNodeQuery.baseQuery )

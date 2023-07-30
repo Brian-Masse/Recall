@@ -11,7 +11,7 @@ import RealmSwift
 
 struct CalendarPageView: View {
     
-    @ObservedResults( RecallCalendarEvent.self ) var components
+    @ObservedResults( RecallCalendarEvent.self ) var events
     
     @State var showingCreateEventView: Bool = false
     
@@ -27,7 +27,7 @@ struct CalendarPageView: View {
                 .padding(.bottom)
         
             GeometryReader { geo in
-                CalendarContainer(at: .now, with: Array(components), from: 0, to: 24, geo: geo)
+                CalendarContainer(at: .now, with: Array(events), from: 0, to: 24, geo: geo)
             }
     
             

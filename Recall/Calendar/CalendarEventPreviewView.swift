@@ -1,5 +1,5 @@
 //
-//  CalendarComponentView.swift
+//  CalendarEventPreviewView.swift
 //  Recall
 //
 //  Created by Brian Masse on 7/14/23.
@@ -46,7 +46,7 @@ struct CalendarEventPreviewView: View {
     @State var moving: Bool = false
     @State var resizing: Bool = false //used to block the movement gesture while resizing
     
-    @State var showingComponent: Bool = false
+    @State var showingEvent: Bool = false
     @State var showingEditingScreen: Bool = false
     
     
@@ -212,14 +212,14 @@ struct CalendarEventPreviewView: View {
                 }
                 .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
                 
-                .onTapGesture { showingComponent = true }
+                .onTapGesture { showingEvent = true }
                 .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
                 .coordinateSpace(name: blockCoordinateSpaceKey)
             
                 .onAppear { setup() }
                 .onChange(of: dragging) { newValue in prepareMovementSnapping() }
                 .shadow(radius: (resizing || moving) ? 10 : 0)
-                .sheet(isPresented: $showingComponent) {
+                .sheet(isPresented: $showingEvent) {
                     CalendarEventView(event: event, events: events)
                 }
                 .sheet(isPresented: $showingEditingScreen) {
