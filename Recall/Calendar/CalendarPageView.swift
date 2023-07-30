@@ -33,7 +33,17 @@ struct CalendarPageView: View {
             
         }
         .padding()
-        .sheet(isPresented: $showingCreateEventView) { CalendarEventCreationView() }
+        .sheet(isPresented: $showingCreateEventView) {
+            CalendarEventCreationView(editing: false,
+                                      event: nil,
+                                      title: "",
+                                      notes: "",
+                                      startTime: .now,
+                                      endTime: .now + Constants.HourTime,
+                                      day: .now,
+                                      category: RecallCategory(),
+                                      goalRatings: Dictionary())   
+        }
         .universalBackground()
         
     }

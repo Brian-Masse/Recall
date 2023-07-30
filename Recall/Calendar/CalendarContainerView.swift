@@ -161,7 +161,7 @@ struct CalendarContainer: View {
                         CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
                         
                         ForEach( filterEvents(), id: \.self ) { component in
-                            CalendarEventPreviewView(component: component,
+                            CalendarEventPreviewView(event: component,
                                                      spacing: spacing,
                                                      geo: geo,
                                                      startHour: startHour,

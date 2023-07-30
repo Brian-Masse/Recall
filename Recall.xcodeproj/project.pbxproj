@@ -41,6 +41,7 @@
 		C94F06792A6AF84200C99EA0 /* RenoMono.otf in Resources */ = {isa = PBXBuildFile; fileRef = C94F06782A6AF84200C99EA0 /* RenoMono.otf */; };
 		C94F067C2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */; };
 		C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F067D2A6B215400C99EA0 /* GoalView.swift */; };
+		C954AACF2A76B60000897BCE /* FlowGrid in Frameworks */ = {isa = PBXBuildFile; productRef = C954AACE2A76B60000897BCE /* FlowGrid */; };
 		C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */; };
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
 		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
@@ -120,6 +121,7 @@
 			files = (
 				C91BCF202A618601003C6DD6 /* RealmSwift in Frameworks */,
 				C91BCF1E2A618601003C6DD6 /* Realm in Frameworks */,
+				C954AACF2A76B60000897BCE /* FlowGrid in Frameworks */,
 				C94B1F142A6888C1007E8537 /* SymbolPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -354,6 +356,7 @@
 				C91BCF1D2A618601003C6DD6 /* Realm */,
 				C91BCF1F2A618601003C6DD6 /* RealmSwift */,
 				C94B1F132A6888C1007E8537 /* SymbolPicker */,
+				C954AACE2A76B60000897BCE /* FlowGrid */,
 			);
 			productName = Recall;
 			productReference = C91BCEEE2A618435003C6DD6 /* Recall.app */;
@@ -430,6 +433,7 @@
 			packageReferences = (
 				C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
+				C954AACD2A76B60000897BCE /* XCRemoteSwiftPackageReference "FlowGrid" */,
 			);
 			productRefGroup = C91BCEEF2A618435003C6DD6 /* Products */;
 			projectDirPath = "";
@@ -877,6 +881,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		C954AACD2A76B60000897BCE /* XCRemoteSwiftPackageReference "FlowGrid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rdev/FlowGrid";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -894,6 +906,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
 			productName = SymbolPicker;
+		};
+		C954AACE2A76B60000897BCE /* FlowGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C954AACD2A76B60000897BCE /* XCRemoteSwiftPackageReference "FlowGrid" */;
+			productName = FlowGrid;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

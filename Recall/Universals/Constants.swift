@@ -44,6 +44,7 @@ class Constants {
     static let UILargeCornerRadius: CGFloat = 30
     static let UIFormSpacing      : CGFloat = 10
     static let UIFormPagePadding: CGFloat = 5
+    static let UIFormSliderTextFieldWidth: CGFloat = 60
     
     static let UICircularProgressWidth: CGFloat = 12
     

@@ -11,17 +11,6 @@ import RealmSwift
 
 struct GoalCreationView: View {
     
-    @ViewBuilder
-    private func makeTextField(title: String, binding: Binding<String>) -> some View {
-        VStack(alignment: .leading) {
-            UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
-            
-            TextField("", text: binding)
-                .secondaryOpaqueRectangularBackground()
-                .universalTextField()
-        }
-    }
-    
 //    TODO: These two should likley be one function, but for now I've seperated them into two for conveinience
     @ViewBuilder func makePickerOptions(label: String, selection: RecallGoal.GoalFrequence) -> some View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
@@ -95,8 +84,8 @@ struct GoalCreationView: View {
             
             ScrollView(.vertical) {
                 VStack {
-                    makeTextField(title: "What's the name of this goal?", binding: $label)
-                    makeTextField(title: "What's the purpose of this goal?", binding: $description)
+                    TextFieldWithPrompt(title: "What's the name of this goal?", binding: $label)
+                    TextFieldWithPrompt(title: "What's the purpose of this goal?", binding: $description)
                         .padding(.bottom)
                     
                     UniversalText("How frequently do you want to meet this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
@@ -106,18 +95,13 @@ struct GoalCreationView: View {
                         makePickerOptions(label: "Weekly", selection: .weekly)
                     }
                     
-                    UniversalText("How many hours do you want to spend on this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
                     
-                    HStack {
-                        Slider(value: $targetHours, in: 0...(frequence == .daily ? 12 : 50 ))
-                            .tint(Colors.tint)
-                        
-                        TextField("", text: hoursBinding)
-                            
-                            .universalTextField()
-                            .frame(width: 60)
-                        
-                    }.padding(.bottom)
+                    SliderWithPrompt(label: "How many hours do you want to spend on this goal?",
+                                     minValue: 0,
+                                     maxValue: (frequence == .daily ? 12 : 50 ),
+                                     binding: $targetHours,
+                                     strBinding: hoursBinding,
+                                     textFieldWidth: Constants.UIFormSliderTextFieldWidth)
                     
                     UniversalText("How would you like to prioritize this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
                     

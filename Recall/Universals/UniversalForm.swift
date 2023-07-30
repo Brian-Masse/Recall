@@ -186,3 +186,68 @@ struct BasicPicker<ListType:RandomAccessCollection, Content: View>: View where L
     }
 }
 
+//MARK: Styled Forms
+
+struct TextFieldWithPrompt: View {
+    
+    let title: String
+    let binding: Binding<String>
+    
+    var body: some View {
+        
+        VStack(alignment: .leading) {
+            UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+            
+            TextField("", text: binding)
+                .secondaryOpaqueRectangularBackground()
+                .universalTextField()
+        }
+    }
+}
+
+struct StyledSlider: View {
+    
+    let minValue: Float
+    let maxValue: Float
+    
+    let binding: Binding<Float>
+    let strBinding: Binding<String>
+    
+    let textFieldWidth: CGFloat
+    
+    var body: some View {
+        HStack {
+            Slider(value: binding, in: minValue...maxValue )
+                .tint(Colors.tint)
+            
+            TextField("", text: strBinding)
+                .secondaryOpaqueRectangularBackground()
+                .universalTextField()
+                .frame(width: textFieldWidth)
+        }
+    }
+    
+}
+
+struct SliderWithPrompt: View {
+    
+    let label: String
+    
+    let minValue: Float
+    let maxValue: Float
+    
+    let binding: Binding<Float>
+    let strBinding: Binding<String>
+    
+    let textFieldWidth: CGFloat
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            
+            UniversalText(label, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+            
+            StyledSlider(minValue: minValue, maxValue: maxValue, binding: binding, strBinding: strBinding, textFieldWidth: textFieldWidth)
+        }
+    }
+}
+

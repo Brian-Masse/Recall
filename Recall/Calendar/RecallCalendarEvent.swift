@@ -26,11 +26,12 @@ class RecallCalendarEvent: Object, Identifiable  {
     
 //    MARK: Main
     @MainActor
-    convenience init(ownerID: String, title: String, startTime: Date, endTime: Date, categoryID: ObjectId, goalRatings: Dictionary<String, String>) {
+    convenience init(ownerID: String, title: String, notes: String, startTime: Date, endTime: Date, categoryID: ObjectId, goalRatings: Dictionary<String, String>) {
         self.init()
         self.ownerID = ownerID
         
         self.title = title
+        self.notes = notes
         self.startTime = startTime
         self.endTime = endTime
         
@@ -44,12 +45,16 @@ class RecallCalendarEvent: Object, Identifiable  {
         ownerID + title + startTime.formatted() + endTime.formatted()
     }
     
-    func update( title: String, startDate: Date, endDate: Date ) {
+    @MainActor
+    func update( title: String, notes: String, startDate: Date, endDate: Date, tagID: ObjectId, goalRatings: Dictionary<String, String> ) {
         RealmManager.updateObject(self) { thawed in
             thawed.title = title
-            
+            thawed.notes = notes
             thawed.startTime = startDate
             thawed.endTime = endDate
+            
+            if let retrievedTag = RecallCategory.getCategoryObject(from: tagID) { thawed.category = retrievedTag }
+            thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
         }
         
         checkUpdateEarliestEvent()

@@ -56,8 +56,26 @@ extension Date {
         Calendar.current.isDate(self, equalTo: secondDate, toGranularity: component)
     }
     
+    func dateBySetting(hour: Double) -> Date {
+        let intHour = Int(hour)
+        let minutes = (hour - Double(intHour)) * Constants.MinuteTime
+        
+        return Calendar.current.date(bySettingHour: intHour, minute: Int(minutes), second: 0, of: self) ?? self
+    }
+    
     func day() -> Int {
         Calendar.current.component(.day, from: self)
+    }
+    
+    func round(to rounding: TimeRounding) -> Date {
+        let comps = Calendar.current.dateComponents([.hour, .minute], from: self)
+        
+        let normalizedMinutes = Double(comps.minute ?? 0) / Constants.MinuteTime
+        let roundedMinutes = (normalizedMinutes * Double(rounding.rawValue)).rounded(.down) / Double(rounding.rawValue) * Constants.MinuteTime
+        let roundedHours =  roundedMinutes == 60 ? (comps.hour ?? 0) + 1 : (comps.hour ?? 0)
+        
+        return Calendar.current.date(bySettingHour: roundedHours, minute: Int(roundedMinutes), second: 0, of: self) ?? self
+        
     }
 }
 

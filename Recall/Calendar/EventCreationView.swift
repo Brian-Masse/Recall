@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import FlowGrid
 
 
 struct GoalRatingsView: View {
@@ -27,14 +28,42 @@ struct GoalRatingsView: View {
                 Text( goal.label )
                 Spacer()
                 TextField("Rating", text: createBinding(forKey: goal.getEncryptionKey() ))
-//                    .keyboardType(.numberPad)
-                
+                    .keyboardType(.numberPad)
             }
         }
     }
 }
 
+//MARK: Creation View
 struct CalendarEventCreationView: View {
+    
+    @ViewBuilder
+    private func makeGoalMultiplierSelector(goal: RecallGoal) -> some View {
+        HStack {
+            UniversalText(goal.label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+
+            Spacer()
+            
+            StyledSlider(minValue: 0, maxValue: 4,
+                         binding: makeGoalRatingMultiplier(forKey: goal.key),
+                         strBinding: makeGoalRatingMultiplierText(forKey: goal.key),
+                         textFieldWidth: 50)
+                .frame(width: 150)
+
+            Image(systemName: "checkmark")
+                .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 == 0 ) { view in view.opaqueRectangularBackground() }
+                .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 != 0 ) { view in view.tintRectangularBackground() }
+            
+                .onTapGesture {
+                    let rating = Int(goalRatings[goal.key] ?? "0") ?? 0
+                    if rating != 0 { goalRatings[goal.key] = "0" }
+                    else { goalRatings[goal.key] = "1" }
+                }
+
+        }
+        .secondaryOpaqueRectangularBackground()
+    }
+    
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -45,15 +74,21 @@ struct CalendarEventCreationView: View {
     @State var alertTitle: String = ""
     @State var alertMessage: String = ""
     
-    @State var title: String = ""
+    let editing: Bool
+    let event: RecallCalendarEvent?
     
-    @State var day: Date = .now
-    @State var startTime: Date = .now
-    @State var endTime: Date = .now + Constants.HourTime
+    @State var title: String
+    @State var notes: String
+    @State var startTime: Date
+    @State var endTime: Date
+    @State var day: Date
     
-    @State var category: RecallCategory = RecallCategory()
-    @State var goalRatings: Dictionary<String, String> = Dictionary()
+    @State var category: RecallCategory
+    @State var goalRatings: Dictionary<String, String>
+
+    @State var showingAllGoals: Bool = false
     
+//    MARK: Helper Functions
     
 //    Makes sure that the start and end times are specifed for the correct day
 //    If the end time bleeds into the next day, this handles that
@@ -64,49 +99,144 @@ struct CalendarEventCreationView: View {
         let endComps = Calendar.current.dateComponents([.hour, .minute, .second], from: endTime)
         
         startTime = Calendar.current.date(bySettingHour: startComps.hour!, minute: startComps.minute!, second: startComps.second!, of: day)!
-        
         endTime = Calendar.current.date(bySettingHour: endComps.hour!, minute: endComps.minute!, second: endComps.second!, of: day + ( requestingNewDay ? Constants.DayTime : 0  ) )!
     }
     
-    var body: some View {
-    
-        VStack {
-            Form {
-                
-                Section("Basic Info") {
-                    
-                    TextField("Event Name", text: $title)
-                    
-                    DatePicker("Day", selection: $day, displayedComponents: .date)
-                    DatePicker("Start Time", selection: $startTime, displayedComponents: .hourAndMinute)
-                    DatePicker("End Time", selection: $endTime, displayedComponents: .hourAndMinute)
-                    
-                    BasicPicker(title: "Select Category",
-                                noSeletion: "No Selection",
-                                sources: Array(categories),
-                                selection: $category) { category in Text(category.label) }
-                }
-                
-                Section( "Productivity" ) {
-                    GoalRatingsView(goalRatings: $goalRatings, goals: Array( goals ))
-                }
-            }
-            
-            Spacer()
-            
-            RoundedButton(label: "Create Event", icon: "calendar.badge.plus") {
-                setDay()
-                
-                let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
-                                                title: title,
-                                                startTime: startTime,
-                                                endTime: endTime,
-                                                categoryID: category._id,
-                                                goalRatings: goalRatings)
-                RealmManager.addObject(event)
-                presentationMode.wrappedValue.dismiss()
-            }
+    private func submit() {
+        setDay()
+        
+        if !editing {
+            let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
+                                            title: title,
+                                            notes: notes,
+                                            startTime: startTime,
+                                            endTime: endTime,
+                                            categoryID: category._id,
+                                            goalRatings: goalRatings)
+            RealmManager.addObject(event)
+        } else {
+            event!.update(title: title,
+                          notes: notes,
+                          startDate: startTime,
+                          endDate: endTime,
+                          tagID: category._id,
+                          goalRatings: goalRatings)
         }
+        presentationMode.wrappedValue.dismiss()
+    }
+    
+//    MARK: Bindings
+    private var startTimeBinding: Binding<Float> {
+        Binding { Float(startTime.getHoursFromStartOfDay().round(to: 2)) }
+        set: { newValue, _ in
+            startTime = startTime.dateBySetting(hour: Double(newValue)).round(to: .halfHour)
+        }
+    }
+    
+    private var startTimeLabel: Binding<String> {
+        Binding { startTime.formatted(date: .omitted, time: .shortened) }
+        set: { newValue, _ in }
+    }
+    
+    private var endTimeBinding: Binding<Float> {
+        Binding { Float(endTime.getHoursFromStartOfDay().round(to: 2)) }
+        set: { newValue, _ in
+            endTime = endTime.dateBySetting(hour: Double(newValue)).round(to: .halfHour)
+        }
+    }
+    
+    private var endTimeLabel: Binding<String> {
+        Binding { endTime.formatted(date: .omitted, time: .shortened) }
+        set: { newValue, _ in }
+    }
+    
+    private func makeGoalRatingMultiplier(forKey key: String) -> Binding<Float> {
+        Binding { Float(goalRatings[ key ] ?? "0") ?? 0 }
+        set: { newValue, _ in goalRatings[key] = "\(Int(newValue))" }
+    }
+    
+    private func makeGoalRatingMultiplierText(forKey key: String) -> Binding<String> {
+        Binding { goalRatings[ key ] ?? "0" }
+        set: { newValue, _ in goalRatings[key] = newValue }
+    }
+
+//    MARK: Body
+    var body: some View {
+        VStack(alignment: .leading) {
+            
+            UniversalText(editing ? "Edit Event" : "Create Event", size: Constants.UITitleTextSize, font: Constants.titleFont)
+                .foregroundColor(.black)
+            
+            ZStack(alignment: .bottom) {
+                ScrollView(.vertical) {
+                    VStack(alignment: .leading) {
+                        
+                        TextFieldWithPrompt(title: "What is the name of this event?", binding: $title)
+                        TextFieldWithPrompt(title: "Leave an optional note", binding: $notes)
+                            .padding(.bottom)
+                        
+                        SliderWithPrompt(label: "When did this event start?",
+                                         minValue: 0,
+                                         maxValue: 23.5,
+                                         binding: startTimeBinding,
+                                         strBinding: startTimeLabel,
+                                         textFieldWidth: 120)
+                        
+                        SliderWithPrompt(label: "When did this event end?",
+                                         minValue: 0,
+                                         maxValue: 23.5,
+                                         binding: endTimeBinding,
+                                         strBinding: endTimeLabel,
+                                         textFieldWidth: 120)
+                        .padding(.bottom)
+                        
+                        UniversalText("Select a tag", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+                        
+                        WrappedHStack(collection: Array( categories )) { tag in
+                            HStack {
+                                Image(systemName: "tag")
+                                UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                            }
+                            .onTapGesture { category = tag }
+                            .if(category.label == tag.label) { view in view.tintRectangularBackground()  }
+                            .if(category.label != tag.label) { view in view.secondaryOpaqueRectangularBackground() }
+                        }
+                        .padding(.bottom)
+                        
+                        UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+                        
+                        if category.goalRatings.count > 0 {
+                            UniversalText("From Tag", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                            ForEach( Array(goals), id: \.key ) { goal in
+                                if category.goalRatings.contains(where: { node in node.key == goal.key }) {
+                                    makeGoalMultiplierSelector(goal: goal)
+                                }
+                            }
+                        }
+                        
+                        HStack {
+                            UniversalText("All Goals", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                            Spacer()
+                            LargeRoundedButton("", icon: showingAllGoals ? "arrow.up" : "arrow.down") { showingAllGoals.toggle() }
+                        }.padding(.top)
+                        
+                        VStack {
+                            if showingAllGoals {
+                                ForEach( Array(goals), id: \.key ) { goal in
+                                    makeGoalMultiplierSelector(goal: goal)
+                                }
+                            }
+                        }.padding(.bottom, 100)
+                    }
+                }
+                
+                LargeRoundedButton("done", icon: "arrow.down") { submit() }
+            }
+            .opaqueRectangularBackground()
+        }
+        .padding(Constants.UIFormPagePadding)
+        .background(Colors.tint)
+        
         .onChange(of: category) { newValue in
             goalRatings = RecallCalendarEvent.translateGoalRatingList(newValue.goalRatings)
         }

@@ -9,32 +9,33 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
+enum TimeRounding: Int {
+    case hour = 1
+    case halfHour = 2
+    case quarter = 4
+}
+
+
 //Should only be placed ontop of a caldndar container
 struct CalendarEventPreviewView: View {
     
     private let blockCoordinateSpaceKey: String = "blockCOordinateSpace"
     private let holdDuration: Double = 0.1
-    
-    private enum TimeRounding: Int {
-        case hour = 1
-        case halfHour = 2
-        case querter = 4
-    }
-    
+
     private enum ResizeDirection: Int {
         case up = 1
         case down = -1
     }
     
     @Environment(\.colorScheme) var colorScheme
-    @ObservedRealmObject var component: RecallCalendarEvent
+    @ObservedRealmObject var event: RecallCalendarEvent
     
     let spacing: CGFloat
     let geo: GeometryProxy
     let startHour: Int
     let events: [RecallCalendarEvent]
     
-    var overlapData: RecallCalendarEvent.OverlapData { component.getOverlapData(in: geo.size.width - 20, from: events) }
+    var overlapData: RecallCalendarEvent.OverlapData { event.getOverlapData(in: geo.size.width - 20, from: events) }
     
     @State var startDate: Date = .now
     @State var endDate: Date = .now
@@ -46,7 +47,7 @@ struct CalendarEventPreviewView: View {
     @State var resizing: Bool = false //used to block the movement gesture while resizing
     
     @State var showingComponent: Bool = false
-    @State var showingEditingView: Bool = false
+    @State var showingEditingScreen: Bool = false
     
     
     
@@ -97,7 +98,7 @@ struct CalendarEventPreviewView: View {
                 if dragging && !resizing {
                     dragging = false
                     moving = false
-                    component.updateDate(startDate: roundedStartDate, endDate: roundedStartDate + ( length * Constants.HourTime ) )
+                    event.updateDate(startDate: roundedStartDate, endDate: roundedStartDate + ( length * Constants.HourTime ) )
                 }
             }
     }
@@ -121,8 +122,8 @@ struct CalendarEventPreviewView: View {
             .onEnded { dragGesture in
                 dragging = false
                 resizing = false
-                if direction == .up { component.updateDate(startDate: roundedStartDate)
-                } else { component.updateDate(endDate: roundedStartDate + length * Constants.HourTime ) }
+                if direction == .up { event.updateDate(startDate: roundedStartDate)
+                } else { event.updateDate(endDate: roundedStartDate + length * Constants.HourTime ) }
             }
     }
     
@@ -156,11 +157,11 @@ struct CalendarEventPreviewView: View {
     }
     
     private func setup() {
-        startDate = component.startTime
-        endDate = component.endTime
+        startDate = event.startTime
+        endDate = event.endTime
         
-        let startTime = component.startTime.getHoursFromStartOfDay()
-        let endTime = component.endTime.getHoursFromStartOfDay()
+        let startTime = event.startTime.getHoursFromStartOfDay()
+        let endTime = event.endTime.getHoursFromStartOfDay()
         length = endTime - startTime
     }
     
@@ -196,7 +197,7 @@ struct CalendarEventPreviewView: View {
                     .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: roundedStartDate))
             }
         
-            CalendarEventPreviewContentView(event: component, width: getWidth(), height: length)
+            CalendarEventPreviewContentView(event: event, width: getWidth(), height: length)
                 .frame(width: getWidth(), height: getHeight())
                 .overlay(VStack {
                     makeLengthHandle(.up)
@@ -206,8 +207,8 @@ struct CalendarEventPreviewView: View {
                 .contextMenu {
                     Button { beginMoving()  }  label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
                     Button {beginResizing() } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
-                    Button {showingEditingView = true } label: { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
-                    Button(role: .destructive) { component.delete() } label: { Label("delete", systemImage: "trash") }
+                    Button {showingEditingScreen = true } label: { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
+                    Button(role: .destructive) { event.delete() } label: { Label("delete", systemImage: "trash") }
                 }
                 .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
                 
@@ -219,7 +220,19 @@ struct CalendarEventPreviewView: View {
                 .onChange(of: dragging) { newValue in prepareMovementSnapping() }
                 .shadow(radius: (resizing || moving) ? 10 : 0)
                 .sheet(isPresented: $showingComponent) {
-                    CalendarEventView(event: component, events: events)
+                    CalendarEventView(event: event, events: events)
+                }
+                .sheet(isPresented: $showingEditingScreen) {
+                    CalendarEventCreationView(editing: true,
+                                              event: event,
+                                              title: event.title,
+                                              notes: event.notes,
+                                              startTime: event.startTime,
+                                              endTime: event.endTime,
+                                              day: event.startTime,
+                                              category: event.category ?? RecallCategory(),
+                                              goalRatings: RecallCalendarEvent.translateGoalRatingList(event.goalRatings) )
+                    
                 }
         }
         
