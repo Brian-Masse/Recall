@@ -135,18 +135,19 @@ struct CalendarContainer: View {
     
     let background: Bool
     
-    init( with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, background: Bool = false ) {
+    init( at currentDay: Date, with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, background: Bool = false ) {
         self.events = events
         self.startHour = startHour
         self.endHour = endHour
         self.geo = geo
         self.scale = scale
         self.background = background
+        self._currentDay = State(initialValue: currentDay)
     }
     
     private var height: CGFloat { geo.size.height * scale }
     @State var dragging: Bool = false
-    @State var currentDay: Date = .now
+    @State var currentDay: Date
     
     var body: some View {
         VStack {

@@ -27,7 +27,7 @@ struct CalendarPageView: View {
                 .padding(.bottom)
         
             GeometryReader { geo in
-                CalendarContainer(with: Array(components), from: 0, to: 24, geo: geo)
+                CalendarContainer(at: .now, with: Array(components), from: 0, to: 24, geo: geo)
             }
     
             

@@ -163,10 +163,11 @@ struct LargeRoundedButton: View {
     let action: () -> Void
     
     let wide: Bool
+    let color: Color?
     
     @State var tempCompletion: Bool = false
     
-    init( _ label: String, to completedLabel: String = "", icon: String, to completedIcon: String = "", wide: Bool = false, completed: @escaping () -> Bool = {false}, action: @escaping () -> Void ) {
+    init( _ label: String, to completedLabel: String = "", icon: String, to completedIcon: String = "", wide: Bool = false, color: Color? = nil, completed: @escaping () -> Bool = {false}, action: @escaping () -> Void ) {
         self.label = label
         self.completedLabel = completedLabel
         self.icon = icon
@@ -174,6 +175,7 @@ struct LargeRoundedButton: View {
         self.completed = completed
         self.action = action
         self.wide = wide
+        self.color = color
     }
     
     var body: some View {
@@ -193,7 +195,10 @@ struct LargeRoundedButton: View {
             }
             if wide { Spacer() }
         }
-        .accentRectangularBackground()
+        .padding(25)
+        .foregroundColor(.black)
+        .background( color == nil ? Colors.tint : color )
+        .cornerRadius(Constants.UIDefaultCornerRadius)
         .animation(.default, value: completed() )
         .onTapGesture { action() }
     }

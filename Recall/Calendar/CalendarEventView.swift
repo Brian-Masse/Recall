@@ -75,7 +75,7 @@ struct CalendarEventView: View {
                 HStack {
                     UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, true ).padding(.bottom, 3)
                     Spacer()
-                    LargeRoundedButton("", icon: "arrow.down") { presentationMode.wrappedValue.dismiss() }
+                    LargeRoundedButton("", icon: "arrow.down", color: event.getColor()) { presentationMode.wrappedValue.dismiss() }
                 }
                 UniversalText( fullDate, size: Constants.UIDefaultTextSize, font: Constants.mainFont ).padding(.bottom, 2)
                 UniversalText( times, size: Constants.UIDefaultTextSize, font: Constants.mainFont ).padding(.bottom, 2)
@@ -89,25 +89,24 @@ struct CalendarEventView: View {
                 UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
                 ScrollView(.horizontal) {
                     HStack {
-                        LargeRoundedButton("edit", icon: "arrow.up.forward")                { showingEditingScreen = true }
-                        LargeRoundedButton("delete", icon: "arrow.up.forward")              { event.delete() }
-                        LargeRoundedButton("make template", icon: "arrow.up.forward")       {  }
+                        LargeRoundedButton("edit", icon: "arrow.up.forward", color: event.getColor())                { showingEditingScreen = true }
+                        LargeRoundedButton("delete", icon: "arrow.up.forward", color: event.getColor())              { event.delete() }
+                        LargeRoundedButton("make template", icon: "arrow.up.forward", color: event.getColor())       {  }
                     }
                 }
                 .opaqueRectangularBackground()
                 .padding(.bottom)
                 
-                
-                let startHour = max(event.startTime.getHoursFromStartOfDay() - 1, 0)
+                let startHour = event.startTime.getHoursFromStartOfDay()
                 let endHour = min(startHour + event.getLengthInHours() + 1, 24)
                 
                 GeometryReader { geo in
-                    CalendarContainer(with: [event], from: Int(startHour), to: Int(endHour), geo: geo, scale: 0.75, background: true)
+                    CalendarContainer(at: event.startTime, with: [event], from: Int(startHour), to: Int(endHour), geo: geo, scale: 0.75, background: true)
                 }
             }
         }
         .padding(7)
         .sheet(isPresented: $showingEditingScreen) { CalendarEventCreationView() }
-        .universalColoredBackground(Colors.tint)
+        .universalColoredBackground(event.getColor())
     }
 }
