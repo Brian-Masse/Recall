@@ -18,7 +18,6 @@ struct CalendarContainer: View {
             VStack {
                 HStack(alignment: .top) {
                     UniversalText( label, size: Constants.UISmallTextSize, lighter: true  )
-                        .foregroundColor(color)
                     
                     Rectangle()
                         .frame(height: 1)
@@ -45,7 +44,7 @@ struct CalendarContainer: View {
         var body: some View {
             ZStack(alignment: .top) {
                 ForEach(0..<Int(hoursToDisplay), id: \.self) { hr in
-                    makeTimeMarker(hour: CGFloat(hr), label: makeHourLabel(from: hr).uppercased(), color: .gray)
+                    makeTimeMarker(hour: CGFloat(hr), label: makeHourLabel(from: hr).uppercased(), color: .gray.opacity(0.4))
                 }
                 
                 makeTimeMarker(hour: CGFloat(Date.now.getHoursFromStartOfDay()), label: "", color: .red)
@@ -151,7 +150,7 @@ struct CalendarContainer: View {
                             .padding(.leading, 40)
                         }
                         .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
-                        .highPriorityGesture(makeZoomGesture(geo: geo))
+                        .highPriorityGesture(makeZoomGesture(geo: geo), including: dragging ? .subviews : .all)
                         .frame(height: height)
                     }
                     .scrollDisabled(dragging)

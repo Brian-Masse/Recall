@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import SwiftUI
 
 class RecallCalendarEvent: Object, Identifiable  {
     
@@ -21,7 +22,7 @@ class RecallCalendarEvent: Object, Identifiable  {
     @Persisted var endTime:   Date = .now + Constants.HourTime
     
     @Persisted var category: RecallCategory? = nil
-    @Persisted var goalRatings: List< GoalNode> = List()
+    @Persisted var goalRatings: RealmSwift.List< GoalNode> = List()
     
 //    MARK: Main
     @MainActor
@@ -64,8 +65,8 @@ class RecallCalendarEvent: Object, Identifiable  {
 //    MARK: Convenience Functions
     
     @MainActor
-    static func translateGoalRatingDictionary(_ dictionary: Dictionary<String, String>) -> List<GoalNode> {
-        let list: List<GoalNode> = List()
+    static func translateGoalRatingDictionary(_ dictionary: Dictionary<String, String>) -> RealmSwift.List<GoalNode> {
+        let list: RealmSwift.List<GoalNode> = List()
         list.append(objectsIn: dictionary.map { (key: String, data: String) in
             GoalNode(ownerID: RecallModel.ownerID, key: key, data: data)
         })
@@ -73,7 +74,7 @@ class RecallCalendarEvent: Object, Identifiable  {
     }
     
     @MainActor
-    static func translateGoalRatingList( _ list: List<GoalNode> ) -> Dictionary<String, String> {
+    static func translateGoalRatingList( _ list: RealmSwift.List<GoalNode> ) -> Dictionary<String, String> {
         var dic = Dictionary<String, String>()
         for node in list { dic[node.key] = node.data }
         return dic
@@ -82,6 +83,10 @@ class RecallCalendarEvent: Object, Identifiable  {
 //    This can later be modified to ensure only a select number of events are pulled from the server onto the device
     static func getEvents(where query: ( (RecallCalendarEvent) -> Bool )? = nil) -> [RecallCalendarEvent] {
         RealmManager.retrieveObjects(where: query)
+    }
+    
+    func getColor() -> Color {
+        category?.getColor() ?? Colors.tint
     }
     
     

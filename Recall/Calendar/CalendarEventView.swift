@@ -164,16 +164,48 @@ struct CalendarEventPreviewView: View {
 //    MARK: Body
     @ViewBuilder
     private func makeLengthHandle(_ direction: ResizeDirection) -> some View {
-        Rectangle()
-            .foregroundColor(.blue)
-            .onTapGesture { }
-            .simultaneousGesture(resizeGesture( direction ))
-            .frame(minHeight: 10, maxHeight: 20)
+        if resizing {
+            Rectangle()
+                .foregroundColor(.white.opacity(0.01))
+                .onTapGesture { }
+                .simultaneousGesture(resizeGesture( direction ))
+                .frame(minHeight: 10, maxHeight: 20)
+                .overlay(
+                    Image(systemName: direction == .up ? "chevron.up" : "chevron.down")
+                        .padding()
+                        .padding(.horizontal)
+                        .rectangularBackgorund()
+                        .offset(y: direction == .up ? 20 : -20)
+                        .onTapGesture { }
+                        .simultaneousGesture(resizeGesture( direction ))
+                )
+        }
+    }
+    
+    @ViewBuilder
+    private func makeMetadataTag(label: String, icon: String) -> some View {
+        HStack {
+            if icon != "" { ResizeableIcon(icon: icon, size: Constants.UIDefaultTextSize) }
+            if label != "" { UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.titleFont) }
+        }
+        .foregroundColor(.black)
+    }
+    
+    @ViewBuilder
+    private func makeMetadata(horiztonal: Bool) -> some View {
+        Group {
+            let timeString = "\( component.startTime.formatted( .dateTime.hour() ) ) - \( component.endTime.formatted( .dateTime.hour() ) )"
+            
+            makeMetadataTag(label: "\(component.category?.label ?? "no tag")", icon: "tag")
+            if horiztonal { Spacer() }
+            makeMetadataTag(label: timeString, icon: "")
+            if horiztonal { Spacer() }
+            makeMetadataTag(label: "", icon: "doc.plaintext")
+        }
     }
     
     var body: some View {
         ZStack {
-            
             if moving || resizing {
                 Rectangle()
                     .foregroundColor(.red.opacity(0.5))
@@ -183,28 +215,36 @@ struct CalendarEventPreviewView: View {
             }
         
             VStack(alignment: .leading) {
-                
                 HStack {
-                    UniversalText( component.title, size: Constants.UISubHeaderTextSize, true )
+                    UniversalText( component.title, size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true)
                     Spacer()
-                    UniversalText( "\(component.category?.label ?? "?"), \(component.category?.productivity ?? 0)", size: Constants.UIDefaultTextSize )
+                    if getWidth() > 250 { ResizeableIcon(icon: "arrow.up", size: Constants.UIHeaderTextSize).padding(.trailing, 5) }
                 }
+                .padding(.horizontal)
+                .padding([.vertical], 5)
                 
                 Spacer()
-
-                UniversalText( startDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
-                Spacer()
-                UniversalText( endDate.formatted(date: .omitted, time: .complete), size: Constants.UIDefaultTextSize )
-                
+            
+                Group {
+                    if length > 2 {
+                        if getWidth() > 250 {
+                            HStack { makeMetadata(horiztonal: true) }
+                        } else {
+                            VStack(alignment: .leading) { makeMetadata(horiztonal: false) }
+                        }
+                    }
+                    
+                }.padding([.horizontal, .bottom])
+            
             }
-            .padding()
+            .foregroundColor(.black)
             .frame(width: getWidth(), height: getHeight())
             .overlay(VStack {
                 makeLengthHandle(.up)
                 Spacer()
                 makeLengthHandle(.down)
             })
-            .background( component.category?.getColor() ?? .white )
+            .background(component.getColor())
             .cornerRadius(Constants.UIDefaultCornerRadius)
             .contextMenu {
                 Button { beginMoving()  }  label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
@@ -289,7 +329,7 @@ struct CalendarEventView: View {
                 
                 VStack(alignment: .leading) {
                 
-                    UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, true ).padding(.bottom, 3)
+                    UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, true ).padding(.bottom, 3)
                     UniversalText( fullDate, size: Constants.UIDefaultTextSize, font: Constants.mainFont ).padding(.bottom, 2)
                     UniversalText( times, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                     

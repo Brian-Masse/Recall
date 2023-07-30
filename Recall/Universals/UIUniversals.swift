@@ -27,14 +27,16 @@ struct UniversalText: View {
     let lighter: Bool
     let fixed: Bool
     let font: String
+    let scale: Bool
     
-    init(_ text: String, size: CGFloat, font: ProvidedFont = .helvetica, wrap: Bool = true, lighter: Bool = false, _ bold: Bool = false, fixed: Bool = false) {
+    init(_ text: String, size: CGFloat, font: ProvidedFont = .helvetica, wrap: Bool = true, lighter: Bool = false, _ bold: Bool = false, fixed: Bool = false, scale: Bool = false) {
         self.text = text
         self.size = size
         self.bold = bold
         self.wrap = wrap
         self.lighter = lighter
         self.fixed = fixed
+        self.scale = scale
         self.font = font.rawValue
     }
     
@@ -42,9 +44,8 @@ struct UniversalText: View {
         
         Text(text)
             .dynamicTypeSize( ...DynamicTypeSize.accessibility1 )
-    
-            .lineSpacing(5)
-            .minimumScaleFactor(wrap ? 1 : 0.5)
+            .lineSpacing(0.5)
+            .minimumScaleFactor(scale ? 0.5 : 1)
             .lineLimit(wrap ? 10 : 1)
             .font( fixed ? Font.custom(font, fixedSize: size) : Font.custom(font, size: size) )
             .bold(bold)
