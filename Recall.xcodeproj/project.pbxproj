@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */; };
+		C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */; };
 		C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0062A67213F009F6C84 /* RecallCategory.swift */; };
 		C915A0092A67217A009F6C84 /* CalendarContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0082A67217A009F6C84 /* CalendarContainerView.swift */; };
 		C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A00A2A672586009F6C84 /* EventCreationView.swift */; };
@@ -30,7 +32,7 @@
 		C91BCF372A61DED5003C6DD6 /* UniversalButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF362A61DED5003C6DD6 /* UniversalButtons.swift */; };
 		C91BCF392A61E0EB003C6DD6 /* RecallCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF382A61E0EB003C6DD6 /* RecallCalendarEvent.swift */; };
 		C91BCF3C2A61E3EE003C6DD6 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */; };
-		C91BCF3E2A6209B9003C6DD6 /* CalendarEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF3D2A6209B9003C6DD6 /* CalendarEventView.swift */; };
+		C91BCF3E2A6209B9003C6DD6 /* CalendarEventPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF3D2A6209B9003C6DD6 /* CalendarEventPreviewView.swift */; };
 		C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F102A688855007E8537 /* UniversalForm.swift */; };
 		C94B1F142A6888C1007E8537 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = C94B1F132A6888C1007E8537 /* SymbolPicker */; };
 		C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F152A6891E9007E8537 /* CalendarPageView.swift */; };
@@ -66,6 +68,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventPreviewContentView.swift; sourceTree = "<group>"; };
+		C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventView.swift; sourceTree = "<group>"; };
 		C915A0062A67213F009F6C84 /* RecallCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCategory.swift; sourceTree = "<group>"; };
 		C915A0082A67217A009F6C84 /* CalendarContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarContainerView.swift; sourceTree = "<group>"; };
 		C915A00A2A672586009F6C84 /* EventCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCreationView.swift; sourceTree = "<group>"; };
@@ -91,7 +95,7 @@
 		C91BCF362A61DED5003C6DD6 /* UniversalButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalButtons.swift; sourceTree = "<group>"; };
 		C91BCF382A61E0EB003C6DD6 /* RecallCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCalendarEvent.swift; sourceTree = "<group>"; };
 		C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
-		C91BCF3D2A6209B9003C6DD6 /* CalendarEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventView.swift; sourceTree = "<group>"; };
+		C91BCF3D2A6209B9003C6DD6 /* CalendarEventPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventPreviewView.swift; sourceTree = "<group>"; };
 		C94B1F102A688855007E8537 /* UniversalForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalForm.swift; sourceTree = "<group>"; };
 		C94B1F152A6891E9007E8537 /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageView.swift; sourceTree = "<group>"; };
 		C94B1F172A68931F007E8537 /* GoalsPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsPageView.swift; sourceTree = "<group>"; };
@@ -137,6 +141,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C910FFBC2A75FD26007213EB /* CalendarEvent */ = {
+			isa = PBXGroup;
+			children = (
+				C91BCF3D2A6209B9003C6DD6 /* CalendarEventPreviewView.swift */,
+				C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */,
+				C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */,
+			);
+			name = CalendarEvent;
+			sourceTree = "<group>";
+		};
 		C91BCEE52A618434003C6DD6 = {
 			isa = PBXGroup;
 			children = (
@@ -249,8 +263,8 @@
 			children = (
 				C915A00A2A672586009F6C84 /* EventCreationView.swift */,
 				C94B1F152A6891E9007E8537 /* CalendarPageView.swift */,
-				C915A0082A67217A009F6C84 /* CalendarContainerView.swift */,
-				C91BCF3D2A6209B9003C6DD6 /* CalendarEventView.swift */,
+				C98E3B912A76037B0005F30F /* CalendarContainer */,
+				C910FFBC2A75FD26007213EB /* CalendarEvent */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -283,6 +297,14 @@
 				C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		C98E3B912A76037B0005F30F /* CalendarContainer */ = {
+			isa = PBXGroup;
+			children = (
+				C915A0082A67217A009F6C84 /* CalendarContainerView.swift */,
+			);
+			name = CalendarContainer;
 			sourceTree = "<group>";
 		};
 		C9D8C5052A69B656005ADA0B /* Charts */ = {
@@ -467,13 +489,15 @@
 				C9EA0EE52A6B48F200E36EF1 /* CategoriesPageView.swift in Sources */,
 				C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */,
 				C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */,
+				C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */,
 				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
 				C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */,
-				C91BCF3E2A6209B9003C6DD6 /* CalendarEventView.swift in Sources */,
+				C91BCF3E2A6209B9003C6DD6 /* CalendarEventPreviewView.swift in Sources */,
 				C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */,
 				C9EA0EE92A6B5E4600E36EF1 /* TagPreviewView.swift in Sources */,
 				C91BCF352A61DE65003C6DD6 /* ViewModifiers.swift in Sources */,
 				C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */,
+				C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */,
 				C915A0092A67217A009F6C84 /* CalendarContainerView.swift in Sources */,
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,

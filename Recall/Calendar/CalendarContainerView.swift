@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CalendarContainer: View {
     
-//   MARK: Calendar View
+//    MARK: CalendarView
     private struct CalendarView: View {
         
         @ViewBuilder
@@ -24,7 +24,7 @@ struct CalendarContainer: View {
                         .foregroundColor(color)
                 }
                 .id( Int(hour.rounded(.down)) )
-                .offset(y: CGFloat(hour) * spacing )
+                .offset(y: CGFloat(hour - CGFloat(startHour)) * spacing )
                 Spacer()
             }
         }
@@ -38,12 +38,14 @@ struct CalendarContainer: View {
         }
         
         let day: Date
-        let hoursToDisplay: CGFloat
         let spacing: CGFloat
+        
+        let startHour: Int
+        let endHour: Int
         
         var body: some View {
             ZStack(alignment: .top) {
-                ForEach(0..<Int(hoursToDisplay), id: \.self) { hr in
+                ForEach(startHour..<endHour, id: \.self) { hr in
                     makeTimeMarker(hour: CGFloat(hr), label: makeHourLabel(from: hr).uppercased(), color: .gray.opacity(0.4))
                 }
                 
@@ -51,6 +53,7 @@ struct CalendarContainer: View {
             }
         }
     }
+    
     
 //    MARK: Dates Preview
     struct DatesPreview: View {
@@ -60,7 +63,6 @@ struct CalendarContainer: View {
             UniversalText( "\(Calendar.current.component(.day, from: date))", size: Constants.UIDefaultTextSize)
                 .padding(7)
                 .onTapGesture { withAnimation { currentDay = date } }
-//                .frame(width: 30)
         }
         
         @Binding var currentDay: Date
@@ -110,7 +112,7 @@ struct CalendarContainer: View {
         MagnificationGesture()
             .onChanged { scaleValue in
                 dragging = true
-                height = min(max(geo.size.height, geo.size.height * 2 * scaleValue), geo.size.height * 4)
+//                height = min(max(geo.size.height, geo.size.height * 2 * scaleValue), geo.size.height * 4)
             }
             .onEnded { value in dragging = false }
     }
@@ -122,47 +124,64 @@ struct CalendarContainer: View {
     }
     
 
-//    MARK: Body    
+//    MARK: Body
+    
+    let geo: GeometryProxy
+    let scale: CGFloat
     let events: [RecallCalendarEvent]
     
+    let startHour: Int
+    let endHour: Int
+    
+    let background: Bool
+    
+    init( with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, background: Bool = false ) {
+        self.events = events
+        self.startHour = startHour
+        self.endHour = endHour
+        self.geo = geo
+        self.scale = scale
+        self.background = background
+    }
+    
+    private var height: CGFloat { geo.size.height * scale }
     @State var dragging: Bool = false
     @State var currentDay: Date = .now
-    @State var height: CGFloat = 0
     
     var body: some View {
-        GeometryReader { geo in
-            VStack {
+        VStack {
+        
+            let spacing = height / CGFloat( endHour - startHour )
             
-                let hoursToDisplay:CGFloat = 24
-                let spacing = height / hoursToDisplay
-                
-                DatesPreview(currentDay: $currentDay)
-                
-                ScrollViewReader { value in
-                    ScrollView {
-                        ZStack(alignment: .topLeading) {
-                            
-                            CalendarView(day: currentDay, hoursToDisplay: hoursToDisplay, spacing: spacing)
-                            
-                            ForEach( filterEvents(), id: \.self ) { component in
-                                CalendarEventPreviewView(component: component, spacing: spacing, geo: geo, events: events, dragging: $dragging)
-                            }
-                            .padding(.leading, 40)
-                        }
-                        .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
-                        .highPriorityGesture(makeZoomGesture(geo: geo), including: dragging ? .subviews : .all)
-                        .frame(height: height)
-                    }
-                    .scrollDisabled(dragging)
-                    .onAppear() {
-                        let id = Int(Date.now.getHoursFromStartOfDay().rounded(.down) )
-                        value.scrollTo( id, anchor: .center )
+            ScrollViewReader { value in
+                ScrollView {
+                    ZStack(alignment: .topLeading) {
                         
-                        height = geo.size.height * 2
+                        CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
+                        
+                        ForEach( filterEvents(), id: \.self ) { component in
+                            CalendarEventPreviewView(component: component,
+                                                     spacing: spacing,
+                                                     geo: geo,
+                                                     startHour: startHour,
+                                                     events: events,
+                                                     dragging: $dragging)
+                        }
+                        .padding(.leading, 40)
                     }
+                    .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
+                    .highPriorityGesture(makeZoomGesture(geo: geo), including: dragging ? .subviews : .all)
+                    .frame(height: height)
+                }
+                .scrollDisabled(dragging)
+                .onAppear() {
+                    let id = Int(Date.now.getHoursFromStartOfDay().rounded(.down) )
+                    value.scrollTo( id, anchor: .center )
+                }
+                .if(background) { view in
+                    view.opaqueRectangularBackground()
                 }
             }
-            .padding(7)
         }
     }
 }
