@@ -100,8 +100,12 @@ struct CalendarEventView: View {
                 let startHour = event.startTime.getHoursFromStartOfDay()
                 let endHour = min(startHour + event.getLengthInHours() + 1, 24)
                 
+                let currentDay = Binding { event.startTime
+                } set: { _, _ in }
+
+                
                 GeometryReader { geo in
-                    CalendarContainer(at: event.startTime, with: [event], from: Int(startHour), to: Int(endHour), geo: geo, scale: 0.75, background: true)
+                    CalendarContainer(at: currentDay, with: [event], from: Int(startHour), to: Int(endHour), geo: geo, scale: 0.75, background: true)
                 }
             }
         }

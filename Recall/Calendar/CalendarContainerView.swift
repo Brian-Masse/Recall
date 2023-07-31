@@ -145,26 +145,24 @@ struct CalendarContainer: View {
     
     let background: Bool
     
+    private var height: CGFloat { geo.size.height * scale }
     
-    @State var transitioning: Bool = false
+    @State var dragging: Bool = false
+    @Binding var currentDay: Date
+    @Binding var slideDirection: AnyTransition.SlideDirection
     
-    init( at currentDay: Date, with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, background: Bool = false ) {
+    @Namespace private var animation
+    
+    init( at currentDay: Binding<Date>, with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, swipeDirection: Binding<AnyTransition.SlideDirection> = Binding { .right } set: { _, _ in }, background: Bool = false ) {
         self.events = events
         self.startHour = startHour
         self.endHour = endHour
         self.geo = geo
         self.scale = scale
         self.background = background
-        self._currentDay = State(initialValue: currentDay)
+        self._currentDay = currentDay
+        self._slideDirection = swipeDirection
     }
-    
-    private var height: CGFloat { geo.size.height * scale }
-    @State var dragging: Bool = false
-    @State var currentDay: Date
-    
-    @State var slideDirection: AnyTransition.SlideDirection = .right
-    
-    @Namespace private var animation
     
     var body: some View {
         VStack {
