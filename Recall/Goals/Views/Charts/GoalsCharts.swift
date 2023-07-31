@@ -19,6 +19,7 @@ struct DataNode: Identifiable {
     let goal: String
 }
 
+//MARK: ActivityPerDay
 // This shows how many hours you spent doing something that contributed to a certain goal over time
 struct ActivityPerDay: View {
     
@@ -32,7 +33,7 @@ struct ActivityPerDay: View {
     
     private func getData() -> [DataNode] {
         events.filter { event in event.startTime > .now - timePeriod }.compactMap { event in
-            let count = event.getLengthInHours() * event.getGoalMultiplier(from: goal)
+            let count = event.getGoalPrgress(goal)
             return DataNode(date: event.startTime, count: count, category: "", goal: goal.label)
         }
     }
@@ -80,6 +81,7 @@ struct ActivityPerDay: View {
 }
 
 
+//MARK: TotalActivites
 struct TotalActivites: View {
     
     let title: String
@@ -94,7 +96,7 @@ struct TotalActivites: View {
         var dateIterator = goal.getStartDate()
         while dateIterator <= .now {
             let count = events.filter { event in event.startTime.matches(dateIterator, to: .day) }.reduce(0) { partialResult, event in
-                partialResult + (event.getLengthInHours() * event.getGoalMultiplier(from: goal))
+                partialResult + event.getGoalPrgress(goal)
             }
             nodes.append(DataNode(date: dateIterator, count: (nodes.last?.count ?? 0) + count, category: "", goal: goal.label))
             dateIterator += Constants.DayTime

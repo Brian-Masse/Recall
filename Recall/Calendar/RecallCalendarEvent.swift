@@ -111,14 +111,16 @@ class RecallCalendarEvent: Object, Identifiable  {
     }
     
 //    This checks to see if this event has a multiplier for a specifc goal (ie. coding should have 'productive')
-    func getGoalMultiplier(from goal: RecallGoal) -> Double {
+    private func getGoalMultiplier(from goal: RecallGoal) -> Double {
         let key = goal.getEncryptionKey()
         let data = self.goalRatings.first { node in node.key == key }?.data ?? "0"
         return Double(data) ?? 0
     }
     
     func getGoalPrgress(_ goal: RecallGoal) -> Double {
-        getLengthInHours() * getGoalMultiplier(from: goal)
+        if RecallGoal.GoalType.getRawType(from: goal.type) == .hourly { return getLengthInHours() * getGoalMultiplier(from: goal) }
+        else if goal.targetTag?.label ?? "" == self.category?.label ?? "-" { return 1 }
+        return 0
     }
 
 //    MARK: Layout functions

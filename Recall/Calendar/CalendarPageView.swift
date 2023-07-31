@@ -87,7 +87,7 @@ struct CalendarPageView: View {
                                       notes: "",
                                       startTime: .now,
                                       endTime: .now + Constants.HourTime,
-                                      day: .now,
+                                      day: currentDay,
                                       category: RecallCategory(),
                                       goalRatings: Dictionary())   
         }

@@ -106,7 +106,10 @@ class RecallGoal: Object, Identifiable {
         self.targetHours = targetHours
         self.priority = priority.rawValue
         self.type = type.rawValue
-        self.targetTag = targetTag
+                
+        if let id = targetTag?._id {
+            if let retrievedTag = RecallCategory.getCategoryObject(from: id) { self.targetTag = retrievedTag }
+        }
     }
     
     func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?) {
@@ -118,7 +121,10 @@ class RecallGoal: Object, Identifiable {
             thawed.targetHours = targetHours
             thawed.priority = priority.rawValue
             thawed.type = type.rawValue
-            thawed.targetTag = targetTag
+            
+            if let id = targetTag?._id {
+                if let retrievedTag = RecallCategory.getCategoryObject(from: id) { thawed.targetTag = retrievedTag }
+            }
         }
     }
     
@@ -147,13 +153,15 @@ class RecallGoal: Object, Identifiable {
     
     
 //    MARK: Data Aggregators
+    
     @MainActor
     func getProgressTowardsGoal(from events: [RecallCalendarEvent]) -> Int {
         
-//        let isSunday = Calendar.current.component(.weekday, from: .now) == 1
-//        let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: .now) ?? .now) - (isSunday ? 0 : 7 * Constants.DayTime)
+        let isSunday = Calendar.current.component(.weekday, from: .now) == 1
+        let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: .now) ?? .now) - (isSunday ? 0 : 7 * Constants.DayTime)
+        let startDate = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? lastSunday : .now
         
-        let filtered = events.filter { event in event.startTime > Date.now.resetToStartOfDay() }
+        let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() }
         return filtered.reduce(0) { partialResult, event in
             partialResult + Int( event.getGoalPrgress(self) )
         }

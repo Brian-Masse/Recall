@@ -53,6 +53,19 @@ struct CalendarEventPreviewView: View {
     
 //    MARK: Convenience Functions
     
+    @MainActor
+    private func duplicate() {
+        let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
+                                        title: event.title,
+                                        notes: event.notes,
+                                        startTime: event.startTime + Constants.HourTime,
+                                        endTime: event.endTime + Constants.HourTime,
+                                        categoryID: event.category!._id,
+                                        goalRatings: RecallCalendarEvent.translateGoalRatingList(event.goalRatings))
+        RealmManager.addObject(event)
+        
+    }
+    
     private func clampPosition(_ pos: CGFloat ) -> CGFloat {
         min( max( 0, pos ), (24 * spacing) - 1 )
     }
@@ -208,6 +221,7 @@ struct CalendarEventPreviewView: View {
                     Button { beginMoving()  }  label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
                     Button {beginResizing() } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
                     Button {showingEditingScreen = true } label: { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
+                    Button {duplicate() } label: { Label("duplicate", systemImage: "rectangle.on.rectangle") }
                     Button(role: .destructive) { event.delete() } label: { Label("delete", systemImage: "trash") }
                 }
                 .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
