@@ -107,15 +107,7 @@ struct GoalPreviewView: View {
             Button("delete") { goal.delete()  }
         }
         .fullScreenCover(isPresented: $showingGoalView) { GoalView(goal: goal, events: events) }
-        .sheet(isPresented: $showingEditingView) {
-            GoalCreationView(editing: true,
-                             goal: goal,
-                             label: goal.label,
-                             description: goal.goalDescription,
-                             frequence: RecallGoal.GoalFrequence.getRawType(from: goal.frequency),
-                             targetHours: Float(goal.targetHours),
-                             priority: RecallGoal.Priority.getRawType(from: goal.priority))
-        }
+        .sheet(isPresented: $showingEditingView) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
     }
     
 }

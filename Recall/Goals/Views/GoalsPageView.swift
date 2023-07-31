@@ -37,15 +37,6 @@ struct GoalsPageView: View {
         }
         .padding(7)
         .universalColoredBackground(Colors.tint)
-        .sheet(isPresented: $showingGoalCreationView) {
-            GoalCreationView(editing: false,
-                             goal: nil,
-                             label: "",
-                             description: "",
-                             frequence: .daily,
-                             targetHours: 0,
-                             priority: .medium)
-            
-        }
+        .sheet(isPresented: $showingGoalCreationView) { GoalCreationView.makeGoalCreationView(editing: false) }
     }
 }

@@ -58,6 +58,17 @@ class RecallGoal: Object, Identifiable {
         }
     }
     
+    enum GoalType: String, Identifiable, CaseIterable {
+        case hourly
+        case byTag
+        
+        var id: String { self.rawValue }
+        
+        static func getRawType(from type: String) -> GoalType {
+            GoalType(rawValue: type) ?? .hourly
+        }
+    }
+    
     enum Priority: String, Identifiable {
         case high
         case medium
@@ -77,11 +88,15 @@ class RecallGoal: Object, Identifiable {
     
     @Persisted var label: String = ""
     @Persisted var goalDescription: String = ""
+    
     @Persisted var frequency: Int = 1
     @Persisted var targetHours: Int = 0
-    @Persisted var priority: String = ""
     
-    convenience init( ownerID: String, label: String, description: String, frequency: Int, targetHours: Int, priority: Priority) {
+    @Persisted var priority: String = ""
+    @Persisted var type: String = ""
+    @Persisted var targetTag: RecallCategory? = nil
+    
+    convenience init( ownerID: String, label: String, description: String, frequency: Int, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?) {
         self.init()
         
         self.ownerID = ownerID
@@ -90,9 +105,11 @@ class RecallGoal: Object, Identifiable {
         self.frequency = frequency
         self.targetHours = targetHours
         self.priority = priority.rawValue
+        self.type = type.rawValue
+        self.targetTag = targetTag
     }
     
-    func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority) {
+    func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?) {
         
         RealmManager.updateObject(self) { thawed in
             thawed.label = label
@@ -100,6 +117,8 @@ class RecallGoal: Object, Identifiable {
             thawed.frequency = frequency.numericValue
             thawed.targetHours = targetHours
             thawed.priority = priority.rawValue
+            thawed.type = type.rawValue
+            thawed.targetTag = targetTag
         }
     }
     

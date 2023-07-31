@@ -126,16 +126,7 @@ struct GoalView: View {
         }
         .padding(7)
         .universalColoredBackground(Colors.tint)
-        .sheet(isPresented: $showingEditingScreen) {
-            GoalCreationView(editing: true,
-                             goal: goal,
-                             label: goal.label,
-                             description: goal.goalDescription,
-                             frequence: RecallGoal.GoalFrequence.getRawType(from: goal.frequency),
-                             targetHours: Float(goal.targetHours),
-                             priority: RecallGoal.Priority.getRawType(from: goal.priority))
-            
-        }
+        .sheet(isPresented: $showingEditingScreen) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
     }
     
 }
