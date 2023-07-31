@@ -37,15 +37,14 @@ struct GoalTags: View {
     let events: [RecallCalendarEvent]
     
     var body: some View {
-        HStack {
-            ForEach( goalRatings ) { node in
+        WrappedHStack(collection: goalRatings) { node in
+            VStack {
                 if Int(node.data) ?? 0 != 0 {
                     if let goal = RecallGoal.getGoalFromKey( node.key ) {
                         GoalTag(events: events, goal: goal, multiplier: Int(node.data)! )
                     }
                 }
             }
-            Spacer()
         }.padding(.leading)
     }
     

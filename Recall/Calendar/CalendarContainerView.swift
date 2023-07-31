@@ -101,10 +101,20 @@ struct CalendarContainer: View {
 //    This doesn't do anything right now, because the horizontal gestures are being taken up by the tabView,
 //    mayble Ill remove those later ?
     private var swipeGesture: some Gesture {
-        DragGesture()
+        DragGesture(minimumDistance: 30)
+            .onChanged{ dragValue in
+//                print("dragging")
+            }
             .onEnded { dragValue in
-                if dragValue.translation.width < 0 { currentDay += Constants.DayTime }
-                if dragValue.translation.width > 0 { currentDay -= Constants.DayTime }
+
+                if dragValue.translation.width < 0 { slideDirection = .right }
+                if dragValue.translation.width > 0 { slideDirection = .left }
+                
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    if dragValue.translation.width < 0 { currentDay += Constants.DayTime }
+                    if dragValue.translation.width > 0 { currentDay -= Constants.DayTime }
+                }
+                
             }
     }
     
@@ -135,6 +145,9 @@ struct CalendarContainer: View {
     
     let background: Bool
     
+    
+    @State var transitioning: Bool = false
+    
     init( at currentDay: Date, with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, background: Bool = false ) {
         self.events = events
         self.startHour = startHour
@@ -149,6 +162,10 @@ struct CalendarContainer: View {
     @State var dragging: Bool = false
     @State var currentDay: Date
     
+    @State var slideDirection: AnyTransition.SlideDirection = .right
+    
+    @Namespace private var animation
+    
     var body: some View {
         VStack {
         
@@ -160,18 +177,20 @@ struct CalendarContainer: View {
                         
                         CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
                         
-                        ForEach( filterEvents(), id: \.self ) { event in
-                            CalendarEventPreviewView(event: event,
-                                                     spacing: spacing,
-                                                     geo: geo,
-                                                     startHour: startHour,
-                                                     events: events,
-                                                     dragging: $dragging)
+                        Group {
+                            ForEach( filterEvents(), id: \.self ) { event in
+                                CalendarEventPreviewView(event: event,
+                                                         spacing: spacing,
+                                                         geo: geo,
+                                                         startHour: startHour,
+                                                         events: events,
+                                                         dragging: $dragging)
+                            }
+                            .padding(.leading, 40)
                         }
-                        .padding(.leading, 40)
+                        .if( slideDirection == .right ) { view in view.transition(AnyTransition.slideAwayTransition(.right)) }
+                        .if( slideDirection == .left ) { view in view.transition(AnyTransition.slideAwayTransition(.left)) }
                     }
-                    .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
-                    .highPriorityGesture(makeZoomGesture(geo: geo), including: dragging ? .subviews : .all)
                     .frame(height: height)
                 }
                 .scrollDisabled(dragging)
@@ -183,6 +202,8 @@ struct CalendarContainer: View {
                     view.opaqueRectangularBackground()
                 }
             }
+            .onTapGesture { }
+            .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
         }
     }
 }

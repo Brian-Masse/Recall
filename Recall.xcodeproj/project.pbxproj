@@ -42,6 +42,7 @@
 		C94F067C2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */; };
 		C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F067D2A6B215400C99EA0 /* GoalView.swift */; };
 		C954AACF2A76B60000897BCE /* FlowGrid in Frameworks */ = {isa = PBXBuildFile; productRef = C954AACE2A76B60000897BCE /* FlowGrid */; };
+		C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C954AAD02A76FA4E00897BCE /* Animations.swift */; };
 		C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */; };
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
 		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
@@ -105,6 +106,7 @@
 		C94F067A2A6AF90600C99EA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Syne-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		C94F067D2A6B215400C99EA0 /* GoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalView.swift; sourceTree = "<group>"; };
+		C954AAD02A76FA4E00897BCE /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
 		C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCharts.swift; sourceTree = "<group>"; };
 		C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIndex.swift; sourceTree = "<group>"; };
 		C9E49D152A68AC820023EBC0 /* RecallGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoal.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 				C94B1F102A688855007E8537 /* UniversalForm.swift */,
 				C91BCF322A61DE55003C6DD6 /* Extensions.swift */,
 				C91BCF342A61DE65003C6DD6 /* ViewModifiers.swift */,
+				C954AAD02A76FA4E00897BCE /* Animations.swift */,
 				C91BCF362A61DED5003C6DD6 /* UniversalButtons.swift */,
 			);
 			path = Universals;
@@ -509,6 +512,7 @@
 				C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */,
 				C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */,
 				C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */,
+				C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */,
 				C91BCF312A61DDBA003C6DD6 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

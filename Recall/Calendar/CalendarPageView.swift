@@ -25,6 +25,12 @@ struct CalendarPageView: View {
             }
             UniversalText( Date.now.formatted(date: .abbreviated, time: .omitted), size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
                 .padding(.bottom)
+            
+            HStack {
+                
+                
+                
+            }
         
             GeometryReader { geo in
                 CalendarContainer(at: .now, with: Array(events), from: 0, to: 24, geo: geo)
