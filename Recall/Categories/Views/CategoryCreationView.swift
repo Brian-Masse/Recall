@@ -62,48 +62,52 @@ struct CategoryCreationView: View {
                 .foregroundColor(.black)
                 .padding(.bottom)
             
-            ScrollView(.vertical) {
-                VStack(alignment: .leading) {
-                    makeTextField(title: "What would you like to call this tag?", binding: $label)
-                        .padding(.bottom)
-                    
-                    UniversalText( "What Color is this tag?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-                    ScrollView(.horizontal) {
-                        HStack {
-                            Spacer()
-                            ForEach(Colors.colorOptions.indices, id: \.self) { i in
-                                ColorPickerOption(color: Colors.colorOptions[i], selectedColor: $color)
+            ZStack(alignment: .bottom) {
+                ScrollView(.vertical) {
+                    VStack(alignment: .leading) {
+                        makeTextField(title: "What would you like to call this tag?", binding: $label)
+                            .padding(.bottom)
+                        
+                        UniversalText( "What Color is this tag?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+                        ScrollView(.horizontal) {
+                            HStack {
+                                Spacer()
+                                ForEach(Colors.colorOptions.indices, id: \.self) { i in
+                                    ColorPickerOption(color: Colors.colorOptions[i], selectedColor: $color)
+                                }
+                                ColorPicker("", selection: $color)
+                                Spacer()
                             }
-                            ColorPicker("", selection: $color)
-                            Spacer()
                         }
-                    }
-                    .padding(.bottom)
-                    
-                    UniversalText( "What goals should this tag contribute to?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-                    ScrollView(.horizontal) {
-                        HStack {
-                            ForEach(goals) { goal in
-                                let key = goal.getEncryptionKey()
+                        .padding(.bottom)
+                        
+                        UniversalText( "What goals should this tag contribute to?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+                        WrappedHStack(collection: Array(goals)) { goal in
+                            let key = goal.getEncryptionKey()
                             
-                                HStack {
-                                    Image(systemName: "arrow.up.forward")
-                                    UniversalText(goal.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                                }
-                                .if(!hasGoalRating(at: key)) { view in view.secondaryOpaqueRectangularBackground() }
-                                .if(hasGoalRating(at: key)) { view in view.tintRectangularBackground() }
-                                .onTapGesture {
-                                    if goalRatings[key] == nil { goalRatings[key] = "1" }
-                                    else { goalRatings[key] = nil }
-                                }
-                                
+                            HStack {
+                                Image(systemName: "arrow.up.forward")
+                                UniversalText(goal.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                             }
-                        }.padding(5)
+                            .if(!hasGoalRating(at: key)) { view in view.secondaryOpaqueRectangularBackground() }
+                            .if(hasGoalRating(at: key)) { view in view.tintRectangularBackground() }
+                            .onTapGesture {
+                                if goalRatings[key] == nil { goalRatings[key] = "1" }
+                                else { goalRatings[key] = nil }
+                            }
+                        }.padding(.bottom)
+                        
+                        VStack(alignment: .leading) {
+                            UniversalText( "How much should this tag contribute to those goals?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+                            ForEach(goals, id: \.key) { goal in
+                                if Int(goalRatings[goal.key] ?? "0") ?? 0 != 0 {
+                                    GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: false)
+                                }
+                            }
+                        }
+                        .padding(.bottom, 100)
                     }
-                    .padding(.bottom)
                 }
-                
-                Spacer()
                 
                 LargeRoundedButton("Done", icon: "arrow.down") { submit() }
                 

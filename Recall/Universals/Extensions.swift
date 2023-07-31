@@ -75,7 +75,6 @@ extension Date {
         let roundedHours =  roundedMinutes == 60 ? (comps.hour ?? 0) + 1 : (comps.hour ?? 0)
         
         return Calendar.current.date(bySettingHour: roundedHours, minute: Int(roundedMinutes), second: 0, of: self) ?? self
-        
     }
 }
 
@@ -94,5 +93,16 @@ extension Float {
 extension Double {
     func round(to digits: Int) -> Double {
         (self * pow(10, Double(digits))).rounded(.down) / ( pow(10, Double(digits)) )
+    }
+}
+
+extension String {
+    func removeFirst( of char: Character ) -> String {
+        if let index = self.firstIndex(of: char) {
+            var t = self
+            t.remove(at: index)
+            return t
+        }
+        return self
     }
 }

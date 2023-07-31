@@ -10,60 +10,54 @@ import SwiftUI
 import RealmSwift
 import FlowGrid
 
-
-struct GoalRatingsView: View {
+struct GoalMultiplierSelector: View {
     
+    private func makeGoalRatingMultiplier(forKey key: String) -> Binding<Float> {
+        Binding { Float(goalRatings[ key ] ?? "0") ?? 0 }
+        set: { newValue, _ in goalRatings[key] = "\(Int(newValue))" }
+    }
+    
+    private func makeGoalRatingMultiplierText(forKey key: String) -> Binding<String> {
+        Binding { "x\(goalRatings[ key ] ?? "0")" }
+        set: { newValue, _ in goalRatings[key] = newValue.removeFirst(of: "x") }
+    }
+    
+    let goal: RecallGoal
     @Binding var goalRatings: Dictionary<String, String>
     
-    let goals: [RecallGoal]
-    
-    private func createBinding(forKey key: String, defaultValue: String = "") -> Binding<String> {
-        Binding { goalRatings[ key ] ?? defaultValue }
-        set: { newValue, _ in goalRatings[key] = newValue }
-    }
+    let showToggle: Bool
     
     var body: some View {
-        ForEach( goals ) { goal in
-            HStack {
-                Text( goal.label )
-                Spacer()
-                TextField("Rating", text: createBinding(forKey: goal.getEncryptionKey() ))
-                    .keyboardType(.numberPad)
-            }
-        }
-    }
-}
-
-//MARK: Creation View
-struct CalendarEventCreationView: View {
-    
-    @ViewBuilder
-    private func makeGoalMultiplierSelector(goal: RecallGoal) -> some View {
         HStack {
             UniversalText(goal.label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
 
             Spacer()
             
-            StyledSlider(minValue: 0, maxValue: 4,
+            StyledSlider(minValue: 1, maxValue: 4,
                          binding: makeGoalRatingMultiplier(forKey: goal.key),
                          strBinding: makeGoalRatingMultiplierText(forKey: goal.key),
-                         textFieldWidth: 50)
+                         textFieldWidth: 60)
                 .frame(width: 150)
 
-            Image(systemName: "checkmark")
-                .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 == 0 ) { view in view.opaqueRectangularBackground() }
-                .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 != 0 ) { view in view.tintRectangularBackground() }
-            
-                .onTapGesture {
-                    let rating = Int(goalRatings[goal.key] ?? "0") ?? 0
-                    if rating != 0 { goalRatings[goal.key] = "0" }
-                    else { goalRatings[goal.key] = "1" }
-                }
-
+            if showToggle {
+                Image(systemName: "checkmark")
+                    .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 == 0 ) { view in view.opaqueRectangularBackground() }
+                    .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 != 0 ) { view in view.tintRectangularBackground() }
+                
+                    .onTapGesture {
+                        let rating = Int(goalRatings[goal.key] ?? "0") ?? 0
+                        if rating != 0 { goalRatings[goal.key] = "0" }
+                        else { goalRatings[goal.key] = "1" }
+                    }
+            }
         }
         .secondaryOpaqueRectangularBackground()
     }
     
+}
+
+//MARK: Creation View
+struct CalendarEventCreationView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -149,16 +143,6 @@ struct CalendarEventCreationView: View {
         Binding { endTime.formatted(date: .omitted, time: .shortened) }
         set: { newValue, _ in }
     }
-    
-    private func makeGoalRatingMultiplier(forKey key: String) -> Binding<Float> {
-        Binding { Float(goalRatings[ key ] ?? "0") ?? 0 }
-        set: { newValue, _ in goalRatings[key] = "\(Int(newValue))" }
-    }
-    
-    private func makeGoalRatingMultiplierText(forKey key: String) -> Binding<String> {
-        Binding { goalRatings[ key ] ?? "0" }
-        set: { newValue, _ in goalRatings[key] = newValue }
-    }
 
 //    MARK: Body
     var body: some View {
@@ -209,7 +193,7 @@ struct CalendarEventCreationView: View {
                             UniversalText("From Tag", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                             ForEach( Array(goals), id: \.key ) { goal in
                                 if category.goalRatings.contains(where: { node in node.key == goal.key }) {
-                                    makeGoalMultiplierSelector(goal: goal)
+                                    GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
                                 }
                             }
                         }
@@ -223,7 +207,7 @@ struct CalendarEventCreationView: View {
                         VStack {
                             if showingAllGoals {
                                 ForEach( Array(goals), id: \.key ) { goal in
-                                    makeGoalMultiplierSelector(goal: goal)
+                                    GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
                                 }
                             }
                         }.padding(.bottom, 100)
