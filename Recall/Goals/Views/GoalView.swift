@@ -80,6 +80,12 @@ struct GoalView: View {
                             makeOverViewDataView(title: "period", icon: "calendar.day.timeline.leading", data: RecallGoal.GoalFrequence.getType(from: goal.frequency))
                             makeOverViewDataView(title: "goal", icon: "scope", data: "\(goal.targetHours)")
                         }
+                        
+                        makeSeperator()
+                            .developer()
+                        
+                        UniversalText(goal.getStartDate().formatted(), size: Constants.UIDefaultTextSize )
+                            .developer()
                     }
                     .secondaryOpaqueRectangularBackground()
                     .padding(.bottom)

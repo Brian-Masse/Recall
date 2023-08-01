@@ -22,7 +22,8 @@ struct GoalCreationView: View {
                              targetHours: Float(goal!.targetHours),
                              priority: RecallGoal.Priority.getRawType(from: goal!.priority),
                              type: RecallGoal.GoalType.getRawType(from: goal!.type),
-                             targetTag: goal!.targetTag)
+                             targetTag: goal!.targetTag,
+                             creationDate: goal!.creationDate)
         } else {
             GoalCreationView(editing: false,
                              goal: nil,
@@ -32,7 +33,8 @@ struct GoalCreationView: View {
                              targetHours: 7,
                              priority: .medium,
                              type: .hourly,
-                             targetTag: nil)
+                             targetTag: nil,
+                             creationDate: .now)
         }
     }
     
@@ -99,7 +101,8 @@ struct GoalCreationView: View {
                          targetHours: Int(targetHours),
                          priority: priority,
                          type: type,
-                         targetTag: targetTag)
+                         targetTag: targetTag,
+                         creationDate: creationDate)
         }
         presentationMode.wrappedValue.dismiss()
     }
@@ -118,6 +121,8 @@ struct GoalCreationView: View {
     @State var type: RecallGoal.GoalType
     @State var targetTag: RecallCategory?
     
+    @State var creationDate: Date
+    
     var body: some View {
         
         VStack(alignment: .leading) {
@@ -128,9 +133,15 @@ struct GoalCreationView: View {
             ZStack(alignment: .bottom) {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading) {
-                        TextFieldWithPrompt(title: "What's the name of this goal?", binding: $label)
-                        TextFieldWithPrompt(title: "What's the purpose of this goal?", binding: $description)
-                            .padding(.bottom)
+                        
+                        DatePicker("date", selection: $creationDate)
+                            .developer()
+                        
+                        VStack(alignment: .leading) {
+                            TextFieldWithPrompt(title: "What's the name of this goal?", binding: $label)
+                            TextFieldWithPrompt(title: "What's the purpose of this goal?", binding: $description)
+                                .padding(.bottom)
+                        }
                         
                         UniversalText("How frequently do you want to meet this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
                         HStack {

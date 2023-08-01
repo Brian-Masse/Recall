@@ -32,6 +32,8 @@ class GoalNode: Object, Identifiable {
 //    MARK: RecallGoal
 class RecallGoal: Object, Identifiable {
     
+    
+//    MARK: Enums
     enum GoalFrequence: String, Identifiable, CaseIterable {
         case daily
         case weekly
@@ -80,6 +82,7 @@ class RecallGoal: Object, Identifiable {
             Priority(rawValue: priority) ?? .medium
         }
     }
+//    MARK: Body
     
     @Persisted(primaryKey: true) var _id: ObjectId
     
@@ -112,7 +115,7 @@ class RecallGoal: Object, Identifiable {
         }
     }
     
-    func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?) {
+    func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?, creationDate: Date) {
         
         RealmManager.updateObject(self) { thawed in
             thawed.label = label
@@ -121,6 +124,7 @@ class RecallGoal: Object, Identifiable {
             thawed.targetHours = targetHours
             thawed.priority = priority.rawValue
             thawed.type = type.rawValue
+            thawed.creationDate = creationDate
             
             if let id = targetTag?._id {
                 if let retrievedTag = RecallCategory.getCategoryObject(from: id) { thawed.targetTag = retrievedTag }
@@ -151,6 +155,13 @@ class RecallGoal: Object, Identifiable {
         max( RecallModel.index.earliestEventDate.resetToStartOfDay(), creationDate.resetToStartOfDay() )
     }
     
+//    This tells how many times you could have met the goal since creation (differs based on week vs day)
+    @MainActor
+    func getNumberOfTimePeriods() -> Double {
+        let rawFrequence = GoalFrequence.getRawType(from: frequency)
+        return Date.now.timeIntervalSince( getStartDate() ) / ( rawFrequence == .daily ? Constants.DayTime : Constants.WeekTime)
+    }
+    
     
 //    MARK: Data Aggregators
     
@@ -167,23 +178,35 @@ class RecallGoal: Object, Identifiable {
         }
     }
     
+//    First int is how many times you've hit the goal, the second is how many times you've missed it
     @MainActor
     func countGoalMet(from events : [RecallCalendarEvent]) -> (Int, Int) {
         
-        let total = (Date.now.timeIntervalSince( getStartDate() ) / Constants.DayTime).rounded(.up)
-        let count = events.filter { event in Int(event.getGoalPrgress(self)) >= targetHours }.count
+        let step = self.frequency == RecallGoal.GoalFrequence.weekly.numericValue ? Constants.WeekTime : Constants.DayTime
+        var dateIterator = self.getStartDate()
+        var metCount = 0
         
-        return ( count, Int(total) - count )
+        while dateIterator <= .now {
+            let endDate = dateIterator + step
+            let count = events.filter { event in event.startTime > dateIterator && event.startTime < endDate }.reduce(0) { partialResult, event in
+                partialResult + event.getGoalPrgress(self)
+            }
+            metCount += (count >= Double(targetHours) ? 1 : 0)
+            dateIterator += step
+        }
+
+        let numberOfTimePeriods = getNumberOfTimePeriods()
+        
+        return(metCount, Int(numberOfTimePeriods) - metCount)
     }
     
     @MainActor
     func getAverage(from events: [RecallCalendarEvent]) -> (Float) {
-        let rawFrequence = GoalFrequence.getRawType(from: frequency)
-        let numberOfTimePeriods = Date.now.timeIntervalSince( getStartDate() ) / ( rawFrequence == .daily ? Constants.DayTime : Constants.WeekTime)
+        let numberOfTimePeriods = getNumberOfTimePeriods()
         
         let allEvents = events.reduce(0) { partialResult, event in partialResult + event.getGoalPrgress(self) }
         
-        return Float(allEvents) / max(Float( numberOfTimePeriods * ( rawFrequence == .daily ? 1 : 7 ) ) , 1)
+        return Float(allEvents) / max(Float( numberOfTimePeriods * Double(frequency) ) , 1)
     }
 }
 

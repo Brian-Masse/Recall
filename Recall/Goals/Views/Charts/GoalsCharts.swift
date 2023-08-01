@@ -32,16 +32,14 @@ struct ActivityPerDay: View {
     let showYAxis: Bool 
     
     private func getData() -> [DataNode] {
-        events.filter { event in event.startTime > .now - timePeriod }.compactMap { event in
+        let startTime: Date = (.now - timePeriod)
+        return events.filter { event in event.startTime > startTime }.compactMap { event in
             let count = event.getGoalPrgress(goal)
             return DataNode(date: event.startTime, count: count, category: "", goal: goal.label)
+            
         }
     }
-    
-    private func collectDate(_ date: Date) -> Date {
-        date.resetToStartOfDay()
-    }
-    
+        
     var body: some View {
         
         let data = getData()

@@ -201,6 +201,14 @@ private struct RoundedCorner: Shape {
     }
 }
 
+private struct Developer: ViewModifier {
+    func body(content: Content) -> some View {
+        if inDev {
+            content
+        }
+    }
+}
+
 //MARK: Extension
 extension View {
     func universalBackground(padding: Bool = true) -> some View {
@@ -274,6 +282,10 @@ extension View {
         if condition {
             contentBuilder(self)
         } else { self }
+    }
+    
+    func developer() -> some View {
+        modifier( Developer() )
     }
 }
 
