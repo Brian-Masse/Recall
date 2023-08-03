@@ -80,7 +80,8 @@ struct MainView: View {
                 CalendarPageView().tag( MainPage.calendar )
                 GoalsPageView(events: Array(events) ).tag( MainPage.goals )
                 CategoriesPageView(events: Array(events) ).tag( MainPage.categories )
-            }
+                DataPageView().tag( MainPage.data )
+            }.tabViewStyle(.page)
             
             TabBar(pageSelection: $currentPage)
             

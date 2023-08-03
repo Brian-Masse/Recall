@@ -7,10 +7,7 @@
 
 import Foundation
 import SwiftUI
-
-//MARK: View Modifiers
-
-
+import RealmSwift
 
 //MARK: Backgrounds
 private struct UniversalBackground: ViewModifier {
@@ -162,6 +159,7 @@ private struct AccentBackground: ViewModifier {
     }
 }
 
+
 //MARK: Utitilities
 private struct BecomingVisible: ViewModifier {
     @State var action: (() -> Void)?
@@ -206,6 +204,29 @@ private struct Developer: ViewModifier {
         if inDev {
             content
         }
+    }
+}
+
+private struct ColorChartByTag: ViewModifier {
+    
+    @ObservedResults(RecallCategory.self) var tags
+    
+    @State var dictionary: Dictionary<String, Color> = Dictionary()
+    
+    func body(content: Content) -> some View {
+        
+        content
+            .chartForegroundStyleScale { value in dictionary[value] ?? .red }
+            .onAppear {
+                var dic: Dictionary<String, Color> = Dictionary()
+                if tags.count == 0 { return }
+                dic["?"] = .white
+                for i in 0..<tags.count  {
+                    let key: String =  tags[i].label
+                    dic[key] = tags[i].getColor()
+                }
+                self.dictionary = dic
+            }
     }
 }
 
@@ -262,6 +283,10 @@ extension View {
     
     func onBecomingVisible(perform action: @escaping () -> Void) -> some View {
         modifier(BecomingVisible(action: action))
+    }
+    
+    func colorChartByTag() -> some View {
+        modifier(ColorChartByTag())
     }
     
     #if canImport(UIKit)

@@ -117,7 +117,7 @@ struct GoalView: View {
                     
                     VStack(alignment: .leading) {
                         UniversalText("Activties", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
-                        ActivityPerDay(title: "activites per day", goal: goal, events: events, showYAxis: true)
+                        ActivityPerDay(timePeriod: .greatestFiniteMagnitude, title: "activites per day", goal: goal, events: events, showYAxis: true)
                             .frame(height: 160)
                         
                         TotalActivites(title: "total activities", goal: goal, events: events, showYAxis: true)

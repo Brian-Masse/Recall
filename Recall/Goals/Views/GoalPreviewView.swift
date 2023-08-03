@@ -63,7 +63,7 @@ struct GoalPreviewView: View {
                     
                     makeSeperator()
                     
-                    ActivityPerDay(title: "", goal: goal, events: events, showYAxis: false)
+                    ActivityPerDay(timePeriod: 7, title: "", goal: goal, events: events, showYAxis: false)
                         .frame(height: 100)
 
                 }

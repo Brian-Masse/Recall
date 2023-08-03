@@ -14,16 +14,26 @@ struct DataNode: Identifiable {
     var id: UUID = UUID()
     
     let date: Date
-    let count: Double
+    var count: Double
     let category: String
     let goal: String
+    
+    mutating func changeCount(to newVal: Double) -> DataNode {
+        self.count = newVal
+        return self
+    }
+    
+    mutating func increment(by increment: Double) -> DataNode {
+        self.count += increment
+        return self
+    }
 }
 
 //MARK: ActivityPerDay
 // This shows how many hours you spent doing something that contributed to a certain goal over time
 struct ActivityPerDay: View {
     
-    private let timePeriod = 7 * Constants.DayTime
+    let timePeriod: Double
     
     let title: String
     
@@ -32,7 +42,7 @@ struct ActivityPerDay: View {
     let showYAxis: Bool 
     
     private func getData() -> [DataNode] {
-        let startTime: Date = (.now - timePeriod)
+        let startTime: Date = (.now - (timePeriod * Constants.DayTime))
         return events.filter { event in event.startTime > startTime }.compactMap { event in
             let count = event.getGoalPrgress(goal)
             return DataNode(date: event.startTime, count: count, category: "", goal: goal.label)
@@ -43,36 +53,43 @@ struct ActivityPerDay: View {
     var body: some View {
         
         let data = getData()
-        VStack(alignment: .leading) {
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-            
-            Chart {
-                ForEach(data) { datum in
-                    BarMark(x: .value("date", datum.date, unit: .day ),
-                            y: .value("count", datum.count))
-                    .foregroundStyle(Colors.tint)
-                    .cornerRadius(Constants.UIDefaultCornerRadius - 10)
-                }
+        
+        GeometryReader { geo in
+            VStack(alignment: .leading) {
+                UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
                 
-                RuleMark(y: .value("Goal", goal.targetHours) )
-                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]) )
-                    .foregroundStyle(Colors.tint)
-            }
-            .chartXAxis {
-                AxisMarks(values: .stride(by: .day)) { value in
-                    if let date = value.as( Date.self ) {
-                        AxisValueLabel(centered: true) {
-                            Text(date.formatted(.dateTime.day() ) )
+                ScrollView(.horizontal) {
+                    Chart {
+                        ForEach(data) { datum in
+                            BarMark(x: .value("date", datum.date, unit: .day ),
+                                    y: .value("count", datum.count))
+                            .foregroundStyle(Colors.tint)
+                            .cornerRadius(Constants.UIDefaultCornerRadius - 10)
+                        }
+                        
+                        RuleMark(y: .value("Goal", goal.targetHours) )
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]) )
+                            .foregroundStyle(Colors.tint)
+                    }
+                    .chartXAxis {
+                        AxisMarks(values: .stride(by: .day)) { value in
+                            if let date = value.as( Date.self ) {
+                                AxisValueLabel(centered: true) {
+                                    Text(date.formatted(.dateTime.day() ) )
+                                }
+                            }
                         }
                     }
-                }
-            }
-            .chartYAxis {
-                AxisMarks { value in
-                    if let count = value.as(Int.self) {
-                        if showYAxis { AxisValueLabel( "\(count) HR" ) }
+                    .chartYAxis {
+                        AxisMarks(position: .leading) { value in
+                            if let count = value.as(Int.self) {
+                                if showYAxis { AxisValueLabel( "\(count) HR" ) }
+                            }
+                        }
                     }
+                    .frame(minWidth: geo.size.width)
                 }
+                .frame(width: geo.size.width)
             }
         }
     }

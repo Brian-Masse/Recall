@@ -94,6 +94,10 @@ class RecallCalendarEvent: Object, Identifiable  {
         category?.getColor() ?? Colors.tint
     }
     
+    func getTagLabel() -> String {
+        category?.label ?? "?"
+    }
+    
     
 //    MARK: Class Methods
     func delete() {
