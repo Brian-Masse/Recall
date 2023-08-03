@@ -197,7 +197,7 @@ class RecallGoal: Object, Identifiable {
 
         let numberOfTimePeriods = getNumberOfTimePeriods()
         
-        return(metCount, Int(numberOfTimePeriods) - metCount)
+        return(metCount, Int(numberOfTimePeriods.rounded(.up)) - metCount)
     }
     
     @MainActor

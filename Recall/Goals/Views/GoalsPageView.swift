@@ -20,8 +20,6 @@ struct GoalsPageView: View {
     
     var body: some View {
         
-        let _ = print(RecallModel.ownerID)
-        
         VStack(alignment: .leading) {
             
             HStack {
