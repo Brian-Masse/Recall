@@ -8,55 +8,63 @@
 import Foundation
 import SwiftUI
 
-struct ActivityHoursPerDaySummary: View {
-    
-    private func compressData() -> [DataNode] {
+//MARK: Events DataSummaries
+//All the data passed to summaries should be compressed
+//this means that instead of passing nodes for every indivudal calendar event, you compress them into their common tags
+//the data is seperated so it can be better plotted on the graphs
+//the indivudal DataSection that summary is being managed by should make sure its passing the right data in
+struct EventsDataSummaries {
+
+//    This describes the daily average, either hours or tags per day, that a person has
+    struct DailyAverage: View {
         
-        Array( data.reduce(Dictionary<String, DataNode>()) { partialResult, node in
-            let key = node.category
-            var mutable = partialResult
-            if var value = mutable[ key ] {
-                mutable[key] = value.increment(by: node.count )
-            } else { mutable[key] = .init(date: .now, count: node.count, category: key, goal: "") }
-            return mutable
-        }.values )
-    }
-    
-    let data: [DataNode]
-    let fullBreakdown: Bool
-    @State var showingBreakdown: Bool = false
-    
-    var body: some View {
+        let data: [DataNode]
+        let unit: String
         
-        let compressedData = compressData().sorted { node1, node2 in node1.count < node2.count }
-        
-        VStack {
-            DataSummaryList(content: [
-                .init(label: "Most Frequent Event", content: "\( compressedData.last?.category ?? "?") (\( compressedData.last?.count.round(to: 2) ?? 0 ) HR)"),
-                .init(label: "Least Frequent Event", content: "\( compressedData.first?.category ?? "?") (\( compressedData.first?.count.round(to: 2) ?? 0 ) HR)")
+        var body: some View {
             
-            ])
-            
-            if fullBreakdown {
-                HStack {
-                    UniversalText("Full breakdown", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                    Spacer()
-                    LargeRoundedButton("", icon: !showingBreakdown ? "arrow.down" : "arrow.up") { withAnimation { showingBreakdown.toggle() }}
-                }
-                if showingBreakdown {
-                    let dataSummaryListContent = compressedData.compactMap { node in
-                        DataSummaryList.Data(label: node.category, content: "\(node.count.round(to: 2)) HR")
-                    }
-                    
-                    DataSummaryList(content: dataSummaryListContent, striped: true)
-                }
+            let fullTimePeriod = Date.now.timeIntervalSince( RecallModel.index.earliestEventDate ) / Constants.DayTime
+            let averageSummaryListContent = data.compactMap { node in
+                DataSummaryList.Data(label: node.category, content: "\( (node.count / fullTimePeriod).round(to: 2) ) " + unit )
             }
             
-        }.padding(.vertical)
+            DataSummaryList(content: averageSummaryListContent, striped: true)
+                .hideableDataCollection("Average Activity", defaultIsHidden: true)
+        }
+    }
+
+//    This tells the user which events they engage in most / least
+    struct SuperlativeEvents: View {
+        
+        let data: [DataNode]
+        let unit: String
+        
+        var body: some View {
+            DataSummaryList(content: [
+                .init(label: "Most Frequent Event", content: "\( data.last?.category ?? "?") (\( data.last?.count.round(to: 2) ?? 0 ) \(unit))"),
+                .init(label: "Least Frequent Event", content: "\( data.first?.category ?? "?") (\( data.first?.count.round(to: 2) ?? 0 ) \(unit))")
+            ])
+        }
+    }
+    
+//    This is a full breakdown of how much activity each tag has
+    struct ActivityPerTag: View {
+        let data: [DataNode]
+        let unit: String
+        
+        var body: some View {
+            let dataSummaryListContent = data.compactMap { node in
+                DataSummaryList.Data(label: node.category, content: "\(node.count.round(to: 2)) \(unit)")
+            }
+            
+            DataSummaryList(content: dataSummaryListContent, striped: true)
+                .hideableDataCollection("Full breakdown", defaultIsHidden: true)
+        }
     }
 }
 
 
+//MARK: Data Summary List
 struct DataSummaryList: View {
     
     struct Data: Identifiable {

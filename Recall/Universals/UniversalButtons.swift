@@ -162,12 +162,13 @@ struct LargeRoundedButton: View {
     let completed: () -> Bool
     let action: () -> Void
     
+    let small: Bool 
     let wide: Bool
     let color: Color?
     
     @State var tempCompletion: Bool = false
     
-    init( _ label: String, to completedLabel: String = "", icon: String, to completedIcon: String = "", wide: Bool = false, color: Color? = nil, completed: @escaping () -> Bool = {false}, action: @escaping () -> Void ) {
+    init( _ label: String, to completedLabel: String = "", icon: String, to completedIcon: String = "", wide: Bool = false, small: Bool = false, color: Color? = nil, completed: @escaping () -> Bool = {false}, action: @escaping () -> Void ) {
         self.label = label
         self.completedLabel = completedLabel
         self.icon = icon
@@ -175,6 +176,7 @@ struct LargeRoundedButton: View {
         self.completed = completed
         self.action = action
         self.wide = wide
+        self.small = small
         self.color = color
     }
     
@@ -195,7 +197,8 @@ struct LargeRoundedButton: View {
             }
             if wide { Spacer() }
         }
-        .padding(25)
+        .padding(.vertical, small ? 7: 25 )
+        .padding(.horizontal, small ? 25 : 25)
         .foregroundColor(.black)
         .background( color == nil ? Colors.tint : color )
         .cornerRadius(Constants.UIDefaultCornerRadius)
@@ -203,5 +206,3 @@ struct LargeRoundedButton: View {
         .onTapGesture { action() }
     }
 }
-
-

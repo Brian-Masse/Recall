@@ -28,43 +28,62 @@ struct ScrollChart<Content: View>: View {
     }
 }
 
+//MARK: AverageActivityByTag
+struct AverageActivityByTag: View {
+    
+    @MainActor
+    private func transformData() -> [DataNode] {
+        let timePeriod = Date.now.timeIntervalSince( RecallModel.index.earliestEventDate ) / Constants.DayTime
+        return data.compactMap { node in
+            .init(date: .now, count: node.count / timePeriod, category: node.category, goal: "")
+        }
+        
+    }
+    
+    let data: [DataNode]
+    let unit: String
+    
+    var body: some View {
+        
+        let averageData = transformData()
+        
+        UniversalText( "Average Activity HR/DY", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+        Chart {
+            ForEach(averageData) { datum in
+                BarMark(x: .value("X", datum.category),
+                        y: .value("Y", datum.count  ))
+                .foregroundStyle(by: .value("SERIES", datum.category))
+                .cornerRadius(Constants.UIBarMarkCOrnerRadius)
+
+            }
+        }
+        .chartLegend(.hidden)
+        .chartYAxis {
+            AxisMarks(position: .leading) { value in
+                if let count = value.as(Double.self) {
+                    AxisValueLabel {
+                        UniversalText("\(count.round(to: 2)) " + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                    }
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
+                }
+            }
+        }
+        .secondaryOpaqueRectangularBackground()
+        .padding(.bottom)
+    }
+}
+
 //MARK: ActivitesPerDay
 struct ActivitiesPerDay: View {
     
-    private func makeData() -> [DataNode] {
-        events.compactMap { event in
-            DataNode(date: event.startTime, count: dataAggregator(event), category: event.getTagLabel(), goal: "")
-        }.sorted { node1, node2 in node1.category < node2.category }
-    }
-    
-    
-    let title: String
-    let events: [RecallCalendarEvent]
-    
-//    This is how you will count individual events (ie. what is their contribution to their tag?)
-//    For hourly, this is how many hours it is, weighted adds the goal multiplier, and events simply counts 1 for each event
-    let dataAggregator: (RecallCalendarEvent) -> Double
-    
-    @State var showing: Bool = true
-    
-    init( _ title: String, with events: [RecallCalendarEvent], aggregator: @escaping (RecallCalendarEvent) -> Double ) {
-        
-        self.title = title
-        self.events = events
-        self.dataAggregator = aggregator
-    
-    }
-    
-//    MARK: Charts
-    
     @ViewBuilder
-    private func makeChart(from data: [DataNode]) -> some View {
+    private func makeChart() -> some View {
         Chart {
             ForEach(data) { datum in
                 BarMark(x: .value("date", datum.date, unit: .day ),
                         y: .value("count", datum.count))
                 .foregroundStyle(by: .value("series", datum.category))
-                .cornerRadius(Constants.UIDefaultCornerRadius - 10)
+                .cornerRadius(Constants.UIBarMarkCOrnerRadius)
             }
         }
         .colorChartByTag()
@@ -84,48 +103,39 @@ struct ActivitiesPerDay: View {
                     AxisValueLabel {
                         UniversalText("\(count)", size: Constants.UISmallTextSize, font: Constants.mainFont)
                     }
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
                 }
             }
         }
     }
     
+    let title: String
+    let data: [DataNode]
+    let scrollable: Bool
     
-//    MARK: Body
+    init( _ title: String, data: [DataNode], scrollable: Bool = false ) {
+        self.title = title
+        self.data = data
+        self.scrollable = scrollable
+    }
+    
     var body: some View {
         
-        let data = makeData()
-        let recentData = data.filter { node in node.date >= .now.resetToStartOfDay() - (7 * Constants.DayTime) }
-        
         VStack(alignment: .leading) {
+                
+            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             
-            HStack {
-                UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                Spacer()
-                LargeRoundedButton("", icon: showing ? "arrow.up" : "arrow.down") { withAnimation { showing.toggle() } }
-                
-            }.padding(.bottom)
-            
-            if showing {
-                UniversalText("This week", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                makeChart(from: recentData)
-                    .secondaryOpaqueRectangularBackground()
-                    .frame(height: 200)
-                
-                ActivityHoursPerDaySummary(data: recentData, fullBreakdown: false)
-                    .padding(.bottom)
-                
-                
-                UniversalText("All time", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                ScrollChart {
-                    makeChart(from: data)
+            Group {
+                if scrollable {
+                    ScrollChart {
+                        makeChart()
+                    }
+                }else {
+                    makeChart()
                 }
-                .secondaryOpaqueRectangularBackground()
-                .frame(height: 200)
-                
-                ActivityHoursPerDaySummary(data: data, fullBreakdown: true)
-                    .padding(.bottom)
             }
-            
+            .secondaryOpaqueRectangularBackground()
+            .padding(.bottom)
         }
     }
 }

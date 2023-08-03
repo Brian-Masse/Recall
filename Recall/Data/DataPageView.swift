@@ -62,13 +62,7 @@ struct DataPageView: View {
                             }
                         }.opaqueRectangularBackground()
                         
-                        
-                        DataCollection("Events") {
-                            ActivitiesPerDay("Number of Hours, by tag", with: arrEvents) { event in event.getLengthInHours() }
-                            
-                            ActivitiesPerDay("Number of events, by tag", with: arrEvents) { _ in 1 }
-                            
-                        }.id( DataBookMark.Events.rawValue )
+                        EventsDataSection(events: arrEvents)
                         
                         
                         Spacer()
@@ -103,7 +97,37 @@ struct DataCollection<Content: View>: View {
                 content
             }.opaqueRectangularBackground()
         }
-        
+        .padding(.bottom, 100)
     }
+}
+
+struct HideableDataCollection: ViewModifier {
+
+    @State var showing: Bool
+    let largeTitle: Bool
+    let title: String
     
+    private func toggleShowing() { withAnimation { showing.toggle() } }
+    
+    func body(content: Content) -> some View {
+     
+        VStack(alignment: .leading) {
+            HStack {
+                UniversalText( title, size: largeTitle ? Constants.UIHeaderTextSize : Constants.UIDefaultTextSize, font: Constants.titleFont )
+                Spacer()
+                if largeTitle   { LargeRoundedButton("", icon: showing ? "arrow.up" : "arrow.down") { toggleShowing() } }
+                else            { LargeRoundedButton("", icon: showing ? "arrow.up" : "arrow.down", small: true) { toggleShowing() } }
+            }.padding(.bottom)
+            
+            if showing {
+                content
+            }
+        }
+    }
+}
+
+extension View {
+    func hideableDataCollection( _ title: String, largeTitle: Bool = false, defaultIsHidden: Bool = false ) -> some View {
+        modifier( HideableDataCollection(showing: !defaultIsHidden, largeTitle: largeTitle, title: title) )
+    }
 }
