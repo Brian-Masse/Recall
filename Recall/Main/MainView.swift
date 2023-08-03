@@ -81,7 +81,8 @@ struct MainView: View {
                 GoalsPageView(events: Array(events) ).tag( MainPage.goals )
                 CategoriesPageView(events: Array(events) ).tag( MainPage.categories )
                 DataPageView().tag( MainPage.data )
-            }.tabViewStyle(.page)
+            }
+//            .tabViewStyle(.page)
             
             TabBar(pageSelection: $currentPage)
             

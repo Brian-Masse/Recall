@@ -45,6 +45,8 @@ struct ActivitiesPerDay: View {
 //    For hourly, this is how many hours it is, weighted adds the goal multiplier, and events simply counts 1 for each event
     let dataAggregator: (RecallCalendarEvent) -> Double
     
+    @State var showing: Bool = true
+    
     init( _ title: String, with events: [RecallCalendarEvent], aggregator: @escaping (RecallCalendarEvent) -> Double ) {
         
         self.title = title
@@ -94,31 +96,35 @@ struct ActivitiesPerDay: View {
         let data = makeData()
         let recentData = data.filter { node in node.date >= .now.resetToStartOfDay() - (7 * Constants.DayTime) }
         
-        let _ = print(recentData.count)
-        
         VStack(alignment: .leading) {
-            UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                .padding(.bottom)
             
+            HStack {
+                UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                Spacer()
+                LargeRoundedButton("", icon: showing ? "arrow.up" : "arrow.down") { withAnimation { showing.toggle() } }
+                
+            }.padding(.bottom)
             
-            UniversalText("This week", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            makeChart(from: recentData)
+            if showing {
+                UniversalText("This week", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                makeChart(from: recentData)
+                    .secondaryOpaqueRectangularBackground()
+                    .frame(height: 200)
+                
+                ActivityHoursPerDaySummary(data: recentData, fullBreakdown: false)
+                    .padding(.bottom)
+                
+                
+                UniversalText("All time", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                ScrollChart {
+                    makeChart(from: data)
+                }
                 .secondaryOpaqueRectangularBackground()
                 .frame(height: 200)
-            
-            ActivityHoursPerDaySummary(data: recentData, fullBreakdown: false)
-                .padding(.bottom)
-            
-        
-            UniversalText("All time", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            ScrollChart {
-                makeChart(from: data)
+                
+                ActivityHoursPerDaySummary(data: data, fullBreakdown: true)
+                    .padding(.bottom)
             }
-            .secondaryOpaqueRectangularBackground()
-            .frame(height: 200)
-            
-            ActivityHoursPerDaySummary(data: data, fullBreakdown: true)
-                .padding(.bottom)
             
         }
     }

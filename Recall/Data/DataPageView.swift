@@ -12,6 +12,26 @@ import RealmSwift
 
 struct DataPageView: View {
     
+    enum DataBookMark: String, Identifiable, CaseIterable {
+        case Overview
+        case Events
+        case Goals
+        
+        var id: String { self.rawValue }
+    }
+    
+//    MARK: ViewBuilders
+    
+    @ViewBuilder
+    private func makeContentsButton(label: String, proxy: ScrollViewProxy) -> some View {
+        HStack {
+            Image(systemName: "arrow.up.forward")
+            UniversalText(label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false)
+        }
+        .tintRectangularBackground()
+        .onTapGesture { withAnimation { proxy.scrollTo(label, anchor: .top) }}
+    }
+    
     
     
     @ObservedResults( RecallCalendarEvent.self ) var events
@@ -28,22 +48,32 @@ struct DataPageView: View {
             
             UniversalText("Data", size: Constants.UITitleTextSize, font: Constants.titleFont)
             
-            ScrollView(.vertical) {
-                
-                
-                
-                VStack(alignment: .leading) {
+            ScrollViewReader { value in
+                ScrollView(.vertical) {
                     
-                    DataCollection("Events") {
-                        ActivitiesPerDay("Number of Hours, by tag", with: arrEvents) { event in event.getLengthInHours() }
-
+                    VStack(alignment: .leading) {
                         
+                        UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach( DataBookMark.allCases ) { content in
+                                    makeContentsButton(label: content.rawValue, proxy: value)
+                                }
+                            }
+                        }.opaqueRectangularBackground()
+                        
+                        
+                        DataCollection("Events") {
+                            ActivitiesPerDay("Number of Hours, by tag", with: arrEvents) { event in event.getLengthInHours() }
+                            
+                            ActivitiesPerDay("Number of events, by tag", with: arrEvents) { _ in 1 }
+                            
+                        }.id( DataBookMark.Events.rawValue )
+                        
+                        
+                        Spacer()
                         
                     }
-                
-                 
-                    Spacer()
-                    
                 }
             }
         }
@@ -68,11 +98,11 @@ struct DataCollection<Content: View>: View {
         VStack(alignment: .leading) {
             
             UniversalText( label, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-                .padding(.bottom)
             
-            content
-            
-        }.opaqueRectangularBackground()
+            VStack(alignment: .leading) {
+                content
+            }.opaqueRectangularBackground()
+        }
         
     }
     

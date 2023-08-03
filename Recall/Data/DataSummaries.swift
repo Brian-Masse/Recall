@@ -41,7 +41,7 @@ struct ActivityHoursPerDaySummary: View {
                 HStack {
                     UniversalText("Full breakdown", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                     Spacer()
-                    LargeRoundedButton("", icon: showingBreakdown ? "arrow.down" : "arrow.up") { withAnimation { showingBreakdown.toggle() }}
+                    LargeRoundedButton("", icon: !showingBreakdown ? "arrow.down" : "arrow.up") { withAnimation { showingBreakdown.toggle() }}
                 }
                 if showingBreakdown {
                     let dataSummaryListContent = compressedData.compactMap { node in
