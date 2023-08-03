@@ -14,7 +14,7 @@ class Colors {
     
     static let colorOptions: [Color] = [.blue]
     
-    static let lightGrey = Color(red: 0.95, green: 0.95, blue: 0.95)
+    static let lightGrey = Color(red: 0.97, green: 0.97, blue: 0.97)
     static let darkGrey = Color(red: 0.1, green: 0.1, blue: 0.1).opacity(0.9)
     static let accentGreen = makeColor(95, 255, 135)
     
@@ -34,6 +34,7 @@ class Colors {
 
 class Constants {
     
+    static let UILargeTextSize: CGFloat     = 90
     static let UITitleTextSize: CGFloat     = 45
     static let UIHeaderTextSize: CGFloat    = 30
     static let UISubHeaderTextSize: CGFloat = 20

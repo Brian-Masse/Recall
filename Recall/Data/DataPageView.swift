@@ -76,7 +76,43 @@ struct DataPageView: View {
     }
 }
 
+//MARK: Data Picker
+struct DataPicker: View {
+    
+    let optionsCount: Int
+    let labels: [String]
+    
+    let fontSize: Double
+    
+    @Binding var selectedOption: Int
+    
+    @Namespace private var picker
+    
+    @ViewBuilder
+    private func makeSelector(from label: String, option: Int ) -> some View {
+        HStack {
+            Spacer()
+            UniversalText(label, size: fontSize, font: Constants.titleFont, wrap: false )
+            Spacer()
+        }
+        .if(selectedOption == option) { view in view.tintRectangularBackground() }
+        .if(selectedOption != option) { view in view.secondaryOpaqueRectangularBackground() }
+        .onTapGesture { withAnimation { selectedOption = option } }
+//        .matchedGeometryEffect(id: "b", in: picker)
+        
+    }
+    
+    var body: some View {
+        HStack {
+            ForEach(0..<optionsCount, id: \.self) { i in
+                let label = labels[i]
+                makeSelector(from: label, option: i)
+            }
+        }.secondaryOpaqueRectangularBackground(5)
+    }
+}
 
+//MARK: DataCollection
 struct DataCollection<Content: View>: View {
     
     let label: String
@@ -95,12 +131,33 @@ struct DataCollection<Content: View>: View {
             
             VStack(alignment: .leading) {
                 content
-            }.opaqueRectangularBackground()
+            }.opaqueRectangularBackground(7)
         }
         .padding(.bottom, 100)
     }
 }
 
+//MARK: Seperator
+struct Seperator: View {
+    
+    enum Orientation {
+        case horizontal
+        case vertical
+    }
+    
+    let orientation: Orientation
+    
+    var body: some View {
+        Rectangle()
+            .universalTextField()
+//            .foregroundColor(.gray.opacity(0.2))
+            .if(orientation == .horizontal) { view in view.frame(height: 4)}
+            .if(orientation == .vertical) { view in view.frame(width: 4)}
+        
+    }
+}
+
+//MARK: HideableDataCollection
 struct HideableDataCollection: ViewModifier {
 
     @State var showing: Bool

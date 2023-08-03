@@ -28,6 +28,10 @@ struct ScrollChart<Content: View>: View {
     }
 }
 
+//MARK: Event Charts
+
+
+
 //MARK: AverageActivityByTag
 struct AverageActivityByTag: View {
     
@@ -52,11 +56,13 @@ struct AverageActivityByTag: View {
             ForEach(averageData) { datum in
                 BarMark(x: .value("X", datum.category),
                         y: .value("Y", datum.count  ))
+            
                 .foregroundStyle(by: .value("SERIES", datum.category))
                 .cornerRadius(Constants.UIBarMarkCOrnerRadius)
 
             }
         }
+        .colorChartByTag()
         .chartLegend(.hidden)
         .chartYAxis {
             AxisMarks(position: .leading) { value in
@@ -68,8 +74,7 @@ struct AverageActivityByTag: View {
                 }
             }
         }
-        .secondaryOpaqueRectangularBackground()
-        .padding(.bottom)
+//        .secondaryOpaqueRectangularBackground()
     }
 }
 
@@ -134,8 +139,9 @@ struct ActivitiesPerDay: View {
                     makeChart()
                 }
             }
-            .secondaryOpaqueRectangularBackground()
             .padding(.bottom)
         }
     }
 }
+
+

@@ -31,64 +31,79 @@ struct EventsDataSection: View {
         }.values ).sorted { node1, node2 in node1.count < node2.count }
     }
     
+    private func getTotalHours(from data: [DataNode]) -> Int {
+        Int(data.reduce(0) { partialResult, node in partialResult + node.count })
+    }
+    
 //    period is measured in days
 //    This is purely convenience
     private func getRecentData(from data: [DataNode], in period: Double = 7) -> [DataNode] {
         data.filter { node in node.date >= .now.resetToStartOfDay() - (period * Constants.DayTime) }
     }
     
-    var body: some View {
+    private func updatePeriod(from data: [DataNode]) -> [DataNode] {
+        if viewFilter == 0 { return getRecentData(from: data) }
+        else { return data }
+    }
     
+//    This determines whether its showing all time or just this week
+    @State var viewFilter: Int = 0
+    
+    var body: some View {
+        
 //        These are typically used for the charts
         let hourlyData = makeData { event in event.getLengthInHours() }
 //        in general the compressed data is used for data sumarries, that dont need every individaul node
         let compressedHourlyData = compressData(from: hourlyData)
         
-        let recentHourlyData = getRecentData(from: hourlyData)
-        let compressedRecentHourlyData = getRecentData(from: compressedHourlyData)
-        
-        
         let tagData = makeData { _ in 1 }
         let compressedTagData = compressData(from: tagData)
-        let recentTagData = getRecentData(from: tagData)
-        let compressedRecentTagData = getRecentData(from: compressedTagData)
+        
+        let totalHours = getTotalHours(from: hourlyData)
         
         DataCollection("Events") {
             
             Group {
-                
-                AverageActivityByTag(data: recentHourlyData, unit: "")
-                EventsDataSummaries.DailyAverage(data: compressedHourlyData, unit: "HR/DY")
-                    .padding(.bottom)
-                
-                ActivitiesPerDay("Hours per day, by tag", data: recentHourlyData)
-                EventsDataSummaries.SuperlativeEvents(data: compressedRecentHourlyData, unit: "HR")
-                EventsDataSummaries.ActivityPerTag(data: compressedRecentTagData, unit: "HR")
-                    .padding(.bottom)
-                
-                ActivitiesPerDay("Events per day, by tag", data: recentTagData)
-                EventsDataSummaries.SuperlativeEvents(data: compressedRecentTagData, unit: "")
-                EventsDataSummaries.ActivityPerTag(data: compressedRecentTagData, unit: "")
-                
+                Seperator(orientation: .horizontal)
+                EventsDataSummaries.LargeText(mainText: "\(totalHours)", subText: "hours")
+                Seperator(orientation: .horizontal)
+                EventsDataSummaries.LargeText(mainText: "\(hourlyData.count)", subText: "events")
+                Seperator(orientation: .horizontal)
             }
-            .hideableDataCollection("This week", largeTitle: true)
-            .padding(.bottom, 20)
+            
+            DataPicker(optionsCount: 2, labels: ["This Week", "All Time"], fontSize: Constants.UISubHeaderTextSize, selectedOption: $viewFilter)
+                .padding(.bottom)
             
             Group {
-                ActivitiesPerDay("Hours per day, by tag", data: hourlyData, scrollable: true)
-                    .frame(height: 250)
-                EventsDataSummaries.SuperlativeEvents(data: compressedHourlyData, unit: "HR")
-                EventsDataSummaries.ActivityPerTag(data: compressedHourlyData, unit: "HR")
-                    .padding(.bottom)
+                UniversalText("Daily Averages", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                    .padding(.bottom, 5)
                 
-                ActivitiesPerDay("Events per day, by tag", data: tagData, scrollable: true)
-                    .frame(height: 250)
-                EventsDataSummaries.SuperlativeEvents(data: compressedTagData, unit: "")
-                EventsDataSummaries.ActivityPerTag(data: compressedTagData, unit: "")
+                AverageActivityByTag(data: updatePeriod(from: hourlyData), unit: "")
+                Seperator(orientation: .horizontal)
+                EventsDataSummaries.LargeText(mainText: "\((Double(totalHours) / Double(hourlyData.count)).round(to: 2))", subText: "HR/DY")
+                    .padding(.vertical)
+                EventsDataSummaries.DailyAverage(data: updatePeriod(from: compressedHourlyData), unit: "HR/DY")
+            }
+            
+            Seperator(orientation: .horizontal)
+            
+            Group {
+                UniversalText("Activities", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                 
-            }.hideableDataCollection("All Time", largeTitle: true)
-            
-            
+                ActivitiesPerDay("Hours per day, by tag", data: updatePeriod(from: hourlyData), scrollable: viewFilter == 1 )
+                    .frame(height: 200)
+                EventsDataSummaries.SuperlativeEvents(data: updatePeriod(from: compressedHourlyData), unit: "HR")
+                EventsDataSummaries.ActivityPerTag(data: updatePeriod(from: compressedHourlyData), unit: "HR")
+                
+                Seperator(orientation: .horizontal)
+                
+                ActivitiesPerDay("Events per day, by tag", data: updatePeriod(from: tagData), scrollable: viewFilter == 1 )
+                    .frame(height: 200)
+                EventsDataSummaries.SuperlativeEvents(data: updatePeriod(from: compressedTagData), unit: "")
+                EventsDataSummaries.ActivityPerTag(data: updatePeriod(from: compressedTagData), unit: "")
+                
+                Seperator(orientation: .horizontal)
+            }
             
         }.id( DataPageView.DataBookMark.Events.rawValue )
         

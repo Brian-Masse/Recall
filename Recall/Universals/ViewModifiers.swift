@@ -34,16 +34,16 @@ private struct UniversalColoredBackground: ViewModifier {
                 .background(
                     GeometryReader { geo in
                         VStack {
-                            if colorScheme == .dark {
-                                LinearGradient(colors: [color.opacity(0.1), .clear], startPoint: .top, endPoint: .bottom )
+//                            if colorScheme == .dark {
+                            LinearGradient(colors: [color.opacity( colorScheme == .dark ? 0.1 : 0.25), .clear], startPoint: .top, endPoint: .bottom )
                                     .frame(maxHeight: 800)
                                 Spacer()
-                            }
-                            else if colorScheme == .light {
-                                Spacer()
-                                LinearGradient(colors: [color.opacity(0.5), .clear], startPoint: .bottom, endPoint: .top )
-                                    .frame(maxHeight: 800)
-                            }
+//                            }
+//                            else if colorScheme == .light {
+//                                Spacer()
+//                                LinearGradient(colors: [color.opacity(0.2), .clear], startPoint: .bottom, endPoint: .top )
+//                                    .frame(maxHeight: 800)
+//                            }
                         }
                     }
                         .universalBackground(padding: false)
@@ -112,10 +112,13 @@ private struct OpaqueRectangularBackground: ViewModifier {
     
     @Environment(\.colorScheme) var colorScheme
     
+    let padding: CGFloat?
+    
     func body(content: Content) -> some View {
         content
-            .padding()
-            .background(colorScheme == .light ? .white : .black )
+            .if(padding == nil) { view in view.padding() }
+            .if(padding != nil) { view in view.padding(padding!) }
+            .background(colorScheme == .light ? Colors.lightGrey : .black )
             .cornerRadius(Constants.UIDefaultCornerRadius)
     }
 }
@@ -124,10 +127,13 @@ private struct OpaqueRectangularBackground: ViewModifier {
 private struct SecondaryOpaqueRectangularBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
+    let padding: CGFloat?
+    
     func body(content: Content) -> some View {
         content
-            .padding()
-            .background( colorScheme == .dark ? Colors.darkGrey : Colors.lightGrey )
+            .if(padding == nil) { view in view.padding() }
+            .if(padding != nil) { view in view.padding(padding!) }
+            .background( colorScheme == .dark ? Colors.darkGrey : .white )
             .cornerRadius(Constants.UIDefaultCornerRadius)
 //            .shadow(color: Colors.tint.opacity( colorScheme == .dark ? 0.2 : 0.4), radius: 50)
     }
@@ -265,12 +271,12 @@ extension View {
         modifier(RectangularBackground(rounded: rounded, radius: radius))
     }
     
-    func opaqueRectangularBackground() -> some View {
-        modifier(OpaqueRectangularBackground())
+    func opaqueRectangularBackground(_ padding: CGFloat? = nil) -> some View {
+        modifier(OpaqueRectangularBackground(padding: padding))
     }
     
-    func secondaryOpaqueRectangularBackground() -> some View {
-        modifier(SecondaryOpaqueRectangularBackground())
+    func secondaryOpaqueRectangularBackground(_ padding: CGFloat? = nil) -> some View {
+        modifier(SecondaryOpaqueRectangularBackground(padding: padding))
     }
     
     func accentRectangularBackground() -> some View {
