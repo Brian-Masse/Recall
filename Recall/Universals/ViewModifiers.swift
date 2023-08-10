@@ -216,7 +216,6 @@ private struct Developer: ViewModifier {
 private struct ColorChartByTag: ViewModifier {
     
     @ObservedResults(RecallCategory.self) var tags
-    
     @State var dictionary: Dictionary<String, Color> = Dictionary()
     
     func body(content: Content) -> some View {
@@ -230,6 +229,28 @@ private struct ColorChartByTag: ViewModifier {
                 for i in 0..<tags.count  {
                     let key: String =  tags[i].label
                     dic[key] = tags[i].getColor()
+                }
+                self.dictionary = dic
+            }
+    }
+}
+
+private struct ColorChartByGoal: ViewModifier {
+    
+    @ObservedResults(RecallGoal.self) var goals
+    @State var dictionary: Dictionary<String, Color> = Dictionary()
+    
+    func body(content: Content) -> some View {
+        
+        content
+            .chartForegroundStyleScale { value in dictionary[value] ?? .red }
+            .onAppear {
+                var dic: Dictionary<String, Color> = Dictionary()
+                if goals.count == 0 { return }
+                dic["?"] = .white
+                for i in 0..<goals.count  {
+                    let key: String =  goals[i].label
+                    dic[key] = Colors.colorOptions[min( Colors.colorOptions.count - 1, i)]
                 }
                 self.dictionary = dic
             }
@@ -291,10 +312,16 @@ extension View {
         modifier(BecomingVisible(action: action))
     }
     
+//    MARK: Charts
     func colorChartByTag() -> some View {
         modifier(ColorChartByTag())
     }
     
+    func colorChartByGoal() -> some View {
+        modifier(ColorChartByGoal())
+    }
+    
+//    MARK: Utilities
     #if canImport(UIKit)
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)

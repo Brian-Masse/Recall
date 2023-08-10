@@ -10,6 +10,7 @@ import SwiftUI
 
 struct GoalsDataSection: View {
     
+//    MARK: Data Aggregators
     @MainActor
     private func makeGoalsMetOverTimeData() -> [DataNode] {
         var iterator = RecallModel.index.earliestEventDate
@@ -24,21 +25,26 @@ struct GoalsDataSection: View {
         return nodes
     }
     
+//  The first is the progress over time, the second is the number of times the goal was met
     @MainActor
-    private func makeGoalsProgressOverTimeData() -> [DataNode] {
+    private func makeGoalsProgressOverTimeData() -> ([DataNode], [DataNode]) {
         var iterator = RecallModel.index.earliestEventDate
-        var nodes: [DataNode] = []
+        var progress: [DataNode] = []
+        var timesMet: [DataNode] = []
+        
         while iterator <= (.now + Constants.DayTime).resetToStartOfDay() {
-
             for goal in goals {
-                let progress = 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
-                nodes.append(.init(date: iterator, count: progress, category: "", goal: goal.label))
+                let progressNum = 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
+                let met = goal.goalWasMet(on: iterator, events: events)
+                
+                progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
+                timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
                 
             }
             
             iterator += Constants.DayTime
         }
-        return nodes
+        return ( progress, timesMet )
     }
     
 //    This returns 2 lists, the first is the total progress for each goal, and the other is how many time that progress was met
@@ -47,21 +53,28 @@ struct GoalsDataSection: View {
     private func makeCountedData() -> ([DataNode], [DataNode]) {
         var metCount: [DataNode] = []
         var progress: [DataNode] = []
-        let start: (Double, Double) = (0,0)
         
         for goal in goals {
-            events.reduce
-            let counts = events.reduce( into: start ) { partialResult, event in
-                var tuple = partialResult
-                tuple.0 += event.getGoalPrgress(goal)
-                tuple.1 += goal.goalWasMet(on: event.startTime, events: events) ? 1 : 0
-                return tuple
+            
+            let counts = events.reduce([0,0]) { partialResult, event in
+                var list = partialResult
+                list[0] += event.getGoalPrgress(goal)
+                list[1] += goal.goalWasMet(on: event.startTime, events: events) ? 1 : 0
+                return list
             }
-            progress.append(.init(date: .now, count: counts.0, category: "", goal: goal.label))
-            metCount.append(.init(date: .now, count: counts.1, category: "", goal: goal.label))
+            progress.append(.init(date: .now, count: counts[0], category: "", goal: goal.label))
+            metCount.append(.init(date: .now, count: counts[1], category: "", goal: goal.label))
         }
-        
         return (progress, metCount)
+    }
+    
+    @MainActor
+    private func makeCompletionPercentageData() -> [DataNode] {
+        goals.compactMap { goal in
+            let data = goal.countGoalMet(from: events)
+            let percentage = 100 * (Double(data.0) / Double(data.1 + data.0))
+            return .init(date: .now, count: percentage, category: "", goal: goal.label)
+        }
     }
     
     
@@ -69,12 +82,21 @@ struct GoalsDataSection: View {
     let events: [RecallCalendarEvent]
     let goals: [RecallGoal]
     
+//    MARK: Body
     var body: some View {
         
         LazyVStack(alignment: .leading) {
             let goalsMetOverTimeData = makeGoalsMetOverTimeData()
-            let goalsProgressOverTime = makeGoalsProgressOverTimeData()
-            let goalAverages = makeAverageGoalActivityData()
+            let countsOverTime = makeGoalsProgressOverTimeData()
+            let progressOverTime = countsOverTime.0
+            let metOverTime = countsOverTime.1
+            
+            let countData = makeCountedData()
+            let progressData = countData.0
+            let metData = countData.1
+            let totalGoalsMet = metData.reduce(0) { partialResult, node in partialResult + node.count }
+            
+            let metPercentageData = makeCompletionPercentageData()
             
             DataCollection("Goals") {
                 
@@ -83,16 +105,49 @@ struct GoalsDataSection: View {
                 Seperator(orientation: .horizontal)
                     .padding(.bottom)
                 
-                GoalCompletionOverTime(data: goalsMetOverTimeData, unit: "")
-                    .frame(height: 200)
+                Group {
+                    UniversalText("Goals Over Time", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                    
+                    GoalCompletionOverTime(data: goalsMetOverTimeData, unit: "")
+                        .frame(height: 200)
+                        .padding(.bottom)
+                    
+                    GoalProgressOverTime(data: progressOverTime, unit: "%")
+                        .frame(height: 200)
+                        .padding(.bottom)
+                    
+                    GoalProgressOverTime(data: metOverTime, unit: "")
+                        .frame(height: 200)
+                        .padding(.bottom)
+                }
+                
+                Seperator(orientation: .horizontal)
                     .padding(.bottom)
+                    
+                Group {
+                    UniversalText("Counts", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                        .padding(.bottom)
+                    
+                    GoalAverages(title: "Goal Progress", data: progressData, unit: "")
+                        .padding(.bottom)
+                    
+                    GoalAverages(title: "Times Met", data: metData, unit: "")
+                        .padding(.bottom)
+                    
+                    GoalsDataSummaries.GoalsMetCount(data: metData)
+                    
+                    Seperator(orientation: .horizontal)
+                    LargeText(mainText: "\(Int(totalGoalsMet))", subText: "Goals met")
+                    Seperator(orientation: .horizontal)
+                        .padding(.bottom)
+                }
                 
-                GoalProgressOverTime(data: goalsProgressOverTime, unit: "%")
-                    .frame(height: 200)
-                    .padding(.bottom)
-                
-                GoalAverages(data: goalAverages, unit: "HR")
-                
+                Group {
+                    GoalsMetPercentageChart(title: "Goals Met Percentage", data: metPercentageData, unit: "%")
+                    
+                    GoalsDataSummaries.GoalsMetPercentageBreakdown(data: metPercentageData)
+                        .padding(.bottom)
+                }
             }
         }.id( DataPageView.DataBookMark.Goals.rawValue )
     }

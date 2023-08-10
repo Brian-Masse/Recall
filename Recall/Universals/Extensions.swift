@@ -81,6 +81,10 @@ extension Date {
         let components = Calendar.current.dateComponents([.day], from: self)
         return components.day == 1
     }
+    
+    func isSunday() -> Bool {
+        Calendar.current.component(.weekday, from: self) == 1
+    }
 }
 
 extension Collection {

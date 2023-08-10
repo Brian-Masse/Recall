@@ -63,6 +63,37 @@ struct EventsDataSummaries {
     }
 }
 
+//MARK: Goals Data Summaries
+struct GoalsDataSummaries {
+    
+    struct GoalsMetCount: View {
+        let data: [DataNode]
+        
+        var body: some View {
+            
+            let dataSummaryListContent = data.compactMap { node in
+                DataSummaryList.Data(label: node.goal, content: "\(Int(node.count))")
+            }
+            
+            DataSummaryList(content: dataSummaryListContent, striped: true)
+                .hideableDataCollection("Full breakdown")
+        }
+    }
+    
+    struct GoalsMetPercentageBreakdown: View {
+        let data: [DataNode]
+        
+        var body: some View {
+            let dataSummaryListContent = data.compactMap { node in
+                DataSummaryList.Data(label: node.goal, content: "\(node.count.round(to: 2))")
+            }
+            
+            DataSummaryList(content: dataSummaryListContent, striped: true)
+                .hideableDataCollection("Full Breakdown")
+        }
+    }
+}
+
 
 //MARK: Data Summary List
 struct DataSummaryList: View {

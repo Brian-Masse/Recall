@@ -13,19 +13,16 @@ class Colors {
     static var tint: Color { RecallModel.shared.activeColor }
     static var main: Color { accentGreen }
     
-    static let colorOptions: [Color] = [.blue]
+    static let colorOptions: [Color] = [ accentGreen, blue, purple, pink, yellow,  ]
     
     static let lightGrey = Color(red: 0.97, green: 0.97, blue: 0.97)
     static let darkGrey = Color(red: 0.1, green: 0.1, blue: 0.1).opacity(0.9)
     static let accentGreen = makeColor(95, 255, 135)
     
-    static let forestGreen = makeColor(80, 120, 87)
-    static let deepPurple = makeColor( 91, 45, 234 )
-    static let roseGold =  makeColor( 223, 143, 133 )
-    static let orange   =  makeColor(239, 140, 86)
-    static let oceanBlue = makeColor( 61, 79, 110 )
-    static let beige    = makeColor( 122, 104, 89 )
-    static let sunnDelight = makeColor( 196, 188, 126 )
+    static let yellow = makeColor(234, 169, 40)
+    static let pink = makeColor(198, 62, 120)
+    static let purple = makeColor(106, 38, 153)
+    static let blue = makeColor(69, 121, 251)
     
     private static func makeColor( _ r: CGFloat, _ g: CGFloat, _ b: CGFloat ) -> Color {
         Color(red: r / 255, green: g / 255, blue: b / 255)
@@ -56,7 +53,7 @@ class Constants {
     static let UICircularProgressWidth: CGFloat = 12
     static let UIBarMarkCOrnerRadius: CGFloat = 5
     static let UIScrollableBarWidth: MarkDimension = 15
-    static let UIScrollableBarWidthDouble: Double = 15
+    static let UIScrollableBarWidthDouble: Double = 24
     
 //    timings
     static let MinuteTime: Double = 60

@@ -132,11 +132,13 @@ struct ActivitiesPerDay: View {
         
         VStack(alignment: .leading) {
                 
+            let days = RecallModel.getDaysSinceFirstEvent()
+            
             UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             
             Group {
                 if scrollable {
-                    ScrollChart(data.count) {
+                    ScrollChart(Int(days)) {
                         makeChart()
                     }
                 }else {
@@ -151,6 +153,9 @@ struct ActivitiesPerDay: View {
 
 //MARK: Goals Charts
 
+
+
+//MARK: Goals Over Time Chart
 struct GoalsOverTimeChart: ViewModifier {
     
     let unit: String
@@ -160,7 +165,9 @@ struct GoalsOverTimeChart: ViewModifier {
             .chartXAxis {
                 AxisMarks(values: .stride(by: .day)) { value in
                     if let date = value.as( Date.self ) {
-                        let label = date.isFirstOfMonth() ? "01\n\(date.formatted(.dateTime.month()))" : "\(date.formatted(.dateTime.day()))"
+                        
+                        let regularLabel = !date.isSunday() ? "\(date.formatted(.dateTime.day()))" : "\(date.formatted(.dateTime.day()))\nSun"
+                        let label = date.isFirstOfMonth() ? "01\n\(date.formatted(.dateTime.month()))" : regularLabel
                         
                         AxisValueLabel(centered: true) {
                             UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont)
@@ -179,6 +186,7 @@ struct GoalsOverTimeChart: ViewModifier {
                     }
                 }
             }
+            .padding(.top, 5)
     }
 }
 
@@ -217,6 +225,7 @@ struct GoalCompletionOverTime: View {
                     }
                 }
                 .goalsOverTimeChart(unit: unit)
+                .colorChartByGoal()
             }
         }
     }
@@ -234,18 +243,23 @@ struct GoalProgressOverTime: View {
         
         VStack(alignment: .leading) {
             
+            let days = RecallModel.getDaysSinceFirstEvent()
+            
             UniversalText("goal progress over time", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             
-            Chart {
-                ForEach(data) { datum in
-                    
-                    BarMark(x: .value("X", datum.date),
-                            y: .value("Y", datum.count))
-                    .foregroundStyle(by: .value("Series", datum.goal))
+            ScrollChart(Int(days)) {
+                Chart {
+                    ForEach(data) { datum in
+                        
+                        BarMark(x: .value("X", datum.date),
+                                y: .value("Y", datum.count),
+                                width: Constants.UIScrollableBarWidth)
+                        .foregroundStyle(by: .value("Series", datum.goal))
+                    }
                 }
+                .colorChartByGoal()
+                .goalsOverTimeChart(unit: unit)
             }
-            .colorChartByTag()
-            .goalsOverTimeChart(unit: unit)
         }
     }
 }
@@ -254,22 +268,98 @@ struct GoalProgressOverTime: View {
 
 struct GoalAverages: View {
     
+    private enum Page: String, Identifiable {
+        case all
+        case average
+        
+        var id: String { self.rawValue }
+    }
+    
+    @ViewBuilder
+    private func makeChart( makeYData: @escaping (DataNode) -> Double) -> some View {
+
+        Chart {
+            ForEach(data) { datum in
+                BarMark(x: .value("X", datum.goal),
+                        y: .value("Y", makeYData(datum)))
+                .foregroundStyle(by: .value("Series", datum.goal))
+                .cornerRadius(Constants.UIBarMarkCOrnerRadius)
+            }
+        }
+        .chartYAxis {
+            AxisMarks(position: .leading) { value in
+                if let count = value.as(Double.self) {
+                    AxisValueLabel {
+                        UniversalText("\(count.round(to: 2))" + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                    }
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
+                }
+            }
+        }
+        .frame(height: 150)
+        .colorChartByGoal()
+        .padding(.top, 5)
+    }
+    
+    let title: String
+    let data: [DataNode]
+    let unit: String
+    
+    @State private var page: Page = .all
+    
+    var body: some View {
+        
+        let totalDay = RecallModel.getDaysSinceFirstEvent()
+        
+        VStack(alignment: .leading) {
+            
+            
+            let chartTitle = page == .all ? title : "Average \(title)"
+            
+            UniversalText(chartTitle, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            
+            TabView(selection: $page) {
+                makeChart { node in node.count }.tag(Page.all)
+                makeChart { node in node.count / totalDay }.tag(Page.average)
+            }
+            .tabViewStyle(.page)
+            .frame(height: 150)
+        }
+    }
+}
+
+//MARK: GoalsMetPercentageChart
+struct GoalsMetPercentageChart: View {
+    
+    let title: String
     let data: [DataNode]
     let unit: String
     
     var body: some View {
-        
         VStack(alignment: .leading) {
             
-            UniversalText("Average Goal Progress", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             
             Chart {
                 ForEach(data) { datum in
                     BarMark(x: .value("X", datum.goal),
                             y: .value("Y", datum.count))
-                    .foregroundStyle(Colors.tint)
+                    .foregroundStyle(by: .value("Series", datum.goal))
+                    .cornerRadius(Constants.UIBarMarkCOrnerRadius)
                 }
             }
+            .chartYAxis {
+                AxisMarks(position: .leading) { value in
+                    if let count = value.as(Double.self) {
+                        AxisValueLabel {
+                            UniversalText("\(count.round(to: 2))" + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                        }
+                        AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
+                    }
+                }
+            }
+            .frame(height: 150)
+            .colorChartByGoal()
         }
     }
 }
