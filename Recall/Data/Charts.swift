@@ -12,19 +12,21 @@ import Charts
 //MARK: Scroll Chart
 struct ScrollChart<Content: View>: View {
     
+    let dataCount: Int
     let content: Content
     
-    init( @ViewBuilder _ content: () -> Content ) {
+    init( _ dataCount: Int, @ViewBuilder _ content: () -> Content ) {
+        self.dataCount = dataCount
         self.content = content()
     }
     
     var body: some View {
-        GeometryReader { geo in
-            ScrollView(.horizontal) {
-                content
-                    .frame(width: geo.size.width)
-            }
+//        GeometryReader { geo in
+        ScrollView(.horizontal) {
+            content
+                .frame(width: Double(dataCount) * Constants.UIScrollableBarWidthDouble )
         }
+//        }
     }
 }
 
@@ -85,8 +87,10 @@ struct ActivitiesPerDay: View {
     private func makeChart() -> some View {
         Chart {
             ForEach(data) { datum in
-                BarMark(x: .value("date", datum.date, unit: .day ),
-                        y: .value("count", datum.count))
+                
+                BarMark(x: .value("X", datum.date, unit: .day ),
+                        y: .value("Y", datum.count),
+                        width: scrollable ? Constants.UIScrollableBarWidth : .automatic)
                 .foregroundStyle(by: .value("series", datum.category))
                 .cornerRadius(Constants.UIBarMarkCOrnerRadius)
             }
@@ -132,7 +136,7 @@ struct ActivitiesPerDay: View {
             
             Group {
                 if scrollable {
-                    ScrollChart {
+                    ScrollChart(data.count) {
                         makeChart()
                     }
                 }else {
@@ -198,7 +202,7 @@ struct GoalCompletionOverTime: View {
         VStack(alignment: .leading) {
             UniversalText("Goals met per day", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             
-            ScrollChart {
+            ScrollChart(data.count) {
                 Chart {
                     ForEach(data) { datum in
                         LineMark(x: .value("date", datum.date, unit: .day ),
@@ -265,10 +269,7 @@ struct GoalAverages: View {
                             y: .value("Y", datum.count))
                     .foregroundStyle(Colors.tint)
                 }
-                
             }
         }
-        
     }
-    
 }

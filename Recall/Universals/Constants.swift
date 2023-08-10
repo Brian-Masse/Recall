@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Charts
 
 class Colors {
     static var tint: Color { RecallModel.shared.activeColor }
@@ -34,6 +35,7 @@ class Colors {
 
 class Constants {
     
+//    font sizes
     static let UILargeTextSize: CGFloat     = 90
     static let UITitleTextSize: CGFloat     = 45
     static let UIHeaderTextSize: CGFloat    = 30
@@ -41,21 +43,28 @@ class Constants {
     static let UIDefaultTextSize: CGFloat   = 15
     static let UISmallTextSize: CGFloat     = 11
     
+//    extra
     static let UIDefaultCornerRadius: CGFloat = 15
     static let UILargeCornerRadius: CGFloat = 30
-    static let UIBarMarkCOrnerRadius: CGFloat = 5
     
+//    forms
     static let UIFormSpacing      : CGFloat = 10
     static let UIFormPagePadding: CGFloat = 5
     static let UIFormSliderTextFieldWidth: CGFloat = 60
     
+//    charts
     static let UICircularProgressWidth: CGFloat = 12
+    static let UIBarMarkCOrnerRadius: CGFloat = 5
+    static let UIScrollableBarWidth: MarkDimension = 15
+    static let UIScrollableBarWidthDouble: Double = 15
     
+//    timings
     static let MinuteTime: Double = 60
     static let HourTime: Double = 3600
     static let DayTime: Double = 86400
     static let WeekTime: Double = 604800
     
+//    fonts
     static let titleFont: ProvidedFont = .syneHeavy
     static let mainFont: ProvidedFont = .renoMono
     

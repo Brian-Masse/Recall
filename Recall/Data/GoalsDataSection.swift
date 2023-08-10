@@ -41,14 +41,27 @@ struct GoalsDataSection: View {
         return nodes
     }
     
+//    This returns 2 lists, the first is the total progress for each goal, and the other is how many time that progress was met
+//    This data can then by used to inexpensivly compute the average when graphing
     @MainActor
-    private func makeAverageGoalActivityData() -> [DataNode] {
-        let totalDays = RecallModel.getDaysSinceFirstEvent()
-        return goals.compactMap { goal in
-            let count = events.reduce(0) { partialResult, event in partialResult + event.getGoalPrgress(goal) } / totalDays
-            return DataNode(date: .now, count: count, category: "", goal: goal.label)
+    private func makeCountedData() -> ([DataNode], [DataNode]) {
+        var metCount: [DataNode] = []
+        var progress: [DataNode] = []
+        let start: (Double, Double) = (0,0)
+        
+        for goal in goals {
+            events.reduce
+            let counts = events.reduce( into: start ) { partialResult, event in
+                var tuple = partialResult
+                tuple.0 += event.getGoalPrgress(goal)
+                tuple.1 += goal.goalWasMet(on: event.startTime, events: events) ? 1 : 0
+                return tuple
+            }
+            progress.append(.init(date: .now, count: counts.0, category: "", goal: goal.label))
+            metCount.append(.init(date: .now, count: counts.1, category: "", goal: goal.label))
         }
         
+        return (progress, metCount)
     }
     
     
@@ -72,12 +85,13 @@ struct GoalsDataSection: View {
                 
                 GoalCompletionOverTime(data: goalsMetOverTimeData, unit: "")
                     .frame(height: 200)
-                    .padding(.bottom, 5)
+                    .padding(.bottom)
                 
                 GoalProgressOverTime(data: goalsProgressOverTime, unit: "%")
                     .frame(height: 200)
+                    .padding(.bottom)
                 
-                GoalAverages(data: goalAverages, unit: "")
+                GoalAverages(data: goalAverages, unit: "HR")
                 
             }
         }.id( DataPageView.DataBookMark.Goals.rawValue )
