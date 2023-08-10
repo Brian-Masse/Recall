@@ -145,3 +145,130 @@ struct ActivitiesPerDay: View {
 }
 
 
+//MARK: Goals Charts
+
+struct GoalsOverTimeChart: ViewModifier {
+    
+    let unit: String
+    
+    func body(content: Content) -> some View {
+        content
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .day)) { value in
+                    if let date = value.as( Date.self ) {
+                        let label = date.isFirstOfMonth() ? "01\n\(date.formatted(.dateTime.month()))" : "\(date.formatted(.dateTime.day()))"
+                        
+                        AxisValueLabel(centered: true) {
+                            UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                            
+                        }
+                    }
+                }
+            }
+            .chartYAxis {
+                AxisMarks(position: .leading) { value in
+                    if let count = value.as(Int.self) {
+                        AxisValueLabel {
+                            UniversalText("\(count)" + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                        }
+                        AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
+                    }
+                }
+            }
+    }
+}
+
+extension View {
+    func goalsOverTimeChart(unit: String = "") -> some View {
+        modifier(GoalsOverTimeChart(unit: unit))
+    }
+}
+
+
+
+//MARK: GoalCompletionOverTime
+struct GoalCompletionOverTime: View {
+    
+    let data: [DataNode]
+    let unit: String
+    
+    
+    var body: some View {
+        
+        VStack(alignment: .leading) {
+            UniversalText("Goals met per day", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            
+            ScrollChart {
+                Chart {
+                    ForEach(data) { datum in
+                        LineMark(x: .value("date", datum.date, unit: .day ),
+                                 y: .value("count", datum.count))
+                        .interpolationMethod(.cardinal)
+                        .foregroundStyle(Colors.tint)
+                        
+                        AreaMark(x: .value("date", datum.date, unit: .day ),
+                                 y: .value("count", datum.count))
+                        .interpolationMethod(.cardinal)
+                        .foregroundStyle( LinearGradient(colors: [Colors.tint.opacity(0.5), .clear], startPoint: .top, endPoint: .bottom ) )
+                    }
+                }
+                .goalsOverTimeChart(unit: unit)
+            }
+        }
+    }
+    
+}
+
+//MARK: Goal Progress over time
+
+struct GoalProgressOverTime: View {
+    
+    let data: [DataNode]
+    let unit: String
+    
+    var body: some View {
+        
+        VStack(alignment: .leading) {
+            
+            UniversalText("goal progress over time", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            
+            Chart {
+                ForEach(data) { datum in
+                    
+                    BarMark(x: .value("X", datum.date),
+                            y: .value("Y", datum.count))
+                    .foregroundStyle(by: .value("Series", datum.goal))
+                }
+            }
+            .colorChartByTag()
+            .goalsOverTimeChart(unit: unit)
+        }
+    }
+}
+
+//MARK: Goal Averages
+
+struct GoalAverages: View {
+    
+    let data: [DataNode]
+    let unit: String
+    
+    var body: some View {
+        
+        VStack(alignment: .leading) {
+            
+            UniversalText("Average Goal Progress", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            
+            Chart {
+                ForEach(data) { datum in
+                    BarMark(x: .value("X", datum.goal),
+                            y: .value("Y", datum.count))
+                    .foregroundStyle(Colors.tint)
+                }
+                
+            }
+        }
+        
+    }
+    
+}

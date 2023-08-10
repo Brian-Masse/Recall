@@ -76,6 +76,11 @@ extension Date {
         
         return Calendar.current.date(bySettingHour: roundedHours, minute: Int(roundedMinutes), second: 0, of: self) ?? self
     }
+    
+    func isFirstOfMonth() -> Bool {
+        let components = Calendar.current.dateComponents([.day], from: self)
+        return components.day == 1
+    }
 }
 
 extension Collection {

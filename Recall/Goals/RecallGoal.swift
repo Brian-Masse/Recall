@@ -162,17 +162,24 @@ class RecallGoal: Object, Identifiable {
         return Date.now.timeIntervalSince( getStartDate() ) / ( rawFrequence == .daily ? Constants.DayTime : Constants.WeekTime)
     }
     
+    @MainActor
+    func goalWasMet(on date: Date, events: [RecallCalendarEvent]) -> Bool {
+        Double(self.getProgressTowardsGoal(from: events, on: date )) >= Double(targetHours)
+    }
+    
     
 //    MARK: Data Aggregators
     
     @MainActor
-    func getProgressTowardsGoal(from events: [RecallCalendarEvent]) -> Int {
+    func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now) -> Int {
         
-        let isSunday = Calendar.current.component(.weekday, from: .now) == 1
-        let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: .now) ?? .now) - (isSunday ? 0 : 7 * Constants.DayTime)
-        let startDate = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? lastSunday : .now
         
-        let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() }
+        let step = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? 7 * Constants.DayTime : Constants.DayTime
+        let isSunday = Calendar.current.component(.weekday, from: date) == 1
+        let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: date) ?? date) - (isSunday ? 0 : 7 * Constants.DayTime)
+        let startDate = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? lastSunday : date
+        
+        let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() && event.endTime < (startDate + step) }
         return filtered.reduce(0) { partialResult, event in
             partialResult + Int( event.getGoalPrgress(self) )
         }

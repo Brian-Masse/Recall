@@ -14,24 +14,6 @@ import SwiftUI
 //the data is seperated so it can be better plotted on the graphs
 //the indivudal DataSection that summary is being managed by should make sure its passing the right data in
 struct EventsDataSummaries {
-
-    struct LargeText: View {
-        
-        let mainText: String
-        let subText: String
-        
-        var body: some View {
-            VStack(alignment: .leading) {
-                HStack(alignment: .bottom) {
-                    UniversalText(mainText, size: Constants.UILargeTextSize * 2, font: Constants.titleFont, wrap: false, scale: true)
-                    UniversalText(subText, size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, scale: true)
-                }
-                .padding(.top, -Constants.UITitleTextSize)
-                .padding(.bottom, -Constants.UIDefaultTextSize)
-            }
-        }
-        
-    }
     
 //    This describes the daily average, either hours or tags per day, that a person has
     struct DailyAverage: View {
@@ -126,5 +108,22 @@ struct DataSummaryList: View {
             }
         }
     }
+}
+
+//MARK: Large Summary Text
+struct LargeText: View {
     
+    let mainText: String
+    let subText: String
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack(alignment: .bottom) {
+                UniversalText(mainText, size: Constants.UILargeTextSize * 2, font: Constants.titleFont, wrap: false, scale: true)
+                UniversalText(subText, size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, scale: true)
+            }
+            .padding(.top, -Constants.UITitleTextSize)
+            .padding(.bottom, -Constants.UIDefaultTextSize)
+        }
+    }
 }
