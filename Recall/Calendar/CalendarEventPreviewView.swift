@@ -182,6 +182,15 @@ struct CalendarEventPreviewView: View {
     
 //    MARK: Body
     @ViewBuilder
+    private func makeLengthHandles() -> some View {
+        VStack {
+            makeLengthHandle(.up)
+            Spacer()
+            makeLengthHandle(.down)
+        }.frame(height: getHeight() + 120)
+    }
+    
+    @ViewBuilder
     private func makeLengthHandle(_ direction: ResizeDirection) -> some View {
         if resizing {
             Rectangle()
@@ -193,7 +202,7 @@ struct CalendarEventPreviewView: View {
                     Image(systemName: direction == .up ? "chevron.up" : "chevron.down")
                         .padding()
                         .padding(.horizontal)
-                        .foregroundColor(.black)
+                        .foregroundColor(event.getColor())
                         .rectangularBackgorund()
                         .offset(y: direction == .up ? 20 : -20)
                         .onTapGesture { }
@@ -214,11 +223,7 @@ struct CalendarEventPreviewView: View {
         
             CalendarEventPreviewContentView(event: event, width: getWidth(), height: length)
                 .frame(width: getWidth(), height: getHeight())
-                .overlay(VStack {
-                    makeLengthHandle(.up)
-                    Spacer()
-                    makeLengthHandle(.down)
-                })
+                .overlay(makeLengthHandles())
                 .contextMenu {
                     Button { beginMoving()  }  label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
                     Button {beginResizing() } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
