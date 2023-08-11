@@ -156,12 +156,14 @@ private struct TintBackground: ViewModifier {
 private struct AccentBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
+    let cornerRadius: CGFloat?
+    
     func body(content: Content) -> some View {
         content
             .padding(25)
             .foregroundColor(.black)
             .background( Colors.tint )
-            .cornerRadius(Constants.UIDefaultCornerRadius)
+            .cornerRadius( cornerRadius == nil ? Constants.UIDefaultCornerRadius : cornerRadius!)
     }
 }
 
@@ -300,8 +302,8 @@ extension View {
         modifier(SecondaryOpaqueRectangularBackground(padding: padding))
     }
     
-    func accentRectangularBackground() -> some View {
-        modifier(AccentBackground())
+    func accentRectangularBackground(_ cornerRadius: CGFloat? = nil) -> some View {
+        modifier(AccentBackground(cornerRadius: cornerRadius))
     }
     
     func tintRectangularBackground() -> some View {

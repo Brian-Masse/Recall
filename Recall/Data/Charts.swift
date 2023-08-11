@@ -255,6 +255,7 @@ struct GoalProgressOverTime: View {
                                 y: .value("Y", datum.count),
                                 width: Constants.UIScrollableBarWidth)
                         .foregroundStyle(by: .value("Series", datum.goal))
+                        .cornerRadius(Constants.UIBarMarkCOrnerRadius)
                     }
                 }
                 .colorChartByGoal()

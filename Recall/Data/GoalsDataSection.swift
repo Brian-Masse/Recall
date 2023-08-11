@@ -86,17 +86,17 @@ struct GoalsDataSection: View {
     var body: some View {
         
         LazyVStack(alignment: .leading) {
-            let goalsMetOverTimeData = makeGoalsMetOverTimeData()
-            let countsOverTime = makeGoalsProgressOverTimeData()
-            let progressOverTime = countsOverTime.0
-            let metOverTime = countsOverTime.1
+            lazy var goalsMetOverTimeData = makeGoalsMetOverTimeData()
+            lazy var countsOverTime = makeGoalsProgressOverTimeData()
+            lazy var progressOverTime = countsOverTime.0
+            lazy var metOverTime = countsOverTime.1
             
-            let countData = makeCountedData()
-            let progressData = countData.0
-            let metData = countData.1
-            let totalGoalsMet = metData.reduce(0) { partialResult, node in partialResult + node.count }
+            lazy var countData = makeCountedData()
+            lazy var progressData = countData.0
+            lazy var metData = countData.1
+            lazy var totalGoalsMet = metData.reduce(0) { partialResult, node in partialResult + node.count }
             
-            let metPercentageData = makeCompletionPercentageData()
+            lazy var metPercentageData = makeCompletionPercentageData()
             
             DataCollection("Goals") {
                 

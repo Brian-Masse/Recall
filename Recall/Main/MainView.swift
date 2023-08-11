@@ -10,6 +10,7 @@ import SwiftUI
 import RealmSwift
 
 
+//MARK: MainView
 struct MainView: View {
     
     enum MainPage: String, Identifiable {
@@ -23,52 +24,79 @@ struct MainView: View {
         }
     }
     
+//    MARK: Tabbar
     struct TabBar: View {
+        
+        enum Edge {
+            case left
+            case right
+            case none
+        }
         
         struct TabBarIcon: View {
             
             @Binding var selection: MainView.MainPage
             
+            let namespace: Namespace.ID
+            
             let page: MainView.MainPage
             let title: String
             let icon: String
+            let edge: TabBar.Edge
         
             var body: some View {
-                VStack {
-                    Image(systemName: icon)
-                    UniversalText( title, size: Constants.UIDefaultTextSize )
+                Group {
+                    if selection == page {
+                        HStack {
+                            ResizeableIcon(icon: "arrow.up", size: Constants.UISubHeaderTextSize)
+                            UniversalText( title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false )
+                        }
+                        .foregroundColor(.black)
+                        .padding(34)
+                        .background {
+                            Rectangle()
+                                .foregroundColor(Colors.tint)
+                                .cornerRadius(50)
+                                .matchedGeometryEffect(id: "highlight", in: namespace)
+                        }
+                        .shadow(color: Colors.tint.opacity(0.4), radius: 5)
+                        
+                    } else {
+                        ResizeableIcon(icon: icon, size: Constants.UIDefaultTextSize)
+                            .padding(.leading, edge == .left ? 30 : 0)
+                            .padding(.trailing, edge == .right ? 30 : 0)
+                    }
                 }
-                .padding(5)
-                .onTapGesture { selection = page }
-                .background( selection == page ? .blue : .clear )
-                .cornerRadius( selection == page ? Constants.UIDefaultCornerRadius : 0 )
+                .onTapGesture { withAnimation { selection = page }}
             }
         }
         
+        @Namespace private var tabBarNamespace
         @Binding var pageSelection: MainView.MainPage
         
         var body: some View {
-            HStack {
-                
+            HStack(spacing: 10) {
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .calendar, title: "Recall", icon: "calendar", edge: .left)
                 Spacer()
-                TabBarIcon(selection: $pageSelection, page: .calendar, title: "Calendar", icon: "calendar")
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .goals, title: "Goals", icon: "checkmark.seal", edge: .none)
                 Spacer()
-                TabBarIcon(selection: $pageSelection, page: .goals, title: "Goals", icon: "checkmark.seal")
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .categories, title: "Tags", icon: "wallet.pass", edge: .none)
                 Spacer()
-                TabBarIcon(selection: $pageSelection, page: .categories, title: "Categories", icon: "wallet.pass")
-                Spacer()
-                TabBarIcon(selection: $pageSelection, page: .data, title: "Data", icon: "chart.bar")
-                Spacer()
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .data, title: "Data", icon: "chart.bar", edge: .right)
             }
             .padding(7)
+//            .padding(.vertical, 8)
+            .padding(.bottom, 18)
+            .ignoresSafeArea()
             .universalTextStyle()
-            .rectangularBackgorund(rounded: true)
+            .background(.thinMaterial)
+            .foregroundStyle(.ultraThickMaterial)
+            .cornerRadius(57, corners: [.topLeft, .topRight])
             .shadow(radius: 5)
-            .padding(.bottom)
-            .padding()
         }
     }
     
+//    MARK: Body
     @ObservedResults( RecallCalendarEvent.self ) var events
     
     @State var currentPage: MainPage = .calendar
@@ -82,7 +110,7 @@ struct MainView: View {
                 CategoriesPageView(events: Array(events) ).tag( MainPage.categories )
                 DataPageView().tag( MainPage.data )
             }
-            .tabViewStyle(.page)
+//            .tabViewStyle(.page(indexDisplayMode: .never))
             
             TabBar(pageSelection: $currentPage)
             

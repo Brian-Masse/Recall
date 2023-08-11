@@ -49,18 +49,18 @@ struct EventsDataSection: View {
         LazyVStack(alignment: .leading) {
         
     //        These are typically used for the charts
-            let hourlyData =                    makeData { event in event.getLengthInHours() }
+            lazy var hourlyData =                    makeData { event in event.getLengthInHours() }
     //        in general the compressed data is used for data sumarries, that dont need every individaul node
-            let compressedHourlyData =          compressData(from: hourlyData)
-            let recentHourlyData =              getRecentData(from: hourlyData)
-            let recentCompressedHourlyData =    getRecentData(from: compressedHourlyData)
+            lazy var compressedHourlyData =          compressData(from: hourlyData)
+            lazy var recentHourlyData =              getRecentData(from: hourlyData)
+            lazy var recentCompressedHourlyData =    getRecentData(from: compressedHourlyData)
             
-            let tagData =                       makeData { _ in 1 }
-            let compressedTagData =             compressData(from: tagData)
-            let recentTagData =                 getRecentData(from: tagData)
-            let recentCompressedTagData =       getRecentData(from: compressedTagData)
+            lazy var tagData =                       makeData { _ in 1 }
+            lazy var compressedTagData =             compressData(from: tagData)
+            lazy var recentTagData =                 getRecentData(from: tagData)
+            lazy var recentCompressedTagData =       getRecentData(from: compressedTagData)
             
-            let totalHours = getTotalHours(from: hourlyData)
+            lazy var totalHours = getTotalHours(from: hourlyData)
             
             DataCollection("Events") {
                 
