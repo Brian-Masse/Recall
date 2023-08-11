@@ -200,7 +200,7 @@ struct CalendarContainer: View {
                     view.opaqueRectangularBackground()
                 }
             }
-            .onTapGesture { }
+            .onTapGesture { dragging = false }
             .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
         }
     }

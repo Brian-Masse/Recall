@@ -49,8 +49,6 @@ struct CalendarEventPreviewView: View {
     @State var showingEvent: Bool = false
     @State var showingEditingScreen: Bool = false
     
-    
-    
 //    MARK: Convenience Functions
     
     @MainActor
@@ -96,6 +94,10 @@ struct CalendarEventPreviewView: View {
         overlapData.offset
     }
     
+    private func resetEditingControls() {
+        resizing = false
+        moving = false
+    }
     
 //    MARK: Drag
     private var drag: some Gesture {
@@ -133,8 +135,8 @@ struct CalendarEventPreviewView: View {
                 }
             }
             .onEnded { dragGesture in
-                dragging = false
                 resizing = false
+                dragging = false
                 if direction == .up { event.updateDate(startDate: roundedStartDate)
                 } else { event.updateDate(endDate: roundedStartDate + length * Constants.HourTime ) }
             }
@@ -231,7 +233,10 @@ struct CalendarEventPreviewView: View {
                 .coordinateSpace(name: blockCoordinateSpaceKey)
             
                 .onAppear { setup() }
-                .onChange(of: dragging) { newValue in prepareMovementSnapping() }
+                .onChange(of: dragging) { newValue in
+                    prepareMovementSnapping()
+                    if !newValue { resetEditingControls() } 
+                }
                 .shadow(radius: (resizing || moving) ? 10 : 0)
                 .sheet(isPresented: $showingEvent) {
                     CalendarEventView(event: event, events: events)
