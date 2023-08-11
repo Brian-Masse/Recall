@@ -14,29 +14,29 @@ struct CategoriesPageView: View {
     @ViewBuilder
     func makeTagList(from tags: [RecallCategory], title: String) -> some View {
         
-        HeadedBackground {
-            HStack {
-                UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
-                Spacer()
-            }
+        VStack(alignment: .leading) {
+            UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
             
-        } content: {
             VStack {
-                ForEach(tags) { category in
-                    TagPreviewView(tag: category, events: events)
+                ForEach(tags) { tag in
+                    TagPreviewView(tag: tag, events: events)
+                        .matchedGeometryEffect(id: tag.label, in: tagsPageNamespace)
                     
-                    Rectangle()
-                        .universalTextStyle()
-                        .opacity(0.5)
-                        .frame(height: 1)
-                        .padding(.horizontal)
+                    if tag.label != tags.last?.label ?? "" {
+                        Rectangle()
+                            .universalTextStyle()
+                            .opacity(0.5)
+                            .frame(height: 1)
+                    }
                 }
             }
-            .padding(.bottom)
+            .opaqueRectangularBackground()
         }
+        .padding(.bottom)
     }
     
     @Environment(\.colorScheme) var colorScheme
+    @Namespace private var tagsPageNamespace
     
     @ObservedResults( RecallCategory.self ) var categories
     
@@ -55,7 +55,7 @@ struct CategoriesPageView: View {
                 UniversalText( "Tags", size: Constants.UITitleTextSize, font: Constants.titleFont, true )
                 Spacer()
                 LargeRoundedButton("Create Tag", icon: "arrow.up") { showingCreateTagView = true }
-            }.padding(7)
+            }
             
             ScrollView(.vertical) {
                 makeTagList(from: favorites, title: "Favorite Tags")
@@ -63,10 +63,12 @@ struct CategoriesPageView: View {
                 
                 makeTagList(from: nonFavorites, title: "All Tags")
                     .padding(.bottom)
+                    .padding(.bottom, Constants.UIBottomOfPagePadding)
                 
             }
             
         }
+        .padding(7)
         .universalColoredBackground(Colors.tint)
         .sheet(isPresented: $showingCreateTagView) {
             CategoryCreationView(editing: false,
@@ -75,7 +77,6 @@ struct CategoriesPageView: View {
                                  goalRatings: Dictionary(),
                                  color: Colors.tint)
         }
-        
     }
     
 }

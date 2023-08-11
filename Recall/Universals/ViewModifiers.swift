@@ -119,6 +119,10 @@ private struct OpaqueRectangularBackground: ViewModifier {
             .if(padding == nil) { view in view.padding() }
             .if(padding != nil) { view in view.padding(padding!) }
             .background(colorScheme == .light ? Colors.lightGrey : .black )
+            .overlay(
+                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                    .stroke(colorScheme == .dark ? .white : .black, lineWidth: 1)
+            )
             .cornerRadius(Constants.UIDefaultCornerRadius)
     }
 }

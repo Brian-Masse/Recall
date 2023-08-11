@@ -43,6 +43,7 @@ class Constants {
 //    extra
     static let UIDefaultCornerRadius: CGFloat = 15
     static let UILargeCornerRadius: CGFloat = 30
+    static let UIBottomOfPagePadding: CGFloat = 100
     
 //    forms
     static let UIFormSpacing      : CGFloat = 10

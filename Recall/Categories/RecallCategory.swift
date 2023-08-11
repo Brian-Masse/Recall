@@ -48,7 +48,7 @@ class RecallCategory: Object, Identifiable {
 //    MARK: Class Methods:
     func toggleFavorite() {
         RealmManager.updateObject(self) { thawed in
-            thawed.isFavorite = true
+            thawed.isFavorite = !self.isFavorite
         }
     }
     

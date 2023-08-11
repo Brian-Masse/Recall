@@ -61,25 +61,42 @@ struct TagPreviewView: View {
     
     @State var showingEditTagView: Bool = false
     
+    @ViewBuilder
+    private func makeFavoriteToggle() -> some View {
+        Group {
+            if tag.isFavorite {
+                HStack {
+                    UniversalText("Favorite", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                    Image(systemName: "checkmark")
+                }
+                
+            } else {
+                HStack {
+                    UniversalText("Favorite", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                    Image(systemName: "arrow.up")
+                }
+            }
+        }
+        .onTapGesture { withAnimation { tag.toggleFavorite() }}
+    }
+    
     var body: some View {
         
         VStack {
             HStack {
                 Image(systemName: "tag")
+                    .foregroundColor(tag.getColor())
                 UniversalText(tag.label, size: Constants.UISubHeaderTextSize, font: Constants.mainFont)
                 
                 Spacer()
                 
-                Image(systemName: tag.isFavorite ? "checkmark.seal" : "seal")
-                    .onTapGesture { tag.toggleFavorite() }
+                makeFavoriteToggle()
             }
             
             GoalTags(goalRatings: Array(tag.goalRatings), events: events)
             
         }
-        .padding(.horizontal)
-        .padding(.vertical, 5)
-        .background( colorScheme == .light ? .white : .black )
+        .opaqueRectangularBackground(0)
         .contextMenu {
             Button("edit") { showingEditTagView = true }
             Button("delete") { tag.delete() }
