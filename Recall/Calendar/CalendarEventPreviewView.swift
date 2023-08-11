@@ -251,9 +251,9 @@ struct CalendarEventPreviewView: View {
                                               day: event.startTime,
                                               category: event.category ?? RecallCategory(),
                                               goalRatings: RecallCalendarEvent.translateGoalRatingList(event.goalRatings) )
-                    
                 }
         }
+        .zIndex( resizing || moving ? 5 : 0 )
         
     }
 }

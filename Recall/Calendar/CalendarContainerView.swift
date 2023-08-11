@@ -17,7 +17,7 @@ struct CalendarContainer: View {
         func makeTimeMarker(hour: CGFloat, label: String, color: Color) -> some View {
             VStack {
                 HStack(alignment: .top) {
-                    UniversalText( label, size: Constants.UISmallTextSize, lighter: true  )
+                    UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont, lighter: true  )
                     
                     Rectangle()
                         .frame(height: 1)
@@ -188,6 +188,14 @@ struct CalendarContainer: View {
                         }
                         .if( slideDirection == .right ) { view in view.transition(AnyTransition.slideAwayTransition(.right)) }
                         .if( slideDirection == .left ) { view in view.transition(AnyTransition.slideAwayTransition(.left)) }
+                        
+                        Rectangle()
+                            .foregroundColor(.white)
+                            .opacity( dragging ? 0.01 : 0 )
+                            .onTapGesture { dragging = false }
+                            .zIndex( 1 )
+                            
+                        
                     }
                     .frame(height: height)
                 }
@@ -200,7 +208,6 @@ struct CalendarContainer: View {
                     view.opaqueRectangularBackground()
                 }
             }
-            .onTapGesture { dragging = false }
             .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
         }
     }
