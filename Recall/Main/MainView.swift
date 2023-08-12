@@ -105,7 +105,6 @@ struct MainView: View {
     
     private func refreshData(events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil) async {
         await RecallModel.dataModel.updateProperties(events: events ?? nil, goals: goals ?? nil)
-        print("done")
     }
     
     var body: some View {
@@ -117,7 +116,7 @@ struct MainView: View {
                 CategoriesPageView(events: Array(events) ).tag( MainPage.categories )
                 DataPageView().tag( MainPage.data )
             }
-//            .tabViewStyle(.page(indexDisplayMode: .never))
+            .tabViewStyle(.page(indexDisplayMode: .never))
             
             TabBar(pageSelection: $currentPage)
             

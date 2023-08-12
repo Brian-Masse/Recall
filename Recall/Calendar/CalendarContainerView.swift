@@ -198,6 +198,7 @@ struct CalendarContainer: View {
                         
                     }
                     .frame(height: height)
+                    .padding(.bottom, Constants.UIBottomOfPagePadding)
                 }
                 .scrollDisabled(dragging)
                 .onAppear() {
@@ -208,6 +209,7 @@ struct CalendarContainer: View {
                     view.opaqueRectangularBackground()
                 }
             }
+            .onTapGesture { }
             .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
         }
     }

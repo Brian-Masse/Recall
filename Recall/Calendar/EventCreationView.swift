@@ -96,6 +96,17 @@ struct CalendarEventCreationView: View {
         endTime = Calendar.current.date(bySettingHour: endComps.hour!, minute: endComps.minute!, second: endComps.second!, of: day + ( requestingNewDay ? Constants.DayTime : 0  ) )!
     }
     
+    @ViewBuilder
+    private func makeTagSelector(tag: RecallCategory) -> some View {
+        HStack {
+            Image(systemName: "tag")
+            UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+        }
+        .onTapGesture { category = tag }
+        .if(category.label == tag.label) { view in view.tintRectangularBackground()  }
+        .if(category.label != tag.label) { view in view.secondaryOpaqueRectangularBackground() }
+    }
+    
     private func submit() {
         setDay()
         
@@ -175,42 +186,48 @@ struct CalendarEventCreationView: View {
                         .padding(.bottom)
                         
                         UniversalText("Select a tag", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+                        UniversalText("Favorites", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                         
-                        WrappedHStack(collection: Array( categories )) { tag in
-                            HStack {
-                                Image(systemName: "tag")
-                                UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+//                        Tags
+                        Group {
+                            WrappedHStack(collection: Array( categories.filter { tag in tag.isFavorite} )) { tag in
+                                makeTagSelector(tag: tag)
                             }
-                            .onTapGesture { category = tag }
-                            .if(category.label == tag.label) { view in view.tintRectangularBackground()  }
-                            .if(category.label != tag.label) { view in view.secondaryOpaqueRectangularBackground() }
-                        }
-                        .padding(.bottom)
-                        
-                        UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-                        
-                        if category.goalRatings.count > 0 {
-                            UniversalText("From Tag", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                            ForEach( Array(goals), id: \.key ) { goal in
-                                if category.goalRatings.contains(where: { node in node.key == goal.key }) {
-                                    GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
-                                }
+                            .padding(.bottom)
+                            UniversalText("All Tags", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                            WrappedHStack(collection: Array( categories.filter { tag in !tag.isFavorite} )) { tag in
+                                makeTagSelector(tag: tag)
                             }
+                            .padding(.bottom)
                         }
                         
-                        HStack {
-                            UniversalText("All Goals", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                            Spacer()
-                            LargeRoundedButton("", icon: showingAllGoals ? "arrow.up" : "arrow.down") { showingAllGoals.toggle() }
-                        }.padding(.top)
-                        
-                        VStack {
-                            if showingAllGoals {
+//                        Goals
+                        Group {
+                            UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+                            
+                            if category.goalRatings.count > 0 {
+                                UniversalText("From Tag", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                                 ForEach( Array(goals), id: \.key ) { goal in
-                                    GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
+                                    if category.goalRatings.contains(where: { node in node.key == goal.key }) {
+                                        GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
+                                    }
                                 }
                             }
-                        }.padding(.bottom, 100)
+                            
+                            HStack {
+                                UniversalText("All Goals", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                                Spacer()
+                                LargeRoundedButton("", icon: showingAllGoals ? "arrow.up" : "arrow.down") { showingAllGoals.toggle() }
+                            }.padding(.top)
+                            
+                            VStack {
+                                if showingAllGoals {
+                                    ForEach( Array(goals), id: \.key ) { goal in
+                                        GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
+                                    }
+                                }
+                            }.padding(.bottom, 100)
+                        }
                     }
                 }
                 
@@ -218,6 +235,7 @@ struct CalendarEventCreationView: View {
             }
             .opaqueRectangularBackground()
         }
+        .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding(Constants.UIFormPagePadding)
         .background(Colors.tint)
         

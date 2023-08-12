@@ -122,6 +122,6 @@ struct CalendarEventView: View {
                                       goalRatings: RecallCalendarEvent.translateGoalRatingList(event.goalRatings) )
             
         }
-        .universalColoredBackground(event.getColor())
+        .universalBackground()
     }
 }

@@ -98,9 +98,7 @@ struct GoalPreviewView: View {
                 
             Spacer()
         }
-        
-        .background( colorScheme == .dark ? .black : .white )
-        .cornerRadius(Constants.UILargeCornerRadius)
+        .opaqueRectangularBackground(0, stroke: true)
         .onTapGesture { showingGoalView = true }
         .contextMenu {
             Button("edit") { showingEditingView = true  }

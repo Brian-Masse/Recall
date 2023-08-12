@@ -31,24 +31,26 @@ private struct UniversalColoredBackground: ViewModifier {
     func body(content: Content) -> some View {
         GeometryReader { geo in
             content
-                .background(
-                    GeometryReader { geo in
-                        VStack {
-//                            if colorScheme == .dark {
-                            LinearGradient(colors: [color.opacity( colorScheme == .dark ? 0.1 : 0.25), .clear], startPoint: .top, endPoint: .bottom )
-                                    .frame(maxHeight: 800)
-                                Spacer()
-//                            }
-//                            else if colorScheme == .light {
-//                                Spacer()
-//                                LinearGradient(colors: [color.opacity(0.2), .clear], startPoint: .bottom, endPoint: .top )
+                .universalBackground(padding: false)
+                .ignoresSafeArea()
+//                .background(
+//                    GeometryReader { geo in
+//                        VStack {
+////                            if colorScheme == .dark {
+//                            LinearGradient(colors: [color.opacity( colorScheme == .dark ? 0.1 : 0.25), .clear], startPoint: .top, endPoint: .bottom )
 //                                    .frame(maxHeight: 800)
-//                            }
-                        }
-                    }
-                        .universalBackground(padding: false)
-                        .ignoresSafeArea()
-                )
+//                                Spacer()
+////                            }
+////                            else if colorScheme == .light {
+////                                Spacer()
+////                                LinearGradient(colors: [color.opacity(0.2), .clear], startPoint: .bottom, endPoint: .top )
+////                                    .frame(maxHeight: 800)
+////                            }
+//                        }
+//                    }
+//                        .universalBackground(padding: false)
+//                        .ignoresSafeArea()
+//                )
         }
     }
 }
@@ -113,16 +115,20 @@ private struct OpaqueRectangularBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
     let padding: CGFloat?
+    let stroke: Bool
     
     func body(content: Content) -> some View {
         content
             .if(padding == nil) { view in view.padding() }
             .if(padding != nil) { view in view.padding(padding!) }
             .background(colorScheme == .light ? Colors.lightGrey : .black )
-            .overlay(
-                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                    .stroke(colorScheme == .dark ? .white : .black, lineWidth: 1)
-            )
+            .if(stroke) { view in
+                view
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                            .stroke(colorScheme == .dark ? .white : .black, lineWidth: 1)
+                    )
+            }
             .cornerRadius(Constants.UIDefaultCornerRadius)
     }
 }
@@ -298,8 +304,8 @@ extension View {
         modifier(RectangularBackground(rounded: rounded, radius: radius))
     }
     
-    func opaqueRectangularBackground(_ padding: CGFloat? = nil) -> some View {
-        modifier(OpaqueRectangularBackground(padding: padding))
+    func opaqueRectangularBackground(_ padding: CGFloat? = nil, stroke: Bool = false) -> some View {
+        modifier(OpaqueRectangularBackground(padding: padding, stroke: stroke))
     }
     
     func secondaryOpaqueRectangularBackground(_ padding: CGFloat? = nil) -> some View {

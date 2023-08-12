@@ -30,7 +30,7 @@ struct CategoriesPageView: View {
                     }
                 }
             }
-            .opaqueRectangularBackground()
+            .opaqueRectangularBackground(stroke: true)
         }
         .padding(.bottom)
     }
@@ -69,7 +69,7 @@ struct CategoriesPageView: View {
             
         }
         .padding(7)
-        .universalColoredBackground(Colors.tint)
+        .universalBackground()
         .sheet(isPresented: $showingCreateTagView) {
             CategoryCreationView(editing: false,
                                  tag: nil,

@@ -29,14 +29,16 @@ struct GoalsPageView: View {
             }
             
             ScrollView(.vertical) {
-                ForEach( goals ) { goal in
-                    GoalPreviewView(goal: goal, events: events)
-                        .padding(.bottom)
-                }
+                Group {
+                    ForEach( goals ) { goal in
+                        GoalPreviewView(goal: goal, events: events)
+                            .padding(.bottom)
+                    }
+                }.padding(.bottom, Constants.UIBottomOfPagePadding)
             }
         }
         .padding(7)
-        .universalColoredBackground(Colors.tint)
+        .universalBackground()
         .sheet(isPresented: $showingGoalCreationView) { GoalCreationView.makeGoalCreationView(editing: false) }
     }
 }

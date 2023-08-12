@@ -51,7 +51,7 @@ struct DataPageView: View {
 
             ScrollViewReader { value in
                 ScrollView(.vertical) {
-                    VStack(alignment: .leading) {
+                    LazyVStack(alignment: .leading) {
                         
                         UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                         ScrollView(.horizontal) {
@@ -76,6 +76,6 @@ struct DataPageView: View {
             }
         }
         .padding(7)
-        .universalColoredBackground(Colors.tint)
+        .universalBackground()
     }
 }

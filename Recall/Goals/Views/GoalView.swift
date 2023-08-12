@@ -131,7 +131,7 @@ struct GoalView: View {
             Spacer()
         }
         .padding(7)
-        .universalColoredBackground(Colors.tint)
+        .universalBackground()
         .sheet(isPresented: $showingEditingScreen) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
     }
     
