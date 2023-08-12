@@ -33,27 +33,25 @@ struct DataPageView: View {
     }
     
     
-    
     @ObservedResults( RecallCalendarEvent.self ) var events
     @ObservedResults( RecallCategory.self ) var tags
     @ObservedResults( RecallGoal.self ) var goals
+    
+    @ObservedObject private var dataModel: RecallDataModel = RecallModel.dataModel
     
 //    MARK: Body
     
     var body: some View {
         
-        let arrEvents = Array(events)
-//        let arrTags = Array(tags)
         let arrGoals = Array(goals)
         
         VStack(alignment: .leading) {
             
             UniversalText("Data", size: Constants.UITitleTextSize, font: Constants.titleFont)
-            
+
             ScrollViewReader { value in
                 ScrollView(.vertical) {
-                    
-                    LazyVStack(alignment: .leading) {
+                    VStack(alignment: .leading) {
                         
                         UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                         ScrollView(.horizontal) {
@@ -65,8 +63,10 @@ struct DataPageView: View {
                         }.opaqueRectangularBackground()
                         
                         
-                        EventsDataSection(events: arrEvents)
-                        GoalsDataSection(events: arrEvents, goals: arrGoals)
+                        EventsDataSection()
+                            .environmentObject(dataModel )
+                        GoalsDataSection(goals: arrGoals)
+                            .environmentObject(dataModel )
                         
                         
                         Spacer()

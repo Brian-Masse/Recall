@@ -49,6 +49,7 @@
 		C954AACF2A76B60000897BCE /* FlowGrid in Frameworks */ = {isa = PBXBuildFile; productRef = C954AACE2A76B60000897BCE /* FlowGrid */; };
 		C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C954AAD02A76FA4E00897BCE /* Animations.swift */; };
 		C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */; };
+		C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033D2A868DEB00729334 /* RecallDataModel.swift */; };
 		C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */; };
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
 		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
@@ -119,6 +120,7 @@
 		C94F067D2A6B215400C99EA0 /* GoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalView.swift; sourceTree = "<group>"; };
 		C954AAD02A76FA4E00897BCE /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
 		C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartsHelperStructs.swift; sourceTree = "<group>"; };
+		C98D033D2A868DEB00729334 /* RecallDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallDataModel.swift; sourceTree = "<group>"; };
 		C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCharts.swift; sourceTree = "<group>"; };
 		C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIndex.swift; sourceTree = "<group>"; };
 		C9E49D152A68AC820023EBC0 /* RecallGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoal.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 			children = (
 				C91BCEF12A618435003C6DD6 /* RecallApp.swift */,
 				C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */,
+				C98D033D2A868DEB00729334 /* RecallDataModel.swift */,
 				C91BCF2A2A61DCD8003C6DD6 /* Authentication */,
 				C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */,
 				C91BCEF32A618435003C6DD6 /* RecallView.swift */,
@@ -534,6 +537,7 @@
 				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
 				C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */,
 				C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */,
+				C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */,
 				C91BCF3E2A6209B9003C6DD6 /* CalendarEventPreviewView.swift in Sources */,
 				C928E15A2A7B546E00E981F1 /* EventsDataSection.swift in Sources */,
 				C9186A982A78A2EE00398BF8 /* Charts.swift in Sources */,

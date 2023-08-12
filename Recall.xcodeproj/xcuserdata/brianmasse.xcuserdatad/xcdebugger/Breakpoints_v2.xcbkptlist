@@ -294,49 +294,282 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "DDB8FC34-63DD-41F7-B14A-1B7BBD8AA924"
+            uuid = "5BA453C9-769D-426E-ADD8-902CB60A3FAD"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Recall/Data/EventsDataSection.swift"
+            filePath = "Recall/Main/MainView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "17"
-            endingLineNumber = "17"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "refreshData(events:goals:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5BA453C9-769D-426E-ADD8-902CB60A3FAD - 76fc597bacc7376c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Recall.MainView.refreshData(events: Swift.Optional&lt;Swift.Array&lt;Recall.RecallCalendarEvent&gt;&gt;, goals: Swift.Optional&lt;Swift.Array&lt;Recall.RecallGoal&gt;&gt;) async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/MainView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "107"
+                  endingLineNumber = "107"
+                  offsetFromSymbolStart = "176">
+               </Location>
+               <Location
+                  uuid = "5BA453C9-769D-426E-ADD8-902CB60A3FAD - fd96d58faaa1d3ab"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for Recall.MainView.refreshData(events: Swift.Optional&lt;Swift.Array&lt;Recall.RecallCalendarEvent&gt;&gt;, goals: Swift.Optional&lt;Swift.Array&lt;Recall.RecallGoal&gt;&gt;) async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/MainView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "107"
+                  endingLineNumber = "107"
+                  offsetFromSymbolStart = "34">
+               </Location>
+               <Location
+                  uuid = "5BA453C9-769D-426E-ADD8-902CB60A3FAD - ab352f4a315cc86e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Recall.MainView.refreshData(events: Swift.Optional&lt;Swift.Array&lt;Recall.RecallCalendarEvent&gt;&gt;, goals: Swift.Optional&lt;Swift.Array&lt;Recall.RecallGoal&gt;&gt;) async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/MainView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "107"
+                  endingLineNumber = "107"
+                  offsetFromSymbolStart = "53">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FF28BF9C-69AC-4871-A11E-219B4F7D1D8F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Main/RecallDataModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "161"
+            endingLineNumber = "161"
+            landmarkName = "onMainRefreshData()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "FF28BF9C-69AC-4871-A11E-219B4F7D1D8F - f1e6d84a34716460"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Recall.RecallDataModel.onMainRefreshData() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "161"
+                  endingLineNumber = "161"
+                  offsetFromSymbolStart = "81">
+               </Location>
+               <Location
+                  uuid = "FF28BF9C-69AC-4871-A11E-219B4F7D1D8F - 463d00d5aac50a3b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) await resume partial function for Recall.RecallDataModel.onMainRefreshData() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "161"
+                  endingLineNumber = "161"
+                  offsetFromSymbolStart = "37">
+               </Location>
+               <Location
+                  uuid = "FF28BF9C-69AC-4871-A11E-219B4F7D1D8F - 1a6eb30bd81d3ec8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) suspend resume partial function for Recall.RecallDataModel.onMainRefreshData() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "161"
+                  endingLineNumber = "161"
+                  offsetFromSymbolStart = "21">
+               </Location>
+               <Location
+                  uuid = "FF28BF9C-69AC-4871-A11E-219B4F7D1D8F - b85940c37a897caf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Recall.RecallCalendarEvent) -&gt; Swift.Double in Recall.RecallDataModel.onMainRefreshData() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "161"
+                  endingLineNumber = "161"
+                  offsetFromSymbolStart = "22">
+               </Location>
+               <Location
+                  uuid = "FF28BF9C-69AC-4871-A11E-219B4F7D1D8F - f1e6d84a34716401"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Recall.RecallDataModel.onMainRefreshData() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "162"
+                  endingLineNumber = "162"
+                  offsetFromSymbolStart = "81">
+               </Location>
+               <Location
+                  uuid = "FF28BF9C-69AC-4871-A11E-219B4F7D1D8F - 463d00d5aac50a5a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) await resume partial function for Recall.RecallDataModel.onMainRefreshData() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "162"
+                  endingLineNumber = "162"
+                  offsetFromSymbolStart = "37">
+               </Location>
+               <Location
+                  uuid = "FF28BF9C-69AC-4871-A11E-219B4F7D1D8F - 1a6eb30bd81d3ea9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) suspend resume partial function for Recall.RecallDataModel.onMainRefreshData() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "162"
+                  endingLineNumber = "162"
+                  offsetFromSymbolStart = "21">
+               </Location>
+               <Location
+                  uuid = "FF28BF9C-69AC-4871-A11E-219B4F7D1D8F - b85940c37a897cce"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Recall.RecallCalendarEvent) -&gt; Swift.Double in Recall.RecallDataModel.onMainRefreshData() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "162"
+                  endingLineNumber = "162"
+                  offsetFromSymbolStart = "22">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0563092A-AD0B-4A1B-AD72-2EEC7FAA81FA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Main/RecallDataModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
+            landmarkName = "updateProperties(events:goals:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4E1E939B-F13E-45E6-A2C8-141B2571A94B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Main/RecallDataModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
             landmarkName = "makeData(dataAggregator:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "DDB8FC34-63DD-41F7-B14A-1B7BBD8AA924 - 49c26258489cc1e2"
+                  uuid = "4E1E939B-F13E-45E6-A2C8-141B2571A94B - dbb2eeb4cb3ca447"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Recall.EventsDataSection.makeData(dataAggregator: (Recall.RecallCalendarEvent) -&gt; Swift.Double) -&gt; Swift.Array&lt;Recall.DataNode&gt;"
+                  symbolName = "(1) suspend resume partial function for Recall.RecallDataModel.makeData(dataAggregator: (Recall.RecallCalendarEvent) -&gt; Swift.Double) async -&gt; Swift.Array&lt;Recall.DataNode&gt;"
                   moduleName = "Recall"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Data/EventsDataSection.swift"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "16"
+                  endingLineNumber = "16"
+                  offsetFromSymbolStart = "136">
+               </Location>
+               <Location
+                  uuid = "4E1E939B-F13E-45E6-A2C8-141B2571A94B - ead71de869c80bd6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Recall.RecallCalendarEvent) -&gt; Swift.Optional&lt;Recall.DataNode&gt; in Recall.RecallDataModel.makeData(dataAggregator: (Recall.RecallCalendarEvent) -&gt; Swift.Double) async -&gt; Swift.Array&lt;Recall.DataNode&gt;"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/RecallDataModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "17"
                   endingLineNumber = "17"
-                  offsetFromSymbolStart = "90">
-               </Location>
-               <Location
-                  uuid = "DDB8FC34-63DD-41F7-B14A-1B7BBD8AA924 - bc395567bdf30366"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Recall.RecallCalendarEvent) -&gt; Swift.Optional&lt;Recall.DataNode&gt; in Recall.EventsDataSection.makeData(dataAggregator: (Recall.RecallCalendarEvent) -&gt; Swift.Double) -&gt; Swift.Array&lt;Recall.DataNode&gt;"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Data/EventsDataSection.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "18"
-                  endingLineNumber = "18"
                   offsetFromSymbolStart = "183">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AEA0A3F5-7EA5-4C3E-85DC-9058992CF280"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Main/RecallDataModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
+            landmarkName = "onMainRefreshData()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

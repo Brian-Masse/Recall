@@ -23,8 +23,15 @@ struct RecallModel {
     
     let activeColor: Color = Colors.main
     
+    @MainActor
     static func getDaysSinceFirstEvent() -> Double {
         (Date.now.timeIntervalSince(index.earliestEventDate)) / Constants.DayTime
     }
     
+    @MainActor
+    static func getEarliestEventDate() -> Date {
+        RecallModel.index.earliestEventDate
+    }
+    
+    static let dataModel: RecallDataModel = RecallDataModel()
 }

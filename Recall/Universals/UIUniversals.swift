@@ -96,6 +96,7 @@ struct AsyncLoader<Content>: View where Content: View {
     }
 }
 
+//MARK: Wrapped HStack
 struct WrappedHStack<Content: View, Object: Identifiable>: View where Object: Equatable {
     
     @State var size: CGSize = .zero

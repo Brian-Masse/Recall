@@ -98,8 +98,15 @@ struct MainView: View {
     
 //    MARK: Body
     @ObservedResults( RecallCalendarEvent.self ) var events
+    @ObservedResults( RecallGoal.self ) var goals
     
     @State var currentPage: MainPage = .calendar
+    @State var shouldRefreshData: Bool = false
+    
+    private func refreshData(events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil) async {
+        await RecallModel.dataModel.updateProperties(events: events ?? nil, goals: goals ?? nil)
+        print("done")
+    }
     
     var body: some View {
     
@@ -115,6 +122,11 @@ struct MainView: View {
             TabBar(pageSelection: $currentPage)
             
         }
+        
+        .onAppear               { Task { await refreshData(events: Array(events), goals: Array(goals)) } }
+        .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
+//        .onChange(of: goals)    { newValue in Task { await refreshData(goals: Array(newValue)) } }
+        
         .ignoresSafeArea()
         .universalBackground()
         

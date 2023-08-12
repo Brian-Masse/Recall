@@ -162,7 +162,7 @@ class RecallGoal: Object, Identifiable {
         return Date.now.timeIntervalSince( getStartDate() ) / ( rawFrequence == .daily ? Constants.DayTime : Constants.WeekTime)
     }
     
-    @MainActor
+//    @MainActor
     func goalWasMet(on date: Date, events: [RecallCalendarEvent]) -> Bool {
         Double(self.getProgressTowardsGoal(from: events, on: date )) >= Double(targetHours)
     }
@@ -170,7 +170,7 @@ class RecallGoal: Object, Identifiable {
     
 //    MARK: Data Aggregators
     
-    @MainActor
+//    @MainActor
     func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now) -> Int {
         
         
