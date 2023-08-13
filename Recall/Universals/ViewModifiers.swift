@@ -19,6 +19,7 @@ private struct UniversalBackground: ViewModifier {
         GeometryReader { geo in
             content
         }
+        .edgesIgnoringSafeArea(.bottom)
         .background(colorScheme == .light ? Colors.lightGrey : .black)
     }
 }

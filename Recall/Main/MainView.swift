@@ -13,25 +13,19 @@ import RealmSwift
 //MARK: MainView
 struct MainView: View {
     
-    enum MainPage: String, Identifiable {
+    enum MainPage: Int, Identifiable {
         case calendar
         case goals
         case data
         case categories
         
-        var id: String {
+        var id: Int {
             self.rawValue
         }
     }
     
 //    MARK: Tabbar
     struct TabBar: View {
-        
-        enum Edge {
-            case left
-            case right
-            case none
-        }
         
         struct TabBarIcon: View {
             
@@ -42,29 +36,36 @@ struct MainView: View {
             let page: MainView.MainPage
             let title: String
             let icon: String
-            let edge: TabBar.Edge
         
+            @ViewBuilder private func makeIcon() -> some View {
+                VStack {
+                    Image(systemName: icon)
+//                    ResizeableIcon(icon: icon, size: Constants.UIDefaultTextSize + 2)
+//                    UniversalText( title, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: false )
+                    
+                }
+                
+            }
+            
             var body: some View {
                 Group {
                     if selection == page {
-                        HStack {
-                            ResizeableIcon(icon: "arrow.up", size: Constants.UISubHeaderTextSize)
-                            UniversalText( title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false )
-                        }
-                        .foregroundColor(.black)
-                        .padding(34)
-                        .background {
-                            Rectangle()
-                                .foregroundColor(Colors.tint)
-                                .cornerRadius(50)
-                                .matchedGeometryEffect(id: "highlight", in: namespace)
-                        }
-                        .shadow(color: Colors.tint.opacity(0.4), radius: 5)
+                        makeIcon()
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 37)
+                            .background {
+                                Rectangle()
+                                    .foregroundColor(Colors.tint)
+                                    .cornerRadius(70)
+                                    .frame(width: 90, height: 90)
+//                                    .aspectRatio(1, contentMode: .fill)
+                                    .matchedGeometryEffect(id: "highlight", in: namespace)
+                            }
+                            .shadow(color: Colors.tint.opacity(0.3), radius: 10)
                         
                     } else {
-                        ResizeableIcon(icon: icon, size: Constants.UIDefaultTextSize)
-                            .padding(.leading, edge == .left ? 30 : 0)
-                            .padding(.trailing, edge == .right ? 30 : 0)
+                        makeIcon()
+                            .padding(.horizontal)
                     }
                 }
                 .onTapGesture { withAnimation { selection = page }}
@@ -76,23 +77,24 @@ struct MainView: View {
         
         var body: some View {
             HStack(spacing: 10) {
-                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .calendar, title: "Recall", icon: "calendar", edge: .left)
-                Spacer()
-                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .goals, title: "Goals", icon: "checkmark.seal", edge: .none)
-                Spacer()
-                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .categories, title: "Tags", icon: "wallet.pass", edge: .none)
-                Spacer()
-                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .data, title: "Data", icon: "chart.bar", edge: .right)
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .calendar, title: "Recall", icon: "calendar")
+                    .padding(.leading, pageSelection == .calendar ? 0 : 10 )
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .goals, title: "Goals", icon: "tray.full")
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .categories, title: "Tags", icon: "tag")
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .data, title: "Data", icon: "chart.bar")
+                    .padding(.trailing, pageSelection == .data ? 0 : 10 )
             }
             .padding(7)
-//            .padding(.vertical, 8)
-            .padding(.bottom, 18)
+            .frame(height: 104)
+
+//            .padding(.bottom, 18)
             .ignoresSafeArea()
             .universalTextStyle()
             .background(.thinMaterial)
             .foregroundStyle(.ultraThickMaterial)
-            .cornerRadius(57, corners: [.topLeft, .topRight])
+            .cornerRadius(55)
             .shadow(radius: 5)
+            .padding(.bottom, 34)
         }
     }
     

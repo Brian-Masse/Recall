@@ -41,7 +41,7 @@ class Constants {
     static let UISmallTextSize: CGFloat     = 11
     
 //    extra
-    static let UIDefaultCornerRadius: CGFloat = 15
+    static let UIDefaultCornerRadius: CGFloat = 20
     static let UILargeCornerRadius: CGFloat = 30
     static let UIBottomOfPagePadding: CGFloat = 100
     

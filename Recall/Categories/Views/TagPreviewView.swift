@@ -96,7 +96,7 @@ struct TagPreviewView: View {
             GoalTags(goalRatings: Array(tag.goalRatings), events: events)
             
         }
-        .opaqueRectangularBackground(0)
+//        .opaqueRectangularBackground(0)
         .contextMenu {
             Button("edit") { showingEditTagView = true }
             Button("delete") { tag.delete() }

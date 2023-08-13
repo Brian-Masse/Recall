@@ -19,6 +19,8 @@ class RecallIndex: Object, Identifiable {
     
     @Persisted private(set) var earliestEventDate: Date = .now - (7 * Constants.DayTime)
     
+    @Persisted private(set) var calendarTemplates: List<RecallCalendarEvent> = List()
+    
     convenience init( ownerID: String ) {
         self.init()
         self.ownerID = ownerID
