@@ -127,7 +127,8 @@ class RecallCalendarEvent: Object, Identifiable  {
 //    This checks to see if this event has a multiplier for a specifc goal (ie. coding should have 'productive')
     private func getGoalMultiplier(from goal: RecallGoal) -> Double {
         let key = goal.getEncryptionKey()
-        let data = self.goalRatings.first { node in node.key == key }?.data ?? "0"
+        let goalRatings = self.goalRatings
+        let data = goalRatings.first { node in node.key == key }?.data ?? "0"
         return Double(data) ?? 0
     }
     
@@ -186,13 +187,21 @@ class RecallCalendarEvent: Object, Identifiable  {
             if overlapNodes.count >= count {
                 let eventWidth = event.getWidth(from: overlapNodes, in: fullWidth, from: events) + 5
                 
-                if overlapNodes.count == count { offset += event.startTime < self.startTime ? eventWidth : 0 }
+                if overlapNodes.count == count {
+                    offset += takesPriority(self, and: event) ? eventWidth : 0
+                }
                 else { offset += eventWidth }
             }
         }
     
         return OverlapData(width: width, offset: offset)
+        
+        func takesPriority(_ thisEvent: RecallCalendarEvent, and otherEvent: RecallCalendarEvent) -> Bool {
+            if otherEvent.startTime == thisEvent.startTime { return thisEvent.title > otherEvent.title }
+            else { return thisEvent.startTime > otherEvent.startTime }
+        }
     }
+    
     
     
     struct OverlapData {

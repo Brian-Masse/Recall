@@ -222,6 +222,7 @@ struct CalendarEventPreviewView: View {
             }
         
             CalendarEventPreviewContentView(event: event, width: getWidth(), height: length)
+                .padding(.vertical, 2)
                 .frame(width: getWidth(), height: getHeight())
                 .overlay(makeLengthHandles())
                 .contextMenu {
