@@ -130,6 +130,15 @@ struct CalendarEventCreationView: View {
         presentationMode.wrappedValue.dismiss()
     }
     
+    private func fillInformation(from event: RecallCalendarEvent) {
+        self.activeTempalte = event
+        self.title = event.title
+        self.startTime = event.startTime
+        self.endTime = event.endTime
+        self.category = event.category ?? RecallCategory()
+        self.goalRatings = RecallCalendarEvent.translateGoalRatingList(event.goalRatings)
+    }
+    
 //    MARK: Bindings
     private var startTimeBinding: Binding<Float> {
         Binding { Float(startTime.getHoursFromStartOfDay().round(to: 2)) }
@@ -154,6 +163,102 @@ struct CalendarEventCreationView: View {
         Binding { endTime.formatted(date: .omitted, time: .shortened) }
         set: { newValue, _ in }
     }
+    
+//    MARK: SectionBuilders
+    
+    @ViewBuilder
+    private func makeTemplateSelector() -> some View {
+        HStack {
+            UniversalText("templates", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+            Spacer()
+            LargeRoundedButton("", icon: showingTemplates ? "arrow.up" : "arrow.down", small: true) { withAnimation {
+                showingTemplates.toggle()
+            } }
+        }
+        if showingTemplates {
+            WrappedHStack(collection: Array(RecallModel.index.templates)) { template in
+                HStack {
+                    Image(systemName: "arrow.up.right")
+                    UniversalText(template.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                }
+                .if( (activeTempalte?.title ?? "") == template.title ) { view in view.tintRectangularBackground() }
+                .if( (activeTempalte?.title ?? "") != template.title ) { view in view.secondaryOpaqueRectangularBackground() }
+                .onTapGesture {
+                    if (activeTempalte?.title ?? "") == template.title { activeTempalte = nil }
+                    else { fillInformation(from: template) }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func makeOverviewQuestions() -> some View {
+        TextFieldWithPrompt(title: "What is the name of this event?", binding: $title)
+        TextFieldWithPrompt(title: "Leave an optional note", binding: $notes)
+            .padding(.bottom)
+        
+        SliderWithPrompt(label: "When did this event start?",
+                         minValue: 0,
+                         maxValue: 23.5,
+                         binding: startTimeBinding,
+                         strBinding: startTimeLabel,
+                         textFieldWidth: 120)
+        
+        SliderWithPrompt(label: "When did this event end?",
+                         minValue: 0,
+                         maxValue: 23.5,
+                         binding: endTimeBinding,
+                         strBinding: endTimeLabel,
+                         textFieldWidth: 120)
+    }
+    
+    @ViewBuilder
+    private func makeTagSelector() -> some View {
+        UniversalText("Select a tag", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+        UniversalText("Favorites", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+        
+        WrappedHStack(collection: Array( categories.filter { tag in tag.isFavorite} )) { tag in
+            makeTagSelector(tag: tag)
+        }
+        .padding(.bottom)
+        UniversalText("All Tags", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+        WrappedHStack(collection: Array( categories.filter { tag in !tag.isFavorite} )) { tag in
+            makeTagSelector(tag: tag)
+        }
+    }
+    
+    @ViewBuilder
+    private func makeGoalSelector() -> some View {
+        VStack(alignment: .leading) {
+            UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+            
+            if category.goalRatings.count > 0 {
+                UniversalText("From Tag", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                ForEach( Array(goals), id: \.key ) { goal in
+                    if category.goalRatings.contains(where: { node in node.key == goal.key }) {
+                        GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
+                    }
+                }
+            }
+            
+            HStack {
+                UniversalText("All Goals", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                Spacer()
+                LargeRoundedButton("", icon: showingAllGoals ? "arrow.up" : "arrow.down") { showingAllGoals.toggle() }
+            }.padding(.top)
+            
+            VStack {
+                if showingAllGoals {
+                    ForEach( Array(goals), id: \.key ) { goal in
+                        GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
+                    }
+                }
+            }
+        }
+    }
+    
+    @State var showingTemplates: Bool = false
+    @State var activeTempalte: RecallCalendarEvent? = nil
 
 //    MARK: Body
     var body: some View {
@@ -166,68 +271,17 @@ struct CalendarEventCreationView: View {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading) {
                         
-                        TextFieldWithPrompt(title: "What is the name of this event?", binding: $title)
-                        TextFieldWithPrompt(title: "Leave an optional note", binding: $notes)
+                        makeTemplateSelector()
+                            .padding(.bottom)
+
+                        makeOverviewQuestions()
                             .padding(.bottom)
                         
-                        SliderWithPrompt(label: "When did this event start?",
-                                         minValue: 0,
-                                         maxValue: 23.5,
-                                         binding: startTimeBinding,
-                                         strBinding: startTimeLabel,
-                                         textFieldWidth: 120)
-                        
-                        SliderWithPrompt(label: "When did this event end?",
-                                         minValue: 0,
-                                         maxValue: 23.5,
-                                         binding: endTimeBinding,
-                                         strBinding: endTimeLabel,
-                                         textFieldWidth: 120)
-                        .padding(.bottom)
-                        
-                        UniversalText("Select a tag", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-                        UniversalText("Favorites", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                        
-//                        Tags
-                        Group {
-                            WrappedHStack(collection: Array( categories.filter { tag in tag.isFavorite} )) { tag in
-                                makeTagSelector(tag: tag)
-                            }
+                        makeTagSelector()
                             .padding(.bottom)
-                            UniversalText("All Tags", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                            WrappedHStack(collection: Array( categories.filter { tag in !tag.isFavorite} )) { tag in
-                                makeTagSelector(tag: tag)
-                            }
-                            .padding(.bottom)
-                        }
                         
-//                        Goals
-                        Group {
-                            UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-                            
-                            if category.goalRatings.count > 0 {
-                                UniversalText("From Tag", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                                ForEach( Array(goals), id: \.key ) { goal in
-                                    if category.goalRatings.contains(where: { node in node.key == goal.key }) {
-                                        GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
-                                    }
-                                }
-                            }
-                            
-                            HStack {
-                                UniversalText("All Goals", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                                Spacer()
-                                LargeRoundedButton("", icon: showingAllGoals ? "arrow.up" : "arrow.down") { showingAllGoals.toggle() }
-                            }.padding(.top)
-                            
-                            VStack {
-                                if showingAllGoals {
-                                    ForEach( Array(goals), id: \.key ) { goal in
-                                        GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
-                                    }
-                                }
-                            }.padding(.bottom, 100)
-                        }
+                        makeGoalSelector()
+                            .padding(.bottom, 100)
                     }
                 }
                 

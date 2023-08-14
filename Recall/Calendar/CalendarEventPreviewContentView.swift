@@ -24,8 +24,10 @@ struct CalendarEventPreviewContentView: View {
         Group {
             let timeString = "\( event.startTime.formatted( .dateTime.hour() ) ) - \( event.endTime.formatted( .dateTime.hour() ) )"
             
-            makeMetadataTag(label: "", icon: "doc.plaintext")
-            if horiztonal { Spacer() }
+            if event.isTemplate {
+                makeMetadataTag(label: "", icon: "doc.plaintext")
+                if horiztonal { Spacer() }
+            }
             makeMetadataTag(label: "\(event.category?.label ?? "no tag")", icon: "tag")
             if horiztonal { Spacer() }
             makeMetadataTag(label: timeString, icon: "")

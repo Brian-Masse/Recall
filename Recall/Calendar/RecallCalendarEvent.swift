@@ -98,6 +98,16 @@ class RecallCalendarEvent: Object, Identifiable  {
         category?.label ?? "?"
     }
     
+    @MainActor
+    func toggleTemplate() {
+        
+        RealmManager.updateObject(self) { thawed in
+            thawed.isTemplate = !self.isTemplate
+        }
+        
+        if self.isTemplate { RecallModel.index.removeTemplate(self) }
+        if !self.isTemplate { RecallModel.index.addTemplate(self) }
+    }
     
 //    MARK: Class Methods
     func delete() {

@@ -32,7 +32,7 @@ struct CalendarEventView: View {
         VStack(alignment: .leading) {
             HStack {
                 makeOverviewMetadataLabel(title: "\( event.getLengthInHours().round(to: 2) ) HRs", icon: "deskclock")
-                makeOverviewMetadataLabel(title: "Tempalte", icon: "doc.plaintext")
+                if event.isTemplate { makeOverviewMetadataLabel(title: "Tempalte", icon: "doc.plaintext") }
                 makeOverviewMetadataLabel(title: "\(event.category?.label ?? "No Tag")", icon: "tag")
             }
 
@@ -90,8 +90,8 @@ struct CalendarEventView: View {
                 ScrollView(.horizontal) {
                     HStack {
                         LargeRoundedButton("edit", icon: "arrow.up.forward", color: event.getColor())                { showingEditingScreen = true }
+                        LargeRoundedButton("make template", icon: "arrow.up.forward", color: event.getColor())       { event.toggleTemplate() }
                         LargeRoundedButton("delete", icon: "arrow.up.forward", color: event.getColor())              { event.delete() }
-                        LargeRoundedButton("make template", icon: "arrow.up.forward", color: event.getColor())       {  }
                     }
                 }
                 .opaqueRectangularBackground()
