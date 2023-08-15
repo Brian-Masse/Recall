@@ -22,11 +22,13 @@ struct EventsDataSection: View {
             
             DataCollection("Events") {
                 
+                let timePeriod: Double = viewFilter == 0 ? 7 : RecallModel.getDaysSinceFirstEvent()
+                
                 Group {
                     Seperator(orientation: .horizontal)
-                    LargeText(mainText: "\(data.totalHours)", subText: "hours")
+                    LargeText(mainText: "\(data.getTotalHours(from: viewFilter))", subText: "hours")
                     Seperator(orientation: .horizontal)
-                    LargeText(mainText: "\(data.hourlyData.count)", subText: "events")
+                    LargeText(mainText: "\(data.getHourlData(from: viewFilter).count)", subText: "events")
                     Seperator(orientation: .horizontal)
                 }
                 
@@ -37,9 +39,9 @@ struct EventsDataSection: View {
                     UniversalText("Daily Averages", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                         .padding(.bottom, 5)
                     
-                    AverageActivityByTag(data: data.getHourlData(from: viewFilter), unit: "")
+                    AverageActivityByTag(recents: viewFilter == 0, data: data.getHourlData(from: viewFilter), unit: "")
                     Seperator(orientation: .horizontal)
-                    LargeText(mainText: "\((Double(data.totalHours) / Double(data.hourlyData.count)).round(to: 2))", subText: "HR/DY")
+                    LargeText(mainText: "\((Double(data.getTotalHours(from: viewFilter)) / timePeriod).round(to: 2))", subText: "HR/DY")
                         .padding(.vertical)
                     EventsDataSummaries.DailyAverage(data: data.getCompressedHourlData(from: viewFilter), unit: "HR/DY")
                 }

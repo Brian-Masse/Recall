@@ -39,13 +39,14 @@ struct AverageActivityByTag: View {
     
     @MainActor
     private func transformData() -> [DataNode] {
-        let timePeriod = Date.now.timeIntervalSince( RecallModel.index.earliestEventDate ) / Constants.DayTime
+        let timePeriod = recents ? 7 : Date.now.timeIntervalSince( RecallModel.index.earliestEventDate ) / Constants.DayTime
         return data.compactMap { node in
             .init(date: .now, count: node.count / timePeriod, category: node.category, goal: "")
         }
         
     }
     
+    let recents: Bool
     let data: [DataNode]
     let unit: String
     

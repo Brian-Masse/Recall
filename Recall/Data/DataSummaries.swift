@@ -127,14 +127,7 @@ struct DataSummaryList: View {
                 .if(!striped) { view in view.padding(.bottom, 5) }
                 .if(striped) { view in view.padding(.horizontal, 7) }
                 .if(striped && !i.isMultiple(of: 2)) { view in
-                    view
-                        .padding(7)
-                        .background {
-                        Rectangle()
-                            .foregroundColor(Colors.darkGrey)
-                            .cornerRadius(Constants.UIDefaultCornerRadius - 5)
-                    }
-                    
+                    view.secondaryOpaqueRectangularBackground(7)
                 }
             }
         }
@@ -149,11 +142,14 @@ struct LargeText: View {
     
     var body: some View {
         VStack(alignment: .leading) {
+            let length = mainText.removeFirst(of: ".").count
+            let lengthScaling = (Constants.UISmallTextSize * Double(length - 1))
+            
             HStack(alignment: .bottom) {
                 UniversalText(mainText, size: Constants.UILargeTextSize * 2, font: Constants.titleFont, wrap: false, scale: true)
                 UniversalText(subText, size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, scale: true)
             }
-            .padding(.top, -Constants.UITitleTextSize)
+            .padding(.top, -Constants.UITitleTextSize + lengthScaling)
             .padding(.bottom, -Constants.UIDefaultTextSize)
         }
     }

@@ -112,18 +112,19 @@ class RecallDataModel: ObservableObject {
     
 //    MARK: Event Data
 //        These are typically used for the charts
-    @Published var hourlyData: [DataNode] = []
+    @Published private var hourlyData: [DataNode] = []
 //        in general the compressed data is used for data sumarries, that dont need every individaul node
-    @Published var compressedHourlyData: [DataNode] = []
-    @Published var recentHourlyData: [DataNode] = []
-    @Published var recentCompressedHourlyData: [DataNode] = []
+    @Published private var compressedHourlyData: [DataNode] = []
+    @Published private var recentHourlyData: [DataNode] = []
+    @Published private var recentCompressedHourlyData: [DataNode] = []
 
-    @Published var tagData: [DataNode] = []
-    @Published var compressedTagData: [DataNode] = []
-    @Published var recentTagData: [DataNode] = []
-    @Published var recentCompressedTagData: [DataNode] = []
+    @Published private var tagData: [DataNode] = []
+    @Published private var compressedTagData: [DataNode] = []
+    @Published private var recentTagData: [DataNode] = []
+    @Published private var recentCompressedTagData: [DataNode] = []
 
-    @Published var totalHours: Int = 0
+    @Published private var totalHours: Int = 0
+    @Published private var recentTotalHours: Int = 0
 
 //   MARK: Goal Data
     @Published var goalsMetOverTimeData   : [DataNode] = []
@@ -169,6 +170,7 @@ class RecallDataModel: ObservableObject {
         recentCompressedTagData     = await getRecentData(from: compressedTagData)
         
         totalHours                  = await getTotalHours(from: hourlyData)
+        recentTotalHours            = await getTotalHours(from: recentHourlyData)
         
 //        goals
         goalsMetOverTimeData        = await makeGoalsMetOverTimeData()
@@ -207,5 +209,9 @@ class RecallDataModel: ObservableObject {
     
     func getCompressedTagData(from viewFilter: Int) -> [DataNode] {
         filterIsWeekly(viewFilter) ? recentCompressedTagData : compressedTagData
+    }
+    
+    func getTotalHours(from viewFilter: Int) -> Double {
+        filterIsWeekly(viewFilter) ? Double(recentTotalHours) : Double(totalHours)
     }
 }
