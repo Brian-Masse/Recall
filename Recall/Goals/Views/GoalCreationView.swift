@@ -11,6 +11,7 @@ import RealmSwift
 
 struct GoalCreationView: View {
     
+//    MARK: ViewBuilders
     @ViewBuilder
     static func makeGoalCreationView(editing: Bool, goal: RecallGoal? = nil) -> some View {
         if editing {
@@ -82,8 +83,14 @@ struct GoalCreationView: View {
         } set: { newValue, _ in targetHours = Float(newValue) ?? 0 }
     }
     
+//    MARK: submit
     @MainActor
     private func submit() {
+        if !checkCompletion() {
+            showingAlert = true
+            return
+        }
+        
         if !editing {
             let goal = RecallGoal(ownerID: RecallModel.ownerID,
                                   label: label,
@@ -107,6 +114,11 @@ struct GoalCreationView: View {
         presentationMode.wrappedValue.dismiss()
     }
     
+    private func checkCompletion() -> Bool {
+        !self.label.isEmpty && !self.description.isEmpty
+    }
+    
+//    MARK: Vars
     @Environment(\.presentationMode) var presentationMode
     @ObservedResults(RecallCategory.self) var tags
     
@@ -123,6 +135,76 @@ struct GoalCreationView: View {
     
     @State var creationDate: Date
     
+    @State var showingAlert: Bool = false
+    
+//    MARK: sectionBuilders
+    @ViewBuilder
+    private func makeOverviewSection() -> some View {
+        VStack(alignment: .leading) {
+            TextFieldWithPrompt(title: "What's the name of this goal?", binding: $label)
+            TextFieldWithPrompt(title: "What's the purpose of this goal?", binding: $description)
+                .padding(.bottom)
+        }
+        
+        UniversalText("How frequently do you want to meet this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        HStack {
+            Spacer()
+            makePickerOptions(label: "Daily", selection: .daily)
+            makePickerOptions(label: "Weekly", selection: .weekly)
+            Spacer()
+        } .padding(.bottom)
+    }
+    
+    @ViewBuilder
+    private func makeTagSelection() -> some View {
+        UniversalText("What type of goal is this?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        HStack {
+            Spacer()
+            makeTypePickerOption(label: "hourly", selection: .hourly)
+            makeTypePickerOption(label: "by tag", selection: .byTag)
+            Spacer()
+        }.padding(.bottom)
+        
+        if type == .byTag {
+            Group {
+                UniversalText("Which tag would you like to track?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                WrappedHStack(collection: Array(tags)) { tag in
+                    HStack {
+                        Image(systemName: "tag")
+                        UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                    }
+                    .onTapGesture { targetTag = tag }
+                    .if( targetTag?.label ?? "" != tag.label ) { view in view.secondaryOpaqueRectangularBackground() }
+                    .if( targetTag?.label ?? "" == tag.label ) { view in view.tintRectangularBackground() }
+                }
+            }.padding(.bottom)
+        }
+    }
+    
+    @ViewBuilder
+    private func makeTargetSelector() -> some View {
+        SliderWithPrompt(label: type == .byTag ? "How many tagged events would you like to complete this goal?" : "How many hours do you want to spend on this goal?",
+                         minValue: 0,
+                         maxValue: (frequence == .daily ? 12 : 50 ),
+                         binding: $targetHours,
+                         strBinding: hoursBinding,
+                         textFieldWidth: Constants.UIFormSliderTextFieldWidth)
+        .padding(.bottom)
+    }
+    
+    @ViewBuilder
+    private func makePrioritySelector() -> some View {
+        UniversalText("How would you like to prioritize this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        HStack {
+            Spacer()
+            makePriorityPickerOptions(label: "High", selection: .high)
+            makePriorityPickerOptions(label: "Medium", selection: .medium)
+            makePriorityPickerOptions(label: "Low", selection: .low)
+            Spacer()
+        }.padding(.bottom, 100)
+    }
+    
+//    MARK: Body
     var body: some View {
         
         VStack(alignment: .leading) {
@@ -134,63 +216,14 @@ struct GoalCreationView: View {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading) {
                         
-                        DatePicker("date", selection: $creationDate)
-                            .developer()
+                        makeOverviewSection()
                         
-                        VStack(alignment: .leading) {
-                            TextFieldWithPrompt(title: "What's the name of this goal?", binding: $label)
-                            TextFieldWithPrompt(title: "What's the purpose of this goal?", binding: $description)
-                                .padding(.bottom)
-                        }
+                        makeTagSelection()
                         
-                        UniversalText("How frequently do you want to meet this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
-                        HStack {
-                            Spacer()
-                            makePickerOptions(label: "Daily", selection: .daily)
-                            makePickerOptions(label: "Weekly", selection: .weekly)
-                            Spacer()
-                        } .padding(.bottom)
+                        makeTargetSelector()
                         
-                        UniversalText("What type of goal is this?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
-                        HStack {
-                            Spacer()
-                            makeTypePickerOption(label: "hourly", selection: .hourly)
-                            makeTypePickerOption(label: "by tag", selection: .byTag)
-                            Spacer()
-                        }.padding(.bottom)
-                        
-                        if type == .byTag {
-                            Group {
-                                UniversalText("Which tag would you like to track?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
-                                WrappedHStack(collection: Array(tags)) { tag in
-                                    HStack {
-                                        Image(systemName: "tag")
-                                        UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                                    }
-                                    .onTapGesture { targetTag = tag }
-                                    .if( targetTag?.label ?? "" != tag.label ) { view in view.secondaryOpaqueRectangularBackground() }
-                                    .if( targetTag?.label ?? "" == tag.label ) { view in view.tintRectangularBackground() }
-                                }
-                            }.padding(.bottom)
-                        }
-                        
-                        SliderWithPrompt(label: type == .byTag ? "How many tagged events would you like to complete this goal?" : "How many hours do you want to spend on this goal?",
-                                         minValue: 0,
-                                         maxValue: (frequence == .daily ? 12 : 50 ),
-                                         binding: $targetHours,
-                                         strBinding: hoursBinding,
-                                         textFieldWidth: Constants.UIFormSliderTextFieldWidth)
-                        .padding(.bottom)
-                        
-                        UniversalText("How would you like to prioritize this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
-                        HStack {
-                            Spacer()
-                            makePriorityPickerOptions(label: "High", selection: .high)
-                            makePriorityPickerOptions(label: "Medium", selection: .medium)
-                            makePriorityPickerOptions(label: "Low", selection: .low)
-                            Spacer()
-                        }
-                        .padding(.bottom, 100)
+                        makePrioritySelector()
+
                     }
                 }
                 
@@ -200,9 +233,13 @@ struct GoalCreationView: View {
             .universalTextStyle()
             .opaqueRectangularBackground()
         }
-        .padding(Constants.UIFormPagePadding)
+        .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
+        .padding([.top, .horizontal], Constants.UIFormPagePadding)
         .background(Colors.tint)
-        .universalBackground()
+        .ignoresSafeArea()
+        .defaultAlert($showingAlert,
+                      title: "Incomplete Form",
+                      description: "Please provide a name, description, and target before creating the goal")
     }
     
 }

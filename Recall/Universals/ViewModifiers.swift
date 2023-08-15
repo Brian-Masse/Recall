@@ -261,6 +261,21 @@ private struct ColorChartByGoal: ViewModifier {
     }
 }
 
+private struct DefaultAlert: ViewModifier {
+    
+    @Binding var activate: Bool
+    let title: String
+    let description: String
+    
+    func body(content: Content) -> some View {
+        content
+            .alert(title, isPresented: $activate) { } message: {
+                Text( description )
+            }
+
+    }
+}
+
 //MARK: Extension
 extension View {
     func universalBackground(padding: Bool = true) -> some View {
@@ -344,6 +359,10 @@ extension View {
     
     func developer() -> some View {
         modifier( Developer() )
+    }
+    
+    func defaultAlert(_ binding: Binding<Bool>, title: String, description: String) -> some View {
+        modifier( DefaultAlert(activate: binding, title: title, description: description) )
     }
 }
 

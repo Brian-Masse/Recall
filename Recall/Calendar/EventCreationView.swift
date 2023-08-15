@@ -107,8 +107,13 @@ struct CalendarEventCreationView: View {
         .if(category.label != tag.label) { view in view.secondaryOpaqueRectangularBackground() }
     }
     
+//    MARK: Submit
     private func submit() {
         setDay()
+        if !checkCompletion() {
+            showingAlert = true
+            return
+        }
         
         if !editing {
             let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
@@ -128,6 +133,10 @@ struct CalendarEventCreationView: View {
                           goalRatings: goalRatings)
         }
         presentationMode.wrappedValue.dismiss()
+    }
+    
+    private func checkCompletion() -> Bool {
+        !self.title.isEmpty && !self.category.label.isEmpty
     }
     
     private func fillInformation(from event: RecallCalendarEvent) {
@@ -259,6 +268,7 @@ struct CalendarEventCreationView: View {
     
     @State var showingTemplates: Bool = false
     @State var activeTempalte: RecallCalendarEvent? = nil
+    @State var showingError: Bool = false
 
 //    MARK: Body
     var body: some View {
@@ -290,15 +300,12 @@ struct CalendarEventCreationView: View {
             .opaqueRectangularBackground()
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
-        .padding(Constants.UIFormPagePadding)
+        .padding([.top, .horizontal], Constants.UIFormPagePadding)
         .background(Colors.tint)
+        .ignoresSafeArea()
         
-        .onChange(of: category) { newValue in
-            goalRatings = RecallCalendarEvent.translateGoalRatingList(newValue.goalRatings)
-        }
+        .onChange(of: category) { newValue in goalRatings = RecallCalendarEvent.translateGoalRatingList(newValue.goalRatings) }
         
-        .alert(isPresented: $showingAlert) {
-            Alert(title: Text(alertTitle), message: Text(alertMessage))
-        }
+        .defaultAlert($showingAlert, title: "Incomplete Form", description: "Please provide a title, start and end times, and a tag before creating the event")
     }
 }
