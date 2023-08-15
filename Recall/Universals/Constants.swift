@@ -9,15 +9,18 @@ import Foundation
 import SwiftUI
 import Charts
 
+@MainActor
 class Colors {
     static var tint: Color { RecallModel.shared.activeColor }
     static var main: Color { accentGreen }
     
     static let colorOptions: [Color] = [ accentGreen, blue, purple, pink, yellow,  ]
     
-    static let lightGrey = Color(red: 0.97, green: 0.97, blue: 0.97)
+    static let lightGrey = makeColor(247, 255, 230)
+    static let secondaryLightColor = makeColor( 227, 235, 211 )
     static let darkGrey = Color(red: 0.1, green: 0.1, blue: 0.1).opacity(0.9)
     static let accentGreen = makeColor(95, 255, 135)
+    static let lightAccentGreen = makeColor(66, 122, 69)
     
     static let yellow = makeColor(234, 169, 40)
     static let pink = makeColor(198, 62, 120)
@@ -27,7 +30,6 @@ class Colors {
     private static func makeColor( _ r: CGFloat, _ g: CGFloat, _ b: CGFloat ) -> Color {
         Color(red: r / 255, green: g / 255, blue: b / 255)
     }
-    
 }
 
 class Constants {

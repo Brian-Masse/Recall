@@ -90,6 +90,7 @@ class RecallCalendarEvent: Object, Identifiable  {
         RealmManager.retrieveObjects(where: query)
     }
     
+    @MainActor
     func getColor() -> Color {
         category?.getColor() ?? Colors.tint
     }

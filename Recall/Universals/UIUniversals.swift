@@ -177,45 +177,6 @@ struct SizePreferenceKey: PreferenceKey {
     }
 }
 
-//MARK: HeadedBackground
-
-struct HeadedBackground<C1: View, C2: View>: View {
-    
-    @Environment(\.colorScheme) var colorScheme
-    
-    let headerView: C1
-    let content: C2
-    
-    init( @ViewBuilder headerBuilder: () -> C1, @ViewBuilder content: () -> C2 ) {
-        self.headerView = headerBuilder()
-        self.content = content()
-    }
-    
-    var body: some View {
-        
-        VStack {
-            ZStack {
-                Rectangle()
-                    .foregroundColor(Colors.tint)
-                    .frame(height: 60)
-                    .cornerRadius(Constants.UILargeCornerRadius, corners: [.topLeft, .topRight])
-                    .cornerRadius(Constants.UIDefaultCornerRadius, corners: [.bottomLeft, .bottomRight])
-                
-                headerView
-                .foregroundColor(.black)
-                .padding(.horizontal, 20)
-            }
-            
-            content
-            
-        }
-        .background( colorScheme == .dark ? .black : .white )
-        .cornerRadius(Constants.UILargeCornerRadius)
-        .padding(7)
-        
-    }
-}
-
 //MARK: CircularProgressBar
 
 struct CircularProgressView: View {
@@ -229,7 +190,7 @@ struct CircularProgressView: View {
         ZStack {
             Circle()
                 .stroke(
-                    colorScheme == .dark ? .black : .white,
+                    colorScheme == .dark ? .black : Colors.lightGrey,
                     lineWidth: Constants.UICircularProgressWidth
                 )
             Circle()

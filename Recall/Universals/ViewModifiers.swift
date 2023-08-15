@@ -56,15 +56,6 @@ private struct UniversalColoredBackground: ViewModifier {
     }
 }
 
-private struct UniversalForeground: ViewModifier {
-    @Environment(\.colorScheme) var colorScheme
-    let reversed: Bool
-    func body(content: Content) -> some View {
-            if !reversed { return content.foregroundColor(colorScheme == .light ? .white : Colors.darkGrey) }
-        return content.foregroundColor(colorScheme == .light ? Colors.darkGrey : .white )
-    }
-}
-
 //MARK: TextStyle
 private struct UniversalTextStyle: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
@@ -127,7 +118,7 @@ private struct OpaqueRectangularBackground: ViewModifier {
                 view
                     .overlay(
                         RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                            .stroke(colorScheme == .dark ? .white : .black, lineWidth: 1)
+                            .stroke(colorScheme == .dark ? .white : Colors.lightAccentGreen, lineWidth: 1)
                     )
             }
             .cornerRadius(Constants.UIDefaultCornerRadius)
@@ -144,7 +135,7 @@ private struct SecondaryOpaqueRectangularBackground: ViewModifier {
         content
             .if(padding == nil) { view in view.padding() }
             .if(padding != nil) { view in view.padding(padding!) }
-            .background( colorScheme == .dark ? Colors.darkGrey : .white )
+            .background( colorScheme == .dark ? Colors.darkGrey : Colors.secondaryLightColor )
             .cornerRadius(Constants.UIDefaultCornerRadius)
 //            .shadow(color: Colors.tint.opacity( colorScheme == .dark ? 0.2 : 0.4), radius: 50)
     }
@@ -278,10 +269,6 @@ extension View {
     
     func universalColoredBackground(_ color: Color) -> some View {
         modifier(UniversalColoredBackground(color: color))
-    }
-    
-    func universalForeground(not reveresed: Bool = false) -> some View {
-        modifier(UniversalForeground(reversed: reveresed))
     }
     
     func universalTextStyle() -> some View {

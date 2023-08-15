@@ -27,6 +27,8 @@ struct MainView: View {
 //    MARK: Tabbar
     struct TabBar: View {
         
+        @Environment(\.colorScheme) var colorScheme
+        
         struct TabBarIcon: View {
             
             @Binding var selection: MainView.MainPage
@@ -99,6 +101,8 @@ struct MainView: View {
     }
     
 //    MARK: Body
+    @Environment(\.colorScheme) var colorScheme
+    
     @ObservedResults( RecallCalendarEvent.self ) var events
     @ObservedResults( RecallGoal.self ) var goals
     
@@ -124,9 +128,16 @@ struct MainView: View {
             
         }
         
-        .onAppear               { Task { await refreshData(events: Array(events), goals: Array(goals)) } }
+        .onAppear {
+            Task { await refreshData(events: Array(events), goals: Array(goals)) }
+            RecallModel.shared.setTint(from: colorScheme)
+        }
         .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
-//        .onChange(of: goals)    { newValue in Task { await refreshData(goals: Array(newValue)) } }
+        
+        .onChange(of: colorScheme) { newValue in
+            RecallModel.shared.setTint(from: newValue)
+        }
+        
         
         .ignoresSafeArea()
         .universalBackground()

@@ -15,13 +15,13 @@ let inDev = true
 @MainActor
 struct RecallModel {
     
-    static let shared: RecallModel = RecallModel()
+    static var shared: RecallModel = RecallModel()
     static let realmManager: RealmManager = RealmManager()
     
     static var ownerID: String { RecallModel.realmManager.user?.id ?? "" }
     static var index: RecallIndex { RecallModel.realmManager.index  }
     
-    let activeColor: Color = Colors.main
+    var activeColor: Color = Colors.main
     
     @MainActor
     static func getDaysSinceFirstEvent() -> Double {
@@ -31,6 +31,11 @@ struct RecallModel {
     @MainActor
     static func getEarliestEventDate() -> Date {
         RecallModel.index.earliestEventDate
+    }
+    
+    @MainActor
+    mutating func setTint(from colorScheme: ColorScheme ) {
+        activeColor = colorScheme == .dark ? Colors.accentGreen : Colors.lightAccentGreen
     }
     
     static let dataModel: RecallDataModel = RecallDataModel()
