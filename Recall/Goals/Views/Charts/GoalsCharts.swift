@@ -33,13 +33,15 @@ struct DataNode: Identifiable {
 // This shows how many hours you spent doing something that contributed to a certain goal over time
 struct ActivityPerDay: View {
     
-    let timePeriod: Double
+    let recentData: Bool
+    //    let timePeriod: Double
     
+    var timePeriod: Double { recentData ? 8 : .greatestFiniteMagnitude }
     let title: String
     
     let goal: RecallGoal
     let events: [RecallCalendarEvent]
-    let showYAxis: Bool 
+//    let showYAxis: Bool
     
     private func getData() -> [DataNode] {
         let startTime: Date = (.now - (timePeriod * Constants.DayTime))
@@ -49,47 +51,48 @@ struct ActivityPerDay: View {
             
         }
     }
+    
+    @MainActor
+    @ViewBuilder
+    private func makeChart() -> some View {
+        Chart {
+            let data = getData()
+
+            ForEach(data) { datum in
+                BarMark(x: .value("date", datum.date, unit: .day ),
+                        y: .value("count", datum.count), width: Constants.UIScrollableBarWidth)
+                .foregroundStyle(Colors.tint)
+                .cornerRadius(Constants.UIDefaultCornerRadius - 10)
+            }
+
+            RuleMark(y: .value("Goal", goal.targetHours) )
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]) )
+                .foregroundStyle(Colors.tint)
+        }
+        .if(!recentData) { view in view.reversedXAxis() }
+        .chartOverTimeXAxis()
+        .chartYAxis {
+            AxisMarks(position: .leading) { value in
+                if let count = value.as(Int.self) {
+                    if !recentData { AxisValueLabel( "\(count) HR" ) }
+                }
+            }
+        }
+    }
+    
+//    MARK: Body
         
     var body: some View {
-        
-        let data = getData()
-        
-        GeometryReader { geo in
-            VStack(alignment: .leading) {
-                UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-                
-                ScrollView(.horizontal) {
-                    Chart {
-                        ForEach(data) { datum in
-                            BarMark(x: .value("date", datum.date, unit: .day ),
-                                    y: .value("count", datum.count))
-                            .foregroundStyle(Colors.tint)
-                            .cornerRadius(Constants.UIDefaultCornerRadius - 10)
-                        }
-                        
-                        RuleMark(y: .value("Goal", goal.targetHours) )
-                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]) )
-                            .foregroundStyle(Colors.tint)
-                    }
-                    .chartXAxis {
-                        AxisMarks(values: .stride(by: .day)) { value in
-                            if let date = value.as( Date.self ) {
-                                AxisValueLabel(centered: true) {
-                                    Text(date.formatted(.dateTime.day() ) )
-                                }
-                            }
-                        }
-                    }
-                    .chartYAxis {
-                        AxisMarks(position: .leading) { value in
-                            if let count = value.as(Int.self) {
-                                if showYAxis { AxisValueLabel( "\(count) HR" ) }
-                            }
-                        }
-                    }
-                    .frame(minWidth: geo.size.width)
+    
+        VStack(alignment: .leading) {
+            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            
+            if recentData {
+                makeChart()
+            } else {
+                ScrollChart(Int(RecallModel.getDaysSinceFirstEvent())) {
+                    makeChart()
                 }
-                .frame(width: geo.size.width)
             }
         }
     }
@@ -118,39 +121,34 @@ struct TotalActivites: View {
         }
         return nodes
     }
-    
+
     var body: some View {
         
         let data = getData()
         
         VStack(alignment: .leading) {
             UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-            Chart {
-                ForEach(data) { datum in
-                    LineMark(x: .value("date", datum.date, unit: .day ),
-                             y: .value("count", datum.count))
-                    .foregroundStyle(Colors.tint)
-                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [3, 3]) )
-                    
-                    AreaMark(x: .value("X", datum.date, unit: .day ),
-                             y: .value("Y", datum.count))
-                    .foregroundStyle( LinearGradient(colors: [Colors.tint.opacity(0.5), .clear], startPoint: .top, endPoint: .bottom)  )
-                    
-                }
-            }
-            .chartXAxis {
-                AxisMarks(values: .stride(by: .day)) { value in
-                    if let date = value.as( Date.self ) {
-                        AxisValueLabel(centered: true) {
-                            Text(date.formatted(.dateTime.day() ) )
-                        }
+            ScrollChart(Int(RecallModel.getDaysSinceFirstEvent())) {
+                Chart {
+                    ForEach(data) { datum in
+                        LineMark(x: .value("date", datum.date, unit: .day ),
+                                 y: .value("count", datum.count))
+                        .foregroundStyle(Colors.tint)
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [3, 3]) )
+                        
+                        
+                        AreaMark(x: .value("X", datum.date, unit: .day ),
+                                 y: .value("Y", datum.count))
+                        .foregroundStyle( LinearGradient(colors: [Colors.tint.opacity(0.5), .clear], startPoint: .top, endPoint: .bottom)  )
+                        
                     }
                 }
-            }
-            .chartYAxis {
-                AxisMarks { value in
-                    if let count = value.as(Int.self) {
-                        if showYAxis { AxisValueLabel( "\(count) HR" ) }
+                .chartOverTimeXAxis()
+                .chartYAxis {
+                    AxisMarks { value in
+                        if let count = value.as(Int.self) {
+                            if showYAxis { AxisValueLabel( "\(count) HR" ) }
+                        }
                     }
                 }
             }

@@ -75,5 +75,11 @@ class RecallCategory: Object, Identifiable {
             category._id == self._id
         }
     }
+    
+    func worksTowards(goal: RecallGoal) -> Bool {
+        self.goalRatings.contains { node in
+            node.key == goal.key
+        }
+    }
 
 }

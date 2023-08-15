@@ -11,6 +11,7 @@ import RealmSwift
 
 struct GoalView: View {
     
+//    MARK: Helpers
     @ViewBuilder
     func makeSeperator() -> some View {
         Rectangle()
@@ -45,17 +46,101 @@ struct GoalView: View {
     }
     
     @Environment(\.presentationMode) var presentationMode
-    
+    @ObservedResults(RecallCategory.self) var tags
     @ObservedRealmObject var goal: RecallGoal
+    
     let events: [RecallCalendarEvent]
     
     @State var showingEditingScreen: Bool = false
     
-    var body: some View {
+//    MARK: ViewBuilders
+    @ViewBuilder
+    private func makeOverview() -> some View {
+        UniversalText("overview", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        
+        HStack {
+            UniversalText( goal.goalDescription, size: Constants.UISmallTextSize, font: Constants.mainFont )
+                .frame(width: 100)
+            
+            makeSeperator()
+            
+            VStack {
+                makeOverViewDataView(title: "priority", icon: "exclamationmark.triangle", data: goal.priority)
+                makeOverViewDataView(title: "period", icon: "calendar.day.timeline.leading", data: RecallGoal.GoalFrequence.getType(from: goal.frequency))
+                makeOverViewDataView(title: "goal", icon: "flag.checkered", data: "\(goal.targetHours) \(goal.byTag() ? "tags" : "HR")")
+                makeOverViewDataView(title: "created on", icon: "calendar.badge.clock", data: "\(goal.creationDate.formatted(date: .numeric, time: .omitted))")
+            }
+        }
+        .secondaryOpaqueRectangularBackground()
+        .padding(.bottom)
+    }
+    
+    @ViewBuilder
+    private func makeContributingTags() -> some View {
+        let contributingTags = tags.filter { tag in tag.worksTowards(goal: goal) }
+        
+        if contributingTags.count != 0 {
+            UniversalText("Contributing Tags", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+            
+            WrappedHStack(collection: Array(contributingTags)) { tag in
+                HStack {
+                    Image(systemName: "arrow.up.right")
+                    UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                    
+                }.opaqueRectangularBackground()
+            }
+            .secondaryOpaqueRectangularBackground(7)
+        }
+    }
+    
+    @ViewBuilder
+    private func makeQuickActions() -> some View {
+        UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        ScrollView(.horizontal) {
+            HStack {
+                LargeRoundedButton("edit", icon: "arrow.up.forward") { showingEditingScreen = true }
+                LargeRoundedButton("delete", icon: "arrow.up.forward") { goal.delete() }
+                LargeRoundedButton("change goal target", icon: "arrow.up.forward") { showingEditingScreen = true }
+            }
+        }
+        .secondaryOpaqueRectangularBackground(7)
+        .padding(.bottom)
+    }
+    
+    @ViewBuilder
+    private func makeGoalReview() -> some View {
         
         let progressData = goal.getProgressTowardsGoal(from: events)
         let averageData = goal.getAverage(from: events)
         let goalMetData = goal.countGoalMet(from: events)
+        
+        UniversalText("Goal Review", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+            .padding(.bottom)
+        
+        ScrollView(.horizontal) {
+            HStack {
+                makeCircularProgressWidget(title: "Current Progress", value: progressData, total: goal.targetHours)
+                
+                makeCircularProgressWidget(title: "Average Activity", value: Int(averageData), total: goal.targetHours)
+                
+                makeCircularProgressWidget(title: "Number of Times met", value: Int(goalMetData.0), total: goalMetData.1 + goalMetData.0)
+            }
+        }
+        
+        
+        ActivityPerDay(recentData: false, title: "activites per day", goal: goal, events: events)
+            .frame(height: 160)
+            .padding(5)
+            .secondaryOpaqueRectangularBackground()
+        
+        TotalActivites(title: "total activities", goal: goal, events: events, showYAxis: true)
+            .frame(height: 160)
+            .padding(5)
+            .secondaryOpaqueRectangularBackground()
+    }
+    
+//    MARK: Body
+    var body: some View {
         
         VStack(alignment: .leading) {
             HStack {
@@ -67,65 +152,13 @@ struct GoalView: View {
             ScrollView(.vertical) {
                 VStack(alignment: .leading) {
                     
-                    UniversalText("overview", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                    makeOverview()
                     
-                    HStack {
-                        UniversalText( goal.goalDescription, size: Constants.UISmallTextSize, font: Constants.mainFont )
-                            .frame(width: 100)
-                        
-                        makeSeperator()
-                        
-                        VStack {
-                            makeOverViewDataView(title: "priority", icon: "wallet.pass", data: goal.priority)
-                            makeOverViewDataView(title: "period", icon: "calendar.day.timeline.leading", data: RecallGoal.GoalFrequence.getType(from: goal.frequency))
-                            makeOverViewDataView(title: "goal", icon: "scope", data: "\(goal.targetHours)")
-                        }
-                        
-                        makeSeperator()
-                            .developer()
-                        
-                        UniversalText(goal.getStartDate().formatted(), size: Constants.UIDefaultTextSize )
-                            .developer()
-                    }
-                    .secondaryOpaqueRectangularBackground()
-                    .padding(.bottom)
+                    makeQuickActions()
                     
-                    UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
-                    ScrollView(.horizontal) {
-                        HStack {
-                            LargeRoundedButton("edit", icon: "arrow.up.forward") { showingEditingScreen = true }
-                            LargeRoundedButton("delete", icon: "arrow.up.forward") { goal.delete() }
-                            LargeRoundedButton("change goal target", icon: "arrow.up.forward") { showingEditingScreen = true }
-                        }
-                    }
-                    .secondaryOpaqueRectangularBackground()
-                    .padding(.bottom)
+                    makeContributingTags()
                     
-                    UniversalText("Goal Review", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
-                        .padding(.bottom)
-                    
-                    ScrollView(.horizontal) {
-                        HStack {
-                            makeCircularProgressWidget(title: "Current Progress", value: progressData, total: goal.targetHours)
-                            
-                            makeCircularProgressWidget(title: "Average Activity", value: Int(averageData), total: goal.targetHours)
-                            
-                            makeCircularProgressWidget(title: "Number of Times met", value: Int(goalMetData.0), total: goalMetData.1 + goalMetData.0)
-                        }
-                    }
-                    
-                    
-                    VStack(alignment: .leading) {
-                        UniversalText("Activties", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
-                        ActivityPerDay(timePeriod: .greatestFiniteMagnitude, title: "activites per day", goal: goal, events: events, showYAxis: true)
-                            .frame(height: 160)
-                        
-                        TotalActivites(title: "total activities", goal: goal, events: events, showYAxis: true)
-                            .frame(height: 160)
-                    }
-                    .padding(5)
-                    .secondaryOpaqueRectangularBackground()
-                    
+                    makeGoalReview()
                 }
             }
             Spacer()

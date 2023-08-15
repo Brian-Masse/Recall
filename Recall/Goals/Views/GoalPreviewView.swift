@@ -63,7 +63,7 @@ struct GoalPreviewView: View {
                     
                     makeSeperator()
                     
-                    ActivityPerDay(timePeriod: 7, title: "", goal: goal, events: events, showYAxis: false)
+                    ActivityPerDay(recentData: true, title: "", goal: goal, events: events)
                         .frame(height: 100)
 
                 }
@@ -78,7 +78,7 @@ struct GoalPreviewView: View {
                         
                         Rectangle()
                             .cornerRadius(Constants.UIDefaultCornerRadius)
-                            .foregroundColor( colorScheme == .dark ? Colors.darkGrey : Colors.lightGrey )
+                            .foregroundColor( colorScheme == .dark ? Colors.darkGrey : Colors.secondaryLightColor )
                         
                         Rectangle()
                             .foregroundColor(Colors.tint)

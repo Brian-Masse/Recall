@@ -9,26 +9,6 @@ import Foundation
 import SwiftUI
 import Charts
 
-//MARK: Scroll Chart
-struct ScrollChart<Content: View>: View {
-    
-    let dataCount: Int
-    let content: Content
-    
-    init( _ dataCount: Int, @ViewBuilder _ content: () -> Content ) {
-        self.dataCount = dataCount
-        self.content = content()
-    }
-    
-    var body: some View {
-//        GeometryReader { geo in
-        ScrollView(.horizontal) {
-            content
-                .frame(width: Double(dataCount) * Constants.UIScrollableBarWidthDouble )
-        }
-//        }
-    }
-}
 
 //MARK: Event Charts
 
@@ -96,17 +76,9 @@ struct ActivitiesPerDay: View {
                 .cornerRadius(Constants.UIBarMarkCOrnerRadius)
             }
         }
+        .reversedXAxis()
+        .chartOverTimeXAxis()
         .colorChartByTag()
-        .chartXAxis {
-            AxisMarks(values: .stride(by: .day)) { value in
-                if let date = value.as( Date.self ) {
-                    AxisValueLabel(centered: true) {
-                        UniversalText(date.formatted(.dateTime.day() ), size: Constants.UISmallTextSize, font: Constants.mainFont)
-                        
-                    }
-                }
-            }
-        }
         .chartYAxis {
             AxisMarks(position: .leading) { value in
                 if let count = value.as(Int.self) {
@@ -153,49 +125,6 @@ struct ActivitiesPerDay: View {
 
 
 //MARK: Goals Charts
-
-
-
-//MARK: Goals Over Time Chart
-struct GoalsOverTimeChart: ViewModifier {
-    
-    let unit: String
-    
-    func body(content: Content) -> some View {
-        content
-            .chartXAxis {
-                AxisMarks(values: .stride(by: .day)) { value in
-                    if let date = value.as( Date.self ) {
-                        
-                        let regularLabel = !date.isSunday() ? "\(date.formatted(.dateTime.day()))" : "\(date.formatted(.dateTime.day()))\nSun"
-                        let label = date.isFirstOfMonth() ? "01\n\(date.formatted(.dateTime.month()))" : regularLabel
-                        
-                        AxisValueLabel(centered: true) {
-                            UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont)
-                            
-                        }
-                    }
-                }
-            }
-            .chartYAxis {
-                AxisMarks(position: .leading) { value in
-                    if let count = value.as(Int.self) {
-                        AxisValueLabel {
-                            UniversalText("\(count)" + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
-                        }
-                        AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
-                    }
-                }
-            }
-            .padding(.top, 5)
-    }
-}
-
-extension View {
-    func goalsOverTimeChart(unit: String = "") -> some View {
-        modifier(GoalsOverTimeChart(unit: unit))
-    }
-}
 
 
 
@@ -261,6 +190,7 @@ struct GoalProgressOverTime: View {
                 }
                 .colorChartByGoal()
                 .goalsOverTimeChart(unit: unit)
+                .reversedXAxis()
             }
         }
     }

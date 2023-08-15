@@ -119,7 +119,7 @@ class RecallGoal: Object, Identifiable {
         
         RealmManager.updateObject(self) { thawed in
             thawed.label = label
-            thawed.goalDescription = goalDescription
+            thawed.goalDescription = description
             thawed.frequency = frequency.numericValue
             thawed.targetHours = targetHours
             thawed.priority = priority.rawValue
@@ -165,6 +165,10 @@ class RecallGoal: Object, Identifiable {
 //    @MainActor
     func goalWasMet(on date: Date, events: [RecallCalendarEvent]) -> Bool {
         Double(self.getProgressTowardsGoal(from: events, on: date )) >= Double(targetHours)
+    }
+    
+    func byTag() -> Bool {
+        GoalType.getRawType(from: self.type) == .byTag
     }
     
     

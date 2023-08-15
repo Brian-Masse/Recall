@@ -189,8 +189,8 @@
             filePath = "Recall/Goals/Views/Charts/GoalsCharts.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
+            startingLineNumber = "127"
+            endingLineNumber = "127"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -269,8 +269,8 @@
             filePath = "Recall/Goals/RecallGoal.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "205"
-            endingLineNumber = "205"
+            startingLineNumber = "209"
+            endingLineNumber = "209"
             landmarkName = "countGoalMet(from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -285,8 +285,8 @@
             filePath = "Recall/Goals/RecallGoal.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "178"
-            endingLineNumber = "178"
+            startingLineNumber = "182"
+            endingLineNumber = "182"
             landmarkName = "getProgressTowardsGoal(from:on:)"
             landmarkType = "7">
          </BreakpointContent>

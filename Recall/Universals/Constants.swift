@@ -55,8 +55,8 @@ class Constants {
 //    charts
     static let UICircularProgressWidth: CGFloat = 12
     static let UIBarMarkCOrnerRadius: CGFloat = 5
-    static let UIScrollableBarWidth: MarkDimension = 15
-    static let UIScrollableBarWidthDouble: Double = 24
+    static let UIScrollableBarWidth: MarkDimension = 16
+    static let UIScrollableBarWidthDouble: Double = 18
     
 //    timings
     static let MinuteTime: Double = 60
