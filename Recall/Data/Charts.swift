@@ -88,7 +88,7 @@ struct ActivitiesPerDay: View {
                     AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
                 }
             }
-        }
+        }.frame(height: 250)
     }
     
     let title: String
@@ -188,9 +188,9 @@ struct GoalProgressOverTime: View {
                         .cornerRadius(Constants.UIBarMarkCOrnerRadius)
                     }
                 }
+                .reversedXAxis()
                 .colorChartByGoal()
                 .goalsOverTimeChart(unit: unit)
-                .reversedXAxis()
             }
         }
     }

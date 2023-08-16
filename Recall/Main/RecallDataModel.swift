@@ -57,48 +57,56 @@ class RecallDataModel: ObservableObject {
           return nodes
       }
       
-    //  The first is the progress over time, the second is the number of times the goal was met
+    //  The first is the progress over time, the second is the number of times the goal was met, the third is the total times a certain goal was met
 //      @MainActor
-      private func makeGoalsProgressOverTimeData() async -> ([DataNode], [DataNode]) {
+      private func makeGoalsProgressOverTimeData() async -> ([DataNode], [DataNode], [DataNode]) {
           var iterator = await RecallModel.getEarliestEventDate()
+          
           var progress: [DataNode] = []
           var timesMet: [DataNode] = []
+          var metCount: [DataNode] = []
           
-          while iterator <= (.now + Constants.DayTime).resetToStartOfDay() {
+          while iterator <= (.now.resetToStartOfDay() + Constants.DayTime) {
               for goal in goals {
                   let progressNum = 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
                   let met = goal.goalWasMet(on: iterator, events: events)
                   
                   progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
                   timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
+                  metCount.append(.init(date: .now, count: met ? 1 : 0, category: "", goal: goal.label))
                   
               }
               
               iterator += Constants.DayTime
           }
-          return ( progress, timesMet )
+          return ( progress, timesMet, metCount )
       }
-      
-    //    This returns 2 lists, the first is the total progress for each goal, and the other is how many time that progress was met
-    //    This data can then by used to inexpensivly compute the average when graphing
-//      @MainActor
-      private func makeCountedData() async -> ([DataNode], [DataNode]) {
-          var metCount: [DataNode] = []
-          var progress: [DataNode] = []
-          
-          for goal in goals {
-              
-              let counts = events.reduce([0,0]) { partialResult, event in
-                  var list = partialResult
-                  list[0] += event.getGoalPrgress(goal)
-                  list[1] += goal.goalWasMet(on: event.startTime, events: events) ? 1 : 0
-                  return list
-              }
-              progress.append(.init(date: .now, count: counts[0], category: "", goal: goal.label))
-              metCount.append(.init(date: .now, count: counts[1], category: "", goal: goal.label))
-          }
-          return (progress, metCount)
-      }
+    
+//      private func countNumberOfTimesMet() async -> [DataNode] {
+//          var metCount: [DataNode] = []
+//          var iterator: Date = await RecallModel.getEarliestEventDate()
+//
+//          while iterator <= (.now.resetToStartOfDay() + Constants.DayTime) {
+//              for goal in goals {
+//                  let count = goal.goalWasMet(on: iterator, events: events)
+//                  metCount.append(.init(date: iterator, count: ., category: <#T##String#>, goal: <#T##String#>))
+//              }
+//              iterator += Constants.DayTime
+//          }
+//
+//          for goal in goals {
+//
+//              let counts = events.reduce([0,0]) { partialResult, event in
+//                  var list = partialResult
+//                  list[0] += event.getGoalPrgress(goal)
+//                  list[1] += goal.goalWasMet(on: event.startTime, events: events) ? 1 : 0
+//                  return list
+//              }
+//              progress.append(.init(date: .now, count: counts[0], category: "", goal: goal.label))
+//              metCount.append(.init(date: .now, count: counts[1], category: "", goal: goal.label))
+//          }
+//          return (progress, metCount)
+//      }
       
       @MainActor
       private func makeCompletionPercentageData() async -> [DataNode] {
@@ -128,12 +136,10 @@ class RecallDataModel: ObservableObject {
 
 //   MARK: Goal Data
     @Published var goalsMetOverTimeData   : [DataNode] = []
-    @Published var countsOverTime         : ([DataNode], [DataNode]) = ([], [])
+    @Published var countsOverTime         : ([DataNode], [DataNode], [DataNode]) = ([], [], [])
     @Published var progressOverTime       : [DataNode] = []
     @Published var metOverTime            : [DataNode] = []
-
-    @Published var countData              : ([DataNode], [DataNode]) = ([], [])
-    @Published var progressData           : [DataNode] = []
+    
     @Published var metData                : [DataNode] = []
     @Published var totalGoalsMet          : Double = 0
 
@@ -178,10 +184,7 @@ class RecallDataModel: ObservableObject {
         countsOverTime              = await makeGoalsProgressOverTimeData()
         progressOverTime            = countsOverTime.0
         metOverTime                 = countsOverTime.1
-        
-        countData                   = await makeCountedData()
-        progressData                = countData.0
-        metData                     = countData.1
+        metData                     = countsOverTime.2
     
         totalGoalsMet               = metData.reduce(0) { partialResult, node in partialResult + node.count }
         metPercentageData           = await makeCompletionPercentageData()

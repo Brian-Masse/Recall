@@ -177,8 +177,8 @@ class RecallGoal: Object, Identifiable {
 //    @MainActor
     func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now) -> Int {
         
-        
         let step = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? 7 * Constants.DayTime : Constants.DayTime
+        
         let isSunday = Calendar.current.component(.weekday, from: date) == 1
         let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: date) ?? date) - (isSunday ? 0 : 7 * Constants.DayTime)
         let startDate = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? lastSunday : date

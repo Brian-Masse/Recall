@@ -52,14 +52,12 @@ struct EventsDataSection: View {
                     UniversalText("Activities", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                     
                     ActivitiesPerDay("Hours per day, by tag", data: data.getHourlData(from: viewFilter), scrollable: viewFilter == 1 )
-                        .frame(height: 200)
                     EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: viewFilter), unit: "HR")
                     EventsDataSummaries.ActivityPerTag(data:        data.getCompressedHourlData(from: viewFilter), unit: "HR")
                     
                     Seperator(orientation: .horizontal)
                     
                     ActivitiesPerDay("Events per day, by tag", data: data.getTagData(from: viewFilter), scrollable: viewFilter == 1 )
-                        .frame(height: 200)
                     EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedTagData(from: viewFilter), unit: "")
                     EventsDataSummaries.ActivityPerTag(data:        data.getCompressedTagData(from: viewFilter), unit: "")
                     

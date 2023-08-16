@@ -49,8 +49,8 @@ struct GoalsDataSection: View {
                     UniversalText("Counts", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                         .padding(.bottom)
                     
-                    GoalAverages(title: "Goal Progress", data: data.progressData, unit: "")
-                        .padding(.bottom)
+//                    GoalAverages(title: "Goal Progress", data: data.progressData, unit: "")
+//                        .padding(.bottom)
                     
                     GoalAverages(title: "Times Met", data: data.metData, unit: "")
                         .padding(.bottom)
