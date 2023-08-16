@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C908FFFA2A8BC32B00E3BBEA /* Chart Universals.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFF92A8BC32B00E3BBEA /* Chart Universals.swift */; };
+		C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */; };
 		C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */; };
 		C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */; };
 		C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0062A67213F009F6C84 /* RecallCategory.swift */; };
@@ -78,7 +78,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C908FFF92A8BC32B00E3BBEA /* Chart Universals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chart Universals.swift"; sourceTree = "<group>"; };
+		C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalCharts.swift; sourceTree = "<group>"; };
 		C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventPreviewContentView.swift; sourceTree = "<group>"; };
 		C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventView.swift; sourceTree = "<group>"; };
 		C915A0062A67213F009F6C84 /* RecallCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCategory.swift; sourceTree = "<group>"; };
@@ -274,7 +274,7 @@
 			isa = PBXGroup;
 			children = (
 				C91BCF2E2A61DD69003C6DD6 /* UIUniversals.swift */,
-				C908FFF92A8BC32B00E3BBEA /* Chart Universals.swift */,
+				C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */,
 				C91BCF302A61DDBA003C6DD6 /* Constants.swift */,
 				C94B1F102A688855007E8537 /* UniversalForm.swift */,
 				C91BCF322A61DE55003C6DD6 /* Extensions.swift */,
@@ -537,7 +537,7 @@
 				C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */,
 				C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */,
 				C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */,
-				C908FFFA2A8BC32B00E3BBEA /* Chart Universals.swift in Sources */,
+				C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */,
 				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
 				C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */,
 				C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */,

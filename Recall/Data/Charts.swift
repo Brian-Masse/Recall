@@ -71,7 +71,7 @@ struct ActivitiesPerDay: View {
                 
                 BarMark(x: .value("X", datum.date, unit: .day ),
                         y: .value("Y", datum.count),
-                        width: scrollable ? Constants.UIScrollableBarWidth : .automatic)
+                        width: .automatic)
                 .foregroundStyle(by: .value("series", datum.category))
                 .cornerRadius(Constants.UIBarMarkCOrnerRadius)
             }
@@ -154,7 +154,9 @@ struct GoalCompletionOverTime: View {
                         .foregroundStyle( LinearGradient(colors: [Colors.tint.opacity(0.5), .clear], startPoint: .top, endPoint: .bottom ) )
                     }
                 }
+                .padding(.top)
                 .goalsOverTimeChart(unit: unit)
+                .reversedXAxis()
                 .colorChartByGoal()
             }
         }
@@ -166,6 +168,7 @@ struct GoalCompletionOverTime: View {
 
 struct GoalProgressOverTime: View {
     
+    let title: String
     let data: [DataNode]
     let unit: String
     
@@ -175,15 +178,16 @@ struct GoalProgressOverTime: View {
             
             let days = RecallModel.getDaysSinceFirstEvent()
             
-            UniversalText("goal progress over time", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             
             ScrollChart(Int(days)) {
+                
                 Chart {
                     ForEach(data) { datum in
                         
-                        BarMark(x: .value("X", datum.date),
+                        BarMark(x: .value("X", datum.date, unit: .day),
                                 y: .value("Y", datum.count),
-                                width: Constants.UIScrollableBarWidth)
+                                width: .automatic)
                         .foregroundStyle(by: .value("Series", datum.goal))
                         .cornerRadius(Constants.UIBarMarkCOrnerRadius)
                     }
@@ -207,17 +211,23 @@ struct GoalAverages: View {
         var id: String { self.rawValue }
     }
     
+    @Environment(\.colorScheme) var colorScheme
+    
+    @MainActor
     @ViewBuilder
     private func makeChart( makeYData: @escaping (DataNode) -> Double) -> some View {
 
         Chart {
             ForEach(data) { datum in
-                BarMark(x: .value("X", datum.goal),
-                        y: .value("Y", makeYData(datum)))
-                .foregroundStyle(by: .value("Series", datum.goal))
-                .cornerRadius(Constants.UIBarMarkCOrnerRadius)
+                if datum.category == "completed" || page == .all {
+                    BarMark(x: .value("X", datum.goal),
+                            y: .value("Y", makeYData(datum)))
+                    .foregroundStyle(by: .value("Series", datum.category))
+                    .cornerRadius(Constants.UIBarMarkCOrnerRadius)
+                }
             }
         }
+        .chartLegend(Visibility.hidden)
         .chartYAxis {
             AxisMarks(position: .leading) { value in
                 if let count = value.as(Double.self) {
@@ -228,8 +238,11 @@ struct GoalAverages: View {
                 }
             }
         }
+        .colorChartByList([
+            "completed": Colors.tint,
+            "uncompleted": (colorScheme == .dark ? Colors.darkGrey : Colors.secondaryLightColor)
+        ])
         .frame(height: 150)
-        .colorChartByGoal()
         .padding(.top, 5)
     }
     
@@ -240,11 +253,7 @@ struct GoalAverages: View {
     @State private var page: Page = .all
     
     var body: some View {
-        
-        let totalDay = RecallModel.getDaysSinceFirstEvent()
-        
         VStack(alignment: .leading) {
-            
             
             let chartTitle = page == .all ? title : "Average \(title)"
             
@@ -252,7 +261,7 @@ struct GoalAverages: View {
             
             TabView(selection: $page) {
                 makeChart { node in node.count }.tag(Page.all)
-                makeChart { node in node.count / totalDay }.tag(Page.average)
+                makeChart { node in node.count / node.getDaysSinceGoalCreation() }.tag(Page.average)
             }
             .tabViewStyle(.page)
             .frame(height: 150)
@@ -276,8 +285,8 @@ struct GoalsMetPercentageChart: View {
                 ForEach(data) { datum in
                     BarMark(x: .value("X", datum.goal),
                             y: .value("Y", datum.count))
-                    .foregroundStyle(by: .value("Series", datum.goal))
                     .cornerRadius(Constants.UIBarMarkCOrnerRadius)
+                    .foregroundStyle(Colors.tint)
                 }
             }
             .chartYAxis {

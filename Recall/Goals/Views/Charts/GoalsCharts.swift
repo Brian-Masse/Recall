@@ -10,6 +10,7 @@ import SwiftUI
 import Charts
 
 
+//MARK: DataNode
 struct DataNode: Identifiable {
     var id: UUID = UUID()
     
@@ -26,6 +27,23 @@ struct DataNode: Identifiable {
     mutating func increment(by increment: Double) -> DataNode {
         self.count += increment
         return self
+    }
+    
+//    MARK: Conveineince Functions
+    
+    private func getGoal() -> RecallGoal? {
+        RealmManager.retrieveObject { goal in
+             goal.label.equals(self.goal)
+        }.first
+    }
+    
+    @MainActor
+    func getDaysSinceGoalCreation() -> Double {
+        if let goal = self.getGoal() {
+            return Double(Date.now.timeIntervalSince(goal.creationDate)) / Constants.DayTime
+        } else {
+            return RecallModel.getDaysSinceFirstEvent()
+        }
     }
 }
 

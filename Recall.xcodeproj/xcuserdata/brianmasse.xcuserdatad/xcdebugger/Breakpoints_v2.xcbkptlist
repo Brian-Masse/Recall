@@ -189,8 +189,8 @@
             filePath = "Recall/Goals/Views/Charts/GoalsCharts.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -364,8 +364,8 @@
             filePath = "Recall/Main/RecallDataModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "168"
-            endingLineNumber = "168"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
             landmarkName = "onMainRefreshData()"
             landmarkType = "7">
             <Locations>
@@ -502,8 +502,8 @@
             filePath = "Recall/Main/RecallDataModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
             landmarkName = "updateProperties(events:goals:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -566,8 +566,8 @@
             filePath = "Recall/Main/RecallDataModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "169"
-            endingLineNumber = "169"
+            startingLineNumber = "163"
+            endingLineNumber = "163"
             landmarkName = "onMainRefreshData()"
             landmarkType = "7">
          </BreakpointContent>

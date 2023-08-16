@@ -118,7 +118,7 @@ private struct OpaqueRectangularBackground: ViewModifier {
                 view
                     .overlay(
                         RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                            .stroke(colorScheme == .dark ? .white : Colors.lightAccentGreen, lineWidth: 1)
+                            .stroke(colorScheme == .dark ? .white : .black, lineWidth: 1)
                     )
             }
             .cornerRadius(Constants.UIDefaultCornerRadius)
@@ -217,50 +217,6 @@ private struct Developer: ViewModifier {
     }
 }
 
-private struct ColorChartByTag: ViewModifier {
-    
-    @ObservedResults(RecallCategory.self) var tags
-    @State var dictionary: Dictionary<String, Color> = Dictionary()
-    
-    func body(content: Content) -> some View {
-        
-        content
-            .chartForegroundStyleScale { value in dictionary[value] ?? .red }
-            .onAppear {
-                var dic: Dictionary<String, Color> = Dictionary()
-                if tags.count == 0 { return }
-                dic["?"] = .white
-                for i in 0..<tags.count  {
-                    let key: String =  tags[i].label
-                    dic[key] = tags[i].getColor()
-                }
-                self.dictionary = dic
-            }
-    }
-}
-
-private struct ColorChartByGoal: ViewModifier {
-    
-    @ObservedResults(RecallGoal.self) var goals
-    @State var dictionary: Dictionary<String, Color> = Dictionary()
-    
-    func body(content: Content) -> some View {
-        
-        content
-            .chartForegroundStyleScale { value in dictionary[value] ?? .red }
-            .onAppear {
-                var dic: Dictionary<String, Color> = Dictionary()
-                if goals.count == 0 { return }
-                dic["?"] = .white
-                for i in 0..<goals.count  {
-                    let key: String =  goals[i].label
-                    dic[key] = Colors.colorOptions[min( Colors.colorOptions.count - 1, i)]
-                }
-                self.dictionary = dic
-            }
-    }
-}
-
 private struct DefaultAlert: ViewModifier {
     
     @Binding var activate: Bool
@@ -325,15 +281,6 @@ extension View {
     
     func onBecomingVisible(perform action: @escaping () -> Void) -> some View {
         modifier(BecomingVisible(action: action))
-    }
-    
-//    MARK: Charts
-    func colorChartByTag() -> some View {
-        modifier(ColorChartByTag())
-    }
-    
-    func colorChartByGoal() -> some View {
-        modifier(ColorChartByGoal())
     }
     
 //    MARK: Utilities

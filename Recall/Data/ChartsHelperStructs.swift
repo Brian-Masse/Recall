@@ -64,9 +64,9 @@ struct DataCollection<Content: View>: View {
             
             VStack(alignment: .leading) {
                 content
-            }.opaqueRectangularBackground(7)
+            }.opaqueRectangularBackground(7, stroke: true)
         }
-        .padding(.bottom, 100)
+        .padding(.bottom)
     }
 }
 
@@ -84,8 +84,9 @@ struct Seperator: View {
         Rectangle()
             .universalTextField()
 //            .foregroundColor(.gray.opacity(0.2))
-            .if(orientation == .horizontal) { view in view.frame(height: 4)}
-            .if(orientation == .vertical) { view in view.frame(width: 4)}
+            .if(orientation == .horizontal) { view in view.frame(height: 1)}
+            .if(orientation == .vertical) { view in view.frame(width: 1)}
+            .padding(.horizontal, 5)
         
     }
 }

@@ -53,14 +53,14 @@ struct DataPageView: View {
                 ScrollView(.vertical) {
                     LazyVStack(alignment: .leading) {
                         
-                        UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+                        UniversalText("Quick Links", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                         ScrollView(.horizontal) {
                             HStack {
                                 ForEach( DataBookMark.allCases ) { content in
                                     makeContentsButton(label: content.rawValue, proxy: value)
                                 }
                             }
-                        }.opaqueRectangularBackground()
+                        }.secondaryOpaqueRectangularBackground(7)
                         
                         
                         EventsDataSection()
@@ -70,8 +70,8 @@ struct DataPageView: View {
                         
                         
                         Spacer()
-                        
                     }
+                    .padding(.bottom, Constants.UIBottomOfPagePadding)
                 }
             }
         }

@@ -25,11 +25,11 @@ struct EventsDataSection: View {
                 let timePeriod: Double = viewFilter == 0 ? 7 : RecallModel.getDaysSinceFirstEvent()
                 
                 Group {
-                    Seperator(orientation: .horizontal)
                     LargeText(mainText: "\(data.getTotalHours(from: viewFilter))", subText: "hours")
                     Seperator(orientation: .horizontal)
                     LargeText(mainText: "\(data.getHourlData(from: viewFilter).count)", subText: "events")
                     Seperator(orientation: .horizontal)
+                        .padding(.bottom)
                 }
                 
                 DataPicker(optionsCount: 2, labels: ["This Week", "All Time"], fontSize: Constants.UISubHeaderTextSize, selectedOption: $viewFilter)
@@ -40,10 +40,10 @@ struct EventsDataSection: View {
                         .padding(.bottom, 5)
                     
                     AverageActivityByTag(recents: viewFilter == 0, data: data.getHourlData(from: viewFilter), unit: "")
-                    Seperator(orientation: .horizontal)
+                    EventsDataSummaries.DailyAverage(data: data.getCompressedHourlData(from: viewFilter), unit: "HR/DY")
+                    
                     LargeText(mainText: "\((Double(data.getTotalHours(from: viewFilter)) / timePeriod).round(to: 2))", subText: "HR/DY")
                         .padding(.vertical)
-                    EventsDataSummaries.DailyAverage(data: data.getCompressedHourlData(from: viewFilter), unit: "HR/DY")
                 }
                 
                 Seperator(orientation: .horizontal)
@@ -61,7 +61,7 @@ struct EventsDataSection: View {
                     EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedTagData(from: viewFilter), unit: "")
                     EventsDataSummaries.ActivityPerTag(data:        data.getCompressedTagData(from: viewFilter), unit: "")
                     
-                    Seperator(orientation: .horizontal)
+//                    Seperator(orientation: .horizontal)
                 }
             }
         }.id( DataPageView.DataBookMark.Events.rawValue )

@@ -43,9 +43,9 @@ struct GoalsOverTimeChart: ViewModifier {
             .chartOverTimeXAxis()
             .chartYAxis {
                 AxisMarks(position: .leading) { value in
-                    if let count = value.as(Int.self) {
+                    if let count = value.as(Double.self) {
                         AxisValueLabel {
-                            UniversalText("\(count)" + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                            UniversalText("\(count.round(to: 2))" + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
                         }
                         AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
                     }
@@ -86,6 +86,66 @@ struct ReversedXAxis: ViewModifier {
     }
 }
 
+
+//MARK: ColoringCharts
+private struct ColorChartByTag: ViewModifier {
+    
+    @ObservedResults(RecallCategory.self) var tags
+    @State var dictionary: Dictionary<String, Color> = Dictionary()
+    
+    func body(content: Content) -> some View {
+        
+        content
+            .chartForegroundStyleScale { value in dictionary[value] ?? .red }
+            .onAppear {
+                var dic: Dictionary<String, Color> = Dictionary()
+                if tags.count == 0 { return }
+                dic["?"] = .white
+                for i in 0..<tags.count  {
+                    let key: String =  tags[i].label
+                    dic[key] = tags[i].getColor()
+                }
+                self.dictionary = dic
+            }
+    }
+}
+
+private struct ColorChartByGoal: ViewModifier {
+    
+    @ObservedResults(RecallGoal.self) var goals
+    @State var dictionary: Dictionary<String, Color> = Dictionary()
+    
+    func body(content: Content) -> some View {
+        
+        content
+            .chartForegroundStyleScale { value in dictionary[value] ?? .red }
+            .onAppear {
+                var dic: Dictionary<String, Color> = Dictionary()
+                if goals.count == 0 { return }
+                dic["?"] = .white
+                for i in 0..<goals.count  {
+                    let key: String =  goals[i].label
+                    dic[key] = Colors.colorOptions[min( Colors.colorOptions.count - 1, i)]
+                }
+                self.dictionary = dic
+            }
+    }
+}
+
+private struct ColorChartByList: ViewModifier {
+    
+    @ObservedResults(RecallGoal.self) var goals
+    @State var dictionary: Dictionary<String, Color>
+    
+    func body(content: Content) -> some View {
+        
+        content
+            .chartForegroundStyleScale { value in dictionary[value] ?? .red }
+    }
+}
+
+
+
 //MARK: View Extension
 extension View {
     func goalsOverTimeChart(unit: String = "") -> some View {
@@ -98,6 +158,18 @@ extension View {
     
     func reversedXAxis() -> some View {
         modifier( ReversedXAxis() )
+    }
+    
+    func colorChartByTag() -> some View {
+        modifier(ColorChartByTag())
+    }
+    
+    func colorChartByGoal() -> some View {
+        modifier(ColorChartByGoal())
+    }
+    
+    func colorChartByList(_ dictionary: Dictionary<String, Color>) -> some View {
+        modifier(ColorChartByList(dictionary: dictionary))
     }
 }
 

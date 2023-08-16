@@ -76,7 +76,7 @@ struct GoalsDataSummaries {
             }
             
             DataSummaryList(content: dataSummaryListContent, striped: true)
-                .hideableDataCollection("Full breakdown")
+                .hideableDataCollection("Full breakdown", defaultIsHidden: true)
         }
     }
     
@@ -89,7 +89,7 @@ struct GoalsDataSummaries {
             }
             
             DataSummaryList(content: dataSummaryListContent, striped: true)
-                .hideableDataCollection("Full Breakdown")
+                .hideableDataCollection("Full Breakdown", defaultIsHidden: true)
         }
     }
 }
@@ -143,7 +143,7 @@ struct LargeText: View {
     var body: some View {
         VStack(alignment: .leading) {
             let length = mainText.removeFirst(of: ".").count
-            let lengthScaling = (Constants.UISmallTextSize * Double(length - 1))
+            let lengthScaling = (Constants.UIDefaultTextSize * Double(max(length - 2, 0)))
             
             HStack(alignment: .bottom) {
                 UniversalText(mainText, size: Constants.UILargeTextSize * 2, font: Constants.titleFont, wrap: false, scale: true)
