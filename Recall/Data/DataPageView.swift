@@ -63,6 +63,8 @@ struct DataPageView: View {
                         }.secondaryOpaqueRectangularBackground(7)
                         
                         
+                        OverviewDataSection(goals: arrGoals)
+                            .environmentObject(dataModel )
                         EventsDataSection()
                             .environmentObject(dataModel )
                         GoalsDataSection(goals: arrGoals)
