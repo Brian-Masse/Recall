@@ -38,5 +38,9 @@ struct RecallModel {
         activeColor = colorScheme == .dark ? Colors.accentGreen : Colors.lightAccentGreen
     }
     
+    static func getTemplates(from events: [RecallCalendarEvent]) -> [RecallCalendarEvent] {
+        events.filter { event in event.isTemplate }
+    }
+    
     static let dataModel: RecallDataModel = RecallDataModel()
 }

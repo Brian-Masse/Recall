@@ -45,7 +45,7 @@ struct GoalTags: View {
                     }
                 }
             }
-        }.padding(.leading)
+        }
     }
     
 }
@@ -94,6 +94,7 @@ struct TagPreviewView: View {
             }
             
             GoalTags(goalRatings: Array(tag.goalRatings), events: events)
+                .padding(.leading)
             
         }
 //        .opaqueRectangularBackground(0)

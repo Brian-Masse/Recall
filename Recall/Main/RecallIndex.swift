@@ -18,7 +18,7 @@ class RecallIndex: Object, Identifiable {
     @Persisted var ownerID: String
     
     @Persisted private(set) var earliestEventDate: Date = .now - (7 * Constants.DayTime)
-    @Persisted private(set) var templates: List<RecallCalendarEvent> = List()
+//    @Persisted private(set) var templates: List<RecallCalendarEvent> = List()
     
     convenience init( ownerID: String ) {
         self.init()
@@ -29,25 +29,25 @@ class RecallIndex: Object, Identifiable {
         self.earliestEventDate = date
     }
     
-    func addTemplate(_ newTemplate: RecallCalendarEvent) {
-        if let _ = self.templates.first(where: { event in
-            event.title == newTemplate.title
-        }) { return }
-        
-        if let copy: RecallCalendarEvent = RealmManager.retrieveObject(where: { event in event.title == newTemplate.title }).first {
-            RealmManager.updateObject(self) { thawed in
-                thawed.templates.append(copy)
-            }
-        }
-    }
-    
-    func removeTemplate(_ template: RecallCalendarEvent) {
-        if let index = self.templates.firstIndex(where: {event in
-            event.title == template.title
-        }) {
-            RealmManager.updateObject(self) { thawed in
-                thawed.templates.remove(at: index)
-            }
-        }
-    }
+//    func addTemplate(_ newTemplate: RecallCalendarEvent) {
+//        if let _ = self.templates.first(where: { event in
+//            event.title == newTemplate.title
+//        }) { return }
+//        
+//        if let copy: RecallCalendarEvent = RealmManager.retrieveObject(where: { event in event.title == newTemplate.title }).first {
+//            RealmManager.updateObject(self) { thawed in
+//                thawed.templates.append(copy)
+//            }
+//        }
+//    }
+//    
+//    func removeTemplate(_ template: RecallCalendarEvent) {
+//        if let index = self.templates.firstIndex(where: {event in
+//            event.title == template.title
+//        }) {
+//            RealmManager.updateObject(self) { thawed in
+//                thawed.templates.remove(at: index)
+//            }
+//        }
+//    }
 }

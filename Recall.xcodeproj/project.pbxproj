@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */; };
 		C908FFFC2A8D461100E3BBEA /* OverviewDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFFB2A8D461100E3BBEA /* OverviewDataSection.swift */; };
+		C908FFFE2A8D858600E3BBEA /* CalendarTemplatesPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFFD2A8D858600E3BBEA /* CalendarTemplatesPageView.swift */; };
 		C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */; };
 		C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */; };
 		C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0062A67213F009F6C84 /* RecallCategory.swift */; };
@@ -81,6 +82,7 @@
 /* Begin PBXFileReference section */
 		C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalCharts.swift; sourceTree = "<group>"; };
 		C908FFFB2A8D461100E3BBEA /* OverviewDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewDataSection.swift; sourceTree = "<group>"; };
+		C908FFFD2A8D858600E3BBEA /* CalendarTemplatesPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarTemplatesPageView.swift; sourceTree = "<group>"; };
 		C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventPreviewContentView.swift; sourceTree = "<group>"; };
 		C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventView.swift; sourceTree = "<group>"; };
 		C915A0062A67213F009F6C84 /* RecallCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCategory.swift; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 			isa = PBXGroup;
 			children = (
 				C915A00A2A672586009F6C84 /* EventCreationView.swift */,
+				C908FFFD2A8D858600E3BBEA /* CalendarTemplatesPageView.swift */,
 				C94B1F152A6891E9007E8537 /* CalendarPageView.swift */,
 				C98E3B912A76037B0005F30F /* CalendarContainer */,
 				C910FFBC2A75FD26007213EB /* CalendarEvent */,
@@ -556,6 +559,7 @@
 				C915A0092A67217A009F6C84 /* CalendarContainerView.swift in Sources */,
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,
+				C908FFFE2A8D858600E3BBEA /* CalendarTemplatesPageView.swift in Sources */,
 				C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */,
 				C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */,
 				C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */,

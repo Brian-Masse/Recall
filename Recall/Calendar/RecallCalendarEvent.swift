@@ -106,8 +106,8 @@ class RecallCalendarEvent: Object, Identifiable  {
             thawed.isTemplate = !self.isTemplate
         }
         
-        if self.isTemplate { RecallModel.index.removeTemplate(self) }
-        if !self.isTemplate { RecallModel.index.addTemplate(self) }
+//        if self.isTemplate { RecallModel.index.removeTemplate(self) }
+//        if !self.isTemplate { RecallModel.index.addTemplate(self) }
     }
     
 //    MARK: Class Methods

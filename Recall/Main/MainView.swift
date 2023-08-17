@@ -18,6 +18,7 @@ struct MainView: View {
         case goals
         case data
         case categories
+        case templates
         
         var id: Int {
             self.rawValue
@@ -67,7 +68,7 @@ struct MainView: View {
                         
                     } else {
                         makeIcon()
-                            .padding(.horizontal)
+                            .padding(.horizontal, 7)
                     }
                 }
                 .onTapGesture { withAnimation { selection = page }}
@@ -83,6 +84,7 @@ struct MainView: View {
                     .padding(.leading, pageSelection == .calendar ? 0 : 10 )
                 TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .goals, title: "Goals", icon: "flag.checkered")
                 TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .categories, title: "Tags", icon: "tag")
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .templates, title: "Templates", icon: "wallet.pass")
                 TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .data, title: "Data", icon: "chart.bar")
                     .padding(.trailing, pageSelection == .data ? 0 : 10 )
             }
@@ -117,10 +119,11 @@ struct MainView: View {
     
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
-                CalendarPageView().tag( MainPage.calendar )
-                GoalsPageView(events: Array(events) ).tag( MainPage.goals )
-                CategoriesPageView(events: Array(events) ).tag( MainPage.categories )
-                DataPageView().tag( MainPage.data )
+                CalendarPageView()                              .tag( MainPage.calendar )
+                GoalsPageView(events: Array(events) )           .tag( MainPage.goals )
+                CategoriesPageView(events: Array(events) )      .tag( MainPage.categories )
+                TemplatesPageView(events: Array(events))        .tag( MainPage.templates )
+                DataPageView()                                  .tag( MainPage.data )
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             

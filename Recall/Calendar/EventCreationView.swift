@@ -61,6 +61,7 @@ struct CalendarEventCreationView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
+    @ObservedResults(RecallCalendarEvent.self) var events
     @ObservedResults(RecallCategory.self) var categories
     @ObservedResults(RecallGoal.self) var goals
     
@@ -185,7 +186,7 @@ struct CalendarEventCreationView: View {
             } }
         }
         if showingTemplates {
-            WrappedHStack(collection: Array(RecallModel.index.templates)) { template in
+            WrappedHStack(collection: RecallModel.getTemplates(from: Array(events))) { template in
                 HStack {
                     Image(systemName: "arrow.up.right")
                     UniversalText(template.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)

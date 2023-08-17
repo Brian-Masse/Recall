@@ -13,37 +13,32 @@ import RealmSwift
 struct CalendarEventView: View {
     
     @ViewBuilder
-    private func makeOverviewMetadataLabel(title: String, icon: String) -> some View {
+    static func makeOverviewMetadataLabel(title: String, icon: String) -> some View {
         ZStack {
-            Rectangle()
-                .foregroundColor(colorScheme == .dark ? Colors.darkGrey : Colors.lightGrey)
-                .cornerRadius(Constants.UIDefaultCornerRadius)
-            
+//            Rectangle()
+//                .foregroundColor(colorScheme == .dark ? Colors.darkGrey : Colors.lightGrey)
+//                .cornerRadius(Constants.UIDefaultCornerRadius)
+//
             VStack {
                 ResizeableIcon(icon: icon, size: Constants.UISubHeaderTextSize)
                     .padding(5)
                 UniversalText(title, size: Constants.UISmallTextSize, font: Constants.mainFont)
-            }.padding(7)
+            }
+            .padding(7)
+            .secondaryOpaqueRectangularBackground()
         }
     }
     
     @ViewBuilder
-    private func makeOverviewView() -> some View {
+    static func makeOverviewView(from event: RecallCalendarEvent, in events: [RecallCalendarEvent]) -> some View {
         VStack(alignment: .leading) {
             HStack {
                 makeOverviewMetadataLabel(title: "\( event.getLengthInHours().round(to: 2) ) HRs", icon: "deskclock")
                 if event.isTemplate { makeOverviewMetadataLabel(title: "Tempalte", icon: "doc.plaintext") }
                 makeOverviewMetadataLabel(title: "\(event.category?.label ?? "No Tag")", icon: "tag")
             }
-
-            Rectangle()
-                .opacity(0.3)
-                .frame(height: 1)
-                .padding(.bottom, 5)
             
-            GoalTags(goalRatings: Array(event.goalRatings), events: events)
-            
-            if !event.notes.isEmpty {
+            if !event.notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Rectangle()
                     .opacity(0.3)
                     .frame(height: 1)
@@ -52,7 +47,17 @@ struct CalendarEventView: View {
                 UniversalText( event.notes, size: Constants.UISmallTextSize, font: Constants.mainFont )
                     .padding(.horizontal, 5)
             }
-        }.opaqueRectangularBackground()
+
+            if event.goalRatings.count != 0 {
+                Rectangle()
+                    .opacity(0.3)
+                    .frame(height: 1)
+                    .padding(.bottom, 5)
+                
+                GoalTags(goalRatings: Array(event.goalRatings), events: events)
+            }
+        }
+//        .secondaryOpaqueRectangularBackground(5)
         
     }
     
@@ -83,7 +88,8 @@ struct CalendarEventView: View {
 
                 
                 UniversalText("Overview", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
-                makeOverviewView()
+                CalendarEventView.makeOverviewView(from: event, in: events)
+                    .opaqueRectangularBackground()
                     .padding(.bottom)
 
                 UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)

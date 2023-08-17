@@ -88,7 +88,30 @@ struct ActivityPerDay: View {
                 .foregroundStyle(Colors.tint)
         }
         .if(!recentData) { view in view.reversedXAxis() }
-        .chartOverTimeXAxis()
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .day)) { value in
+                if let date = value.as( Date.self ) {
+                    
+                    let dateLabel = "\(date.formatted(.dateTime.day()))"
+                    
+                    let sundayLabel = !date.isSunday() ? "" : "Sun"
+                    let bottomLabel = date.isFirstOfMonth() ? "\(date.formatted(.dateTime.month()))" : ( sundayLabel )
+                    
+                    AxisValueLabel(centered: true) {
+                        VStack(alignment: .leading) {
+                            UniversalText( dateLabel, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: false)
+                            UniversalText(bottomLabel, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                        }
+                    }
+                    
+                    if date.matches(goal.creationDate, to: .day) {
+                        AxisGridLine(centered: true, stroke: .init(lineWidth: 1, lineCap: .round, dash: [2, 6]))
+                            .foregroundStyle(.red)
+                        
+                    }
+                }
+            }
+        }
         .chartYAxis {
             AxisMarks(position: .leading) { value in
                 if let count = value.as(Int.self) {
