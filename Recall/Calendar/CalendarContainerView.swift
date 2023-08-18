@@ -129,7 +129,10 @@ struct CalendarContainer: View {
     
     private func filterEvents() -> [RecallCalendarEvent] {
         events.filter { event in
-            Calendar.current.isDate(event.startTime, equalTo: currentDay, toGranularity: .day)
+            event.startTime.matches(currentDay, to: .day) &&
+            event.startTime.matches(currentDay, to: .month) &&
+            event.startTime.matches(currentDay, to: .year)
+            
         }
     }
     

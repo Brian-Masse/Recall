@@ -48,6 +48,7 @@ struct CalendarEventPreviewView: View {
     
     @State var showingEvent: Bool = false
     @State var showingEditingScreen: Bool = false
+    @State var showingDeletionAlert: Bool = false
     
 //    MARK: Convenience Functions
     
@@ -229,7 +230,10 @@ struct CalendarEventPreviewView: View {
                     Button {beginResizing() } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
                     Button {showingEditingScreen = true } label: { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
                     Button {duplicate() } label: { Label("duplicate", systemImage: "rectangle.on.rectangle") }
-                    Button(role: .destructive) { event.delete() } label: { Label("delete", systemImage: "trash") }
+                    Button(role: .destructive) {
+                        if event.isTemplate { showingDeletionAlert = true }
+                        else { event.delete() }
+                    } label: { Label("delete", systemImage: "trash") }
                 }
                 .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
                 
@@ -244,15 +248,15 @@ struct CalendarEventPreviewView: View {
                 }
                 .shadow(radius: (resizing || moving) ? 10 : 0)
                 .sheet(isPresented: $showingEditingScreen) {
-                    CalendarEventCreationView(editing: true,
-                                              event: event,
-                                              title: event.title,
-                                              notes: event.notes,
-                                              startTime: event.startTime,
-                                              endTime: event.endTime,
-                                              day: event.startTime,
-                                              category: event.category ?? RecallCategory(),
-                                              goalRatings: RecallCalendarEvent.translateGoalRatingList(event.goalRatings) )
+                    CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
+                }
+            
+                .alert("This Event is a Template", isPresented: $showingDeletionAlert) {
+                    Button(role: .cancel) { showingDeletionAlert = false } label:    { Text("cancel") }
+                    Button(role: .destructive) { event.delete(preserveTemplate: true) } label:    { Text("only delete event") }
+                    Button(role: .destructive) { event.delete() } label:    { Text("delete event and template") }
+                } message: {
+                    Text("Choose whether to delete or preserve the template associated with this event.")
                 }
         }
         .zIndex( resizing || moving ? 5 : 0 )

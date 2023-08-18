@@ -88,6 +88,37 @@ struct CategoriesPageView: View {
     
 //    MARK: TemplatesPage
     private struct TemplatesTab: View {
+        
+        private struct Wrapper: View {
+            let events: [RecallCalendarEvent]
+            let template: RecallCalendarEvent
+            
+            @State var showingEditingScreen: Bool = false
+            @State var showingDeletionAlert: Bool = false
+            
+            var body: some View {
+                GeometryReader { geo in
+                    CalendarEventPreviewContentView(event: template, events: events, width: geo.size.width, height: 80)
+                        .contextMenu {
+                            Button { showingEditingScreen = true }  label:          { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
+                            Button(role: .destructive) { showingDeletionAlert = true } label:    { Label("delete", systemImage: "trash") }
+                        }
+                        .sheet(isPresented: $showingEditingScreen) {
+                            CalendarEventCreationView.makeEventCreationView(currentDay: template.startTime, editing: true, event: template)
+                        }
+                }
+                .frame(height: 80)
+                
+                .alert("Delete Associated Calendar Event?", isPresented: $showingDeletionAlert) {
+                    Button(role: .cancel) { showingDeletionAlert = false } label:    { Text("cancel") }
+                    Button(role: .destructive) { template.toggleTemplate() } label:    { Text("only delete template") }
+                    Button(role: .destructive) { template.delete() } label:    { Text("delete template and event") }
+                } message: {
+                    Text("Choosing to delete both template and event permanently deletes the calendar event that constructed this template. Choosing to only delete the template keeps the original event in your recall log.")
+                }
+            }
+        }
+        
         let events: [RecallCalendarEvent]
         
         var body: some View {
@@ -96,11 +127,7 @@ struct CategoriesPageView: View {
             ScrollView(.vertical) {
                 VStack(alignment: .leading) {
                     ForEach( templates ) { template in
-                        GeometryReader { geo in
-                            CalendarEventPreviewContentView(event: template, events: events, width: geo.size.width, height: 80)
-                        }
-                        .frame(height: 80)
-                        
+                        Wrapper(events: events, template: template)
                     }
                 }
                 .opaqueRectangularBackground(7, stroke: true)
@@ -113,6 +140,7 @@ struct CategoriesPageView: View {
     @ObservedResults( RecallCategory.self ) var categories
     
     @State var showingCreateTagView: Bool = false
+    @State var showingCreateEventView: Bool = false
     @State var activePage: TagPage = .tags
     
     let events: [RecallCalendarEvent] 
@@ -125,7 +153,10 @@ struct CategoriesPageView: View {
             HStack {
                 UniversalText( activePage == .tags ? "Tags" : "Templates", size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true )
                 Spacer()
-                LargeRoundedButton(activePage == .tags ? "Create Tag" : "Template", icon: "arrow.up") { showingCreateTagView = true }
+                LargeRoundedButton(activePage == .tags ? "Create Tag" : "Template", icon: "arrow.up") {
+                    if activePage == .tags { showingCreateTagView = true }
+                    if activePage == .templates { showingCreateEventView = true }
+                }
             }
                 
             makePagePicker()
@@ -143,6 +174,9 @@ struct CategoriesPageView: View {
                                  label: "",
                                  goalRatings: Dictionary(),
                                  color: Colors.tint)
+        }
+        .sheet(isPresented: $showingCreateEventView) {
+            CalendarEventCreationView.makeEventCreationView(currentDay: .now, template: true)
         }
     }
     

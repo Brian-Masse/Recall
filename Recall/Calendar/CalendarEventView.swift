@@ -117,15 +117,7 @@ struct CalendarEventView: View {
         }
         .padding(7)
         .sheet(isPresented: $showingEditingScreen) {
-            CalendarEventCreationView(editing: true,
-                                      event: event,
-                                      title: event.title,
-                                      notes: event.notes,
-                                      startTime: event.startTime,
-                                      endTime: event.endTime,
-                                      day: event.startTime,
-                                      category: event.category ?? RecallCategory(),
-                                      goalRatings: RecallCalendarEvent.translateGoalRatingList(event.goalRatings) )
+            CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
             
         }
         .universalBackground()

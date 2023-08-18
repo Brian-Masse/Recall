@@ -10,7 +10,9 @@ import SwiftUI
 import RealmSwift
 import FlowGrid
 
+//MARK: GoalMultiplierSelector
 struct GoalMultiplierSelector: View {
+    
     
     private func makeGoalRatingMultiplier(forKey key: String) -> Binding<Float> {
         Binding { Float(goalRatings[ key ] ?? "0") ?? 0 }
@@ -59,6 +61,35 @@ struct GoalMultiplierSelector: View {
 //MARK: Creation View
 struct CalendarEventCreationView: View {
     
+    @ViewBuilder
+    static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, template: Bool = false) -> some View {
+        if !editing {
+            CalendarEventCreationView(editing: false,
+                                      event: nil,
+                                      title: "",
+                                      notes: "",
+                                      startTime: .now,
+                                      endTime: .now + Constants.HourTime,
+                                      day: currentDay,
+                                      category: RecallCategory(),
+                                      goalRatings: Dictionary(),
+                                      template: template)
+        } else {
+            CalendarEventCreationView(editing: true,
+                                      event: event,
+                                      title: event!.title,
+                                      notes: event!.notes,
+                                      startTime: event!.startTime,
+                                      endTime: event!.endTime,
+                                      day: event!.startTime,
+                                      category: event!.category ?? RecallCategory(),
+                                      goalRatings: RecallCalendarEvent.translateGoalRatingList(event!.goalRatings),
+                                      template: false)
+        }
+        
+        
+    }
+    
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedResults(RecallCalendarEvent.self) var events
@@ -80,6 +111,8 @@ struct CalendarEventCreationView: View {
     
     @State var category: RecallCategory
     @State var goalRatings: Dictionary<String, String>
+    
+    let template: Bool
 
     @State var showingAllGoals: Bool = false
     
@@ -125,6 +158,7 @@ struct CalendarEventCreationView: View {
                                             categoryID: category._id,
                                             goalRatings: goalRatings)
             RealmManager.addObject(event)
+            if template { event.toggleTemplate() }
         } else {
             event!.update(title: title,
                           notes: notes,
@@ -303,7 +337,6 @@ struct CalendarEventCreationView: View {
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
         .background(Colors.tint)
-        .ignoresSafeArea()
         
         .onChange(of: category) { newValue in goalRatings = RecallCalendarEvent.translateGoalRatingList(newValue.goalRatings) }
         

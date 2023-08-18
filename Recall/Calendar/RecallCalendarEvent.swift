@@ -65,6 +65,8 @@ class RecallCalendarEvent: Object, Identifiable  {
             thawed.startTime = startDate ?? thawed.startTime
             thawed.endTime = endDate ?? thawed.endTime
         }
+        
+        checkUpdateEarliestEvent()
     }
     
 //    MARK: Convenience Functions
@@ -111,11 +113,35 @@ class RecallCalendarEvent: Object, Identifiable  {
     }
     
 //    MARK: Class Methods
-    func delete() {
-        RealmManager.deleteObject(self) { event in event._id == self._id }
+    @MainActor
+    func delete(preserveTemplate: Bool = false) {
+        if !preserveTemplate {
+            if self.isTemplate { self.toggleTemplate() }
+            RealmManager.deleteObject(self) { event in event._id == self._id }
+        }
+        
+        else {
+//            toggleTemplate()
+            var components = DateComponents()
+            components.year = 2005
+            components.month = 5
+            components.day = 18
+            let newDate = Calendar.current.date(from: components)
+            
+            let startComponents  = Calendar.current.dateComponents([.minute, .hour], from: startTime)
+            let endComponents    = Calendar.current.dateComponents([.minute, .hour], from: endTime)
+            
+            let startDate = Calendar.current.date(bySettingHour: startComponents.hour!, minute: startComponents.minute!, second: 0, of: newDate!)
+            let endDate   = Calendar.current.date(bySettingHour: endComponents.hour!, minute: endComponents.minute!, second: 0, of: newDate!)
+            
+            updateDate(startDate: startDate, endDate: endDate)
+//            toggleTemplate()
+        }
     }
     
     private func checkUpdateEarliestEvent() {
+        
+        if Calendar.current.component(.year, from: self.startTime) == 2005 { return }
         if self.startTime < RecallModel.realmManager.index.earliestEventDate {
             RecallModel.realmManager.index.updateEarliestEventDate(with: self.startTime)
         }

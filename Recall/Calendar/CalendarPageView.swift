@@ -81,15 +81,7 @@ struct CalendarPageView: View {
         }
         .padding()
         .sheet(isPresented: $showingCreateEventView) {
-            CalendarEventCreationView(editing: false,
-                                      event: nil,
-                                      title: "",
-                                      notes: "",
-                                      startTime: .now,
-                                      endTime: .now + Constants.HourTime,
-                                      day: currentDay,
-                                      category: RecallCategory(),
-                                      goalRatings: Dictionary())   
+            CalendarEventCreationView.makeEventCreationView(currentDay: currentDay)
         }
         .universalBackground()
         
