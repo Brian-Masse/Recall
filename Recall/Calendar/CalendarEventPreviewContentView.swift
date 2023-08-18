@@ -14,7 +14,7 @@ struct CalendarEventPreviewContentView: View {
     private func makeMetadataTag(label: String, icon: String) -> some View {
         HStack {
             if icon != "" { ResizeableIcon(icon: icon, size: Constants.UIDefaultTextSize) }
-            if label != "" { UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.titleFont) }
+            if label != "" { UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.titleFont, scale: true) }
         }
         .foregroundColor(.black)
     }
@@ -22,7 +22,7 @@ struct CalendarEventPreviewContentView: View {
     @ViewBuilder
     private func makeMetadata(horiztonal: Bool) -> some View {
         Group {
-            let timeString = "\( event.startTime.formatted( .dateTime.hour() ) ) - \( event.endTime.formatted( .dateTime.hour() ) )"
+            let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
             
             if event.isTemplate {
                 makeMetadataTag(label: "", icon: "doc.plaintext")
@@ -35,52 +35,64 @@ struct CalendarEventPreviewContentView: View {
     }
     
     let event: RecallCalendarEvent
+    let events: [RecallCalendarEvent]
     let width: CGFloat  //measured in pixels
     let height: CGFloat //measured in pixels
     
 //    arbitrary for now
     let minWidth: CGFloat = 250
-    let minLength: CGFloat = 2
+    
+//    These are the pixel heights for a quart, half, and 1.5 hour events with standard spacing
+//    The heights that are given to this view are in pixels, so you have to compare them to these values instead of 0.25, 0.5, and 2
+    private let defaultQuarter: CGFloat = 13
+    private let defaultHalf: CGFloat = 25
+    private let minLength: CGFloat = 68.4
+    
+    @State var showingEvent: Bool = false
     
     var body: some View {
+       
+        ZStack {
+            Rectangle()
+                .foregroundColor(event.getColor())
+                .cornerRadius(Constants.UIDefaultCornerRadius)
             
-        VStack(alignment: .leading) {
-            HStack {
-                UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true)
-                Spacer()
-                if width > minWidth && event.getLengthInHours() > 0.25 {
-                    ResizeableIcon(icon: "arrow.up", size: min(Constants.UIHeaderTextSize, height)).padding(.trailing, 5)
-                }
-            }
-            .padding(.horizontal)
-            .if(event.getLengthInHours() > 0.5) { view in
-                    view.padding([.vertical], 5)
-            }
-
-            Group {
-                if event.getLengthInHours() > minLength {
-
+            VStack(alignment: .leading) {
+                HStack {
+                    UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true)
+                    
                     Spacer()
-
+                    
+                    if width > minWidth && height > defaultHalf {
+                        Image(systemName: "arrow.up")
+                            .resizable()
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(maxHeight: Constants.UIHeaderTextSize)
+                    }
+                }
+                
+                if height > minLength {
+                    Spacer()
                     if width > minWidth {
                         HStack { makeMetadata(horiztonal: true) }
                     } else {
                         VStack(alignment: .leading) { makeMetadata(horiztonal: false) }
                     }
                 }
-
             }
             .padding(.horizontal)
-            .if(event.getLengthInHours() > minLength) { view in
-                view.padding(.bottom)
+            .if(height > defaultQuarter) { view in
+                view.padding(.vertical, 5)
             }
-            
         }
         .foregroundColor(.black)
-        .background(event.getColor())
-        .cornerRadius(Constants.UIDefaultCornerRadius)
-        .if(event.getLengthInHours() > 0.5) { view in
+        .onTapGesture { showingEvent = true }
+        .if(height > defaultHalf) { view in
             view.padding(.vertical, 2)
+        }
+        .frame(maxHeight: height)
+        .sheet(isPresented: $showingEvent) {
+            CalendarEventView(event: event, events: events)
         }
         
     }

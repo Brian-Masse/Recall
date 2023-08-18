@@ -97,8 +97,9 @@ struct CategoriesPageView: View {
                 VStack(alignment: .leading) {
                     ForEach( templates ) { template in
                         GeometryReader { geo in
-                            CalendarEventPreviewContentView(event: template, width: geo.size.width, height: 200)
-                        }.frame(height: 80)
+                            CalendarEventPreviewContentView(event: template, events: events, width: geo.size.width, height: 80)
+                        }
+                        .frame(height: 80)
                         
                     }
                 }
