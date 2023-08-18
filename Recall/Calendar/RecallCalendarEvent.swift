@@ -46,6 +46,7 @@ class RecallCalendarEvent: Object, Identifiable  {
     }
     
     @MainActor
+//    MARK: Updates
     func update( title: String, notes: String, startDate: Date, endDate: Date, tagID: ObjectId, goalRatings: Dictionary<String, String> ) {
         RealmManager.updateObject(self) { thawed in
             thawed.title = title
@@ -69,9 +70,26 @@ class RecallCalendarEvent: Object, Identifiable  {
         checkUpdateEarliestEvent()
     }
     
-//    MARK: Convenience Functions
+    func updateTag(with tag: RecallCategory) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.category = tag
+        }
+    }
     
     @MainActor
+    func updateGoalRatings(with ratings: Dictionary<String, String>) {
+        let list = RecallCalendarEvent.translateGoalRatingDictionary(ratings)
+        RealmManager.updateObject(self) { thawed in
+            thawed.goalRatings = list
+        }
+    }
+    
+//    MARK: Convenience Functions
+    @MainActor
+    func getRatingsDictionary() -> Dictionary<String,String> {
+        RecallCalendarEvent.translateGoalRatingList(self.goalRatings)
+    }
+
     static func translateGoalRatingDictionary(_ dictionary: Dictionary<String, String>) -> RealmSwift.List<GoalNode> {
         let list: RealmSwift.List<GoalNode> = List()
         list.append(objectsIn: dictionary.map { (key: String, data: String) in
@@ -80,7 +98,6 @@ class RecallCalendarEvent: Object, Identifiable  {
         return list
     }
     
-    @MainActor
     static func translateGoalRatingList( _ list: RealmSwift.List<GoalNode> ) -> Dictionary<String, String> {
         var dic = Dictionary<String, String>()
         for node in list { dic[node.key] = node.data }
@@ -88,6 +105,7 @@ class RecallCalendarEvent: Object, Identifiable  {
     }
     
 //    This can later be modified to ensure only a select number of events are pulled from the server onto the device
+    @MainActor
     static func getEvents(where query: ( (RecallCalendarEvent) -> Bool )? = nil) -> [RecallCalendarEvent] {
         RealmManager.retrieveObjects(where: query)
     }

@@ -160,6 +160,8 @@ class RealmManager: ObservableObject {
         
         self.realmLoaded = true
         
+        print("User Realm User file location: \(realm.configuration.fileURL!.path)")
+        
 //        This should be done during the create profile phase of the authentication process, but because that doesnt really exist right now, its just going to run automatically here
         let results: Results<RecallIndex> = RealmManager.retrieveObject()
         if let index = results.first {
@@ -271,6 +273,7 @@ class RealmManager: ObservableObject {
         else { return RecallModel.realmManager.realm.objects(T.self).where(query!) }
     }
     
+    @MainActor
     static func retrieveObjects<T: Object>(where query: ( (T) -> Bool )? = nil ) -> [T] {
         if query == nil { return Array(RecallModel.realmManager.realm.objects(T.self)) }
         else { return Array(RecallModel.realmManager.realm.objects(T.self).filter(query!)  ) }

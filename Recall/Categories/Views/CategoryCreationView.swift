@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
+@MainActor
 struct CategoryCreationView: View {
     
     @ViewBuilder
@@ -36,7 +37,9 @@ struct CategoryCreationView: View {
     @State var showingAlert: Bool = false
     
 //    MARK: Submit
+//    @MainActor
     private func submit() {
+        
         if !checkCompletion() {
             showingAlert = true
             return
@@ -140,7 +143,13 @@ struct CategoryCreationView: View {
                     }
                 }
                 
-                LargeRoundedButton("Done", icon: "arrow.down") { submit() }
+                LargeRoundedButton("Done", icon: "arrow.down") {
+//                    Task {
+//                        await
+                        submit()
+//
+//                    }
+                }
                 
             }
             .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)

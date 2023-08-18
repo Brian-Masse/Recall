@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Charts
 
-@MainActor
+//@MainActor
 class Colors {
     static var tint: Color { RecallModel.shared.activeColor }
     static var main: Color { accentGreen }

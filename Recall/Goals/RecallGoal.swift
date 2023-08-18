@@ -143,6 +143,7 @@ class RecallGoal: Object, Identifiable {
     
     var key: String { getEncryptionKey() }
     
+    @MainActor
     static func getGoalFromKey(_ key: String) -> RecallGoal? {
         let goals: [RecallGoal] = RealmManager.retrieveObjects { goal in
             goal.getEncryptionKey() == key

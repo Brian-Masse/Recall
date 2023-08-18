@@ -12,15 +12,16 @@ import SwiftUI
 //64b8478c84023dfb762af304
 let inDev = true
 
-@MainActor
 struct RecallModel {
     
     static var shared: RecallModel = RecallModel()
+    @MainActor
     static let realmManager: RealmManager = RealmManager()
     
     static var ownerID: String { RecallModel.realmManager.user?.id ?? "" }
     static var index: RecallIndex { RecallModel.realmManager.index  }
     
+//    @MainActor
     var activeColor: Color = Colors.main
     
     static let dateSnapping: TimeRounding = .quarter
