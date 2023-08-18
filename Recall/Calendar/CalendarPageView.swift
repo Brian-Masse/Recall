@@ -32,7 +32,8 @@ struct CalendarPageView: View {
     }
     
 //   MARK: Body
-    @ObservedResults( RecallCalendarEvent.self ) var events
+
+    let events: [RecallCalendarEvent]
     
     @State var showingCreateEventView: Bool = false
     @State var currentDay: Date = .now

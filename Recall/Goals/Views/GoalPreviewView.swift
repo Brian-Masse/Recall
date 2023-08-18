@@ -25,6 +25,7 @@ struct GoalPreviewView: View {
     
     @State var showingGoalView: Bool = false
     @State var showingEditingView: Bool = false
+    @State var showingDeletionAlert: Bool = false
     
     let textFont: ProvidedFont = .renoMono
     
@@ -99,12 +100,15 @@ struct GoalPreviewView: View {
         .opaqueRectangularBackground(0, stroke: true)
         .onTapGesture { showingGoalView = true }
         .contextMenu {
-            Button("edit") { showingEditingView = true  }
-            Button("delete") { goal.delete()  }
+            Button { showingEditingView = true }  label:          { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
+            Button(role: .destructive) { showingDeletionAlert = true } label:    { Label("delete", systemImage: "trash") }
         }
         .fullScreenCover(isPresented: $showingGoalView) { GoalView(goal: goal, events: events) }
         .sheet(isPresented: $showingEditingView) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
-        .task { await dataModel.makeData(for: goal, with: events) }
+        .task { dataModel.makeData(for: goal, with: events) }
+        .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
+            Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
+        }
     }
     
 }

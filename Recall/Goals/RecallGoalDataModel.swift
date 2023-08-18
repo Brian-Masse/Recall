@@ -19,7 +19,7 @@ class RecallGoalDataModel: ObservableObject {
     }
     
     @MainActor
-    func makeData(for goal: RecallGoal, with events: [RecallCalendarEvent]) async {
+    func makeData(for goal: RecallGoal, with events: [RecallCalendarEvent]) {
         
         progressData = goal.getProgressTowardsGoal(from: events)
         averageData = goal.getAverage(from: events)

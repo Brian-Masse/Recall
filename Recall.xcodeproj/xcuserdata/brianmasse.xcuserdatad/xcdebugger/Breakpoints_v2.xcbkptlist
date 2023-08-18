@@ -632,6 +632,21 @@
                   endingLineNumber = "146"
                   offsetFromSymbolStart = "663">
                </Location>
+               <Location
+                  uuid = "9240E018-7AE8-422E-8B15-251CB87B3501 - b23c1141ece2e924"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Recall.RecallCalendarEvent.checkUpdateEarliestEvent() -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Calendar/RecallCalendarEvent.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "146"
+                  endingLineNumber = "146"
+                  offsetFromSymbolStart = "852">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>

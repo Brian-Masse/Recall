@@ -55,6 +55,7 @@ struct GoalView: View {
     let events: [RecallCalendarEvent]
     
     @State var showingEditingScreen: Bool = false
+    @State var showingDeletionAlert: Bool = false
     
 //    MARK: ViewBuilders
     @ViewBuilder
@@ -102,7 +103,7 @@ struct GoalView: View {
         ScrollView(.horizontal) {
             HStack {
                 LargeRoundedButton("edit", icon: "arrow.up.forward") { showingEditingScreen = true }
-                LargeRoundedButton("delete", icon: "arrow.up.forward") { goal.delete() }
+                LargeRoundedButton("delete", icon: "arrow.up.forward") { showingDeletionAlert = true }
                 LargeRoundedButton("change goal target", icon: "arrow.up.forward") { showingEditingScreen = true }
             }
         }
@@ -130,12 +131,12 @@ struct GoalView: View {
             }
         }
         
-        
+//
         ActivityPerDay(recentData: false, title: "activites per day", goal: goal, events: events)
             .frame(height: 160)
             .padding(5)
             .secondaryOpaqueRectangularBackground()
-        
+
         TotalActivites(title: "total activities", goal: goal, events: events, showYAxis: true)
             .frame(height: 160)
             .padding(5)
@@ -158,9 +159,9 @@ struct GoalView: View {
                     makeOverview()
                     
                     makeQuickActions()
-                    
+
                     makeContributingTags()
-                    
+
                     makeGoalReview()
                 }
             }
@@ -169,7 +170,10 @@ struct GoalView: View {
         .padding(7)
         .universalBackground()
         .sheet(isPresented: $showingEditingScreen) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
-        .task { await dataModel.makeData(for: goal, with: events) }
+        .onAppear { dataModel.makeData(for: goal, with: events) }
+        .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
+            Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
+        }
     }
     
     

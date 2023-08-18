@@ -104,7 +104,7 @@ struct MainView: View {
 //    MARK: Body
     @Environment(\.colorScheme) var colorScheme
     
-    @ObservedResults( RecallCalendarEvent.self ) var events
+    @ObservedResults( RecallCalendarEvent.self, where: { event in event.startTime > RecallModel.getEarliestEventDate() } ) var events
     @ObservedResults( RecallGoal.self ) var goals
     
     @State var currentPage: MainPage = .calendar
@@ -116,12 +116,14 @@ struct MainView: View {
     
     var body: some View {
     
+        let arrEvents = Array(events)
+        
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
-                CalendarPageView()                              .tag( MainPage.calendar )
-                GoalsPageView(events: Array(events) )           .tag( MainPage.goals )
-                CategoriesPageView(events: Array(events) )      .tag( MainPage.categories )
-                DataPageView()                                  .tag( MainPage.data )
+                CalendarPageView(events: arrEvents)                              .tag( MainPage.calendar )
+                GoalsPageView(events: arrEvents )           .tag( MainPage.goals )
+                CategoriesPageView(events: arrEvents )      .tag( MainPage.categories )
+                DataPageView(events: arrEvents)                                  .tag( MainPage.data )
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             

@@ -239,7 +239,6 @@ struct GoalCreationView: View {
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
         .background(Colors.tint)
-        .ignoresSafeArea()
         .defaultAlert($showingAlert,
                       title: "Incomplete Form",
                       description: "Please provide a name, description, and target before creating the goal")

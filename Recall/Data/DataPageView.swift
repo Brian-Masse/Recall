@@ -47,7 +47,7 @@ struct DataPageView: View {
     }
     
     
-    @ObservedResults( RecallCalendarEvent.self ) var events
+    let events: [RecallCalendarEvent]
     @ObservedResults( RecallCategory.self ) var tags
     @ObservedResults( RecallGoal.self ) var goals
     

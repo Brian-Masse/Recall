@@ -151,7 +151,6 @@ struct CategoryCreationView: View {
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
         .background(Colors.tint)
-        .ignoresSafeArea()
         
         .defaultAlert($showingAlert,
                       title: "Incomplete Form",
