@@ -216,6 +216,9 @@ struct GoalCreationView: View {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading) {
                         
+//                        DatePicker("temp", selection: $creationDate)
+//                            .developer()
+                        
                         makeOverviewSection()
                         
                         makeTagSelection()

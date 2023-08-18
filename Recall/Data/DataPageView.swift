@@ -9,18 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-
-struct DataPageView: View {
-    
-    enum DataBookMark: String, Identifiable, CaseIterable {
-        case Overview
-        case Events
-        case Goals
-        
-        var id: String { self.rawValue }
-    }
-    
-//    MARK: ViewBuilders
+struct QuickLinks<EnumType: CaseIterable>: View where EnumType.AllCases: RandomAccessCollection, EnumType: Identifiable, EnumType:RawRepresentable, EnumType.RawValue == String {
     
     @ViewBuilder
     private func makeContentsButton(label: String, proxy: ScrollViewProxy) -> some View {
@@ -30,6 +19,31 @@ struct DataPageView: View {
         }
         .tintRectangularBackground()
         .onTapGesture { withAnimation { proxy.scrollTo(label, anchor: .top) }}
+    }
+    
+    let dudContent: EnumType
+    let value: ScrollViewProxy
+    
+    var body: some View {
+        UniversalText("Quick Links", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+        ScrollView(.horizontal) {
+            HStack {
+                ForEach( EnumType.allCases ) { content in
+                    makeContentsButton(label: content.rawValue, proxy: value)
+                }
+            }
+        }.secondaryOpaqueRectangularBackground(7)    }
+}
+
+
+struct DataPageView: View {
+    
+    enum DataBookMark: String, Identifiable, CaseIterable {
+        case Overview
+        case Events
+        case Goals
+        
+        var id: String { self.rawValue }
     }
     
     
@@ -53,14 +67,7 @@ struct DataPageView: View {
                 ScrollView(.vertical) {
                     LazyVStack(alignment: .leading) {
                         
-                        UniversalText("Quick Links", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-                        ScrollView(.horizontal) {
-                            HStack {
-                                ForEach( DataBookMark.allCases ) { content in
-                                    makeContentsButton(label: content.rawValue, proxy: value)
-                                }
-                            }
-                        }.secondaryOpaqueRectangularBackground(7)
+                        QuickLinks(dudContent: DataBookMark.Events, value: value)
                         
                         
                         OverviewDataSection(goals: arrGoals)

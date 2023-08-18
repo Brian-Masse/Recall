@@ -217,22 +217,32 @@ struct GoalAverages: View {
     @ViewBuilder
     private func makeChart( makeYData: @escaping (DataNode) -> Double) -> some View {
 
+//        in the future, this should also include the 'uncompleted' counts too
         Chart {
             ForEach(data) { datum in
-                if datum.category == "completed" || page == .all {
+                if datum.category == "completed" {
+                    
                     BarMark(x: .value("X", datum.goal),
                             y: .value("Y", makeYData(datum)))
                     .foregroundStyle(by: .value("Series", datum.category))
                     .cornerRadius(Constants.UIBarMarkCOrnerRadius)
+                    
+                    .annotation(position: .top, alignment: .top) { context in
+                        if datum.category == "completed" {
+                            let label = page == .all ? "\(Int(makeYData(datum)))" : "\(makeYData(datum).round(to: 2))"
+                            UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                                .zIndex(1000)
+                        }
+                    }
                 }
             }
         }
         .chartLegend(Visibility.hidden)
         .chartYAxis {
             AxisMarks(position: .leading) { value in
-                if let count = value.as(Double.self) {
+                if let count = value.as(Int.self) {
                     AxisValueLabel {
-                        UniversalText("\(count.round(to: 2))" + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                        UniversalText("\(count)" + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
                     }
                     AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
                 }

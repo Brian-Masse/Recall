@@ -107,7 +107,7 @@ struct CalendarEventPreviewView: View {
                 startDate = getTime(from: clampPosition(dragGesture.location.y))
                 endDate   = startDate + (length * Constants.HourTime)
                 
-                roundedStartDate = getNearestTime(from: clampPosition(dragGesture.location.y), to: .halfHour)
+                roundedStartDate = getNearestTime(from: clampPosition(dragGesture.location.y), to: RecallModel.dateSnapping)
             }
             .onEnded { dragGesture in
                 if dragging && !resizing {
@@ -125,11 +125,11 @@ struct CalendarEventPreviewView: View {
                 if !dragging || !resizing { return }
                 if direction == .up {
                     startDate        = min(getTime(from: clampPosition(dragGesture.location.y)), endDate - Constants.HourTime)
-                    roundedStartDate = min(getNearestTime(from: clampPosition(dragGesture.location.y), to: .halfHour), endDate - Constants.HourTime)
+                    roundedStartDate = min(getNearestTime(from: clampPosition(dragGesture.location.y), to: RecallModel.dateSnapping), endDate - Constants.HourTime)
                     length           = endDate.timeIntervalSince(startDate) / Constants.HourTime
                 } else {
                     endDate             = max(getTime(from: clampPosition(dragGesture.location.y)), startDate + Constants.HourTime)
-                    let roundedEndDate  = max(getNearestTime(from: clampPosition(dragGesture.location.y), to: .halfHour, roundingRule: .up), startDate + Constants.HourTime)
+                    let roundedEndDate  = max(getNearestTime(from: clampPosition(dragGesture.location.y), to: RecallModel.dateSnapping, roundingRule: .up), startDate + Constants.HourTime)
                     length              = endDate.timeIntervalSince(startDate) / Constants.HourTime
                     roundedStartDate    = roundedEndDate - length * Constants.HourTime
                 }

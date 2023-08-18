@@ -153,7 +153,7 @@ struct CalendarEventCreationView: View {
     private var startTimeBinding: Binding<Float> {
         Binding { Float(startTime.getHoursFromStartOfDay().round(to: 2)) }
         set: { newValue, _ in
-            startTime = startTime.dateBySetting(hour: Double(newValue)).round(to: .halfHour)
+            startTime = startTime.dateBySetting(hour: Double(newValue)).round(to: RecallModel.dateSnapping)
         }
     }
     
@@ -165,7 +165,7 @@ struct CalendarEventCreationView: View {
     private var endTimeBinding: Binding<Float> {
         Binding { Float(endTime.getHoursFromStartOfDay().round(to: 2)) }
         set: { newValue, _ in
-            endTime = endTime.dateBySetting(hour: Double(newValue)).round(to: .halfHour)
+            endTime = endTime.dateBySetting(hour: Double(newValue)).round(to: RecallModel.dateSnapping)
         }
     }
     

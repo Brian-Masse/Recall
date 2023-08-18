@@ -237,8 +237,8 @@
             filePath = "Recall/Main/MainView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
             landmarkName = "refreshData(events:goals:)"
             landmarkType = "7">
             <Locations>
@@ -505,6 +505,22 @@
             startingLineNumber = "163"
             endingLineNumber = "163"
             landmarkName = "onMainRefreshData()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "50216087-E534-4479-9BF6-1E1ADEC11A2C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Goals/Views/Charts/GoalsCharts.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
+            landmarkName = "getDaysSinceGoalCreation()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
