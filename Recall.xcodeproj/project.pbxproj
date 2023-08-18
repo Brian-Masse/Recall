@@ -39,6 +39,7 @@
 		C91BCF392A61E0EB003C6DD6 /* RecallCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF382A61E0EB003C6DD6 /* RecallCalendarEvent.swift */; };
 		C91BCF3C2A61E3EE003C6DD6 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */; };
 		C91BCF3E2A6209B9003C6DD6 /* CalendarEventPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF3D2A6209B9003C6DD6 /* CalendarEventPreviewView.swift */; };
+		C923D51A2A8EF20500E432B9 /* RecallGoalDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923D5192A8EF20500E432B9 /* RecallGoalDataModel.swift */; };
 		C928E15A2A7B546E00E981F1 /* EventsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E1592A7B546E00E981F1 /* EventsDataSection.swift */; };
 		C928E15C2A7C3B3300E981F1 /* GoalsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E15B2A7C3B3300E981F1 /* GoalsDataSection.swift */; };
 		C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F102A688855007E8537 /* UniversalForm.swift */; };
@@ -114,6 +115,7 @@
 		C91BCF382A61E0EB003C6DD6 /* RecallCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCalendarEvent.swift; sourceTree = "<group>"; };
 		C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		C91BCF3D2A6209B9003C6DD6 /* CalendarEventPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventPreviewView.swift; sourceTree = "<group>"; };
+		C923D5192A8EF20500E432B9 /* RecallGoalDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoalDataModel.swift; sourceTree = "<group>"; };
 		C928E1592A7B546E00E981F1 /* EventsDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsDataSection.swift; sourceTree = "<group>"; };
 		C928E15B2A7C3B3300E981F1 /* GoalsDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsDataSection.swift; sourceTree = "<group>"; };
 		C94B1F102A688855007E8537 /* UniversalForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalForm.swift; sourceTree = "<group>"; };
@@ -324,6 +326,7 @@
 			isa = PBXGroup;
 			children = (
 				C9E49D152A68AC820023EBC0 /* RecallGoal.swift */,
+				C923D5192A8EF20500E432B9 /* RecallGoalDataModel.swift */,
 				C94B1F1A2A689335007E8537 /* Views */,
 			);
 			path = Goals;
@@ -556,6 +559,7 @@
 				C91BCF352A61DE65003C6DD6 /* ViewModifiers.swift in Sources */,
 				C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */,
 				C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */,
+				C923D51A2A8EF20500E432B9 /* RecallGoalDataModel.swift in Sources */,
 				C915A0092A67217A009F6C84 /* CalendarContainerView.swift in Sources */,
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,

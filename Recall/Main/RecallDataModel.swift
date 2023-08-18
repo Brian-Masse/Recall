@@ -41,20 +41,28 @@ class RecallDataModel: ObservableObject {
     }
     
 //MARK: Goal Data Aggregators
-//      @MainActor
+//    This code is so large because it involves two iteration loops, both of which deal with asyncronous work
+//    this is in order to keep the goal aggregators off the main thread
       private func makeGoalsMetOverTimeData() async -> [DataNode] {
-          var iterator = await RecallModel.getEarliestEventDate()
-          var nodes : [DataNode] = []
-          while iterator <= (.now + Constants.DayTime).resetToStartOfDay() {
-    //            for goal in goals { nodes.append(.init(date: iterator, count: 1, category: "", goal: goal.label)) }
-              let count = goals.reduce(0) { partialResult, goal in
-                  partialResult + (goal.goalWasMet(on: iterator, events: events) ? 1 : 0)
-              }
-              nodes.append(.init(date: iterator, count: Double(count), category: "", goal: ""))
+          await AsyncStream<DataNode>() {
+              var iterator = await RecallModel.getEarliestEventDate()
+//              stops once the iterator is past the current date
+              guard iterator <= (.now + Constants.DayTime).resetToStartOfDay() else { return nil }
               
               iterator += Constants.DayTime
-          }
-          return nodes
+              
+//              This is a roundabout way of calling a reduce function that handles async code
+              let count = await AsyncStream { [iterator] continuation in
+                  Task {
+                      for goal in self.goals {
+                          let met = await goal.goalWasMet(on: iterator, events: self.events)
+                          continuation.yield( met )
+                      }
+                  }
+              }.reduce(Double.zero) { partialResult, wasMet in partialResult + (wasMet ? 1 : 0) }
+              return DataNode(date: .now, count: count, category: "", goal: "")
+              
+          }.collect()
       }
       
     //  The first is the progress over time, the second is the number of times the goal was met
@@ -67,8 +75,8 @@ class RecallDataModel: ObservableObject {
           
           while iterator <= (.now.resetToStartOfDay() + Constants.DayTime) {
               for goal in goals {
-                  let progressNum = 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
-                  let met = goal.goalWasMet(on: iterator, events: events)
+                  let progressNum = await 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
+                  let met = await goal.goalWasMet(on: iterator, events: events)
                   
                   progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
                   timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
@@ -103,11 +111,15 @@ class RecallDataModel: ObservableObject {
       
       @MainActor
       private func makeCompletionPercentageData() async -> [DataNode] {
-          goals.compactMap { goal in
-              let data = goal.countGoalMet(from: events)
-              let percentage = 100 * (Double(data.0) / Double(data.1 + data.0))
-              return .init(date: .now, count: percentage, category: "", goal: goal.label)
-          }
+          await AsyncStream { continuation in
+              Task {
+                  for goal in goals {
+                      let data = await goal.countGoalMet(from: events)
+                      let percentage = 100 * (Double(data.0) / Double(data.1 + data.0))
+                      continuation.yield( DataNode(date: .now, count: percentage, category: "", goal: goal.label) )
+                  }
+              }
+          }.collect()
       }
         
     

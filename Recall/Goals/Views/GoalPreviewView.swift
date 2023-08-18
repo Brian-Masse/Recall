@@ -21,6 +21,7 @@ struct GoalPreviewView: View {
     
     @Environment(\.colorScheme) var colorScheme
     @ObservedRealmObject var goal: RecallGoal
+    @StateObject var dataModel: RecallGoalDataModel = RecallGoalDataModel()
     
     @State var showingGoalView: Bool = false
     @State var showingEditingView: Bool = false
@@ -29,10 +30,8 @@ struct GoalPreviewView: View {
     
     let events: [RecallCalendarEvent]
     
+    @MainActor
     var body: some View {
-        
-        let completionData = goal.countGoalMet(from: events)
-        let progressData = goal.getProgressTowardsGoal(from: events)
         
         VStack {
             HStack(alignment: .center) {
@@ -55,17 +54,16 @@ struct GoalPreviewView: View {
                     
                     VStack(alignment: .trailing) {
                         UniversalText("completed", size: Constants.UISmallTextSize, font: textFont)
-                        UniversalText("\(completionData.0)", size: Constants.UIHeaderTextSize, font: textFont)
+                        UniversalText("\(dataModel.goalMetData.0)", size: Constants.UIHeaderTextSize, font: textFont)
                         
                         UniversalText("missed", size: Constants.UISmallTextSize, font: textFont)
-                        UniversalText("\(completionData.1)", size: Constants.UIHeaderTextSize, font: textFont)
+                        UniversalText("\(dataModel.goalMetData.1)", size: Constants.UIHeaderTextSize, font: textFont)
                     }
                     
                     makeSeperator()
                     
                     ActivityPerDay(recentData: true, title: "", goal: goal, events: events)
                         .frame(height: 100)
-
                 }
             }
             .padding(.horizontal)
@@ -82,14 +80,14 @@ struct GoalPreviewView: View {
                         
                         Rectangle()
                             .foregroundColor(Colors.tint)
-                            .frame(width: max(min(Double(progressData) / Double(goal.targetHours) * geo.size.width, geo.size.width),0) )
+                            .frame(width: max(min(dataModel.roundedProgressData / Double(goal.targetHours) * geo.size.width, geo.size.width),0) )
                             .cornerRadius(Constants.UIDefaultCornerRadius)
                     }
                 }
                 HStack {
                     UniversalText("current progress", size: Constants.UISmallTextSize, font: textFont)
                     Spacer()
-                    UniversalText("\(progressData) / \(goal.targetHours)", size: Constants.UISmallTextSize, font: textFont)
+                    UniversalText("\(dataModel.roundedProgressData) / \(goal.targetHours)", size: Constants.UISmallTextSize, font: textFont)
                 }
             }
             .frame(height: 40)
@@ -106,6 +104,7 @@ struct GoalPreviewView: View {
         }
         .fullScreenCover(isPresented: $showingGoalView) { GoalView(goal: goal, events: events) }
         .sheet(isPresented: $showingEditingView) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
+        .task { await dataModel.makeData(for: goal, with: events) }
     }
     
 }

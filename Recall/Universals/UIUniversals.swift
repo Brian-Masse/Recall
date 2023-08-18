@@ -183,8 +183,8 @@ struct CircularProgressView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
-    let currentValue: Float
-    let totalValue: Float
+    let currentValue: Double
+    let totalValue: Double
     
     var body: some View {
         ZStack {

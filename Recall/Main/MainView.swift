@@ -106,6 +106,7 @@ struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @ObservedResults( RecallCalendarEvent.self ) var events
+    @ObservedResults( RecallCategory.self ) var tags
     @ObservedResults( RecallGoal.self ) var goals
     
     @State var currentPage: MainPage = .calendar
@@ -117,13 +118,16 @@ struct MainView: View {
     
     var body: some View {
     
+        let arrEvents = Array(events)
+        let arrTags = Array(tags)
+        
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
-                CalendarPageView()                              .tag( MainPage.calendar )
-                GoalsPageView(events: Array(events) )           .tag( MainPage.goals )
-                CategoriesPageView(events: Array(events) )      .tag( MainPage.categories )
-                TemplatesPageView(events: Array(events))        .tag( MainPage.templates )
-                DataPageView()                                  .tag( MainPage.data )
+                CalendarPageView()                                          .tag( MainPage.calendar )
+                GoalsPageView(events: arrEvents )                           .tag( MainPage.goals )
+                CategoriesPageView(events: arrEvents, tags: arrTags)        .tag( MainPage.categories )
+                TemplatesPageView(events: arrEvents)                        .tag( MainPage.templates )
+                DataPageView()                                              .tag( MainPage.data )
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             
@@ -135,7 +139,10 @@ struct MainView: View {
             Task { await refreshData(events: Array(events), goals: Array(goals)) }
             RecallModel.shared.setTint(from: colorScheme)
         }
-        .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
+        .onChange(of: events)   { newValue in
+            Task { await refreshData(events: Array(newValue), goals: Array(goals)) }
+            
+        }
         
         .onChange(of: colorScheme) { newValue in
             RecallModel.shared.setTint(from: newValue)

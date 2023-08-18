@@ -11,13 +11,14 @@ import RealmSwift
 
 struct CategoriesPageView: View {
     
+//    MARK: MakeTagList
     @ViewBuilder
     func makeTagList(from tags: [RecallCategory], title: String) -> some View {
         
         VStack(alignment: .leading) {
             UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
             
-            VStack {
+            LazyVStack {
                 ForEach(tags) { tag in
                     TagPreviewView(tag: tag, events: events)
                         .matchedGeometryEffect(id: tag.label, in: tagsPageNamespace)
@@ -38,16 +39,16 @@ struct CategoriesPageView: View {
     @Environment(\.colorScheme) var colorScheme
     @Namespace private var tagsPageNamespace
     
-    @ObservedResults( RecallCategory.self ) var categories
-    
     @State var showingCreateTagView: Bool = false
     
-    let events: [RecallCalendarEvent] 
+    let events: [RecallCalendarEvent]
+    let tags: [RecallCategory]
     
+//    MARK: Body
     var body: some View {
         
-        let favorites = Array(categories.filter { tag in tag.isFavorite })
-        let nonFavorites = Array(categories.filter { tag in !tag.isFavorite })
+        let favorites = Array(tags.filter { tag in tag.isFavorite })
+        let nonFavorites = Array(tags.filter { tag in !tag.isFavorite })
         
         VStack(alignment: .leading) {
             

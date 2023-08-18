@@ -163,8 +163,8 @@ class RecallGoal: Object, Identifiable {
     }
     
 //    @MainActor
-    func goalWasMet(on date: Date, events: [RecallCalendarEvent]) -> Bool {
-        Double(self.getProgressTowardsGoal(from: events, on: date )) >= Double(targetHours)
+    func goalWasMet(on date: Date, events: [RecallCalendarEvent]) async -> Bool {
+        await Double(self.getProgressTowardsGoal(from: events, on: date )) >= Double(targetHours)
     }
     
     func byTag() -> Bool {
@@ -174,8 +174,7 @@ class RecallGoal: Object, Identifiable {
     
 //    MARK: Data Aggregators
     
-//    @MainActor
-    func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now) -> Int {
+    func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now) async -> Double {
         
         let step = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? 7 * Constants.DayTime : Constants.DayTime
         
@@ -185,13 +184,13 @@ class RecallGoal: Object, Identifiable {
         
         let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() && event.endTime < (startDate + step) }
         return filtered.reduce(0) { partialResult, event in
-            partialResult + Int( event.getGoalPrgress(self) )
+            partialResult + event.getGoalPrgress(self)
         }
     }
     
 //    First int is how many times you've hit the goal, the second is how many times you've missed it
     @MainActor
-    func countGoalMet(from events : [RecallCalendarEvent]) -> (Int, Int) {
+    func countGoalMet(from events : [RecallCalendarEvent]) async -> (Int, Int) {
         
         let step = self.frequency == RecallGoal.GoalFrequence.weekly.numericValue ? Constants.WeekTime : Constants.DayTime
         var dateIterator = self.getStartDate()
@@ -211,13 +210,13 @@ class RecallGoal: Object, Identifiable {
         return(metCount, Int(numberOfTimePeriods.rounded(.up)) - metCount)
     }
     
-    @MainActor
-    func getAverage(from events: [RecallCalendarEvent]) -> (Float) {
-        let numberOfTimePeriods = getNumberOfTimePeriods()
+//    @MainActor
+    func getAverage(from events: [RecallCalendarEvent]) async -> Double {
+        let numberOfTimePeriods = await getNumberOfTimePeriods()
         
         let allEvents = events.reduce(0) { partialResult, event in partialResult + event.getGoalPrgress(self) }
         
-        return Float(allEvents) / max(Float( numberOfTimePeriods * Double(frequency) ) , 1)
+        return allEvents / max(Double(numberOfTimePeriods) * Double(frequency) , 1)
     }
 }
 
