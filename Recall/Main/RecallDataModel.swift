@@ -30,8 +30,8 @@ class RecallDataModel: ObservableObject {
         }.values ).sorted { node1, node2 in node1.count < node2.count }
     }
     
-    private func getTotalHours(from data: [DataNode]) async -> Int {
-        Int(data.reduce(0) { partialResult, node in partialResult + node.count })
+    private func getTotalHours(from data: [DataNode]) async -> Double {
+        data.reduce(0) { partialResult, node in partialResult + node.count }
     }
     
 //    period is measured in days
@@ -51,7 +51,7 @@ class RecallDataModel: ObservableObject {
                   partialResult + (goal.goalWasMet(on: iterator, events: events) ? 1 : 0)
               }
               nodes.append(.init(date: iterator, count: Double(count), category: "", goal: ""))
-              
+
               iterator += Constants.DayTime
           }
           return nodes
@@ -61,20 +61,20 @@ class RecallDataModel: ObservableObject {
 //      @MainActor
       private func makeGoalsProgressOverTimeData() async -> ([DataNode], [DataNode]) {
           var iterator = await RecallModel.getEarliestEventDate()
-          
+
           var progress: [DataNode] = []
           var timesMet: [DataNode] = []
-          
+
           while iterator <= (.now.resetToStartOfDay() + Constants.DayTime) {
               for goal in goals {
                   let progressNum = 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
                   let met = goal.goalWasMet(on: iterator, events: events)
-                  
+
                   progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
                   timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
-                  
+
               }
-              
+
               iterator += Constants.DayTime
           }
           return ( progress, timesMet )
@@ -124,8 +124,8 @@ class RecallDataModel: ObservableObject {
     @Published private var recentTagData: [DataNode] = []
     @Published private var recentCompressedTagData: [DataNode] = []
 
-    @Published private var totalHours: Int = 0
-    @Published private var recentTotalHours: Int = 0
+    @Published private var totalHours: Double = 0
+    @Published private var recentTotalHours: Double = 0
 
 //   MARK: Goal Data
     @Published var goalsMetOverTimeData   : [DataNode] = []

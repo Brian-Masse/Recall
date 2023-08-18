@@ -32,12 +32,12 @@ struct GoalView: View {
     }
     
     @ViewBuilder
-    func makeCircularProgressWidget(title: String, value: Int, total: Int) -> some View {
+    func makeCircularProgressWidget(title: String, value: Double, total: Double) -> some View {
         
         VStack {
             UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
                 .padding(.bottom, 5)
-            CircularProgressView(currentValue: Float(value), totalValue: Float( total ))
+            CircularProgressView(currentValue: value, totalValue: total)
         }
         .padding(5)
         .frame(width: 115)
@@ -45,9 +45,12 @@ struct GoalView: View {
         
     }
     
+//    MARK: vars
+    
     @Environment(\.presentationMode) var presentationMode
     @ObservedResults(RecallCategory.self) var tags
     @ObservedRealmObject var goal: RecallGoal
+    @StateObject var dataModel: RecallGoalDataModel = RecallGoalDataModel()
     
     let events: [RecallCalendarEvent]
     
@@ -110,20 +113,20 @@ struct GoalView: View {
     @ViewBuilder
     private func makeGoalReview() -> some View {
         
-        let progressData = goal.getProgressTowardsGoal(from: events)
-        let averageData = goal.getAverage(from: events)
-        let goalMetData = goal.countGoalMet(from: events)
+        let progressData = dataModel.progressData
+        let averageData = dataModel.averageData
+        let goalMetData = dataModel.goalMetData
         
         UniversalText("Goal Review", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
             .padding(.bottom)
         
         ScrollView(.horizontal) {
             HStack {
-                makeCircularProgressWidget(title: "Current Progress", value: progressData, total: goal.targetHours)
+                makeCircularProgressWidget(title: "Current Progress", value: progressData, total: Double(goal.targetHours))
                 
-                makeCircularProgressWidget(title: "Average Activity", value: Int(averageData), total: goal.targetHours)
+                makeCircularProgressWidget(title: "Average Activity", value: averageData, total: Double(goal.targetHours))
                 
-                makeCircularProgressWidget(title: "Number of Times met", value: Int(goalMetData.0), total: goalMetData.1 + goalMetData.0)
+                makeCircularProgressWidget(title: "Number of Times met", value: Double(goalMetData.0), total: Double(goalMetData.1 + goalMetData.0))
             }
         }
         
@@ -166,6 +169,8 @@ struct GoalView: View {
         .padding(7)
         .universalBackground()
         .sheet(isPresented: $showingEditingScreen) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
+        .task { await dataModel.makeData(for: goal, with: events) }
     }
+    
     
 }

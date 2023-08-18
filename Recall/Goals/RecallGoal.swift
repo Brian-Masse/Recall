@@ -174,8 +174,7 @@ class RecallGoal: Object, Identifiable {
     
 //    MARK: Data Aggregators
     
-//    @MainActor
-    func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now) -> Int {
+    func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now) -> Double {
         
         let step = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? 7 * Constants.DayTime : Constants.DayTime
         
@@ -185,7 +184,7 @@ class RecallGoal: Object, Identifiable {
         
         let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() && event.endTime < (startDate + step) }
         return filtered.reduce(0) { partialResult, event in
-            partialResult + Int( event.getGoalPrgress(self) )
+            partialResult + event.getGoalPrgress(self)
         }
     }
     
@@ -212,12 +211,11 @@ class RecallGoal: Object, Identifiable {
     }
     
     @MainActor
-    func getAverage(from events: [RecallCalendarEvent]) -> (Float) {
+    func getAverage(from events: [RecallCalendarEvent]) -> Double {
         let numberOfTimePeriods = getNumberOfTimePeriods()
         
         let allEvents = events.reduce(0) { partialResult, event in partialResult + event.getGoalPrgress(self) }
         
-        return Float(allEvents) / max(Float( numberOfTimePeriods * Double(frequency) ) , 1)
+        return allEvents / max(Double(numberOfTimePeriods) * Double(frequency) , 1)
     }
 }
-
