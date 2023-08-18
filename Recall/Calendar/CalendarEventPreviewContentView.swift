@@ -36,38 +36,52 @@ struct CalendarEventPreviewContentView: View {
     
     let event: RecallCalendarEvent
     let width: CGFloat  //measured in pixels
-    let height: CGFloat //measured in hours
+    let height: CGFloat //measured in pixels
     
 //    arbitrary for now
     let minWidth: CGFloat = 250
     let minLength: CGFloat = 2
     
     var body: some View {
-        
+            
         VStack(alignment: .leading) {
             HStack {
                 UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true)
                 Spacer()
-                if width > minWidth { ResizeableIcon(icon: "arrow.up", size: Constants.UIHeaderTextSize).padding(.trailing, 5) }
+                if width > minWidth && event.getLengthInHours() > 0.25 {
+                    ResizeableIcon(icon: "arrow.up", size: min(Constants.UIHeaderTextSize, height)).padding(.trailing, 5)
+                }
             }
             .padding(.horizontal)
-            .padding([.vertical], 5)
-            
-            Spacer()
-        
+            .if(event.getLengthInHours() > 0.5) { view in
+                    view.padding([.vertical], 5)
+            }
+
             Group {
-                if height > minLength {
+                if event.getLengthInHours() > minLength {
+
+                    Spacer()
+
                     if width > minWidth {
                         HStack { makeMetadata(horiztonal: true) }
                     } else {
                         VStack(alignment: .leading) { makeMetadata(horiztonal: false) }
                     }
                 }
-                
-            }.padding([.horizontal, .bottom])
+
+            }
+            .padding(.horizontal)
+            .if(event.getLengthInHours() > minLength) { view in
+                view.padding(.bottom)
+            }
+            
         }
         .foregroundColor(.black)
         .background(event.getColor())
         .cornerRadius(Constants.UIDefaultCornerRadius)
+        .if(event.getLengthInHours() > 0.5) { view in
+            view.padding(.vertical, 2)
+        }
+        
     }
 }

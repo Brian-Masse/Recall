@@ -83,7 +83,7 @@ struct CalendarEventPreviewView: View {
     }
     
     private func getHeight() -> CGFloat {
-        max(CGFloat(length) * spacing, 20)
+        max(CGFloat(length) * spacing, 10)
     }
     
     private func getVerticalOffset(from startDate: Date) -> CGFloat {
@@ -221,10 +221,10 @@ struct CalendarEventPreviewView: View {
                     .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: roundedStartDate))
             }
         
-            CalendarEventPreviewContentView(event: event, width: getWidth(), height: length)
+            CalendarEventPreviewContentView(event: event, width: getWidth(), height: getHeight())
 //                .padding(.vertical, 2)
                 .frame(width: getWidth(), height: getHeight())
-                .overlay(makeLengthHandles())
+//                .overlay(makeLengthHandles())
                 .contextMenu {
                     Button { beginMoving()  }  label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
                     Button {beginResizing() } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
