@@ -99,6 +99,13 @@ class RecallGoal: Object, Identifiable {
     @Persisted var type: String = ""
     @Persisted var targetTag: RecallCategory? = nil
     
+//    This overrideKey has a very specific purpose, and does not need to be used in general use of the app
+//    If there is an issue with sync, and data needs to be manually reinserted into the synced realm from a local realm file
+//    the objectIDs of everything will be overriden / changed. This is fine for most objects, however goals use their object ids
+//    to match with GoalNodes which are used for goalRatings.
+//    The overrrideKey is a place to store (from the DB) the previous objectID, and use in encryption key funcs instead
+    @Persisted var overrideKey: String? = nil
+    
     convenience init( ownerID: String, label: String, description: String, frequency: Int, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?) {
         self.init()
         
@@ -138,7 +145,7 @@ class RecallGoal: Object, Identifiable {
     
 //    MARK: Convenience Functions
     func getEncryptionKey() -> String {
-        label + _id.stringValue
+        label + ( overrideKey ?? _id.stringValue)  
     }
     
     var key: String { getEncryptionKey() }

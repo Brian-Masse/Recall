@@ -78,6 +78,12 @@ struct DataPageView: View {
                             .environmentObject(dataModel )
                         
                         
+                        HStack {
+                            Spacer()
+                            UniversalText( RecallModel.ownerID, size: Constants.UISmallTextSize, font: Constants.mainFont  )
+                            Spacer()
+                        }
+                        
                         Spacer()
                     }
                     .padding(.bottom, Constants.UIBottomOfPagePadding)

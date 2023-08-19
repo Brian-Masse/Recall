@@ -24,6 +24,8 @@ class RealmManager: ObservableObject {
     
     var index: RecallIndex!
     
+    var localRealm: Realm!
+    
 //    This is the realm profile that signed into the app
     var user: User?
     
@@ -160,8 +162,6 @@ class RealmManager: ObservableObject {
         
         self.realmLoaded = true
         
-        print("User Realm User file location: \(realm.configuration.fileURL!.path)")
-        
 //        This should be done during the create profile phase of the authentication process, but because that doesnt really exist right now, its just going to run automatically here
         let results: Results<RecallIndex> = RealmManager.retrieveObject()
         if let index = results.first {
@@ -292,3 +292,80 @@ class RealmManager: ObservableObject {
     
 }
 
+
+//MARK: Merger Code
+
+
+
+
+//MARK: Insertion Functions
+//these functions are responsible for reading a local realm database (which should be read-only), and manually copying their items into the synced realm
+//They should never again be used
+//this was awful, sincerely me at 1:57AM
+
+//        let goals = localRealm.objects(RecallGoal.self)
+//        for goal in goals {
+//
+//            let priority = RecallGoal.Priority.getRawType(from: goal.priority)
+//            let type = RecallGoal.GoalType.getRawType(from: goal.type)
+//
+//            var newGoal = RecallGoal(ownerID: goal.ownerID, label: goal.label, description: goal.goalDescription, frequency: goal.frequency, targetHours: goal.targetHours, priority: priority, type: type, targetTag: nil)
+//            newGoal.creationDate = goal.creationDate
+//
+//            RealmManager.addObject(newGoal)
+//        }
+
+//        let goalNodes = localRealm.objects(GoalNode.self)
+//        for node in goalNodes {
+//            let newNode = GoalNode(ownerID: node.ownerID, key: node.key, data: node.data)
+//            RealmManager.addObject(newNode)
+//        }
+
+//        let tags = localRealm.objects(RecallCategory.self)
+//        for tag in tags {
+//            let ratings = RecallCalendarEvent.translateGoalRatingList(tag.goalRatings)
+    
+//            print(tag.goalRatings.first?.key ?? "")
+//            var newTag = RecallCategory(ownerID: tag.ownerID, label: tag.label, goalRatings: ratings, color: tag.getColor())
+//            newTag.isFavorite = tag.isFavorite
+    
+//            RealmManager.addObject(newTag)
+//        }
+
+
+//        let events = localRealm.objects(RecallCalendarEvent.self)
+//        for event in events {
+//
+//
+//            let tag: Results<RecallCategory> = RealmManager.retrieveObject { tag in
+//                tag.label == event.getTagLabel()
+//            }
+//
+//            let id = tag.first?._id ?? ObjectId()
+//
+//            let ratings = RecallCalendarEvent.translateGoalRatingList(event.goalRatings)
+//
+//            let newEvent = RecallCalendarEvent(ownerID: event.ownerID, title: event.title, notes: event.notes, startTime: event.startTime, endTime: event.endTime, categoryID: id, goalRatings: ratings)
+//
+//            RealmManager.addObject(newEvent)
+//
+//        }
+
+//MARK: Local Realm
+//This code creates a local realm.
+//the configuration that it uses is very important
+//change out the file URL with the correct location of the realm file
+//make backups, any mistake in the configuration will cause the realm file to be erased
+
+
+//if let url = URL(string: "/Users/brianmasse/Desktop/flx_sync_default.realm") {
+//
+//    var config = Realm.Configuration()
+//    config.fileURL = url
+//    config.readOnly = true
+//    config.schemaVersion = 1
+//
+//    self.localRealm = await  try! Realm(configuration: config)
+//    print("success overiding realm")
+//
+//}

@@ -15,7 +15,7 @@ struct OpenFlexibleSyncRealmView: View {
     @State var title: String = ""
     @State var alertMessage: String = ""
     
-    @AsyncOpen(appId: RealmManager.appID, timeout: .min) var asyncOpen
+    @AutoOpen(appId: RealmManager.appID, timeout: .min) var asyncOpen
     
     struct loadingCase: View {
         let icon: String
@@ -62,7 +62,7 @@ struct OpenFlexibleSyncRealmView: View {
                             loadingCase(icon: "shippingbox", title: "Loading Assests")
                                 .task {
                                     await RecallModel.realmManager.authRealm(realm: realm)
-                                    await RecallModel.realmManager.checkProfile()
+//                                    await RecallModel.realmManager.checkProfile()
                                 }
                         }
                         
