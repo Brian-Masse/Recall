@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import Realm
+import AuthenticationServices
 
 
 
@@ -29,6 +30,12 @@ class RealmManager: ObservableObject {
 //    This is the realm profile that signed into the app
     var user: User?
     
+//    These variables are just temporary storage until the realm is initialized, and can be put in the database
+//    they are not stored locally
+    var firstName: String = ""
+    var lastName: String = ""
+    var email: String = ""
+    
     @Published var signedIn: Bool = false
     @Published var realmLoaded: Bool = false
     @Published var hasProfile: Bool = false
@@ -45,14 +52,44 @@ class RealmManager: ObservableObject {
         self.checkLogin()
     }
     
+//    MARK: Login Method Functions
+//    I need to handle the case where you dont get an email, but im not sure that literally ever happens
+//    so I think Im all set
+    func signInWithApple(_ authorization: ASAuthorization) {
+        
+        switch authorization.credential {
+        case let credential as ASAuthorizationAppleIDCredential:
+            print("successfully retrieved credentials")
+            self.email = credential.email ?? ""
+            self.firstName = credential.fullName?.givenName ?? ""
+            self.lastName = credential.fullName?.familyName ?? ""
+            
+            if let token = credential.identityToken {
+                let idTokenString = String(data: token, encoding: .utf8)
+                let realmCredentials = Credentials.apple(idToken: idTokenString!)
+                Task {
+                    await RecallModel.realmManager.authUser(credentials: realmCredentials )
+                }
+            } else {
+                print("unable to retrieve idenitty token")
+            }
+            
+        default:
+            print("unable to retrieve credentials")
+            break
+        }
+    }
+    
+    
+    
 //    MARK: Authentication Functions
-//    If there is a user already signed in,skip the user authentication system
+//    If there is a user already signed in, skip the user authentication system
     @MainActor
     func checkLogin() {
-        if let user = app.currentUser {
-            self.user = user
-            self.postAuthenticationInit()
-        }
+//        if let user = app.currentUser {
+//            self.user = user
+//            self.postAuthenticationInit()
+//        }
     }
     
 //    Called by the LoginModel once credentials are provided
@@ -162,14 +199,24 @@ class RealmManager: ObservableObject {
         
         self.realmLoaded = true
         
-//        This should be done during the create profile phase of the authentication process, but because that doesnt really exist right now, its just going to run automatically here
+//        this still needs to be moved intot he correct part of the sign in process
+//        but since I dotn have the views to create a profile or anyting, it doesnt do much
+        makeRecallIndex()
+    }
+    
+//    depending on what authetnication system you're using, when this is called will change
+//    for an email / password sign up, it will be when you are creating your profile
+//    for apple authentication, it will be right after you input your credentials / hit the sign in button
+    private func makeRecallIndex() {
+        
         let results: Results<RecallIndex> = RealmManager.retrieveObject()
         if let index = results.first {
             self.index = index
         } else {
-            self.index = RecallIndex(ownerID: user!.id)
+            self.index = RecallIndex(ownerID: user!.id, email: email, firstName: firstName, lastName: lastName)
             RealmManager.addObject(self.index)
         }
+        
     }
     
     private func addSubcriptions() async {

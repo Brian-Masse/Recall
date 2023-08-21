@@ -18,11 +18,20 @@ class RecallIndex: Object, Identifiable {
     @Persisted var ownerID: String
     
     @Persisted private(set) var earliestEventDate: Date = .now - (7 * Constants.DayTime)
+    
+//    credentials
+    @Persisted var email: String = ""
+    @Persisted var firstName: String = ""
+    @Persisted var lastName: String = ""
+    
 //    @Persisted private(set) var templates: List<RecallCalendarEvent> = List()
     
-    convenience init( ownerID: String ) {
+    convenience init( ownerID: String, email: String, firstName: String, lastName: String) {
         self.init()
         self.ownerID = ownerID
+        self.email = email
+        self.firstName = firstName
+        self.lastName = lastName
     }
     
     func updateEarliestEventDate(with date: Date) {

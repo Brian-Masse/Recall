@@ -14,11 +14,14 @@ struct ContentView: View {
     var body: some View {
 
         if !realmManager.signedIn {
-            VStack {
-                ProgressView()
-                Text( "Logging in" )
-            }
-            .task { let _ = await realmManager.authUser(credentials: .anonymous) }
+            
+            LoginView()
+            
+//            VStack {
+//                ProgressView()
+//                Text( "Logging in" )
+//            }
+//            .task { let _ = await realmManager.authUser(credentials: .anonymous) }
             
         }else if !realmManager.realmLoaded {
             OpenFlexibleSyncRealmView()
