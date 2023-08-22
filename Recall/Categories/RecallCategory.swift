@@ -43,14 +43,14 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
     }
     
     @MainActor
-    func update(label: String, goalRatings: Dictionary<String, String>, color: Color ) {
+    func update(label: String, goalRatings: Dictionary<String, String>, color: Color ) async {
         RealmManager.updateObject(self) { thawed in
             thawed.label = label
-//            thawed.setColor(with: color)
-//            thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+            thawed.setColor(with: color)
+            thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
         }
         
-//        updateEvents(preference: .preserveCustom, newLabel: label, newRatings: goalRatings)
+        await updateEvents(preference: .preserveCustom, newLabel: label, newRatings: goalRatings)
     }
     
 //    MARK: Class Methods:
@@ -61,21 +61,21 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
     }
     
     @MainActor
-    private func updateEvents(preference: TagUpdatingOption, newLabel: String, newRatings: Dictionary<String, String>) {
+    private func updateEvents(preference: TagUpdatingOption, newLabel: String, newRatings: Dictionary<String, String>) async {
         
         let filteredEvents: [RecallCalendarEvent] = RealmManager.retrieveObjects() { event in event.getTagLabel() == newLabel }
         
-//        let oldRatingsDic = RecallCalendarEvent.translateGoalRatingList(self.goalRatings)
-//
-//        for event in filteredEvents {
-//
-//            switch preference {
-//            case .nameOnly: return
-//            case .completeOverride: await completeOverride(for: event, newRatings: newRatings)
-//            case .preserveCustom:  await preserveCustom(for: event, oldRatings: oldRatingsDic, newRatings: newRatings)
-//            }
-//
-//        }
+        let oldRatingsDic = RecallCalendarEvent.translateGoalRatingList(self.goalRatings)
+
+        for event in filteredEvents {
+
+            switch preference {
+            case .nameOnly: return
+            case .completeOverride: await completeOverride(for: event, newRatings: newRatings)
+            case .preserveCustom:  await preserveCustom(for: event, oldRatings: oldRatingsDic, newRatings: newRatings)
+            }
+
+        }
         
     }
     

@@ -53,9 +53,11 @@ struct CategoryCreationView: View {
             )
             RealmManager.addObject(category)
         }else {
-            tag!.update(label: label,
-                        goalRatings: goalRatings,
-                        color: color)
+            Task {
+                await tag!.update(label: label,
+                            goalRatings: goalRatings,
+                            color: color)
+            }
         }
         
         presentationMode.wrappedValue.dismiss()
