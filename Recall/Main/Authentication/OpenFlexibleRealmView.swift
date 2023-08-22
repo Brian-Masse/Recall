@@ -15,7 +15,7 @@ struct OpenFlexibleSyncRealmView: View {
     @State var title: String = ""
     @State var alertMessage: String = ""
     
-    @AutoOpen(appId: RealmManager.appID, timeout: .min) var asyncOpen
+    @AsyncOpen(appId: "application-0-incki", timeout: .min) var asyncOpen
     
     struct loadingCase: View {
         let icon: String

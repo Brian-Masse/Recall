@@ -36,7 +36,9 @@ struct SplashScreen: View {
                     Spacer()
                     
                     HStack {
-                        LargeRoundedButton("Create an account or login", icon: "arrow.forward") { page = .login }
+                        LargeRoundedButton("Create an account or login", icon: "arrow.forward") {
+                            page = .login
+                        }
                         Spacer()
                     }
                     .padding(.bottom, Constants.UIBottomOfPagePadding)
@@ -52,8 +54,9 @@ struct SplashScreen: View {
             Image("PaperNoise")
                 .resizable()
                 .blendMode( colorScheme == .light ? .multiply : .lighten)
-                .opacity( colorScheme == .light ? 0.5 : 0.25)
+                .opacity( colorScheme == .light ? 0.65 : 0.25)
                 .ignoresSafeArea()
+                .allowsHitTesting(false)
             
         )
     }

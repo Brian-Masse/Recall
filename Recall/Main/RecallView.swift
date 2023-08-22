@@ -33,8 +33,10 @@ struct ContentView: View {
                 }
                 
                 
-            }else if !realmManager.realmLoaded {
+            } else if !realmManager.realmLoaded {
                 OpenFlexibleSyncRealmView()
+                    .environment(\.realmConfiguration, realmManager.configuration)
+                
             }else {
                 MainView()
             }

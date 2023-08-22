@@ -25,8 +25,8 @@ class RealmManager: ObservableObject {
     
     var index: RecallIndex!
     
-    var localRealm: Realm!
-    
+//    var localRealm: Realm!
+
 //    This is the realm profile that signed into the app
     var user: User?
     
@@ -41,11 +41,15 @@ class RealmManager: ObservableObject {
     @Published var hasProfile: Bool = false
     
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
-    @MainActor lazy var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission {query in query.ownerID == RecallModel.ownerID }
-    @MainActor lazy var categoryQuery: (QueryPermission<RecallCategory>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
-    @MainActor lazy var goalsQuery: (QueryPermission<RecallGoal>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
-    @MainActor lazy var goalsNodeQuery: (QueryPermission<GoalNode>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
-    @MainActor lazy var indexQuery: (QueryPermission<RecallIndex>) = QueryPermission { query in query.ownerID == RecallModel.ownerID }
+    lazy var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission { query in
+        print( self.user!.id )
+        return query.ownerID == self.user!.id
+        
+    }
+    lazy var categoryQuery: (QueryPermission<RecallCategory>)           = QueryPermission { query in query.ownerID == self.user!.id }
+    lazy var goalsQuery: (QueryPermission<RecallGoal>)                  = QueryPermission { query in query.ownerID == self.user!.id }
+    lazy var goalsNodeQuery: (QueryPermission<GoalNode>)                = QueryPermission { query in query.ownerID == self.user!.id }
+    lazy var indexQuery: (QueryPermission<RecallIndex>)                 = QueryPermission { query in query.ownerID == self.user!.id }
     
     @MainActor
     init() {
@@ -146,11 +150,12 @@ class RealmManager: ObservableObject {
     
     private func setConfiguration() {
         self.configuration = user!.flexibleSyncConfiguration(clientResetMode: .discardUnsyncedChanges())
-        self.configuration.schemaVersion = 1
+//        self.configuration.schemaVersion = 1
         
         Realm.Configuration.defaultConfiguration = self.configuration
     }
     
+    @MainActor
     func logoutUser() {
         if let user = self.user {
             user.logOut { error in
@@ -212,11 +217,12 @@ class RealmManager: ObservableObject {
         self.realm = realm
         await self.addSubcriptions()
         
-        self.realmLoaded = true
         
 //        this still needs to be moved intot he correct part of the sign in process
 //        but since I dotn have the views to create a profile or anyting, it doesnt do much
         makeRecallIndex()
+        
+        self.realmLoaded = true
     }
     
 //    depending on what authetnication system you're using, when this is called will change
@@ -240,7 +246,7 @@ class RealmManager: ObservableObject {
 //             ->add the subscriptions (which downloads the data from the cloud) -> enter into the app with proper config and realm
 //            Instead, when creating the configuration, use initalSubscriptions to provide the subs before creating the relam
 //            This wasn't working before, but possibly if there is an instance of Realm in existence it might work?
-
+        
         await self.removeAllNonBaseSubscriptions()
         
         let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarEventQuery.baseQuery )
@@ -295,12 +301,12 @@ class RealmManager: ObservableObject {
         if let realm = self.realm {
             if realm.subscriptions.count > 0 {
                 for subscription in realm.subscriptions {
-                    if !QuerySubKey.allCases.contains(where: { key in
-                        key.rawValue == subscription.name
-                    }) {
+//                    if !QuerySubKey.allCases.contains(where: { key in
+//                        key.rawValue == subscription.name
+//                    }) {
                         await self.removeSubscription(name: subscription.name!)
                         
-                    }
+//                    }
                 }
             }
         }
