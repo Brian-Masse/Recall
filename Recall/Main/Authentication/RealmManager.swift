@@ -80,16 +80,51 @@ class RealmManager: ObservableObject {
         }
     }
     
+    func signInWithPassword(email: String, password: String) async -> String? {
+        
+        let fixedEmail = RealmManager.stripEmail(email)
+        let error =  await registerUser(fixedEmail, password)
+        if error == nil {
+            let credentials = Credentials.emailPassword(email: fixedEmail, password: password)
+            let secondaryError = await authUser(credentials: credentials)
+            
+            if secondaryError != nil { print("error authenticating registered user") }
+
+        }
+        
+        return error?.localizedDescription ?? nil
+    }
+    
+    static func stripEmail(_ email: String) -> String {
+        email
+            .lowercased()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+//    only needs to run for email + password signup
+    private func registerUser(_ email: String, _ password: String) async -> Error? {
+        
+        let client = app.emailPasswordAuth
+        do {
+            try await client.registerUser(email: email, password: password)
+            return nil
+        } catch {
+            if error.localizedDescription == "name already in use" { return nil }
+            print("failed to register user: \(error.localizedDescription)")
+            return error
+        }
+    }
+    
     
     
 //    MARK: Authentication Functions
 //    If there is a user already signed in, skip the user authentication system
     @MainActor
     func checkLogin() {
-//        if let user = app.currentUser {
-//            self.user = user
-//            self.postAuthenticationInit()
-//        }
+        if let user = app.currentUser {
+            self.user = user
+            self.postAuthenticationInit()
+        }
     }
     
 //    Called by the LoginModel once credentials are provided
@@ -114,26 +149,6 @@ class RealmManager: ObservableObject {
         self.configuration.schemaVersion = 1
         
         Realm.Configuration.defaultConfiguration = self.configuration
-    }
-    
-    static func stripEmail(_ email: String) -> String {
-        email
-            .lowercased()
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-    
-//    only needs to run for email + password signup
-    func registerUser(_ email: String, _ password: String) async -> Error? {
-        
-        let client = app.emailPasswordAuth
-        do {
-            try await client.registerUser(email: email, password: password)
-            return nil
-        } catch {
-            if error.localizedDescription == "name already in use" { return nil }
-            print("failed to register user: \(error.localizedDescription)")
-            return error
-        }
     }
     
     func logoutUser() {
@@ -291,7 +306,32 @@ class RealmManager: ObservableObject {
         }
     }
     
+    @MainActor
+    func transferDataOwnership(to ownerID: String) {
+        
+        if ownerID.isEmpty { return }
+        
+        let goals: [RecallGoal] = RealmManager.retrieveObjects()
+        for goal in goals { RealmManager.transferOwnership(of: goal, to: ownerID) }
+        
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        for event in events { RealmManager.transferOwnership(of: event, to: ownerID) }
+        
+        let tags: [RecallCategory] = RealmManager.retrieveObjects()
+        for tag in tags { RealmManager.transferOwnership(of: tag, to: ownerID) }
+        
+        let dataNodes: [GoalNode] = RealmManager.retrieveObjects()
+        for node in dataNodes { RealmManager.transferOwnership(of: node, to: ownerID) }
+        
+    }
+    
 //    MARK: Realm Functions
+    
+    static func transferOwnership<T: Object>(of object: T, to newID: String) where T: OwnedRealmObject {
+        updateObject(object) { thawed in
+            thawed.ownerID = newID
+        }
+    }
     
     static func writeToRealm(_ block: () -> Void ) {
         do {
@@ -336,7 +376,10 @@ class RealmManager: ObservableObject {
             }
         }
     }
-    
+}
+
+protocol OwnedRealmObject: Object {
+    var ownerID: String { get set }
 }
 
 

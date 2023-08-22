@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-class RecallCategory: Object, Identifiable {
+class RecallCategory: Object, Identifiable, OwnedRealmObject {
     
     @Persisted(primaryKey: true) var _id: ObjectId
     

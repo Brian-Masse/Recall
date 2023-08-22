@@ -39,13 +39,19 @@ struct CalendarPageView: View {
     @State var currentDay: Date = .now
     @State var swipeDirection: AnyTransition.SlideDirection = .right
 
+    @State var showingProfileView: Bool = false
+    
     @Namespace private var calendarPageView
     
     var body: some View {
         
         VStack(alignment: .leading) {
 
-            UniversalText( "Today's Recall", size: Constants.UITitleTextSize, font: Constants.titleFont, true )
+            HStack {
+                UniversalText( "Today's Recall", size: Constants.UITitleTextSize, font: Constants.titleFont, true )
+                Spacer()
+                LargeRoundedButton("", icon: "person") { showingProfileView = true }
+            }
             UniversalText( Date.now.formatted(date: .abbreviated, time: .omitted), size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
                 .onTapGesture { setCurrentDay(with: .now) }
                 .padding(.bottom)
@@ -83,6 +89,9 @@ struct CalendarPageView: View {
         .padding()
         .sheet(isPresented: $showingCreateEventView) {
             CalendarEventCreationView.makeEventCreationView(currentDay: currentDay)
+        }
+        .sheet(isPresented: $showingProfileView) {
+            ProfileView()
         }
         .universalBackground()
         

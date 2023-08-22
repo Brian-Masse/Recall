@@ -144,12 +144,13 @@ private struct SecondaryOpaqueRectangularBackground: ViewModifier {
 //This is the titn background
 private struct TintBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
+    var model = RecallModel.shared
     
     func body(content: Content) -> some View {
         content
             .padding()
             .foregroundColor(.black)
-            .background( Colors.tint )
+            .background( model.activeColor )
             .cornerRadius(Constants.UIDefaultCornerRadius)
     }
 }
@@ -157,6 +158,7 @@ private struct TintBackground: ViewModifier {
 //This adds extra padding to the tint background
 private struct AccentBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
+    var model = RecallModel.shared
     
     let cornerRadius: CGFloat?
     
@@ -164,7 +166,7 @@ private struct AccentBackground: ViewModifier {
         content
             .padding(25)
             .foregroundColor(.black)
-            .background( Colors.tint )
+            .background( model.activeColor )
             .cornerRadius( cornerRadius == nil ? Constants.UIDefaultCornerRadius : cornerRadius!)
     }
 }
@@ -232,6 +234,29 @@ private struct DefaultAlert: ViewModifier {
     }
 }
 
+//MARK: Colors
+private struct UniversalForegroundColor: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(colorScheme == .light ? Colors.lightAccentGreen : Colors.accentGreen)
+    }
+}
+
+private struct UniversalBackgroundColor: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    let ignoreSafeAreas: Edge.Set?
+    
+    func body(content: Content) -> some View {
+        content
+            .if(ignoreSafeAreas == nil ) { view in view.background(colorScheme == .light ? Colors.lightAccentGreen : Colors.accentGreen) }
+            .if(ignoreSafeAreas != nil ) { view in view.background(colorScheme == .light ? Colors.lightAccentGreen : Colors.accentGreen, ignoresSafeAreaEdges: ignoreSafeAreas!) }
+            
+    }
+}
+
 //MARK: Extension
 extension View {
     func universalBackground(padding: Bool = true) -> some View {
@@ -281,6 +306,14 @@ extension View {
     
     func onBecomingVisible(perform action: @escaping () -> Void) -> some View {
         modifier(BecomingVisible(action: action))
+    }
+    
+    func universalForegroundColor() -> some View {
+        modifier( UniversalForegroundColor() )
+    }
+    
+    func universalBackgroundColor(ignoreSafeAreas: Edge.Set? = nil) -> some View {
+        modifier( UniversalBackgroundColor(ignoreSafeAreas: ignoreSafeAreas) )
     }
     
 //    MARK: Utilities

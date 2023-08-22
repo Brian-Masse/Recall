@@ -81,6 +81,7 @@ struct DataPageView: View {
                         HStack {
                             Spacer()
                             UniversalText( RecallModel.ownerID, size: Constants.UISmallTextSize, font: Constants.mainFont  )
+                                .onTapGesture { print( RecallModel.ownerID ) }
                             Spacer()
                         }
                         

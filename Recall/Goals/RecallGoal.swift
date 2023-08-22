@@ -12,7 +12,7 @@ import RealmSwift
 //    These will be stored in calendar events,
 //    the key represents the label of the goal the data is associated with
 //    The data will be the goal rating for that event (ie. 5 points of "productivity" or 0 points of "social")
-class GoalNode: Object, Identifiable {
+class GoalNode: Object, Identifiable, OwnedRealmObject {
    
     @Persisted(primaryKey: true) var _id: ObjectId
    
@@ -30,7 +30,7 @@ class GoalNode: Object, Identifiable {
 }
 
 //    MARK: RecallGoal
-class RecallGoal: Object, Identifiable {
+class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
     
 //    MARK: Enums

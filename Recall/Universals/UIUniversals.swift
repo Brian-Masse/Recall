@@ -28,8 +28,9 @@ struct UniversalText: View {
     let fixed: Bool
     let font: String
     let scale: Bool
+    let alignment: TextAlignment
     
-    init(_ text: String, size: CGFloat, font: ProvidedFont = .helvetica, wrap: Bool = true, lighter: Bool = false, _ bold: Bool = false, fixed: Bool = false, scale: Bool = false) {
+    init(_ text: String, size: CGFloat, font: ProvidedFont = .helvetica, wrap: Bool = true, lighter: Bool = false, _ bold: Bool = false, fixed: Bool = false, scale: Bool = false, textAlignment: TextAlignment = .leading) {
         self.text = text
         self.size = size
         self.bold = bold
@@ -38,6 +39,7 @@ struct UniversalText: View {
         self.fixed = fixed
         self.scale = scale
         self.font = font.rawValue
+        self.alignment = textAlignment
     }
     
     var body: some View {
@@ -47,6 +49,7 @@ struct UniversalText: View {
             .lineSpacing(0.5)
             .minimumScaleFactor(scale ? 0.1 : 1)
             .lineLimit(wrap ? 10 : 1)
+            .multilineTextAlignment(alignment)
             .font( fixed ? Font.custom(font, fixedSize: size) : Font.custom(font, size: size) )
             .bold(bold)
             .opacity(lighter ? 0.8 : 1)

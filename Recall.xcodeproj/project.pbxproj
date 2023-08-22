@@ -54,6 +54,8 @@
 		C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */; };
 		C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033D2A868DEB00729334 /* RecallDataModel.swift */; };
 		C98F2F222A94134F00E92B30 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F212A94134F00E92B30 /* LoginView.swift */; };
+		C98F2F252A94435600E92B30 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F242A94435600E92B30 /* SplashScreen.swift */; };
+		C98F2F272A945B7400E92B30 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F262A945B7400E92B30 /* ProfileView.swift */; };
 		C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */; };
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
 		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
@@ -129,6 +131,8 @@
 		C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartsHelperStructs.swift; sourceTree = "<group>"; };
 		C98D033D2A868DEB00729334 /* RecallDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallDataModel.swift; sourceTree = "<group>"; };
 		C98F2F212A94134F00E92B30 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		C98F2F242A94435600E92B30 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
+		C98F2F262A945B7400E92B30 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCharts.swift; sourceTree = "<group>"; };
 		C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIndex.swift; sourceTree = "<group>"; };
 		C9E49D152A68AC820023EBC0 /* RecallGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoal.swift; sourceTree = "<group>"; };
@@ -214,6 +218,7 @@
 			children = (
 				C94F067A2A6AF90600C99EA0 /* Info.plist */,
 				C94F06772A6AF82000C99EA0 /* Fonts */,
+				C98F2F232A94430A00E92B30 /* Profile */,
 				C91BCF2D2A61DD51003C6DD6 /* Universals */,
 				C91BCF232A61C380003C6DD6 /* Main */,
 				C91BCF3A2A61E0F0003C6DD6 /* Calendar */,
@@ -269,7 +274,6 @@
 		C91BCF2A2A61DCD8003C6DD6 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				C98F2F202A94134400E92B30 /* Views */,
 				C91BCF212A61C374003C6DD6 /* RealmManager.swift */,
 				C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */,
 				C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */,
@@ -361,12 +365,14 @@
 			name = CalendarContainer;
 			sourceTree = "<group>";
 		};
-		C98F2F202A94134400E92B30 /* Views */ = {
+		C98F2F232A94430A00E92B30 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				C98F2F242A94435600E92B30 /* SplashScreen.swift */,
 				C98F2F212A94134F00E92B30 /* LoginView.swift */,
+				C98F2F262A945B7400E92B30 /* ProfileView.swift */,
 			);
-			path = Views;
+			path = Profile;
 			sourceTree = "<group>";
 		};
 		C9D8C5052A69B656005ADA0B /* Charts */ = {
@@ -567,6 +573,7 @@
 				C9EA0EE92A6B5E4600E36EF1 /* TagPreviewView.swift in Sources */,
 				C91BCF352A61DE65003C6DD6 /* ViewModifiers.swift in Sources */,
 				C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */,
+				C98F2F252A94435600E92B30 /* SplashScreen.swift in Sources */,
 				C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */,
 				C915A0092A67217A009F6C84 /* CalendarContainerView.swift in Sources */,
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
@@ -575,6 +582,7 @@
 				C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */,
 				C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */,
 				C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */,
+				C98F2F272A945B7400E92B30 /* ProfileView.swift in Sources */,
 				C908FFFC2A8D461100E3BBEA /* OverviewDataSection.swift in Sources */,
 				C928E15C2A7C3B3300E981F1 /* GoalsDataSection.swift in Sources */,
 				C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */,

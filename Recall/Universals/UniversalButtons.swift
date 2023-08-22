@@ -200,7 +200,8 @@ struct LargeRoundedButton: View {
         .padding(.vertical, small ? 7: 25 )
         .padding(.horizontal, small ? 25 : 25)
         .foregroundColor(.black)
-        .background( color == nil ? Colors.tint : color )
+        .if( color == nil ) { view in view.universalBackgroundColor() }
+        .if( color != nil ) { view in view.background(color) }
         .cornerRadius(Constants.UIDefaultCornerRadius)
         .animation(.default, value: completed() )
         .onTapGesture { action() }

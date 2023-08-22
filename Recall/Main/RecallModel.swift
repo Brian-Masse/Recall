@@ -14,18 +14,25 @@ let inDev = true
 
 struct RecallModel {
     
+//    64e4235dadda1f970fc082ed
+    
     static var shared: RecallModel = RecallModel()
     @MainActor
     static let realmManager: RealmManager = RealmManager()
     
     static var ownerID: String {
-//        RecallModel.realmManager.user?.id ?? ""
-        "64ba0fbbd6e75f291b404772"
+        RecallModel.realmManager.user?.id ?? ""
+//        "64ba0fbbd6e75f291b404772"
     }
     static var index: RecallIndex { RecallModel.realmManager.index  }
     
 //    @MainActor
-    var activeColor: Color = Colors.main
+    private(set) var activeColor: Color = Colors.main
+    
+    mutating func setActiveColor(from colorScheme: ColorScheme) {
+        activeColor = colorScheme == .dark ? Colors.accentGreen : Colors.lightAccentGreen
+    }
+    
     
     static let dateSnapping: TimeRounding = .quarter
     

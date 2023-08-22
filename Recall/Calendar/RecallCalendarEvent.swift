@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-class RecallCalendarEvent: Object, Identifiable  {
+class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var ownerID: String
