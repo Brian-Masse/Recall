@@ -13,7 +13,6 @@ import RealmSwift
 //MARK: MainView
 struct MainView: View {
     
-    
     enum MainPage: Int, Identifiable {
         case calendar
         case goals

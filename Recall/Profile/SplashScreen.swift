@@ -37,7 +37,7 @@ struct SplashScreen: View {
                     
                     HStack {
                         LargeRoundedButton("Create an account or login", icon: "arrow.forward") {
-                            page = .login
+                            withAnimation { page = .login }
                         }
                         Spacer()
                     }
@@ -59,5 +59,6 @@ struct SplashScreen: View {
                 .allowsHitTesting(false)
             
         )
+        .transition(.asymmetric(insertion: .push(from: .trailing), removal: .push(from: .leading)))
     }
 }

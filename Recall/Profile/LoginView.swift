@@ -23,6 +23,10 @@ struct LoginView: View {
     @State var showingError: Bool = false
     @State var message: String = ""
     
+    private func formsFilledIn() -> Bool {
+        !email.isEmpty && !password.isEmpty
+    }
+    
 //    MARK: Methods
     private func submit() async {
         if checkCompletion() {
@@ -50,6 +54,7 @@ struct LoginView: View {
             VStack(alignment: .leading) {
                 UniversalText("Create an account with Recall", size: Constants.UITitleTextSize, font: Constants.titleFont)
                     .padding(.bottom, 5)
+                    .foregroundColor(.black)
 
                 ZStack(alignment: .bottom) {
                     ScrollView(.vertical) {
@@ -91,19 +96,31 @@ struct LoginView: View {
                     }
                     
                     
-                    LargeRoundedButton("create / login", icon: "arrow.forward", wide: true) { Task { await submit() } }
-                    .padding(.bottom)
+                    HStack {
+                        Spacer()
+                        UniversalText("create / login", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                        Image(systemName: "arrow.forward")
+                        Spacer()
+                        
+                    }
+                        .padding(10)
+                        .if( checkCompletion() ) { view in view.tintRectangularBackground() }
+                        .if( !checkCompletion() ) { view in view.secondaryOpaqueRectangularBackground() }
+                    
+//                    LargeRoundedButton("create / login", icon: "arrow.forward", wide: true) { Task { await submit() } }
+//                    .padding(.bottom)?
                     
                 }
                 .universalTextStyle()
                 .opaqueRectangularBackground()
             }
         }
-        .padding(.top, 40)
+        .padding(.top, 50)
         .padding(.bottom, 30)
         .padding(7)
         .ignoresSafeArea()
         .universalBackgroundColor(ignoreSafeAreas: .all)
         .defaultAlert($showingError, title: "Issue Signing in", description: self.message)
+        .transition(.asymmetric(insertion: .push(from: .leading), removal: .push(from: .leading)))
     }
 }

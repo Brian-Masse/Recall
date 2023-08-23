@@ -111,7 +111,7 @@ struct CalendarEventView: View {
 
                 
                 GeometryReader { geo in
-                    CalendarContainer(at: currentDay, with: [event], from: Int(startHour), to: Int(endHour), geo: geo, scale: 0.75, background: true)
+//                    CalendarContainer(at: currentDay, with: [event], from: Int(startHour), to: Int(endHour), geo: geo, scale: 0.75, background: true)
                 }
             }
         }
