@@ -121,6 +121,6 @@ struct LoginView: View {
         .ignoresSafeArea()
         .universalBackgroundColor(ignoreSafeAreas: .all)
         .defaultAlert($showingError, title: "Issue Signing in", description: self.message)
-        .transition(.asymmetric(insertion: .push(from: .leading), removal: .push(from: .leading)))
+        .transition(.asymmetric(insertion: .push(from: .trailing), removal: .push(from: .trailing)))
     }
 }

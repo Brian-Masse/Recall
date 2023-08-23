@@ -20,6 +20,15 @@ private struct UniversalBackground: ViewModifier {
             content
         }
         .edgesIgnoringSafeArea(.bottom)
+        .background(
+            Image("PaperNoise")
+                .resizable()
+                .blendMode( colorScheme == .light ? .multiply : .lighten)
+                .opacity( colorScheme == .light ? 0.55 : 0.25)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+            
+        )
         .background(colorScheme == .light ? Colors.lightGrey : .black)
     }
 }
@@ -113,6 +122,15 @@ private struct OpaqueRectangularBackground: ViewModifier {
         content
             .if(padding == nil) { view in view.padding() }
             .if(padding != nil) { view in view.padding(padding!) }
+            .background(
+                Image("PaperNoise")
+                    .resizable()
+                    .blendMode( colorScheme == .light ? .multiply : .lighten)
+                    .opacity( colorScheme == .light ? 0.55 : 0.20)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                
+            )
             .background(colorScheme == .light ? Colors.lightGrey : .black )
             .if(stroke) { view in
                 view

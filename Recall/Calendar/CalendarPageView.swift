@@ -63,7 +63,7 @@ struct CalendarPageView: View {
                 }
                 
                 let string = currentDay.formatted(.dateTime.day(.twoDigits))
-                UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false)
+                UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
                     .tintRectangularBackground()
                     .overlay( VStack {
                         if currentDay.matches(.now, to: .day) {

@@ -59,6 +59,6 @@ struct SplashScreen: View {
                 .allowsHitTesting(false)
             
         )
-        .transition(.asymmetric(insertion: .push(from: .trailing), removal: .push(from: .leading)))
+        .transition(.asymmetric(insertion: .push(from: .leading), removal: .push(from: .trailing)))
     }
 }
