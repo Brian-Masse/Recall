@@ -62,7 +62,7 @@ struct DataCollection<Content: View>: View {
             
             UniversalText( label, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
             
-            VStack(alignment: .leading) {
+            LazyVStack(alignment: .leading) {
                 content
             }.opaqueRectangularBackground(7, stroke: true)
         }

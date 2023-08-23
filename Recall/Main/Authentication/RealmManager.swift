@@ -41,15 +41,13 @@ class RealmManager: ObservableObject {
     @Published var hasProfile: Bool = false
     
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
-    lazy var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission { query in
-        print( self.user!.id )
-        return query.ownerID == self.user!.id
+    lazy var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission { query in query.ownerID == RecallModel.ownerID
         
     }
-    lazy var categoryQuery: (QueryPermission<RecallCategory>)           = QueryPermission { query in query.ownerID == self.user!.id }
-    lazy var goalsQuery: (QueryPermission<RecallGoal>)                  = QueryPermission { query in query.ownerID == self.user!.id }
-    lazy var goalsNodeQuery: (QueryPermission<GoalNode>)                = QueryPermission { query in query.ownerID == self.user!.id }
-    lazy var indexQuery: (QueryPermission<RecallIndex>)                 = QueryPermission { query in query.ownerID == self.user!.id }
+    @MainActor lazy var categoryQuery: (QueryPermission<RecallCategory>)           = QueryPermission { query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var goalsQuery: (QueryPermission<RecallGoal>)                  = QueryPermission { query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var goalsNodeQuery: (QueryPermission<GoalNode>)                = QueryPermission { query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var indexQuery: (QueryPermission<RecallIndex>)                 = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     
     @MainActor
     init() {

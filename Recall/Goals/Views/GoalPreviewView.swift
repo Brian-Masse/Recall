@@ -50,35 +50,35 @@ struct GoalPreviewView: View {
                     UniversalText(goal.goalDescription, size: Constants.UISmallTextSize, font: textFont)
                         .frame(maxWidth: 80)
                         .padding(.vertical)
-                    
+
                     makeSeperator()
-                    
+
                     VStack(alignment: .trailing) {
                         UniversalText("completed", size: Constants.UISmallTextSize, font: textFont)
                         UniversalText("\(dataModel.goalMetData.0)", size: Constants.UIHeaderTextSize, font: textFont)
-                        
+
                         UniversalText("missed", size: Constants.UISmallTextSize, font: textFont)
                         UniversalText("\(dataModel.goalMetData.1)", size: Constants.UIHeaderTextSize, font: textFont)
                     }
-                    
+
                     makeSeperator()
-                    
+
                     ActivityPerDay(recentData: true, title: "", goal: goal, events: events)
                         .frame(height: 100)
                 }
             }
             .padding(.horizontal)
             .frame(height: 110)
-                
+
 //            MARK: Progress Bar
             VStack {
                 ZStack(alignment: .leading) {
                     GeometryReader { geo in
-                        
+
                         Rectangle()
                             .cornerRadius(Constants.UIDefaultCornerRadius)
                             .foregroundColor( colorScheme == .dark ? Colors.darkGrey : Colors.secondaryLightColor )
-                        
+
                         Rectangle()
                             .foregroundColor(Colors.tint)
                             .frame(width: max(min(dataModel.roundedProgressData / Double(goal.targetHours) * geo.size.width, geo.size.width),0) )
@@ -94,7 +94,7 @@ struct GoalPreviewView: View {
             .frame(height: 40)
             .padding(.horizontal)
             .padding(.bottom)
-                
+
             Spacer()
         }
         .opaqueRectangularBackground(0, stroke: true)

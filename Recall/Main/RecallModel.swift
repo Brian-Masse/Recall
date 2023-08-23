@@ -14,7 +14,8 @@ let inDev = true
 
 struct RecallModel {
     
-//    64e4235dadda1f970fc082ed
+//  OUTLOOK:    64e4235dadda1f970fc082ed
+//  GMAIL:      64e3f9d5ac7aee58fbbceb37
     
     static var shared: RecallModel = RecallModel()
     @MainActor
@@ -38,7 +39,7 @@ struct RecallModel {
     
     @MainActor
     static func getDaysSinceFirstEvent() -> Double {
-        (Date.now.timeIntervalSince(index.earliestEventDate)) / Constants.DayTime
+        (Date.now.timeIntervalSince(getEarliestEventDate() )) / Constants.DayTime
     }
     
     @MainActor

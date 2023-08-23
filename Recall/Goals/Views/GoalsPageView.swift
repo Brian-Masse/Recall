@@ -29,12 +29,14 @@ struct GoalsPageView: View {
             }
             
             ScrollView(.vertical) {
-                Group {
-                    ForEach( goals ) { goal in
+                LazyVStack {
+//                Group {
+                    ForEach( goals, id: \.label ) { goal in
                         GoalPreviewView(goal: goal, events: events)
                             .padding(.bottom)
                     }
-                }.padding(.bottom, Constants.UIBottomOfPagePadding)
+                }
+            .padding(.bottom, Constants.UIBottomOfPagePadding)
             }
         }
         .padding(7)

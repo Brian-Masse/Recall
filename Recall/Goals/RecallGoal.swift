@@ -160,7 +160,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
     @MainActor
     func getStartDate() -> Date {
-        max( RecallModel.index.earliestEventDate.resetToStartOfDay(), creationDate.resetToStartOfDay() )
+        max( RecallModel.getEarliestEventDate().resetToStartOfDay(), creationDate.resetToStartOfDay() )
     }
     
 //    This tells how many times you could have met the goal since creation (differs based on week vs day)
