@@ -251,13 +251,7 @@ struct CalendarEventPreviewView: View {
                     CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
                 }
             
-                .alert("This Event is a Template", isPresented: $showingDeletionAlert) {
-                    Button(role: .cancel) { showingDeletionAlert = false } label:    { Text("cancel") }
-                    Button(role: .destructive) { event.delete(preserveTemplate: true) } label:    { Text("only delete event") }
-                    Button(role: .destructive) { event.delete() } label:    { Text("delete event and template") }
-                } message: {
-                    Text("Choose whether to delete or preserve the template associated with this event.")
-                }
+                .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
         }
         .zIndex( resizing || moving ? 5 : 0 )
         

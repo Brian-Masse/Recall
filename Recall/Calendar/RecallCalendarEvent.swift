@@ -226,19 +226,21 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         let width = getWidth(from: overlaps, in: fullWidth, from: events)
 
         var offset: CGFloat = 0
-        
+
         for event in overlaps {
             let overlapNodes = event.getOverlapNodes(from: events)
             if overlapNodes.count >= count {
                 let eventWidth = event.getWidth(from: overlapNodes, in: fullWidth, from: events) + 5
-                
+
                 if overlapNodes.count == count {
                     offset += takesPriority(self, and: event) ? eventWidth : 0
                 }
                 else { offset += eventWidth }
             }
         }
-    
+
+//        return .init(width: fullWidth, offset: 0)
+        
         return OverlapData(width: width, offset: offset)
         
         func takesPriority(_ thisEvent: RecallCalendarEvent, and otherEvent: RecallCalendarEvent) -> Bool {

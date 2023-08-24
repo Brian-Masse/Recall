@@ -24,7 +24,7 @@ private struct UniversalBackground: ViewModifier {
             Image("PaperNoise")
                 .resizable()
                 .blendMode( colorScheme == .light ? .multiply : .lighten)
-                .opacity( colorScheme == .light ? 0.55 : 0.25)
+                .opacity( colorScheme == .light ? 0.55 : 0.2)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
             

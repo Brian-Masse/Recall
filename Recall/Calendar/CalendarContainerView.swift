@@ -148,7 +148,11 @@ struct CalendarContainer: View {
     
     let background: Bool
     
-    private var height: CGFloat { geo.size.height * scale }
+    private var height: CGFloat {
+        if overrideHeight == nil { return geo.size.height * scale }
+        else { return overrideHeight! }
+    }
+    let overrideHeight: CGFloat?
     
     @State var dragging: Bool = false
     @Binding var currentDay: Date
@@ -156,13 +160,14 @@ struct CalendarContainer: View {
     
     @Namespace private var animation
     
-    init( at currentDay: Binding<Date>, with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, swipeDirection: Binding<AnyTransition.SlideDirection> = Binding { .right } set: { _, _ in }, background: Bool = false ) {
+    init( at currentDay: Binding<Date>, with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, swipeDirection: Binding<AnyTransition.SlideDirection> = Binding { .right } set: { _, _ in }, background: Bool = false, overrideHeight: CGFloat? = nil ) {
         self.events = events
         self.startHour = startHour
         self.endHour = endHour
         self.geo = geo
         self.scale = scale
         self.background = background
+        self.overrideHeight = overrideHeight
         self._currentDay = currentDay
         self._slideDirection = swipeDirection
     }
@@ -179,12 +184,14 @@ struct CalendarContainer: View {
                         CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
                         
                         Group {
-                            ForEach( filterEvents(), id: \.self ) { event in
+                            let filtered = filterEvents()
+                            
+                            ForEach( filtered, id: \.self ) { event in
                                 CalendarEventPreviewView(event: event,
                                                          spacing: spacing,
                                                          geo: geo,
                                                          startHour: startHour,
-                                                         events: events,
+                                                         events: filtered,
                                                          dragging: $dragging)
                             }
                             .padding(.leading, 40)
@@ -203,13 +210,14 @@ struct CalendarContainer: View {
                     .frame(height: height)
                     .padding(.bottom, Constants.UIBottomOfPagePadding)
                 }
-                .scrollDisabled(dragging)
+                .scrollDisabled(dragging || background)
                 .onAppear() {
+                    if background { return }
                     let id = Int(Date.now.getHoursFromStartOfDay().rounded(.down) )
                     value.scrollTo( id, anchor: .center )
                 }
                 .if(background) { view in
-                    view.opaqueRectangularBackground()
+                    view.opaqueRectangularBackground(7, stroke: true)
                 }
             }
             .onTapGesture { }
