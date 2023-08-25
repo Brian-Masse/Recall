@@ -19,7 +19,7 @@ struct CalendarPageView: View {
         
         UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.mainFont)
             .matchedGeometryEffect(id: string, in: calendarPageView)
-            .padding(5)
+            .padding(4)
             .onTapGesture { setCurrentDay(with: date) }
     }
     
@@ -67,14 +67,18 @@ struct CalendarPageView: View {
                 }
                 
                 let string = currentDay.formatted(.dateTime.day(.twoDigits))
-                UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
+                let month = currentDay.formatted(.dateTime.month(.abbreviated)).lowercased()
+                VStack {
+                    UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
+                    UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true )
+                }
                     .tintRectangularBackground()
                     .overlay( VStack {
                         if currentDay.matches(.now, to: .day) {
                             Circle()
                                 .foregroundColor(Colors.tint)
                                 .frame(width: 10, height: 10)
-                                .offset(y: -40)
+                                .offset(y: -50)
                         }
                     })
                 
