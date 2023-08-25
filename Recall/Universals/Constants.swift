@@ -63,6 +63,7 @@ class Constants {
     static let HourTime: Double = 3600
     static let DayTime: Double = 86400
     static let WeekTime: Double = 604800
+    static let yearTime: Double = 31557600
     
 //    fonts
     static let titleFont: ProvidedFont = .syneHeavy

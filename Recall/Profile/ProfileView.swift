@@ -11,7 +11,10 @@ import SwiftUI
 @MainActor
 struct ProfileView: View {
     
+//    MARK: Vars
+    
     @State var showingDataTransfer: Bool = false
+    @State var showingEditingView: Bool = false
     @State var ownerID: String = ""
     
     let index = RecallModel.index
@@ -91,7 +94,7 @@ struct ProfileView: View {
     @ViewBuilder
     private func makePageFooter() -> some View {
         VStack {
-            LargeRoundedButton( "Edit", icon: "arrow.right", wide: true ) {  }
+            LargeRoundedButton( "Edit", icon: "arrow.right", wide: true ) { showingEditingView = true }
 //            LargeRoundedButton( "Transfer Data", icon: "arrow.right", wide: true ) { showingDataTransfer = true }
             LargeRoundedButton("Signout", icon: "arrow.down", wide: true) { RecallModel.realmManager.logoutUser() }
         }
@@ -120,6 +123,13 @@ struct ProfileView: View {
             Button(role: .destructive) {
                 RecallModel.realmManager.transferDataOwnership(to: ownerID)
             } label: { Text("Transfer Data") }
+        }
+        .sheet(isPresented: $showingEditingView) {
+            ProfileEditorView(email: index.email,
+                              phoneNumber: index.phoneNumber,
+                              dateOfBirth: index.dateOfBirth,
+                              firstName: index.firstName,
+                              lastName: index.lastName)
         }
         
     }

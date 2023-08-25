@@ -28,9 +28,6 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var dateOfBirth: Date = .now
     @Persisted var dateJoined: Date = .now
     
-    
-//    @Persisted private(set) var templates: List<RecallCalendarEvent> = List()
-    
     convenience init( ownerID: String, email: String, firstName: String, lastName: String) {
         self.init()
         self.ownerID = ownerID
@@ -44,32 +41,20 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         self.earliestEventDate = date
     }
     
+    func update( firstName: String, lastName: String, email: String, phoneNumber: Int, dateOfBirth: Date ) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.firstName = firstName
+            thawed.lastName = lastName
+            thawed.email = email
+            thawed.phoneNumber = phoneNumber
+            thawed.dateOfBirth = dateOfBirth
+        }
+    }
+    
 //    MARK: Convenience Functions
     
     func getFullName() -> String {
         "\(firstName) \(lastName)"
     }
     
-    
-//    func addTemplate(_ newTemplate: RecallCalendarEvent) {
-//        if let _ = self.templates.first(where: { event in
-//            event.title == newTemplate.title
-//        }) { return }
-//        
-//        if let copy: RecallCalendarEvent = RealmManager.retrieveObject(where: { event in event.title == newTemplate.title }).first {
-//            RealmManager.updateObject(self) { thawed in
-//                thawed.templates.append(copy)
-//            }
-//        }
-//    }
-//    
-//    func removeTemplate(_ template: RecallCalendarEvent) {
-//        if let index = self.templates.firstIndex(where: {event in
-//            event.title == template.title
-//        }) {
-//            RealmManager.updateObject(self) { thawed in
-//                thawed.templates.remove(at: index)
-//            }
-//        }
-//    }
 }

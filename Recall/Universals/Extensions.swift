@@ -50,6 +50,10 @@ extension Date {
         return Double(comps.minute ?? 0) / Constants.MinuteTime + Double(comps.hour ?? 0)
     }
     
+    func getYearsSince( _ date: Date ) -> Double {
+        self.timeIntervalSince(date) / Constants.yearTime
+    }
+    
     func resetToStartOfDay() -> Date {
         Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self) ?? self
     }
@@ -143,5 +147,9 @@ extension String {
             return t
         }
         return self
+    }
+    
+    func removeNonNumbers() -> String {
+        self.filter("0123456789.".contains)
     }
 }
