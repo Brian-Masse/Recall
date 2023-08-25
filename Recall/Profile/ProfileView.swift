@@ -8,22 +8,112 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 struct ProfileView: View {
     
     @State var showingDataTransfer: Bool = false
     @State var ownerID: String = ""
     
+    let index = RecallModel.index
+    
+//    MARK: ViewBuilders
+    
+    @ViewBuilder
+    private func makeContactLabel( title: String, content: String ) -> some View {
+        HStack {
+            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+            Spacer()
+            UniversalText(content, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+        }
+        .padding(.horizontal, 7)
+        .padding(.vertical, 5)
+    }
+    
+    @ViewBuilder
+    private func makeDemographicLabel(mainText: String, secondaryText: String, tertiaryText: String) -> some View {
+        VStack {
+            HStack {
+                Spacer()
+                VStack {
+                    UniversalText( mainText, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+                    UniversalText( secondaryText, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true )
+                }
+                Spacer()
+            }
+            .secondaryOpaqueRectangularBackground()
+            
+            UniversalText( tertiaryText, size: Constants.UISmallTextSize, font: Constants.mainFont )
+        }
+    }
+    
+    @ViewBuilder
+    private func makeDemographicInfo() -> some View {
+        
+        let dayFormatted: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd"
+            return formatter
+        }()
+        
+        let yearFormatted: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM, yyyy"
+            return formatter
+        }()
+        
+        
+        UniversalText( "Overview", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+        VStack(alignment: .leading) {
+            HStack {
+                makeDemographicLabel(mainText: dayFormatted.string(from: index.dateJoined),
+                                     secondaryText: yearFormatted.string(from: index.dateJoined),
+                                     tertiaryText: "Date Joined")
+                
+                makeDemographicLabel(mainText: dayFormatted.string(from: index.dateOfBirth),
+                                     secondaryText: yearFormatted.string(from: index.dateOfBirth),
+                                     tertiaryText: "Date of Birth")
+            }.padding(.bottom)
+            
+            UniversalText( "Contact Information", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                .padding(.bottom, 5 )
+            makeContactLabel(title: "email", content: index.email)
+            makeContactLabel(title: "phone number", content: "\(index.phoneNumber.formatIntoPhoneNumber())")
+        }
+        .opaqueRectangularBackground(7, stroke: true)
+    }
+    
+    @ViewBuilder
+    private func makePageHeader() -> some View {
+        UniversalText(index.getFullName(), size: Constants.UITitleTextSize, font: Constants.titleFont)
+        UniversalText( RecallModel.ownerID, size: Constants.UISmallTextSize, font: Constants.mainFont )
+    }
+    
+    @ViewBuilder
+    private func makePageFooter() -> some View {
+        VStack {
+            LargeRoundedButton( "Edit", icon: "arrow.right", wide: true ) {  }
+//            LargeRoundedButton( "Transfer Data", icon: "arrow.right", wide: true ) { showingDataTransfer = true }
+            LargeRoundedButton("Signout", icon: "arrow.down", wide: true) { RecallModel.realmManager.logoutUser() }
+        }
+    }
+    
+//    MARK: Body
     var body: some View {
         
-        VStack {
+        VStack(alignment: .leading) {
+                
+            makePageHeader()
+                .padding(.bottom)
+            
+            makeDemographicInfo()
             
             Spacer()
             
-            LargeRoundedButton( "Transfer Data", icon: "arrow.right" ) { showingDataTransfer = true }
-            
-            LargeRoundedButton("Signout", icon: "arrow.down") { RecallModel.realmManager.logoutUser() }
+            makePageFooter()
+                .padding(.bottom, 20)
             
         }
+        .padding(7)
         .universalBackground()
         .alert("OwnerID", isPresented: $showingDataTransfer) {
             TextField("ownerID", text: $ownerID)

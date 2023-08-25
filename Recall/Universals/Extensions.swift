@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+//MARK: Color
 extension Color {
     var components: (red: CGFloat, green: CGFloat, blue: CGFloat, opacity: CGFloat) {
 
@@ -41,6 +42,7 @@ extension Color {
     }
 }
 
+//MARK: Date
 extension Date {
     
     func getHoursFromStartOfDay() -> Double {
@@ -87,12 +89,14 @@ extension Date {
     }
 }
 
+//MARK: Collection
 extension Collection {
     func countAll(where query: ( Self.Element ) -> Bool ) -> Int {
         self.filter(query).count
     }
 }
 
+//MARK: Float, Double, Int
 extension Float {
     func round(to digits: Int) -> Float {
         (self * pow(10, Float(digits))).rounded(.down) / ( pow(10, Float(digits)) )
@@ -105,6 +109,32 @@ extension Double {
     }
 }
 
+extension Int {
+    func formatIntoPhoneNumber() -> String {
+        let mask = "+X (XXX) XXX-XXXX"
+        var phone = "\(self)"
+        let numbers = phone.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+        var result = ""
+        var index = numbers.startIndex // numbers iterator
+
+        // iterate over the mask characters until the iterator of numbers ends
+        for ch in mask where index < numbers.endIndex {
+            if ch == "X" {
+                // mask requires a number in this place, so take the next one
+                result.append(numbers[index])
+
+                // move numbers iterator to the next index
+                index = numbers.index(after: index)
+
+            } else {
+                result.append(ch) // just append a mask character
+            }
+        }
+        return result
+    }
+}
+
+//MARK: String
 extension String {
     func removeFirst( of char: Character ) -> String {
         if let index = self.firstIndex(of: char) {

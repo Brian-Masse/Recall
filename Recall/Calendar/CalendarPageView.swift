@@ -48,9 +48,13 @@ struct CalendarPageView: View {
         VStack(alignment: .leading) {
 
             HStack {
-                UniversalText( "Today's Recall", size: Constants.UITitleTextSize, font: Constants.titleFont, true )
+                UniversalText( "Today's Recall", size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, true, scale: true )
                 Spacer()
-                LargeRoundedButton("", icon: "person") { showingProfileView = true }
+                
+                ResizeableIcon(icon: "person", size: Constants.UIDefaultTextSize)
+                    .secondaryOpaqueRectangularBackground()
+                    .padding(.leading)
+                    .onTapGesture { showingProfileView = true }
             }
             UniversalText( Date.now.formatted(date: .abbreviated, time: .omitted), size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
                 .onTapGesture { setCurrentDay(with: .now) }

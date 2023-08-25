@@ -23,6 +23,11 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var email: String = ""
     @Persisted var firstName: String = ""
     @Persisted var lastName: String = ""
+    @Persisted var phoneNumber: Int
+    
+    @Persisted var dateOfBirth: Date = .now
+    @Persisted var dateJoined: Date = .now
+    
     
 //    @Persisted private(set) var templates: List<RecallCalendarEvent> = List()
     
@@ -34,9 +39,17 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         self.lastName = lastName
     }
     
+//    MARK: Class Methods
     func updateEarliestEventDate(with date: Date) {
         self.earliestEventDate = date
     }
+    
+//    MARK: Convenience Functions
+    
+    func getFullName() -> String {
+        "\(firstName) \(lastName)"
+    }
+    
     
 //    func addTemplate(_ newTemplate: RecallCalendarEvent) {
 //        if let _ = self.templates.first(where: { event in
