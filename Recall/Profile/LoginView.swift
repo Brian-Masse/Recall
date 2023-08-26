@@ -122,5 +122,6 @@ struct LoginView: View {
         .universalBackgroundColor(ignoreSafeAreas: .all)
         .defaultAlert($showingError, title: "Issue Signing in", description: self.message)
         .transition(.asymmetric(insertion: .push(from: .trailing), removal: .push(from: .trailing)))
+//        .preferredColorScheme(.light)
     }
 }
