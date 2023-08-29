@@ -251,3 +251,28 @@ struct SliderWithPrompt: View {
     }
 }
 
+//MARK: Color Picker
+
+struct LabeledColorPicker: View {
+    
+    let label: String
+    @Binding var color: Color
+    
+    var body: some View {
+        
+        VStack(alignment: .leading) {
+            UniversalText( label, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+            
+            ScrollView(.horizontal) {
+                HStack {
+                    Spacer()
+                    ForEach(Colors.colorOptions.indices, id: \.self) { i in
+                        ColorPickerOption(color: Colors.colorOptions[i], selectedColor: $color)
+                    }
+                    ColorPicker("", selection: $color)
+                    Spacer()
+                }
+            }
+        }
+    }
+}

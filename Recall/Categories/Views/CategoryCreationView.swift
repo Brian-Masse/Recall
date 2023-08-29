@@ -78,17 +78,7 @@ struct CategoryCreationView: View {
         makeTextField(title: "What would you like to call this tag?", binding: $label)
             .padding(.bottom)
         
-        UniversalText( "What Color is this tag?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-        ScrollView(.horizontal) {
-            HStack {
-                Spacer()
-                ForEach(Colors.colorOptions.indices, id: \.self) { i in
-                    ColorPickerOption(color: Colors.colorOptions[i], selectedColor: $color)
-                }
-                ColorPicker("", selection: $color)
-                Spacer()
-            }
-        }
+        LabeledColorPicker(label: "What Color is this tag?", color: $color)
         .padding(.bottom)
     }
     

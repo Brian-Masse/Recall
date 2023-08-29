@@ -41,7 +41,7 @@ struct CategoriesPageView: View {
     }
     
 //      MARK: TagPage
-    private struct TagTab: View {
+    struct TagTab: View {
     
        @ViewBuilder
        private func makeTagList(from tags: [RecallCategory], title: String) -> some View {
@@ -75,12 +75,16 @@ struct CategoriesPageView: View {
             
             ScrollView(.vertical) {
                 VStack {
-                    makeTagList(from: favorites, title: "Favorite Tags")
-                        .padding(.bottom)
+                    if favorites.count != 0 {
+                        makeTagList(from: favorites, title: "Favorite Tags")
+                            .padding(.bottom)
+                    }
                     
-                    makeTagList(from: nonFavorites, title: "All Tags")
-                        .padding(.bottom)
-                        .padding(.bottom, Constants.UIBottomOfPagePadding)
+                    if nonFavorites.count != 0 {
+                        makeTagList(from: nonFavorites, title: "All Tags")
+                            .padding(.bottom)
+                            .padding(.bottom, Constants.UIBottomOfPagePadding)
+                    }
                 }
             }
         }

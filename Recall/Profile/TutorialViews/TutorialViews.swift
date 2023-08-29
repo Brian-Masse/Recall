@@ -9,6 +9,33 @@ import Foundation
 import SwiftUI
 
 
+//MARK: ViewModifiers
+
+private struct ConstrainedBroadScene: ViewModifier {
+    
+    let broadScene: TutorialViews.TutorialScene.BroadScene
+    
+    @Binding var activeScene: TutorialViews.TutorialScene
+    
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                
+                let bounds = activeScene.getValidSceneBounds(for: broadScene)
+                if activeScene.rawValue < bounds.0 { activeScene = activeScene.setScene(to: bounds.0) }
+                if activeScene.rawValue > bounds.1 { activeScene = activeScene.setScene(to: bounds.1) }
+            }
+    }
+}
+
+extension View {
+    
+    func constrainBroadScene( to broadScene: TutorialViews.TutorialScene.BroadScene, activeScene: Binding<TutorialViews.TutorialScene> ) -> some View  {
+        modifier( ConstrainedBroadScene(broadScene: broadScene, activeScene: activeScene) )
+    }
+    
+}
+
 struct TutorialViews: View {
     
 //    MARK: Scenes
@@ -37,7 +64,7 @@ struct TutorialViews: View {
                 self.rawValue
             }
         }
-        
+//        MARK: Convenience functions for scenes
         private func getScene(from value: Int) -> TutorialViews.TutorialScene {
             TutorialScene(rawValue: value) ?? .goalCreation
         }
@@ -50,14 +77,26 @@ struct TutorialViews: View {
             getScene(from: max( self.rawValue - 1, getScenesBefore(activeBroadScene) + 1) )
         }
         
+        func setScene(to index: Int) -> TutorialScene {
+            TutorialScene(rawValue: index) ?? .goalCreation
+        }
+        
+//        The following three functions are used to switch the broad scenes automatically, and to ensure a valid view is always being displayed
+//        This function says what indecies of this scene list are valid for a given broad scene
+        func getValidSceneBounds(for broadScene: BroadScene) -> (Int, Int) {
+            (getScenesBefore(broadScene), getScenesBefore(broadScene) + Int(getBroadSceneTotal(broadScene)) )
+        }
+        
+//        This is the number of sub scenes in a given broad scene
         private func getBroadSceneTotal(_ scene: BroadScene) -> Double {
             switch scene {
             case .goal: return 4
-            case .tag: return 4
+            case .tag: return 5
             default: return 1
             }
         }
         
+//        this counts how many subscenes occour before the start of a given broad scene
         private func getScenesBefore(_ activeBroadScene: BroadScene) -> Int {
             switch activeBroadScene {
             case .goal: return 0
@@ -118,8 +157,12 @@ struct TutorialViews: View {
         
         VStack {
             switch broadScene {
-            case .goal:     GoalCreationScene(scene: $scene, broadScene: $broadScene, nextButtonIsActive: $nextButtonIsActive)
-            case .tag:      TagsCreationScene(scene: $scene, broadScene: $broadScene, nextButtonIsActive: $nextButtonIsActive)
+            case .goal:     GoalCreationScene(scene: $scene,
+                                              broadScene: $broadScene,
+                                              nextButtonIsActive: $nextButtonIsActive).constrainBroadScene(to: .goal, activeScene: $scene)
+            case .tag:      TagsCreationScene(scene: $scene,
+                                              broadScene: $broadScene,
+                                              nextButtonIsActive: $nextButtonIsActive).constrainBroadScene(to: .tag, activeScene: $scene)
             case .event: EmptyView()
             }
     
@@ -178,9 +221,7 @@ struct TutorialViews: View {
     
 //    MARK: Body
     var body: some View {
-        
         VStack {
-            
             makeHeader()
             makeProgressView()
                 .padding(.bottom)
@@ -192,6 +233,5 @@ struct TutorialViews: View {
         .padding(.bottom, 30)
         .universalBackground()
         .defaultAlert($showSkipTutorialWarning, title: "Skip tutorial?", description: "")
-        
     }
 }
