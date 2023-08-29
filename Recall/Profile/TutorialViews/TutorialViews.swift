@@ -53,6 +53,12 @@ struct TutorialViews: View {
         case tagView
         
         case eventCreation
+        case eventName
+        case eventNotes
+        case eventTime
+        case eventTag
+        case eventGoals
+        
         case complete
         
         enum BroadScene: String, CaseIterable, Identifiable {
@@ -92,7 +98,7 @@ struct TutorialViews: View {
             switch scene {
             case .goal: return 4
             case .tag: return 4
-            default: return 1
+            case .event: return 5
             }
         }
         
@@ -101,7 +107,7 @@ struct TutorialViews: View {
             switch activeBroadScene {
             case .goal: return 0
             case .tag: return Int(getBroadSceneTotal(.goal)) + 1
-            default: return 0
+            default: return Int(getBroadSceneTotal(.goal) + getBroadSceneTotal(.tag))  + 2
             }
         }
         
@@ -163,7 +169,9 @@ struct TutorialViews: View {
             case .tag:      TagsCreationScene(scene: $scene,
                                               broadScene: $broadScene,
                                               nextButtonIsActive: $nextButtonIsActive).constrainBroadScene(to: .tag, activeScene: $scene)
-            case .event: EmptyView()
+            case .event:    EventsCreationScene(scene: $scene,
+                                              broadScene: $broadScene,
+                                              nextButtonIsActive: $nextButtonIsActive).constrainBroadScene(to: .event, activeScene: $scene)
             }
     
             Spacer()

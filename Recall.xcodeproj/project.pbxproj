@@ -60,6 +60,7 @@
 		C98F2F2B2A9D216700E92B30 /* TutorialViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2A2A9D216700E92B30 /* TutorialViews.swift */; };
 		C98F2F2E2A9D336200E92B30 /* GoalsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2D2A9D336200E92B30 /* GoalsCreationScene.swift */; };
 		C98F2F302A9D3F3300E92B30 /* TagsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */; };
+		C98F2F322A9DC49300E92B30 /* EventsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F312A9DC49300E92B30 /* EventsCreationScene.swift */; };
 		C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */; };
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
 		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
@@ -141,6 +142,7 @@
 		C98F2F2A2A9D216700E92B30 /* TutorialViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialViews.swift; sourceTree = "<group>"; };
 		C98F2F2D2A9D336200E92B30 /* GoalsCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCreationScene.swift; sourceTree = "<group>"; };
 		C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsCreationScene.swift; sourceTree = "<group>"; };
+		C98F2F312A9DC49300E92B30 /* EventsCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsCreationScene.swift; sourceTree = "<group>"; };
 		C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCharts.swift; sourceTree = "<group>"; };
 		C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIndex.swift; sourceTree = "<group>"; };
 		C9E49D152A68AC820023EBC0 /* RecallGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoal.swift; sourceTree = "<group>"; };
@@ -391,6 +393,7 @@
 				C98F2F2A2A9D216700E92B30 /* TutorialViews.swift */,
 				C98F2F2D2A9D336200E92B30 /* GoalsCreationScene.swift */,
 				C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */,
+				C98F2F312A9DC49300E92B30 /* EventsCreationScene.swift */,
 			);
 			path = TutorialViews;
 			sourceTree = "<group>";
@@ -575,6 +578,7 @@
 				C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */,
 				C98F2F222A94134F00E92B30 /* LoginView.swift in Sources */,
 				C98F2F292A9859BD00E92B30 /* ProfileViewEditor.swift in Sources */,
+				C98F2F322A9DC49300E92B30 /* EventsCreationScene.swift in Sources */,
 				C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */,
 				C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */,
 				C98F2F2E2A9D336200E92B30 /* GoalsCreationScene.swift in Sources */,
