@@ -207,3 +207,33 @@ struct LargeRoundedButton: View {
         .onTapGesture { action() }
     }
 }
+
+
+//MARK: ConditionalLargeRoundedButton
+
+struct ConditionalLargeRoundedButton: View {
+    
+    let title: String
+    let icon: String
+    
+    let condition: () -> Bool
+    let action: () -> Void
+    
+    var body: some View {
+        HStack {
+            Spacer()
+            UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+            Image(systemName: icon)
+            Spacer()
+            
+        }
+            .padding(10)
+            .if( condition() ) { view in view.tintRectangularBackground() }
+            .if( !condition() ) { view in view.secondaryOpaqueRectangularBackground() }
+            .onTapGesture { withAnimation {
+                if condition() { action() }
+            }}
+    }
+    
+    
+}

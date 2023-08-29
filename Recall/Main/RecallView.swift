@@ -12,7 +12,7 @@ struct ContentView: View {
     enum EntryPage {
         case splashScreen
         case login
-        case tutorial 
+        case app
     }
     
     @Environment(\.colorScheme) var colorScheme
@@ -32,10 +32,12 @@ struct ContentView: View {
                 default: EmptyView()
                 }
                 
-                
             } else if !realmManager.realmLoaded {
                 OpenFlexibleSyncRealmView()
                     .environment(\.realmConfiguration, realmManager.configuration)
+                
+            } else if entryPage != .app {
+                TutorialViews(page: $entryPage)
                 
             }else {
                 MainView()

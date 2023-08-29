@@ -252,6 +252,14 @@ private struct DefaultAlert: ViewModifier {
     }
 }
 
+//MARK: Transitions
+private struct SlideTransition: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .transition(.push(from: .trailing))
+    }
+}
+
 //MARK: Colors
 private struct UniversalForegroundColor: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
@@ -333,6 +341,7 @@ extension View {
     func universalBackgroundColor(ignoreSafeAreas: Edge.Set? = nil) -> some View {
         modifier( UniversalBackgroundColor(ignoreSafeAreas: ignoreSafeAreas) )
     }
+
     
 //    MARK: Utilities
     #if canImport(UIKit)
@@ -361,6 +370,12 @@ extension View {
     
     func defaultAlert(_ binding: Binding<Bool>, title: String, description: String) -> some View {
         modifier( DefaultAlert(activate: binding, title: title, description: description) )
+    }
+    
+//    MARK: Transitions
+    func slideTransition() -> some View {
+        modifier( SlideTransition() )
+        
     }
 }
 

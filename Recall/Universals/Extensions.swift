@@ -116,7 +116,7 @@ extension Double {
 extension Int {
     func formatIntoPhoneNumber() -> String {
         let mask = "+X (XXX) XXX-XXXX"
-        var phone = "\(self)"
+        let phone = "\(self)"
         let numbers = phone.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         var result = ""
         var index = numbers.startIndex // numbers iterator

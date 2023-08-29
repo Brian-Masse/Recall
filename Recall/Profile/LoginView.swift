@@ -96,19 +96,9 @@ struct LoginView: View {
                     }
                     
                     
-                    HStack {
-                        Spacer()
-                        UniversalText("create / login", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                        Image(systemName: "arrow.forward")
-                        Spacer()
-                        
-                    }
-                        .padding(10)
-                        .if( checkCompletion() ) { view in view.tintRectangularBackground() }
-                        .if( !checkCompletion() ) { view in view.secondaryOpaqueRectangularBackground() }
-                    
-//                    LargeRoundedButton("create / login", icon: "arrow.forward", wide: true) { Task { await submit() } }
-//                    .padding(.bottom)?
+                    ConditionalLargeRoundedButton(title: "create / login",
+                                                  icon: "arrow.forward",
+                                                  condition: checkCompletion) { Task { await submit() }  }
                     
                 }
                 .universalTextStyle()
@@ -121,7 +111,7 @@ struct LoginView: View {
         .ignoresSafeArea()
         .universalBackgroundColor(ignoreSafeAreas: .all)
         .defaultAlert($showingError, title: "Issue Signing in", description: self.message)
-        .transition(.asymmetric(insertion: .push(from: .trailing), removal: .push(from: .trailing)))
+        .transition(.push(from: .trailing))
 //        .preferredColorScheme(.light)
     }
 }

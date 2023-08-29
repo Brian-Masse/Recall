@@ -57,6 +57,9 @@
 		C98F2F252A94435600E92B30 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F242A94435600E92B30 /* SplashScreen.swift */; };
 		C98F2F272A945B7400E92B30 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F262A945B7400E92B30 /* ProfileView.swift */; };
 		C98F2F292A9859BD00E92B30 /* ProfileViewEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F282A9859BD00E92B30 /* ProfileViewEditor.swift */; };
+		C98F2F2B2A9D216700E92B30 /* TutorialViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2A2A9D216700E92B30 /* TutorialViews.swift */; };
+		C98F2F2E2A9D336200E92B30 /* GoalsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2D2A9D336200E92B30 /* GoalsCreationScene.swift */; };
+		C98F2F302A9D3F3300E92B30 /* TagsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */; };
 		C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */; };
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
 		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
@@ -135,6 +138,9 @@
 		C98F2F242A94435600E92B30 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		C98F2F262A945B7400E92B30 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C98F2F282A9859BD00E92B30 /* ProfileViewEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewEditor.swift; sourceTree = "<group>"; };
+		C98F2F2A2A9D216700E92B30 /* TutorialViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialViews.swift; sourceTree = "<group>"; };
+		C98F2F2D2A9D336200E92B30 /* GoalsCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCreationScene.swift; sourceTree = "<group>"; };
+		C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsCreationScene.swift; sourceTree = "<group>"; };
 		C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCharts.swift; sourceTree = "<group>"; };
 		C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIndex.swift; sourceTree = "<group>"; };
 		C9E49D152A68AC820023EBC0 /* RecallGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoal.swift; sourceTree = "<group>"; };
@@ -374,8 +380,19 @@
 				C98F2F212A94134F00E92B30 /* LoginView.swift */,
 				C98F2F262A945B7400E92B30 /* ProfileView.swift */,
 				C98F2F282A9859BD00E92B30 /* ProfileViewEditor.swift */,
+				C98F2F2C2A9D334C00E92B30 /* TutorialViews */,
 			);
 			path = Profile;
+			sourceTree = "<group>";
+		};
+		C98F2F2C2A9D334C00E92B30 /* TutorialViews */ = {
+			isa = PBXGroup;
+			children = (
+				C98F2F2A2A9D216700E92B30 /* TutorialViews.swift */,
+				C98F2F2D2A9D336200E92B30 /* GoalsCreationScene.swift */,
+				C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */,
+			);
+			path = TutorialViews;
 			sourceTree = "<group>";
 		};
 		C9D8C5052A69B656005ADA0B /* Charts */ = {
@@ -560,10 +577,13 @@
 				C98F2F292A9859BD00E92B30 /* ProfileViewEditor.swift in Sources */,
 				C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */,
 				C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */,
+				C98F2F2E2A9D336200E92B30 /* GoalsCreationScene.swift in Sources */,
+				C98F2F302A9D3F3300E92B30 /* TagsCreationScene.swift in Sources */,
 				C91BCF3C2A61E3EE003C6DD6 /* MainView.swift in Sources */,
 				C9EA0EE52A6B48F200E36EF1 /* CategoriesPageView.swift in Sources */,
 				C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */,
 				C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */,
+				C98F2F2B2A9D216700E92B30 /* TutorialViews.swift in Sources */,
 				C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */,
 				C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */,
 				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
