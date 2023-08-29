@@ -189,7 +189,6 @@ extension TutorialViews {
                 
                 RealmManager.addObject(goal)
             }
-            .onDisappear { broadScene = .tag }
         }
         
         

@@ -68,7 +68,7 @@ struct TutorialViews: View {
         private func getScene(from value: Int) -> TutorialViews.TutorialScene {
             TutorialScene(rawValue: value) ?? .goalCreation
         }
-        
+    
         func advanceScene() -> TutorialScene {
             getScene(from:  self.rawValue + 1 )
         }
@@ -91,7 +91,7 @@ struct TutorialViews: View {
         private func getBroadSceneTotal(_ scene: BroadScene) -> Double {
             switch scene {
             case .goal: return 4
-            case .tag: return 5
+            case .tag: return 4
             default: return 1
             }
         }
@@ -100,7 +100,7 @@ struct TutorialViews: View {
         private func getScenesBefore(_ activeBroadScene: BroadScene) -> Int {
             switch activeBroadScene {
             case .goal: return 0
-            case .tag: return Int(getBroadSceneTotal(.goal))
+            case .tag: return Int(getBroadSceneTotal(.goal)) + 1
             default: return 0
             }
         }
@@ -168,8 +168,20 @@ struct TutorialViews: View {
     
             Spacer()
             
+//            This button also checks to make sure that when a new broad scene is ready, the view switches to it
             ConditionalLargeRoundedButton(title: "continue", icon: "arrow.forward", condition: { nextButtonIsActive }) {
+                
                 scene = scene.advanceScene()
+                
+                let bounds = scene.getValidSceneBounds(for: broadScene)
+                if scene.rawValue > bounds.1 {
+                    switch broadScene {
+                    case .goal: broadScene = .tag
+                    case .tag: broadScene = .event
+                    default: break
+                    }
+                }
+                            
                 nextButtonIsActive = false
             }
         }
