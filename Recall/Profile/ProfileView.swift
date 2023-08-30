@@ -17,6 +17,8 @@ struct ProfileView: View {
     @State var showingEditingView: Bool = false
     @State var ownerID: String = ""
     
+    @Binding var appPage: ContentView.EntryPage
+    
     let index = RecallModel.index
     
 //    MARK: ViewBuilders
@@ -83,6 +85,20 @@ struct ProfileView: View {
             makeContactLabel(title: "phone number", content: "\(index.phoneNumber.formatIntoPhoneNumber())")
         }
         .opaqueRectangularBackground(7, stroke: true)
+        .padding(.bottom, 5)
+        
+        HStack {
+            Spacer()
+            UniversalText( "Replay Tutorial", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            Image(systemName: "arrow.clockwise")
+            Spacer()
+        }
+        .secondaryOpaqueRectangularBackground()
+        .onTapGesture {
+            index.replayTutorial()
+            appPage = .login
+        }
+        
     }
     
     @ViewBuilder
@@ -96,7 +112,10 @@ struct ProfileView: View {
         VStack {
             LargeRoundedButton( "Edit", icon: "arrow.right", wide: true ) { showingEditingView = true }
 //            LargeRoundedButton( "Transfer Data", icon: "arrow.right", wide: true ) { showingDataTransfer = true }
-            LargeRoundedButton("Signout", icon: "arrow.down", wide: true) { RecallModel.realmManager.logoutUser() }
+            LargeRoundedButton("Signout", icon: "arrow.down", wide: true) {
+                RecallModel.realmManager.logoutUser()
+                appPage = .splashScreen
+            }
         }
     }
     

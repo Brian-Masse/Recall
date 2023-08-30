@@ -25,7 +25,7 @@ struct EventsDataSection: View {
                 let timePeriod: Double = viewFilter == 0 ? 7 : RecallModel.getDaysSinceFirstEvent()
                 
                 Group {
-                    LargeText(mainText: "\(data.getTotalHours(from: viewFilter))", subText: "hours")
+                    LargeText(mainText: "\(data.getTotalHours(from: viewFilter).round(to: 2) )", subText: "hours")
                     Seperator(orientation: .horizontal)
                     LargeText(mainText: "\(data.getHourlData(from: viewFilter).count)", subText: "events")
                     Seperator(orientation: .horizontal)

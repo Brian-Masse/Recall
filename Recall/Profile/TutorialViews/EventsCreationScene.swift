@@ -95,6 +95,7 @@ extension TutorialViews {
                 
                 TimeSelector(label: "When did this event end?", time: $endTime)
             }
+            .padding(.horizontal, 5)
             .slideTransition()
             .onAppear { nextButtonIsActive = true }
         }

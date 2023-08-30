@@ -36,11 +36,12 @@ struct ContentView: View {
                 OpenFlexibleSyncRealmView()
                     .environment(\.realmConfiguration, realmManager.configuration)
                 
-            } else if entryPage != .app {
+            } else if entryPage != .app && !RecallModel.index.finishedTutorial {
                 TutorialViews(page: $entryPage)
                 
             }else {
-                MainView()
+                MainView(appPage: $entryPage)
+                    .onAppear() { entryPage = .app }
             }
         }
         .onChange(of: colorScheme) { newValue in RecallModel.shared.setActiveColor(from: newValue) }

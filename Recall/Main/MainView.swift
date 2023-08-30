@@ -109,6 +109,7 @@ struct MainView: View {
     
     @State var currentPage: MainPage = .calendar
     @State var shouldRefreshData: Bool = false
+    @Binding var appPage: ContentView.EntryPage
     
     private func refreshData(events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil) async {
         await RecallModel.dataModel.updateProperties(events: events ?? nil, goals: goals ?? nil)
@@ -120,7 +121,7 @@ struct MainView: View {
         
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
-                CalendarPageView(events: arrEvents)                              .tag( MainPage.calendar )
+                CalendarPageView(events: arrEvents, appPage: $appPage)                              .tag( MainPage.calendar )
                 GoalsPageView(events: arrEvents )           .tag( MainPage.goals )
                 CategoriesPageView(events: arrEvents )      .tag( MainPage.categories )
                 DataPageView(events: arrEvents)                                  .tag( MainPage.data )

@@ -134,6 +134,28 @@ struct TutorialViews: View {
     @State var nextButtonIsActive: Bool = false
     @State var showSkipTutorialWarning: Bool = false
     
+    private func progressScene(to passedScene: TutorialScene? = nil) {
+        if passedScene == nil { scene = scene.advanceScene() }
+        else { scene = passedScene! }
+        
+        let bounds = scene.getValidSceneBounds(for: broadScene)
+        if scene.rawValue > bounds.1 {
+            switch broadScene {
+            case .goal: broadScene = .tag
+            case .tag: broadScene = .event
+            case .event: page = .app
+            }
+            
+            if scene == .complete {
+                RecallModel.index.finishTutorial()
+                page = .app
+            }
+        }
+                    
+        nextButtonIsActive = false
+    }
+    
+    
 //    MARK: ViewBuilders
     @ViewBuilder
     private func makeHeader() -> some View {
@@ -177,21 +199,10 @@ struct TutorialViews: View {
     
             Spacer()
             
+//        MARK: Next Button
 //            This button also checks to make sure that when a new broad scene is ready, the view switches to it
             ConditionalLargeRoundedButton(title: "continue", icon: "arrow.forward", condition: { nextButtonIsActive }) {
-                
-                scene = scene.advanceScene()
-                
-                let bounds = scene.getValidSceneBounds(for: broadScene)
-                if scene.rawValue > bounds.1 {
-                    switch broadScene {
-                    case .goal: broadScene = .tag
-                    case .tag: broadScene = .event
-                    case .event: page = .app
-                    }
-                }
-                            
-                nextButtonIsActive = false
+                progressScene()
             }
         }
     }
@@ -253,7 +264,13 @@ struct TutorialViews: View {
         .padding(7)
         .padding(.bottom, 30)
         .universalBackground()
-        .defaultAlert($showSkipTutorialWarning, title: "Skip tutorial?", description: "")
+        .alert("Skip tutorial?", isPresented: $showSkipTutorialWarning) {
+            Button("skip") { progressScene(to: .complete) }
+            Button(role: .cancel) { } label: {
+                Text("cancel")
+            }
+
+        }
         .transition(.opacity)
     }
 }

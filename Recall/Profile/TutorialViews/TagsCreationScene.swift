@@ -19,6 +19,7 @@ extension TutorialViews {
         @ObservedResults(RecallCalendarEvent.self) var events
         
         @State var showingTagCreationView: Bool = false
+        @State var sentTag: Bool = false
         
         @State var name: String = ""
         @State var color: Color = Colors.tint
@@ -131,7 +132,17 @@ extension TutorialViews {
                 }
             }
             .slideTransition()
-            .onAppear() { nextButtonIsActive = true }
+            .onAppear() {
+                nextButtonIsActive = true
+                
+                if sentTag { return }
+                let tag = RecallCategory(ownerID: RecallModel.ownerID,
+                                         label: name,
+                                         goalRatings: goalRatings,
+                                         color: color)
+                RealmManager.addObject(tag)
+                sentTag = true
+            }
             .sheet(isPresented: $showingTagCreationView) {
                 CategoryCreationView(editing: false,
                                      tag: nil,

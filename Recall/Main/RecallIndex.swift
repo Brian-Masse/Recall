@@ -28,6 +28,8 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var dateOfBirth: Date = .now
     @Persisted var dateJoined: Date = .now
     
+    @Persisted var finishedTutorial: Bool = false
+    
     convenience init( ownerID: String, email: String, firstName: String, lastName: String) {
         self.init()
         self.ownerID = ownerID
@@ -48,6 +50,18 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
             thawed.email = email
             thawed.phoneNumber = phoneNumber
             thawed.dateOfBirth = dateOfBirth
+        }
+    }
+    
+    func finishTutorial() {
+        RealmManager.updateObject(self) { thawed in
+            thawed.finishedTutorial = true
+        }
+    }
+    
+    func replayTutorial() {
+        RealmManager.updateObject(self) { thawed in
+            thawed.finishedTutorial = false
         }
     }
     

@@ -40,6 +40,7 @@ struct CalendarPageView: View {
     @State var swipeDirection: AnyTransition.SlideDirection = .right
 
     @State var showingProfileView: Bool = false
+    @Binding var appPage: ContentView.EntryPage
     
     @Namespace private var calendarPageView
     
@@ -99,7 +100,7 @@ struct CalendarPageView: View {
             CalendarEventCreationView.makeEventCreationView(currentDay: currentDay)
         }
         .sheet(isPresented: $showingProfileView) {
-            ProfileView()
+            ProfileView(appPage: $appPage)
         }
         .universalBackground()
         
