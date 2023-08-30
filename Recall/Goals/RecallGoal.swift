@@ -71,7 +71,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         }
     }
     
-    enum Priority: String, Identifiable {
+    enum Priority: String, Identifiable, CaseIterable {
         case high
         case medium
         case low

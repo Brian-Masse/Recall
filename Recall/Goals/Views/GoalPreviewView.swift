@@ -64,11 +64,11 @@ struct GoalPreviewView: View {
                     makeSeperator()
 
                     ActivityPerDay(recentData: true, title: "", goal: goal, events: events)
-                        .frame(height: 100)
+//                        .frame(height: 100)
                 }
             }
             .padding(.horizontal)
-            .frame(height: 110)
+            .frame(height: 70)
 
 //            MARK: Progress Bar
             VStack {

@@ -29,12 +29,24 @@ struct GoalsPageView: View {
             }
             
             ScrollView(.vertical) {
-                LazyVStack {
-//                Group {
+//                LazyVStack {
+                VStack(alignment: .leading) {
                     if goals.count != 0 {
-                        ForEach( goals, id: \.label ) { goal in
-                            GoalPreviewView(goal: goal, events: events)
-                                .padding(.bottom)
+                        
+                        ForEach( RecallGoal.Priority.allCases) { priority in
+                        
+                            let filtered = goals.filter { goal in goal.priority == priority.rawValue }
+                            
+                            if filtered.count != 0 {
+                                VStack(alignment: .leading) {
+                                    UniversalText( priority.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                                    
+                                    ForEach( Array(filtered), id: \.label ) { goal in
+                                        GoalPreviewView(goal: goal, events: events)
+                                            .padding(.bottom, 5)
+                                    }
+                                }.padding(.bottom)
+                            }
                         }
                     } else {
                         UniversalText( Constants.goalsSplashPurpose,
