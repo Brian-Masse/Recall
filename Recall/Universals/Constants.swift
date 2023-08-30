@@ -14,7 +14,7 @@ class Colors {
     static var tint: Color { RecallModel.shared.activeColor }
     static var main: Color { accentGreen }
     
-    static let colorOptions: [Color] = [ accentGreen, blue, purple, pink, yellow,  ]
+    static let colorOptions: [Color] = [ accentGreen, blue, purple, grape, pink, red, yellow,  ]
     
     static let lightGrey = makeColor(247, 255, 230)
     static let secondaryLightColor = makeColor( 227, 235, 211 )
@@ -25,7 +25,9 @@ class Colors {
     static let yellow = makeColor(234, 169, 40)
     static let pink = makeColor(198, 62, 120)
     static let purple = makeColor(106, 38, 153)
+    static let grape = makeColor(70, 42, 171)
     static let blue = makeColor(69, 121, 251)
+    static let red = makeColor(236, 81, 46)
     
     private static func makeColor( _ r: CGFloat, _ g: CGFloat, _ b: CGFloat ) -> Color {
         Color(red: r / 255, green: g / 255, blue: b / 255)
