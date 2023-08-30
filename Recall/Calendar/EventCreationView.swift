@@ -99,6 +99,7 @@ struct CalendarEventCreationView: View {
     @State var showingAlert: Bool = false
     @State var alertTitle: String = ""
     @State var alertMessage: String = ""
+    @State var showingTagCreationView: Bool = false
     
     let editing: Bool
     let event: RecallCalendarEvent?
@@ -241,19 +242,21 @@ struct CalendarEventCreationView: View {
         TextFieldWithPrompt(title: "Leave an optional note", binding: $notes)
             .padding(.bottom)
         
-        SliderWithPrompt(label: "When did this event start?",
-                         minValue: 0,
-                         maxValue: 23.5,
-                         binding: startTimeBinding,
-                         strBinding: startTimeLabel,
-                         textFieldWidth: 120)
+//        SliderWithPrompt(label: "When did this event start?",
+//                         minValue: 0,
+//                         maxValue: 23.5,
+//                         binding: startTimeBinding,
+//                         strBinding: startTimeLabel,
+//                         textFieldWidth: 120)
         
-        SliderWithPrompt(label: "When did this event end?",
-                         minValue: 0,
-                         maxValue: 23.5,
-                         binding: endTimeBinding,
-                         strBinding: endTimeLabel,
-                         textFieldWidth: 120)
+        TimeSelector(label: "Whend did this event start?", time: $startTime)
+        TimeSelector(label: "Whend did this event end?", time: $endTime)
+//        SliderWithPrompt(label: "When did this event end?",
+//                         minValue: 0,
+//                         maxValue: 23.5,
+//                         binding: endTimeBinding,
+//                         strBinding: endTimeLabel,
+//                         textFieldWidth: 120)
     }
     
     @ViewBuilder
@@ -268,7 +271,9 @@ struct CalendarEventCreationView: View {
         UniversalText("All Tags", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
         WrappedHStack(collection: Array( categories.filter { tag in !tag.isFavorite} )) { tag in
             makeTagSelector(tag: tag)
-        }
+        }.padding(.bottom)
+        
+        LargeRoundedButton("create another tag", icon: "arrow.up") { showingTagCreationView = true }
     }
     
     @ViewBuilder
@@ -339,6 +344,13 @@ struct CalendarEventCreationView: View {
         .background(Colors.tint)
         
         .onChange(of: category) { newValue in goalRatings = RecallCalendarEvent.translateGoalRatingList(newValue.goalRatings) }
+        .sheet(isPresented: $showingTagCreationView) {
+            CategoryCreationView(editing: false,
+                                 tag: nil,
+                                 label: "",
+                                 goalRatings: Dictionary(),
+                                 color: Colors.tint)
+        }
         
         .defaultAlert($showingAlert, title: "Incomplete Form", description: "Please provide a title, start and end times, and a tag before creating the event")
     }

@@ -276,3 +276,37 @@ struct LabeledColorPicker: View {
         }
     }
 }
+
+
+
+//MARK: Time Selector
+
+struct TimeSelector: View {
+    
+    let label: String 
+    @Binding var time: Date
+    
+    private var timeBinding: Binding<Float> {
+        Binding { Float(time.getHoursFromStartOfDay().round(to: 2)) }
+        set: { newValue, _ in
+            time = time.dateBySetting(hour: Double(newValue)).round(to: RecallModel.dateSnapping)
+        }
+    }
+    
+    private var timeLabel: Binding<String> {
+        Binding { time.formatted(date: .omitted, time: .shortened) }
+        set: { newValue, _ in }
+    }
+    
+    var body: some View {
+        VStack {
+            SliderWithPrompt(label: label,
+                             minValue: 0,
+                             maxValue: 23.5,
+                             binding: timeBinding,
+                             strBinding: timeLabel,
+                             textFieldWidth: 120)
+        }
+    }
+    
+}

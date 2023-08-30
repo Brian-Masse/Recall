@@ -58,6 +58,7 @@ struct TutorialViews: View {
         case eventTime
         case eventTag
         case eventGoals
+        case eventView
         
         case complete
         
@@ -80,7 +81,7 @@ struct TutorialViews: View {
         }
     
         func returnScene(in activeBroadScene: BroadScene) -> TutorialScene {
-            getScene(from: max( self.rawValue - 1, getScenesBefore(activeBroadScene) + 1) )
+            getScene(from: max( self.rawValue - 1, getScenesBefore(activeBroadScene)) )
         }
         
         func setScene(to index: Int) -> TutorialScene {
@@ -98,7 +99,7 @@ struct TutorialViews: View {
             switch scene {
             case .goal: return 4
             case .tag: return 4
-            case .event: return 5
+            case .event: return 6
             }
         }
         
@@ -186,7 +187,7 @@ struct TutorialViews: View {
                     switch broadScene {
                     case .goal: broadScene = .tag
                     case .tag: broadScene = .event
-                    default: break
+                    case .event: page = .app
                     }
                 }
                             
@@ -253,5 +254,6 @@ struct TutorialViews: View {
         .padding(.bottom, 30)
         .universalBackground()
         .defaultAlert($showSkipTutorialWarning, title: "Skip tutorial?", description: "")
+        .transition(.opacity)
     }
 }
