@@ -44,7 +44,7 @@ extension TutorialViews {
                               font: Constants.titleFont)
                 .padding(.bottom)
                 
-                UniversalText( "Tags are a way to organize similar types of events in your life, as well as label how those activites contribute to your goals.",
+                UniversalText( Constants.tagSplashPurpose,
                                size: Constants.UISubHeaderTextSize,
                                font: Constants.mainFont)
                 .padding(.trailing, 20)

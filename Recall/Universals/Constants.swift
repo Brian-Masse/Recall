@@ -69,4 +69,10 @@ class Constants {
     static let titleFont: ProvidedFont = .syneHeavy
     static let mainFont: ProvidedFont = .renoMono
     
+//    texts
+    static let tagSplashPurpose: String = "Tags are a way to organize similar types of events in your life, as well as label how those activites contribute to your goals."
+    static let goalsSplashPurpose: String = "Goals allow you to automatically count certain activities towards the personal goals in your life."
+    
+    static let templatesSplashPurpose: String = "Templates allow you save and quickly recall frequent events. To create a template, select an event and click 'make template'"
+    
 }

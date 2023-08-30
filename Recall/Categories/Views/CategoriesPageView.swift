@@ -73,18 +73,28 @@ struct CategoriesPageView: View {
             let favorites = Array(tags.filter { tag in tag.isFavorite })
             let nonFavorites = Array(tags.filter { tag in !tag.isFavorite })
             
-            ScrollView(.vertical) {
+            if tags.count != 0 {
+                ScrollView(.vertical) {
+                    VStack {
+                        if favorites.count != 0 {
+                            makeTagList(from: favorites, title: "Favorite Tags")
+                                .padding(.bottom)
+                        }
+                        
+                        if nonFavorites.count != 0 {
+                            makeTagList(from: nonFavorites, title: "All Tags")
+                                .padding(.bottom)
+                                .padding(.bottom, Constants.UIBottomOfPagePadding)
+                        }
+                    }
+                }
+            } else {
                 VStack {
-                    if favorites.count != 0 {
-                        makeTagList(from: favorites, title: "Favorite Tags")
-                            .padding(.bottom)
-                    }
+                    UniversalText( Constants.tagSplashPurpose,
+                                   size: Constants.UIDefaultTextSize,
+                                   font: Constants.mainFont)
                     
-                    if nonFavorites.count != 0 {
-                        makeTagList(from: nonFavorites, title: "All Tags")
-                            .padding(.bottom)
-                            .padding(.bottom, Constants.UIBottomOfPagePadding)
-                    }
+                    Spacer()
                 }
             }
         }
@@ -128,14 +138,24 @@ struct CategoriesPageView: View {
         var body: some View {
             let templates = RecallModel.getTemplates(from: events)
             
-            ScrollView(.vertical) {
-                VStack(alignment: .leading) {
-                    ForEach( templates ) { template in
-                        Wrapper(events: events, template: template)
+            if templates.count != 0 {
+                ScrollView(.vertical) {
+                    VStack(alignment: .leading) {
+                        ForEach( templates ) { template in
+                            Wrapper(events: events, template: template)
+                        }
                     }
+                    .opaqueRectangularBackground(7, stroke: true)
+                    .padding(.bottom, Constants.UIBottomOfPagePadding)
                 }
-                .opaqueRectangularBackground(7, stroke: true)
-                .padding(.bottom, Constants.UIBottomOfPagePadding)
+            } else {
+                VStack {
+                    UniversalText(Constants.templatesSplashPurpose,
+                                  size: Constants.UIDefaultTextSize,
+                                  font: Constants.mainFont)
+                    
+                    Spacer()
+                }
             }
         }
     }

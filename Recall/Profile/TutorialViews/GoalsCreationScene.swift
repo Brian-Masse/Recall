@@ -67,8 +67,7 @@ extension TutorialViews {
                               font: Constants.titleFont)
                 .padding(.bottom)
                 
-                //            They can be as narrow as eating 3 meals a day or as open as staying productive.
-                UniversalText( "Goals allow you to automatically count certain activities towards the personal goals in your life." ,
+                UniversalText( Constants.goalsSplashPurpose ,
                                size: Constants.UISubHeaderTextSize,
                                font: Constants.mainFont)
                 .padding(.trailing, 20)

@@ -17,7 +17,7 @@ struct ScrollChart<Content: View>: View {
     let content: Content
     
     init( _ dataCount: Int, @ViewBuilder _ content: () -> Content ) {
-        self.dataCount = dataCount
+        self.dataCount = max(dataCount, 21)
         self.content = content()
     }
     

@@ -31,9 +31,15 @@ struct GoalsPageView: View {
             ScrollView(.vertical) {
                 LazyVStack {
 //                Group {
-                    ForEach( goals, id: \.label ) { goal in
-                        GoalPreviewView(goal: goal, events: events)
-                            .padding(.bottom)
+                    if goals.count != 0 {
+                        ForEach( goals, id: \.label ) { goal in
+                            GoalPreviewView(goal: goal, events: events)
+                                .padding(.bottom)
+                        }
+                    } else {
+                        UniversalText( Constants.goalsSplashPurpose,
+                                       size: Constants.UIDefaultTextSize,
+                                       font: Constants.mainFont)
                     }
                 }
             .padding(.bottom, Constants.UIBottomOfPagePadding)
