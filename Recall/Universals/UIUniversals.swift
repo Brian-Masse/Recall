@@ -208,10 +208,10 @@ struct CircularProgressView: View {
                 .rotationEffect(.degrees(-90))
             
             VStack {
-                UniversalText("\(Int(currentValue)) / \(Int(totalValue))", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                UniversalText("\(Int(currentValue)) / \(Int(totalValue))", size: Constants.UIHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
                     .padding(.bottom, 5)
                 UniversalText("\(((currentValue / totalValue) * 100).round(to: 2)  )%", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            }
+            }.padding()
         }
     }
 }

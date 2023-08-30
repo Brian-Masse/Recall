@@ -170,6 +170,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     }
     
 //    This checks to see if this event has a multiplier for a specifc goal (ie. coding should have 'productive')
+//    @MainActor
     private func getGoalMultiplier(from goal: RecallGoal) -> Double {
         let key = goal.getEncryptionKey()
         let goalRatings = self.goalRatings
@@ -177,6 +178,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         return Double(data) ?? 0
     }
     
+//    @MainActor
     func getGoalPrgress(_ goal: RecallGoal) -> Double {
         if RecallGoal.GoalType.getRawType(from: goal.type) == .hourly { return getLengthInHours() * getGoalMultiplier(from: goal) }
         else if goal.targetTag?.label ?? "" == self.category?.label ?? "-" { return 1 }

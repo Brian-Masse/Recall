@@ -48,7 +48,8 @@ class RecallDataModel: ObservableObject {
           while iterator <= (.now + Constants.DayTime).resetToStartOfDay() {
     //            for goal in goals { nodes.append(.init(date: iterator, count: 1, category: "", goal: goal.label)) }
               let count = goals.reduce(0) { partialResult, goal in
-                  partialResult + (goal.goalWasMet(on: iterator, events: events) ? 1 : 0)
+//                  partialResult + (goal.goalWasMet(on: iterator, events: events) ? 1 : 0)
+                  0
               }
               nodes.append(.init(date: iterator, count: Double(count), category: "", goal: ""))
 
@@ -67,11 +68,11 @@ class RecallDataModel: ObservableObject {
 
           while iterator <= (.now.resetToStartOfDay() + Constants.DayTime) {
               for goal in goals {
-                  let progressNum = 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
-                  let met = goal.goalWasMet(on: iterator, events: events)
-
-                  progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
-                  timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
+//                  let progressNum = 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
+//                  let met = goal.goalWasMet(on: iterator, events: events)
+//
+//                  progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
+//                  timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
 
               }
 
@@ -104,9 +105,9 @@ class RecallDataModel: ObservableObject {
       @MainActor
       private func makeCompletionPercentageData() async -> [DataNode] {
           goals.compactMap { goal in
-              let data = goal.countGoalMet(from: events)
-              let percentage = 100 * (Double(data.0) / Double(data.1 + data.0))
-              return .init(date: .now, count: percentage, category: "", goal: goal.label)
+//              let data = goal.countGoalMet(from: events)
+//              let percentage = 100 * (Double(data.0) / Double(data.1 + data.0))
+              return .init(date: .now, count: 0, category: "", goal: goal.label)
           }
       }
         

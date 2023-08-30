@@ -30,7 +30,7 @@ struct GoalsPageView: View {
             
             ScrollView(.vertical) {
 //                LazyVStack {
-                VStack(alignment: .leading) {
+                LazyVStack(alignment: .leading) {
                     if goals.count != 0 {
                         
                         ForEach( RecallGoal.Priority.allCases) { priority in

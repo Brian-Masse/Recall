@@ -124,7 +124,8 @@ struct MainView: View {
                 CalendarPageView(events: arrEvents, appPage: $appPage)                              .tag( MainPage.calendar )
                 GoalsPageView(events: arrEvents )           .tag( MainPage.goals )
                 CategoriesPageView(events: arrEvents )      .tag( MainPage.categories )
-                DataPageView(events: arrEvents)                                  .tag( MainPage.data )
+//                DataPageView(events: arrEvents)                                  .tag( MainPage.data )
+                Text("hi")                                  .tag( MainPage.data )
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             

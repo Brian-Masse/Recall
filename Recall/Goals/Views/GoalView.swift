@@ -50,7 +50,7 @@ struct GoalView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedResults(RecallCategory.self) var tags
     @ObservedRealmObject var goal: RecallGoal
-    @StateObject var dataModel: RecallGoalDataModel = RecallGoalDataModel()
+    @EnvironmentObject var dataModel: RecallGoalDataModel
     
     let events: [RecallCalendarEvent]
     
@@ -132,7 +132,7 @@ struct GoalView: View {
         }
         
 //
-        ActivityPerDay(recentData: false, title: "activites per day", goal: goal, events: events)
+        ActivityPerDay(recentData: false, title: "activites per day", goal: goal, data: dataModel.progressOverTimeData)
             .frame(height: 160)
             .padding(5)
             .secondaryOpaqueRectangularBackground()
@@ -160,9 +160,9 @@ struct GoalView: View {
                     
                     makeQuickActions()
 
-                    makeContributingTags()
-
                     makeGoalReview()
+                    
+                    makeContributingTags()
                 }
             }
             Spacer()
@@ -170,7 +170,7 @@ struct GoalView: View {
         .padding(7)
         .universalBackground()
         .sheet(isPresented: $showingEditingScreen) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
-        .onAppear { dataModel.makeData(for: goal, with: events) }
+//        .onAppear { dataModel.makeData(for: goal, with: events) }
         .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
             Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
         }

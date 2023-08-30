@@ -63,7 +63,9 @@ struct GoalPreviewView: View {
 
                     makeSeperator()
 
-                    ActivityPerDay(recentData: true, title: "", goal: goal, events: events)
+                    ActivityPerDay(recentData: true, title: "", goal: goal, data: dataModel.recentProgressOverTimeData)
+                    
+//                    ActivityPerDay(recentData: true, title: "", goal: goal, events: events)
 //                        .frame(height: 100)
                 }
             }
@@ -103,9 +105,12 @@ struct GoalPreviewView: View {
             Button { showingEditingView = true }  label:          { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
             Button(role: .destructive) { showingDeletionAlert = true } label:    { Label("delete", systemImage: "trash") }
         }
-        .fullScreenCover(isPresented: $showingGoalView) { GoalView(goal: goal, events: events) }
+        .fullScreenCover(isPresented: $showingGoalView) {
+            GoalView(goal: goal, events: events)
+                .environmentObject(dataModel)
+        }
         .sheet(isPresented: $showingEditingView) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
-        .task { dataModel.makeData(for: goal, with: events) }
+        .task { await dataModel.makeData(for: goal, with: events) }
         .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
             Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
         }
