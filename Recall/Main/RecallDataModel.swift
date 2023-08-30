@@ -18,7 +18,7 @@ class RecallDataModel: ObservableObject {
         }.sorted { node1, node2 in node1.category < node2.category }
     }
     
-//    THis merges data points that all have the same tag
+//    This merges data points that all have the same tag
     private func compressData(from data: [DataNode]) async -> [DataNode] {
         Array( data.reduce(Dictionary<String, DataNode>()) { partialResult, node in
             let key = node.category
@@ -47,9 +47,9 @@ class RecallDataModel: ObservableObject {
           var nodes : [DataNode] = []
           while iterator <= (.now + Constants.DayTime).resetToStartOfDay() {
     //            for goal in goals { nodes.append(.init(date: iterator, count: 1, category: "", goal: goal.label)) }
-              let count = goals.reduce(0) { partialResult, goal in
-//                  partialResult + (goal.goalWasMet(on: iterator, events: events) ? 1 : 0)
-                  0
+              var count: Int = 0
+              for goal in goals {
+                  await count += (goal.goalWasMet(on: iterator, events: events) ? 1 : 0)
               }
               nodes.append(.init(date: iterator, count: Double(count), category: "", goal: ""))
 
@@ -68,11 +68,11 @@ class RecallDataModel: ObservableObject {
 
           while iterator <= (.now.resetToStartOfDay() + Constants.DayTime) {
               for goal in goals {
-//                  let progressNum = 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
-//                  let met = goal.goalWasMet(on: iterator, events: events)
-//
-//                  progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
-//                  timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
+                  let progressNum = await 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
+                  let met = await goal.goalWasMet(on: iterator, events: events)
+
+                  progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
+                  timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
 
               }
 

@@ -34,33 +34,33 @@ struct EventsDataSection: View {
                 
                 DataPicker(optionsCount: 2, labels: ["This Week", "All Time"], fontSize: Constants.UISubHeaderTextSize, selectedOption: $viewFilter)
                     .padding(.bottom)
-                
+
                 Group {
                     UniversalText("Daily Averages", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                         .padding(.bottom, 5)
-                    
+
                     AverageActivityByTag(recents: viewFilter == 0, data: data.getHourlData(from: viewFilter), unit: "")
                     EventsDataSummaries.DailyAverage(data: data.getCompressedHourlData(from: viewFilter), unit: "HR/DY")
-                    
+
                     LargeText(mainText: "\((Double(data.getTotalHours(from: viewFilter)) / timePeriod).round(to: 2))", subText: "HR/DY")
                         .padding(.vertical)
                 }
-                
+
                 Seperator(orientation: .horizontal)
                 
                 Group {
                     UniversalText("Activities", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                    
+
                     ActivitiesPerDay("Hours per day, by tag", data: data.getHourlData(from: viewFilter), scrollable: viewFilter == 1 )
                     EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: viewFilter), unit: "HR")
                     EventsDataSummaries.ActivityPerTag(data:        data.getCompressedHourlData(from: viewFilter), unit: "HR")
-                    
+
                     Seperator(orientation: .horizontal)
-                    
+
                     ActivitiesPerDay("Events per day, by tag", data: data.getTagData(from: viewFilter), scrollable: viewFilter == 1 )
                     EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedTagData(from: viewFilter), unit: "")
                     EventsDataSummaries.ActivityPerTag(data:        data.getCompressedTagData(from: viewFilter), unit: "")
-                    
+
 //                    Seperator(orientation: .horizontal)
                 }
             }

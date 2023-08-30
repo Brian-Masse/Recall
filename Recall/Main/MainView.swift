@@ -122,10 +122,15 @@ struct MainView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
                 CalendarPageView(events: arrEvents, appPage: $appPage)                              .tag( MainPage.calendar )
-                GoalsPageView(events: arrEvents )           .tag( MainPage.goals )
-                CategoriesPageView(events: arrEvents )      .tag( MainPage.categories )
-//                DataPageView(events: arrEvents)                                  .tag( MainPage.data )
-                Text("hi")                                  .tag( MainPage.data )
+//                GoalsPageView(events: arrEvents )
+                    Text("goals").tag( MainPage.goals )
+//                CategoriesPageView(events: arrEvents )
+                Rectangle()
+                    .foregroundColor(.red)
+                    .padding()
+                    .tag( MainPage.categories )
+                DataPageView(events: arrEvents, page: $currentPage)                                  .tag( MainPage.data )
+//                Text("hi")                                  .tag( MainPage.data )
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             
@@ -136,6 +141,7 @@ struct MainView: View {
         .onAppear {
             Task { await refreshData(events: Array(events), goals: Array(goals)) }
             RecallModel.shared.setTint(from: colorScheme)
+            Constants.setupConstants()
         }
         .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
         

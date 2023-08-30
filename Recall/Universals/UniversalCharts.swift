@@ -61,18 +61,12 @@ struct ChartOverTimeXAxis: ViewModifier {
             .chartXAxis {
                 AxisMarks(values: .stride(by: .day)) { value in
                     if let date = value.as( Date.self ) {
-                        
                         let dateLabel = "\(date.formatted(.dateTime.day()))"
-                        
+
                         let sundayLabel = !date.isSunday() ? "" : "Sun"
                         let bottomLabel = date.isFirstOfMonth() ? "\(date.formatted(.dateTime.month()))" : ( sundayLabel )
-                        
-                        AxisValueLabel(centered: true) {
-                            VStack(alignment: .leading) {
-                                UniversalText( dateLabel, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: false)
-                                UniversalText(bottomLabel, size: Constants.UISmallTextSize, font: Constants.mainFont)
-                            }
-                        }
+
+                        AxisValueLabel("\( dateLabel)\n\(bottomLabel)")
                     }
                 }
             }
@@ -90,45 +84,18 @@ struct ReversedXAxis: ViewModifier {
 //MARK: ColoringCharts
 private struct ColorChartByTag: ViewModifier {
     
-    @ObservedResults(RecallCategory.self) var tags
-    @State var dictionary: Dictionary<String, Color> = Dictionary()
-    
     func body(content: Content) -> some View {
-        
         content
-            .chartForegroundStyleScale { value in dictionary[value] ?? .red }
-            .onAppear {
-                var dic: Dictionary<String, Color> = Dictionary()
-                if tags.count == 0 { return }
-                dic["?"] = .white
-                for i in 0..<tags.count  {
-                    let key: String =  tags[i].label
-                    dic[key] = tags[i].getColor()
-                }
-                self.dictionary = dic
-            }
+            .chartForegroundStyleScale { value in Constants.tagColorsDic[value] ?? .red }
     }
 }
 
 private struct ColorChartByGoal: ViewModifier {
     
-    @ObservedResults(RecallGoal.self) var goals
-    @State var dictionary: Dictionary<String, Color> = Dictionary()
-    
     func body(content: Content) -> some View {
         
         content
-            .chartForegroundStyleScale { value in dictionary[value] ?? .red }
-            .onAppear {
-                var dic: Dictionary<String, Color> = Dictionary()
-                if goals.count == 0 { return }
-                dic["?"] = .white
-                for i in 0..<goals.count  {
-                    let key: String =  goals[i].label
-                    dic[key] = Colors.colorOptions[min( Colors.colorOptions.count - 1, i)]
-                }
-                self.dictionary = dic
-            }
+            .chartForegroundStyleScale { value in Constants.goalColorsDic[value] ?? .red }
     }
 }
 

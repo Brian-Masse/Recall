@@ -53,7 +53,11 @@ struct DataPageView: View {
     
     @ObservedObject private var dataModel: RecallDataModel = RecallModel.dataModel
     
+    @Binding var page: MainView.MainPage
+    
 //    MARK: Body
+    
+    @State var hide: Bool = true
     
     var body: some View {
         
@@ -65,17 +69,27 @@ struct DataPageView: View {
 
             ScrollViewReader { value in
                 ScrollView(.vertical) {
-                    LazyVStack(alignment: .leading) {
+                    VStack(alignment: .leading) {
                         
                         QuickLinks(dudContent: DataBookMark.Events, value: value)
                         
                         
-                        OverviewDataSection(goals: arrGoals)
-                            .environmentObject(dataModel )
-                        EventsDataSection()
-                            .environmentObject(dataModel )
-                        GoalsDataSection(goals: arrGoals)
-                            .environmentObject(dataModel )
+                        if !hide {
+                            OverviewDataSection(goals: arrGoals)
+                                .environmentObject(dataModel )
+                            
+                            EventsDataSection()
+                                .environmentObject(dataModel )
+                            
+                            GoalsDataSection(goals: arrGoals)
+                                .environmentObject(dataModel )
+                        }
+                        
+                            
+                            
+                            
+//                        }
+//                        .tabViewStyle(.page)
                         
                         
                         HStack {
@@ -88,6 +102,13 @@ struct DataPageView: View {
                         Spacer()
                     }
                     .padding(.bottom, Constants.UIBottomOfPagePadding)
+                    .onChange(of: page) { newValue in
+                        if newValue == .data {
+                            hide = false
+                        } else {
+                            hide = true
+                        }
+                    }
                 }
             }
         }

@@ -88,7 +88,8 @@ struct ActivitiesPerDay: View {
                     AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
                 }
             }
-        }.frame(height: 220)
+        }
+        .frame(height: 220)
     }
     
     let title: String
