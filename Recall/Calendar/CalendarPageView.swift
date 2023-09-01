@@ -44,6 +44,39 @@ struct CalendarPageView: View {
     
     @Namespace private var calendarPageView
     
+    private func formatDate(_ date: Date) -> String {
+        let weekDay = date.formatted(.dateTime.weekday())
+        let month = date.formatted(.dateTime.month(.abbreviated))
+        let day = date.formatted(.dateTime.day())
+        return "\(weekDay), \(month) \(day)"
+    }
+    
+//    MARK: ViewBuilders
+    
+    @ViewBuilder
+    private func makeDateLabel() -> some View {
+        let matches = currentDay.matches(.now, to: .day)
+        
+        HStack {
+            
+            let currentLabel    = formatDate(currentDay)
+            let nowLabel        = formatDate(.now)
+            
+            if !matches {
+                UniversalText(currentLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true)
+                Image(systemName: "arrow.forward")
+                    .opacity(0.8)
+            }
+            
+            UniversalText(nowLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
+                .onTapGesture { setCurrentDay(with: .now) }
+        }
+        .padding(.bottom)
+    }
+    
+    
+//    MARK: Body
+    
     var body: some View {
         
         VStack(alignment: .leading) {
@@ -57,9 +90,8 @@ struct CalendarPageView: View {
                     .padding(.leading)
                     .onTapGesture { showingProfileView = true }
             }
-            UniversalText( Date.now.formatted(date: .abbreviated, time: .omitted), size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
-                .onTapGesture { setCurrentDay(with: .now) }
-                .padding(.bottom)
+            
+            makeDateLabel()
             
             HStack(alignment: .center) {
                 ForEach(0..<3) { i in
