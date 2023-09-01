@@ -93,34 +93,36 @@ struct ActivityPerDay: View {
         .if(!recentData) { view in view.reversedXAxis() }
         .chartXAxis {
             AxisMarks(values: .stride(by: .day)) { value in
-                if let date = value.as( Date.self ) {
-
-                    let dateLabel = "\(date.formatted(.dateTime.day(.twoDigits)))"
-//
-                    let sundayLabel = !date.isSunday() ? "" : "Sun"
-                    let bottomLabel = date.isFirstOfMonth() ? "\(date.formatted(.dateTime.month()))" : ( sundayLabel )
-
-
-
-//                    AxisValueLabel {
-//                        Text(dateLabel)
-////                        UniversalText( dateLabel, size: Constants.UISmallTextSize, font: Constants.mainFont )
-//                    }
-
-                    AxisValueLabel("\( dateLabel)\n\(bottomLabel)")
-//                        VStack(alignment: .leading) {
-
-//                            Text(  )
-
-//                            UniversalText( , size: Constants.UISmallTextSize, font: Constants.mainFont)
-//                            UniversalText(bottomLabel, size: Constants.UISmallTextSize, font: Constants.mainFont)
-//                        }
-                    
-//
-                    if date.matches(goal.creationDate, to: .day) {
-                        AxisGridLine(centered: true, stroke: .init(lineWidth: 1, lineCap: .round, dash: [2, 6]))
-                            .foregroundStyle(.red)
-
+                if !recentData {
+                    if let date = value.as( Date.self ) {
+                        
+                        let dateLabel = "\(date.formatted(.dateTime.day(.twoDigits)))"
+                        //
+                        let sundayLabel = !date.isSunday() ? "" : "Sun"
+                        let bottomLabel = date.isFirstOfMonth() ? "\(date.formatted(.dateTime.month()))" : ( sundayLabel )
+                        
+                        
+                        
+                        //                    AxisValueLabel {
+                        //                        Text(dateLabel)
+                        ////                        UniversalText( dateLabel, size: Constants.UISmallTextSize, font: Constants.mainFont )
+                        //                    }
+                        
+                        AxisValueLabel("\( dateLabel)\n\(bottomLabel)")
+                        //                        VStack(alignment: .leading) {
+                        
+                        //                            Text(  )
+                        
+                        //                            UniversalText( , size: Constants.UISmallTextSize, font: Constants.mainFont)
+                        //                            UniversalText(bottomLabel, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                        //                        }
+                        
+                        //
+                        if date.matches(goal.creationDate, to: .day) {
+                            AxisGridLine(centered: true, stroke: .init(lineWidth: 1, lineCap: .round, dash: [2, 6]))
+                                .foregroundStyle(.red)
+                            
+                        }
                     }
                 }
             }

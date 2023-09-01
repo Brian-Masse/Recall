@@ -122,8 +122,9 @@ struct MainView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
                 CalendarPageView(events: arrEvents, appPage: $appPage)                              .tag( MainPage.calendar )
-//                GoalsPageView(events: arrEvents )
-                    Text("goals").tag( MainPage.goals )
+                GoalsPageView(events: arrEvents )
+//                    Text("goals")
+                    .tag( MainPage.goals )
 //                CategoriesPageView(events: arrEvents )
                 Rectangle()
                     .foregroundColor(.red)
