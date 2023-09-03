@@ -30,8 +30,8 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "220"
-            endingLineNumber = "220"
+            startingLineNumber = "230"
+            endingLineNumber = "230"
             landmarkName = "getWidth(from:in:from:)"
             landmarkType = "7">
             <Locations>
@@ -78,8 +78,8 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "219"
-            endingLineNumber = "219"
+            startingLineNumber = "229"
+            endingLineNumber = "229"
             landmarkName = "getWidth(from:in:from:)"
             landmarkType = "7">
             <Locations>
@@ -141,8 +141,8 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "210"
-            endingLineNumber = "210"
+            startingLineNumber = "220"
+            endingLineNumber = "220"
             landmarkName = "getWidth(from:in:from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -157,8 +157,8 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "216"
+            endingLineNumber = "216"
             landmarkName = "getWidth(from:in:from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -173,8 +173,8 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "229"
-            endingLineNumber = "229"
+            startingLineNumber = "239"
+            endingLineNumber = "239"
             landmarkName = "getOverlapData(in:from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -591,63 +591,16 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "9240E018-7AE8-422E-8B15-251CB87B3501"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "164"
-            endingLineNumber = "164"
+            startingLineNumber = "175"
+            endingLineNumber = "175"
             landmarkName = "checkUpdateEarliestEvent()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "9240E018-7AE8-422E-8B15-251CB87B3501 - b23c1141ece2ee8a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Recall.RecallCalendarEvent.checkUpdateEarliestEvent() -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Calendar/RecallCalendarEvent.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "164"
-                  endingLineNumber = "164"
-                  offsetFromSymbolStart = "929">
-               </Location>
-               <Location
-                  uuid = "9240E018-7AE8-422E-8B15-251CB87B3501 - b23c1141ece2ee8a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Recall.RecallCalendarEvent.checkUpdateEarliestEvent() -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Calendar/RecallCalendarEvent.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "164"
-                  endingLineNumber = "164"
-                  offsetFromSymbolStart = "663">
-               </Location>
-               <Location
-                  uuid = "9240E018-7AE8-422E-8B15-251CB87B3501 - b23c1141ece2ee8a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Recall.RecallCalendarEvent.checkUpdateEarliestEvent() -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Calendar/RecallCalendarEvent.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "164"
-                  endingLineNumber = "164"
-                  offsetFromSymbolStart = "852">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

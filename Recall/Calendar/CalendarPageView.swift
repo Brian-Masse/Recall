@@ -12,17 +12,6 @@ import RealmSwift
 struct CalendarPageView: View {
     
 //    MARK: Convenience Functions
-    @ViewBuilder
-    private func makeDateSelector(from date: Date) -> some View {
-        
-        let string = date.formatted(.dateTime.day(.twoDigits))
-        
-        UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.mainFont)
-            .matchedGeometryEffect(id: string, in: calendarPageView)
-            .padding(4)
-            .onTapGesture { setCurrentDay(with: date) }
-    }
-    
     
     private func setCurrentDay(with date: Date) {
         if date > currentDay { swipeDirection = .right }
@@ -31,7 +20,7 @@ struct CalendarPageView: View {
         withAnimation { currentDay = date }
     }
     
-//   MARK: Body
+//   MARK: vars
 
     let events: [RecallCalendarEvent]
     
@@ -58,7 +47,6 @@ struct CalendarPageView: View {
         let matches = currentDay.matches(.now, to: .day)
         
         HStack {
-            
             let currentLabel    = formatDate(currentDay)
             let nowLabel        = formatDate(.now)
             
@@ -74,51 +62,103 @@ struct CalendarPageView: View {
         .padding(.bottom)
     }
     
+//    MARK: DateSelector
+    @ViewBuilder
+    private func makeDateSelectorContent(from date: Date, string: String, month: String) -> some View {
+        let activeDay = date.matches(currentDay, to: .day)
+        
+        if activeDay {
+            VStack {
+                UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
+                UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true )
+            }
+                .overlay( VStack {
+                    Circle()
+                    .universalForegroundColor()
+                        .frame(width: 10, height: 10)
+                        .offset(y: -50)
+                })
+        } else {
+            UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.mainFont, wrap: false, scale: true)
+                .overlay {
+                    if date.isFirstOfMonth() && !currentDay.matches(date, to: .day) {
+                        UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true )
+                            .offset(y: -60)
+                    }
+                }
+                .padding(.horizontal, 2)
+        }
+    }
+    
+    @ViewBuilder
+    private func makeDateSelector(from date: Date) -> some View {
+        
+        let string = date.formatted(.dateTime.day(.twoDigits))
+        let month = date.formatted(.dateTime.month(.abbreviated)).lowercased()
+    
+        makeDateSelectorContent(from: date, string: string, month: month)
+            .if(currentDay.matches(date, to: .day)) { view in
+                view
+                    .padding()
+                    .background(
+                        Rectangle()
+                            .cornerRadius(Constants.UIDefaultCornerRadius)
+                            .universalForegroundColor()
+                            .matchedGeometryEffect(id: "string", in: calendarPageView) )
+            }
+            .onTapGesture { setCurrentDay(with: date) }
+    }
+    
+    @ViewBuilder
+    private func makeDateSelectors() -> some View {
+        ScrollViewReader { reader in
+            ScrollView(.horizontal) {
+                HStack(alignment: .center) {
+                    ForEach(-100..<100) { i in
+                        let date: Date = (Date.now) - (Double( 3 - i ) * Constants.DayTime)
+                        makeDateSelector(from: date)
+                            .id(i)
+                    }
+                }
+                .onAppear() {
+                    reader.scrollTo(0, anchor: .leading)
+                }.onChange(of: currentDay) { newValue in
+                    if newValue.matches(Date.now, to: .day) {
+                        withAnimation { reader.scrollTo(0, anchor: .leading) }
+                    }
+                }
+            }
+            .scrollIndicators(.never)
+        }
+    }
+    
+//    MARK: Headers
+    @ViewBuilder
+    private func makeHeader() -> some View {
+        HStack {
+            UniversalText( "Today's Recall", size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, true, scale: true )
+            Spacer()
+            
+            ResizeableIcon(icon: "person", size: Constants.UIDefaultTextSize)
+                .secondaryOpaqueRectangularBackground()
+                .padding(.leading)
+                .onTapGesture { showingProfileView = true }
+        }
+        
+        makeDateLabel()
+    }
+    
     
 //    MARK: Body
     
     var body: some View {
         
         VStack(alignment: .leading) {
-
+            
+            makeHeader()
+            
             HStack {
-                UniversalText( "Today's Recall", size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, true, scale: true )
-                Spacer()
-                
-                ResizeableIcon(icon: "person", size: Constants.UIDefaultTextSize)
-                    .secondaryOpaqueRectangularBackground()
-                    .padding(.leading)
-                    .onTapGesture { showingProfileView = true }
-            }
-            
-            makeDateLabel()
-            
-            HStack(alignment: .center) {
-                ForEach(0..<3) { i in
-                    let date: Date = currentDay - (Double( 3 - i ) * Constants.DayTime)
-                    makeDateSelector(from: date)
-                }
-                
-                let string = currentDay.formatted(.dateTime.day(.twoDigits))
-                let month = currentDay.formatted(.dateTime.month(.abbreviated)).lowercased()
-                VStack {
-                    UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
-                    UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true )
-                }
-                    .tintRectangularBackground()
-                    .overlay( VStack {
-                        if currentDay.matches(.now, to: .day) {
-                            Circle()
-                                .foregroundColor(Colors.tint)
-                                .frame(width: 10, height: 10)
-                                .offset(y: -50)
-                        }
-                    })
-                
-                makeDateSelector(from: currentDay + Constants.DayTime)
-//                    .padding(.bottom, 5)
-                
-                Spacer()
+                makeDateSelectors()
                 
                 LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
             }

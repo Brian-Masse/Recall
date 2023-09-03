@@ -24,6 +24,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @Persisted var category: RecallCategory? = nil
     @Persisted var goalRatings: RealmSwift.List< GoalNode> = List()
     
+    private var cachedGoalRatings: RealmSwift.List<GoalNode> = List()
+    
 //    MARK: Main
     @MainActor
     convenience init(ownerID: String, title: String, notes: String, startTime: Date, endTime: Date, categoryID: ObjectId, goalRatings: Dictionary<String, String>) {
@@ -39,6 +41,18 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
         
         checkUpdateEarliestEvent()
+    }
+
+//    Certain times the simulator crasehs because it cant access goalRatings on the correct thread.
+//    moving those functions onto the main thread would be virtually impossible, so instead we cache the data into a local variable
+//    that can be accessed on any thread at any time
+//    I have no idea what effect this will have on the memory required for the app
+//    this might not be a permenet solution
+    @MainActor
+    override init() {
+        super.init()
+        
+        self.cachedGoalRatings = self.goalRatings
     }
     
     func identifier() -> String {
@@ -125,9 +139,6 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         RealmManager.updateObject(self) { thawed in
             thawed.isTemplate = !self.isTemplate
         }
-        
-//        if self.isTemplate { RecallModel.index.removeTemplate(self) }
-//        if !self.isTemplate { RecallModel.index.addTemplate(self) }
     }
     
 //    MARK: Class Methods
@@ -173,7 +184,6 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    @MainActor
     private func getGoalMultiplier(from goal: RecallGoal) -> Double {
         let key = goal.getEncryptionKey()
-        let goalRatings = self.goalRatings
         let data = goalRatings.first { node in node.key == key }?.data ?? "0"
         return Double(data) ?? 0
     }
