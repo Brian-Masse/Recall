@@ -36,6 +36,11 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         self.email = email
         self.firstName = firstName
         self.lastName = lastName
+        
+        
+        Task {
+            await initializeIndex()
+        }
     }
     
 //    MARK: Class Methods
@@ -70,5 +75,24 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     func getFullName() -> String {
         "\(firstName) \(lastName)"
     }
+    
+    
+//    MARK: Indexing Functions
+    
+//    this takes care of all the indexxing / constructing that needs to be done when a user first signs in.
+//    It can also be used as a reset, if a user needs to manually reindex their data
+    @MainActor
+    private func initializeIndex() async {
+    
+//        let goals: [RecallGoal] = RealmManager.retrieveObjects()
+//        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+     
+        
+//        this function was initially designed to run setup on the goalProgressHistoryIndex on init
+//        however, the function that gets the progress automatically creates an index if it doesn't find one,
+//        meaning that the index sort of forms itself
+        
+    }
+    
     
 }

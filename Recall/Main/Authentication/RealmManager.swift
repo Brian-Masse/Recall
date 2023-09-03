@@ -48,6 +48,7 @@ class RealmManager: ObservableObject {
     @MainActor lazy var goalsQuery: (QueryPermission<RecallGoal>)                  = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     @MainActor lazy var goalsNodeQuery: (QueryPermission<GoalNode>)                = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     @MainActor lazy var indexQuery: (QueryPermission<RecallIndex>)                 = QueryPermission { query in query.ownerID == RecallModel.ownerID }
+    @MainActor lazy var dicQuery: (QueryPermission<DictionaryNode>)                = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     
     @MainActor
     init() {
@@ -252,6 +253,7 @@ class RealmManager: ObservableObject {
         let _:RecallGoal?           = await self.addGenericSubcriptions(name: QuerySubKey.goal.rawValue, query: goalsQuery.baseQuery )
         let _:GoalNode?             = await self.addGenericSubcriptions(name: QuerySubKey.goalNode.rawValue, query: goalsNodeQuery.baseQuery )
         let _:RecallIndex?          = await self.addGenericSubcriptions(name: QuerySubKey.index.rawValue, query: indexQuery.baseQuery )
+        let _:DictionaryNode?       = await self.addGenericSubcriptions(name: QuerySubKey.dictionary.rawValue, query: dicQuery.baseQuery )
         
     }
     

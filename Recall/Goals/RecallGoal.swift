@@ -36,22 +36,42 @@ class GoalNode: Object, Identifiable, OwnedRealmObject {
 //(ie. you update an event from 4 months ago, donwload the nodes from that time, and update their value)
 
 //They should be used universally as dictionaryNodes, but have been created for indexing historic goalWasMet data for each goal
+//I mainly want to be able to seperate goalNodes from all the other different types of nodes
 
 class DictionaryNode: Object, Identifiable, OwnedRealmObject {
     
     @Persisted(primaryKey: true) var _id: ObjectId
     
+//    the objectOwnerID is the id of the object that has 'dictionary' this dictionaryNode belongs to
+//    it avoids parsing all that information into the key value
     @Persisted var ownerID: String = ""
+    @Persisted var objectOwnerID: String = ""
     @Persisted var key: String = ""
     @Persisted var data: String = ""
     
+    private static var dateFormat: String = "dd/MM/yy"
     
-    convenience init(ownerID: String, key: String, data: String) {
+    convenience init(ownerID: String, objectOwnerID: String, key: String, data: String) {
         self.init()
         
         self.ownerID = ownerID
+        self.objectOwnerID = objectOwnerID
         self.key = key
         self.data = data
+    }
+    
+    static func makeKey(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = DictionaryNode.dateFormat
+        
+        return formatter.string(from: date)
+    }
+    
+    func keyAsDate() -> Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = DictionaryNode.dateFormat
+        
+        return formatter.date(from: self.key) ?? .now
     }
     
 }
@@ -126,12 +146,21 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     @Persisted var type: String = ""
     @Persisted var targetTag: RecallCategory? = nil
     
+    
+//    This will describe if the goal was met on a given day
+//    it is formatted like this for quick retrieval / updating, and so that a single event change will not force the goal to reevaluate
+//    whether it was met for everyday the user has had an account
+//    this property works closely with goalWasMet, getGoalProgress, and the index
+    @Persisted var indexedGoalProgressHistory: List< DictionaryNode > = List()
+    
 //    This overrideKey has a very specific purpose, and does not need to be used in general use of the app
 //    If there is an issue with sync, and data needs to be manually reinserted into the synced realm from a local realm file
 //    the objectIDs of everything will be overriden / changed. This is fine for most objects, however goals use their object ids
 //    to match with GoalNodes which are used for goalRatings.
 //    The overrrideKey is a place to store (from the DB) the previous objectID, and use in encryption key funcs instead
     @Persisted var overrideKey: String? = nil
+    
+    var id: String { self._id.stringValue }
     
     convenience init( ownerID: String, label: String, description: String, frequency: Int, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?) {
         self.init()
@@ -209,17 +238,49 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
 //    MARK: Data Aggregators
     
+    
+    
+//    MARK: GetProgressTowardsGoal
+    
+    @MainActor
+    private func checkProgressIndex(on date: Date) -> Double? {
+        let matchingKey = DictionaryNode.makeKey(from: date)
+        let progressResults: Results<DictionaryNode> = RealmManager.retrieveObject { node in
+            node.objectOwnerID == self.id && node.key == matchingKey
+        }
+        
+        if let progress = progressResults.first {
+            if let numericPrgress = Double( progress.data ) {
+                return numericPrgress
+            }
+        }
+        return nil
+    }
+
     func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now) async -> Double {
+    
+//        attempt to find a dictionaryNode that is already saving the goal progress on that date
+//        This function needs to be run on the main thread, and as such is computationaly inexpensive
+//        If this fails however, it needs to perform a very expensive task, which will then be handled off the main thread, async
+        if let progress = await checkProgressIndex(on: date) { return progress }
         
-        let step = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? 7 * Constants.DayTime : Constants.DayTime
+//        if you didn't find a match, compute the progress, then store it for later, so it doesn't need to be computed again.
+        let computedProgress = computeGoalProgress()
+        await self.makeNewProgressIndex(with: computedProgress, on: date)
         
-        let isSunday = Calendar.current.component(.weekday, from: date) == 1
-        let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: date) ?? date) - (isSunday ? 0 : 7 * Constants.DayTime)
-        let startDate = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? lastSunday : date
+        return computedProgress
         
-        let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() && event.endTime < (startDate + step) }
-        return filtered.reduce(0) { partialResult, event in
-            partialResult + event.getGoalPrgress(self)
+        func computeGoalProgress() -> Double {
+            let step = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? 7 * Constants.DayTime : Constants.DayTime
+            
+            let isSunday = Calendar.current.component(.weekday, from: date) == 1
+            let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: date) ?? date) - (isSunday ? 0 : 7 * Constants.DayTime)
+            let startDate = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? lastSunday : date
+            
+            let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() && event.endTime < (startDate + step) }
+            return filtered.reduce(0) { partialResult, event in
+                partialResult + event.getGoalPrgress(self)
+            }
         }
     }
     
@@ -256,5 +317,18 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
 //    MARK: Indexxing Function
     
-    
+//    if some external code has already determined that there is no index for a given date / it can't be read as progress,
+//    then call this function to create one
+//    this does NOT check if there might be a duplicate index, so it is important that this function is only called if there is no index for the date
+    @MainActor
+    func makeNewProgressIndex( with progress: Double, on date: Date ) {
+        let key = DictionaryNode.makeKey(from: date)
+        
+        let node = DictionaryNode(ownerID: RecallModel.ownerID,
+                                  objectOwnerID: self.id,
+                                  key: key,
+                                  data: "\(progress)")
+        
+        RealmManager.addObject(node)
+    }
 }

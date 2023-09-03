@@ -14,6 +14,7 @@ enum QuerySubKey: String, CaseIterable {
     case goal
     case goalNode
     case index
+    case dictionary
 }
 
 class QueryPermission<T: Object> {
