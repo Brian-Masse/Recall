@@ -29,6 +29,33 @@ class GoalNode: Object, Identifiable, OwnedRealmObject {
     }
 }
 
+
+//MARK: DictionaryNode
+//These are pretty much the same in structure as the goalNode (they are meant to be used as a form of dictionary storage in realmSwift)
+//They will be kept in this form, not even downloaded until one is specifically needed
+//(ie. you update an event from 4 months ago, donwload the nodes from that time, and update their value)
+
+//They should be used universally as dictionaryNodes, but have been created for indexing historic goalWasMet data for each goal
+
+class DictionaryNode: Object, Identifiable, OwnedRealmObject {
+    
+    @Persisted(primaryKey: true) var _id: ObjectId
+    
+    @Persisted var ownerID: String = ""
+    @Persisted var key: String = ""
+    @Persisted var data: String = ""
+    
+    
+    convenience init(ownerID: String, key: String, data: String) {
+        self.init()
+        
+        self.ownerID = ownerID
+        self.key = key
+        self.data = data
+    }
+    
+}
+
 //    MARK: RecallGoal
 class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
@@ -226,4 +253,8 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         
         return allEvents / max(Double(numberOfTimePeriods) * Double(frequency) , 1)
     }
+    
+//    MARK: Indexxing Function
+    
+    
 }
