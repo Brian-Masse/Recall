@@ -257,7 +257,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         return nil
     }
 
-    func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now) async -> Double {
+    func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now, createIndex: Bool = false) async -> Double {
     
 //        attempt to find a dictionaryNode that is already saving the goal progress on that date
 //        This function needs to be run on the main thread, and as such is computationaly inexpensive
@@ -265,12 +265,14 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         if let progress = await checkProgressIndex(on: date) { return progress }
         
 //        if you didn't find a match, compute the progress, then store it for later, so it doesn't need to be computed again.
-        let computedProgress = computeGoalProgress()
-        await self.makeNewProgressIndex(with: computedProgress, on: date)
+        let computedProgress = await computeGoalProgress()
+        
+        if createIndex { await self.makeNewProgressIndex(with: computedProgress, on: date) }
         
         return computedProgress
         
-        func computeGoalProgress() -> Double {
+        func computeGoalProgress() async -> Double {
+            
             let step = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? 7 * Constants.DayTime : Constants.DayTime
             
             let isSunday = Calendar.current.component(.weekday, from: date) == 1

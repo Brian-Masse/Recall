@@ -24,6 +24,18 @@ struct ProfileView: View {
 //    MARK: ViewBuilders
     
     @ViewBuilder
+    private func makeSubButton( title: String, icon: String, action: @escaping () -> Void ) -> some View {
+        HStack {
+            Spacer()
+            UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            Image(systemName: icon)
+            Spacer()
+        }
+        .secondaryOpaqueRectangularBackground()
+        .onTapGesture { action() }
+    }
+    
+    @ViewBuilder
     private func makeContactLabel( title: String, content: String ) -> some View {
         HStack {
             UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
@@ -87,18 +99,16 @@ struct ProfileView: View {
         .opaqueRectangularBackground(7, stroke: true)
         .padding(.bottom, 5)
         
-        HStack {
-            Spacer()
-            UniversalText( "Replay Tutorial", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-            Image(systemName: "arrow.clockwise")
-            Spacer()
-        }
-        .secondaryOpaqueRectangularBackground()
-        .onTapGesture {
+        makeSubButton(title: "Replay Tutorial", icon: "arrow.clockwise") {
             index.replayTutorial()
             appPage = .login
         }
         
+        makeSubButton(title: "reindex Data", icon: "tray.2") {
+            Task {
+                await RecallModel.index.initializeIndex()
+            }
+        }
     }
     
     @ViewBuilder

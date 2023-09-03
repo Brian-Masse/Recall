@@ -82,17 +82,43 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
 //    this takes care of all the indexxing / constructing that needs to be done when a user first signs in.
 //    It can also be used as a reset, if a user needs to manually reindex their data
     @MainActor
-    private func initializeIndex() async {
+    func initializeIndex() async {
     
-//        let goals: [RecallGoal] = RealmManager.retrieveObjects()
-//        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
-     
+        let goals: [RecallGoal] = RealmManager.retrieveObjects()
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
         
-//        this function was initially designed to run setup on the goalProgressHistoryIndex on init
-//        however, the function that gets the progress automatically creates an index if it doesn't find one,
-//        meaning that the index sort of forms itself
+        let startDate = earliestEventDate
+        
+//       for every day since the user created an account, this computes whether or not all of the goals were met
+//       this is destructive in the sens that it will overrite all the current indecies
+//       although the getProgress function on the goals can create these nodes if they are missing, this does it more optimatllt, storage wise
+        await reindexGoalWasMetHistory(startDate: startDate, events: events, goals: goals)
         
     }
     
     
+//    This should be run as little as possible, since it is so computationally expensive.
+    func reindexGoalWasMetHistory(startDate: Date, events: [RecallCalendarEvent], goals: [RecallGoal]) async {
+        var iterator = startDate
+        var dateCounter: Int = 0
+        
+        
+        while iterator <= ( Date.now.resetToStartOfDay() + Constants.DayTime ) {
+            for goal in goals {
+                await self.eraseGoalIndex(goal)
+                let _ = await goal.getProgressTowardsGoal(from: events, on: iterator, createIndex: true)
+            }
+            iterator += Constants.DayTime
+            dateCounter += 1
+        }
+        
+        print(dateCounter)
+    }
+    
+    @MainActor
+    private func eraseGoalIndex(_ goal: RecallGoal) {
+        RealmManager.updateObject(goal) { thawed in
+            goal.indexedGoalProgressHistory = List()
+        }
+    }
 }
