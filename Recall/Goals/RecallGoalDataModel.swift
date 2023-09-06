@@ -81,8 +81,10 @@ class RecallGoalDataModel: ObservableObject {
             if fastLoad && fastLoadCount > RecallGoalDataModel.loadLimit { return nodes }
             if recentData && event.startTime < weekStart { return nodes }
             
-            let count = event.getGoalPrgress(goal)
-            nodes.append(.init(date: event.startTime, count: count, category: "", goal: goal.label))
+            DispatchQueue.main.sync {
+                let count = event.getGoalPrgress(goal)
+                nodes.append(.init(date: event.startTime, count: count, category: "", goal: goal.label))
+            }
             
             fastLoadCount += 1
             

@@ -102,17 +102,21 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         var iterator = startDate
         var dateCounter: Int = 0
         
-        
         while iterator <= ( Date.now.resetToStartOfDay() + Constants.DayTime ) {
             for goal in goals {
-                await self.eraseGoalIndex(goal)
-                let _ = await goal.getProgressTowardsGoal(from: events, on: iterator, createIndex: true)
+                let progress = await goal.computeGoalProgress(on: iterator, from: events)
+                if let _ = await goal.retrieveProgressIndex(on: iterator) {
+                    await goal.updateProgressIndex(to: progress, on: iterator)
+                    
+                } else {
+                    await goal.makeNewProgressIndex(with: progress, on: iterator)
+                }
+                
+                
             }
             iterator += Constants.DayTime
             dateCounter += 1
         }
-        
-        print(dateCounter)
     }
     
     @MainActor
@@ -120,5 +124,31 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         RealmManager.updateObject(goal) { thawed in
             goal.indexedGoalProgressHistory = List()
         }
+    }
+    
+    
+//    MARK: Event Update reindex
+//    these sets of functions react to the ways an event can be updated, and consequently effect the goalProgress index
+    func updateEvent(_ event: RecallCalendarEvent) async {
+        
+        @MainActor
+        func getStartTime() -> Date { event.startTime }
+        
+        var iterator = await getStartTime()
+        let endDate = iterator + (7 * Constants.DayTime)
+        
+        let goals = await event.getGoals()
+        let events: [RecallCalendarEvent] = await RealmManager.retrieveObjects()
+        
+        while iterator <= endDate {
+            
+            for goal in goals {
+                
+                let newProgress = await goal.computeGoalProgress(on: iterator, from: events)
+                await goal.updateProgressIndex(to: newProgress, on: iterator)
+            }
+            iterator += Constants.DayTime
+        }
+        print("finished updating goal Index")
     }
 }

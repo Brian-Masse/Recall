@@ -41,6 +41,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
         
         checkUpdateEarliestEvent()
+        
+        updateIndex()
     }
 
 //    Certain times the simulator crasehs because it cant access goalRatings on the correct thread.
@@ -70,6 +72,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             
             if let retrievedTag = RecallCategory.getCategoryObject(from: tagID) { thawed.category = retrievedTag }
             thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+            
+            updateIndex()
         }
         
         checkUpdateEarliestEvent()
@@ -79,6 +83,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         RealmManager.updateObject(self) { thawed in
             thawed.startTime = startDate ?? thawed.startTime
             thawed.endTime = endDate ?? thawed.endTime
+            
+            updateIndex()
         }
         
         checkUpdateEarliestEvent()
@@ -87,6 +93,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     func updateTag(with tag: RecallCategory) {
         RealmManager.updateObject(self) { thawed in
             thawed.category = tag
+            
+            updateIndex()
         }
     }
     
@@ -94,7 +102,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     func updateGoalRatings(with ratings: Dictionary<String, String>) {
         let list = RecallCalendarEvent.translateGoalRatingDictionary(ratings)
         RealmManager.updateObject(self) { thawed in
+            
             thawed.goalRatings = list
+            
+            updateIndex()
         }
     }
     
@@ -141,7 +152,26 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
+//    This is a list of all the goals this event's tag contributes to
+    @MainActor
+    func getGoals() -> [RecallGoal] {
+        self.goalRatings.compactMap { node in
+            if node.getNumericData() > 0 {
+                if let goal = RecallGoal.getGoalFromKey(node.key) {
+                    return goal
+                }
+            }
+            return nil
+        }
+    }
+    
 //    MARK: Class Methods
+    
+//    When an event changes in any way (is created, updated, or deleted), it needs to quickly reindex the goalWasMet data...
+    private func updateIndex() {
+        Task { await RecallModel.index.updateEvent(self) }
+    }
+    
     @MainActor
     func delete(preserveTemplate: Bool = false) {
         if !preserveTemplate {
@@ -166,6 +196,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             updateDate(startDate: startDate, endDate: endDate)
 //            toggleTemplate()
         }
+        
+        updateIndex()
+
     }
     
     private func checkUpdateEarliestEvent() {
@@ -184,6 +217,11 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    @MainActor
     private func getGoalMultiplier(from goal: RecallGoal) -> Double {
         let key = goal.getEncryptionKey()
+        
+//        @MainActor
+//        func getRatings() -> [GoalNode] { Array(self.goalRatings) }
+        
+//        let ratings = getRatings()
         let data = goalRatings.first { node in node.key == key }?.data ?? "0"
         return Double(data) ?? 0
     }

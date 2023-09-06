@@ -27,6 +27,10 @@ class GoalNode: Object, Identifiable, OwnedRealmObject {
         self.key = key
         self.data = data
     }
+    
+    func getNumericData() -> Int {
+        Int( self.data ) ?? 0
+    }
 }
 
 
@@ -239,17 +243,21 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
 //    MARK: Data Aggregators
     
     
+    @MainActor
+    func retrieveProgressIndex(on date: Date) -> DictionaryNode? {
+        let key = DictionaryNode.makeKey(from: date)
+        let results:Results<DictionaryNode> = RealmManager.retrieveObject { node in
+            node.objectOwnerID == self.id && node.key == key
+        }
+        return results.first
+    }
+    
     
 //    MARK: GetProgressTowardsGoal
     
     @MainActor
     private func checkProgressIndex(on date: Date) -> Double? {
-        let matchingKey = DictionaryNode.makeKey(from: date)
-        let progressResults: Results<DictionaryNode> = RealmManager.retrieveObject { node in
-            node.objectOwnerID == self.id && node.key == matchingKey
-        }
-        
-        if let progress = progressResults.first {
+        if let progress = retrieveProgressIndex(on: date) {
             if let numericPrgress = Double( progress.data ) {
                 return numericPrgress
             }
@@ -257,7 +265,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         return nil
     }
 
-    func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now, createIndex: Bool = false) async -> Double {
+    func getProgressTowardsGoal(from events: [RecallCalendarEvent], on date: Date = .now, createIndex: Bool = true) async -> Double {
     
 //        attempt to find a dictionaryNode that is already saving the goal progress on that date
 //        This function needs to be run on the main thread, and as such is computationaly inexpensive
@@ -265,24 +273,30 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         if let progress = await checkProgressIndex(on: date) { return progress }
         
 //        if you didn't find a match, compute the progress, then store it for later, so it doesn't need to be computed again.
-        let computedProgress = await computeGoalProgress()
+        let computedProgress = await computeGoalProgress(on: date, from: events)
         
         if createIndex { await self.makeNewProgressIndex(with: computedProgress, on: date) }
         
         return computedProgress
+    }
+    
+    @MainActor
+    func computeGoalProgress(on date: Date, from events: [RecallCalendarEvent]) async -> Double {
         
-        func computeGoalProgress() async -> Double {
-            
-            let step = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? 7 * Constants.DayTime : Constants.DayTime
-            
-            let isSunday = Calendar.current.component(.weekday, from: date) == 1
-            let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: date) ?? date) - (isSunday ? 0 : 7 * Constants.DayTime)
-            let startDate = RecallGoal.GoalFrequence.getRawType(from: self.frequency) == .weekly ? lastSunday : date
-            
-            let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() && event.endTime < (startDate + step) }
-            return filtered.reduce(0) { partialResult, event in
-                partialResult + event.getGoalPrgress(self)
-            }
+//        @MainActor
+//        func getFrequency() -> Int { self.frequency }
+        
+//        let frequency = await getFrequency()
+        
+        let step = RecallGoal.GoalFrequence.getRawType(from: frequency) == .weekly ? 7 * Constants.DayTime : Constants.DayTime
+        
+        let isSunday = Calendar.current.component(.weekday, from: date) == 1
+        let lastSunday = (Calendar.current.date(bySetting: .weekday, value: 1, of: date) ?? date) - (isSunday ? 0 : 7 * Constants.DayTime)
+        let startDate = RecallGoal.GoalFrequence.getRawType(from: frequency) == .weekly ? lastSunday : date
+        
+        let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() && event.endTime < (startDate + step) }
+        return filtered.reduce(0) { partialResult, event in
+            partialResult + event.getGoalPrgress(self)
         }
     }
     
@@ -321,16 +335,27 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
 //    if some external code has already determined that there is no index for a given date / it can't be read as progress,
 //    then call this function to create one
-//    this does NOT check if there might be a duplicate index, so it is important that this function is only called if there is no index for the date
     @MainActor
     func makeNewProgressIndex( with progress: Double, on date: Date ) {
-        let key = DictionaryNode.makeKey(from: date)
         
-        let node = DictionaryNode(ownerID: RecallModel.ownerID,
+        let key = DictionaryNode.makeKey(from: date)
+        if let _ = retrieveProgressIndex(on: date) { return }
+        
+        let newNode = DictionaryNode(ownerID: RecallModel.ownerID,
                                   objectOwnerID: self.id,
                                   key: key,
                                   data: "\(progress)")
         
-        RealmManager.addObject(node)
+        RealmManager.addObject(newNode)
+    }
+    
+    @MainActor
+    func updateProgressIndex( to progress: Double, on date: Date ) {
+        if let progressIndex = retrieveProgressIndex(on: date) {
+
+            RealmManager.updateObject(progressIndex) { thawed in
+                thawed.data = "\(progress)"
+            }
+        }
     }
 }
