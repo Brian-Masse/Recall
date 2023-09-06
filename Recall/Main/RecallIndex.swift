@@ -127,7 +127,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     }
     
     
-//    MARK: Event Update reindex
+//    MARK: reindex
 //    these sets of functions react to the ways an event can be updated, and consequently effect the goalProgress index
     func updateEvent(_ event: RecallCalendarEvent) async {
         
