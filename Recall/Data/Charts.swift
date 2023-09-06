@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Charts
+import RealmSwift
 
 
 //MARK: Event Charts
@@ -22,41 +23,96 @@ struct AverageActivityByTag: View {
         let timePeriod = recents ? 7 : Date.now.timeIntervalSince( RecallModel.index.earliestEventDate ) / Constants.DayTime
         return data.compactMap { node in
             .init(date: .now, count: node.count / timePeriod, category: node.category, goal: "")
+        }.sorted { node1, node2 in
+            node1.count >= node2.count
+        }
+    }
+    
+    private func findMax(from data: [DataNode]) -> Double {
+        let maxLabel = data.first?.category ?? "?"
+        return data.reduce(0) { partialResult, node in
+            if node.category == maxLabel {
+                return partialResult + node.count
+            }
+            return partialResult
         }
         
     }
+    
+    @ObservedResults(RecallCategory.self) var tags
     
     let recents: Bool
     let data: [DataNode]
     let unit: String
     
+    @State var activeLabel: String? = nil
+    
     var body: some View {
         
         let averageData = transformData()
+        let max = findMax(from: averageData)
         
         UniversalText( "Average Activity HR/DY", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-        Chart {
-            ForEach(averageData) { datum in
-                BarMark(x: .value("X", datum.category),
-                        y: .value("Y", datum.count  ))
-            
-                .foregroundStyle(by: .value("SERIES", datum.category))
-                .cornerRadius(Constants.UIBarMarkCOrnerRadius)
-
-            }
-        }
-        .colorChartByTag()
-        .chartLegend(.hidden)
-        .chartYAxis {
-            AxisMarks(position: .leading) { value in
-                if let count = value.as(Double.self) {
-                    AxisValueLabel {
-                        UniversalText("\(count.round(to: 2)) " + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
-                    }
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
+//        ScrollView(.horizontal) {
+            Chart {
+                ForEach(averageData) { datum in
+                    BarMark(x: .value("X", datum.category),
+                            y: .value("Y", datum.count  ))
+                    
+                    .foregroundStyle(by: .value("SERIES", datum.category))
+                    .cornerRadius(Constants.UIBarMarkCOrnerRadius)
+                    
+                }
+                
+                if let label = activeLabel {
+                    RuleMark(x: .value("X", label))
+                        .annotation(position: .top) {
+                            UniversalText( label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                                .secondaryOpaqueRectangularBackground()
+                        }
+                        .foregroundStyle( Constants.tagColorsDic[ label ] ?? Colors.tint )
                 }
             }
-        }
+            .chartYScale(domain: 0...(CGFloat(max) + ( recents ? 2 : 1 )))
+            .chartXAxis( tags.count >= 10 ? .hidden : .visible)
+            .chartOverlay { proxy in
+                GeometryReader { innerProxy in
+                    Rectangle()
+                        .fill(.clear)
+                        .contentShape(Rectangle())
+                        .gesture(
+                            DragGesture()
+                                .onChanged{ value in
+                                    if let tag: String = proxy.value(atX: value.location.x - 30) {
+                                        activeLabel = tag
+                                    }
+                                }
+                                .onEnded { value in
+                                    activeLabel = nil
+                                }
+                        )
+                }
+                
+            }
+            .colorChartByTag()
+            .chartLegend(.hidden)
+            .chartYAxis {
+                AxisMarks(position: .leading) { value in
+                    if let count = value.as(Double.self) {
+                        AxisValueLabel {
+                            UniversalText("\(count.round(to: 2)) " + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                        }
+                        AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
+                    }
+                }
+            }
+//            .chartXAxis {
+//                AxisMarks { value in
+//                    AxisValueLabel(orientation: .vertical)
+//                }
+//            }
+//            .frame(width: 20 * CGFloat(tags.count))
+//        }
 //        .secondaryOpaqueRectangularBackground()
     }
 }
