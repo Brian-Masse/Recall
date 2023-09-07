@@ -273,7 +273,7 @@ struct CalendarEventCreationView: View {
             makeTagSelector(tag: tag)
         }.padding(.bottom)
         
-        LargeRoundedButton("create another tag", icon: "arrow.up") { showingTagCreationView = true }
+        LargeRoundedButton("create another tag", icon: "arrow.up", wide: true) { showingTagCreationView = true }
     }
     
     @ViewBuilder

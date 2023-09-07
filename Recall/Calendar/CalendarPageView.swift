@@ -72,6 +72,7 @@ struct CalendarPageView: View {
                 UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
                 UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true )
             }
+                .foregroundColor(.black)
                 .overlay( VStack {
                     Circle()
                     .universalForegroundColor()

@@ -22,7 +22,10 @@ struct CategoriesPageView: View {
         }
         .if( activePage == page ) { view in view.tintRectangularBackground() }
         .if( activePage != page ) { view in view.secondaryOpaqueRectangularBackground() }
-        .onTapGesture { withAnimation { activePage = page } }
+        .onTapGesture {
+            withAnimation { activePage = page
+            }
+        }
     }
     
     @ViewBuilder
@@ -188,7 +191,9 @@ struct CategoriesPageView: View {
             TabView(selection: $activePage) {
                 TagTab(tags: Array(categories), events: events).tag( TagPage.tags )
                 TemplatesTab(events: events).tag( TagPage.templates )
-            }.tabViewStyle(.page(indexDisplayMode: .never))
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .padding(.top)
         }
         .padding(7)
         .universalBackground()
