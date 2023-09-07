@@ -28,7 +28,12 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var dateOfBirth: Date = .now
     @Persisted var dateJoined: Date = .now
     
+    
+    //  Settings
     @Persisted var finishedTutorial: Bool = false
+    
+    @Persisted var notificationsEnabled: Bool = false
+    @Persisted var notificationsTime: Date = .now
     
     convenience init( ownerID: String, email: String, firstName: String, lastName: String) {
         self.init()
@@ -67,6 +72,31 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     func replayTutorial() {
         RealmManager.updateObject(self) { thawed in
             thawed.finishedTutorial = false
+        }
+    }
+    
+    @MainActor
+    func toggleNotifcations(to enabled: Bool, time: Date) {
+        RealmManager.updateObject(self) { thawed in
+            if !enabled {
+                thawed.notificationsEnabled = false
+                NotificationManager.shared.removeReminderNotification()
+            }
+            else {
+                thawed.notificationsEnabled = true
+                
+                NotificationManager.shared.requestNotifcationPermissions()
+                setNotificationTime(to: time)
+            }
+        }
+    }
+    
+    @MainActor
+    private func setNotificationTime(to time: Date) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.notificationsTime = time
+            
+            NotificationManager.shared.makeNotificationRequest(from: time)
         }
     }
     

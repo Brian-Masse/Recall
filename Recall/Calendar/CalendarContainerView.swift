@@ -221,7 +221,7 @@ struct CalendarContainer: View {
                 }
             }
             .onTapGesture { }
-            .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
+//            .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
         }
     }
 }

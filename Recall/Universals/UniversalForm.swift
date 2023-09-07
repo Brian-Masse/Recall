@@ -240,11 +240,23 @@ struct SliderWithPrompt: View {
     let strBinding: Binding<String>
     
     let textFieldWidth: CGFloat
+    let size: Double
+    
+    init(label: String, minValue: Float, maxValue: Float, binding: Binding<Float>, strBinding: Binding<String>, textFieldWidth: CGFloat, size: Double = Constants.UIHeaderTextSize) {
+        
+        self.label = label
+        self.minValue = minValue
+        self.maxValue = maxValue
+        self.binding = binding
+        self.strBinding = strBinding
+        self.textFieldWidth = textFieldWidth
+        self.size = size
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
             
-            UniversalText(label, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+            UniversalText(label, size: size, font: Constants.titleFont, true)
             
             StyledSlider(minValue: minValue, maxValue: maxValue, binding: binding, strBinding: strBinding, textFieldWidth: textFieldWidth)
         }
@@ -283,8 +295,16 @@ struct LabeledColorPicker: View {
 
 struct TimeSelector: View {
     
-    let label: String 
+    let label: String
     @Binding var time: Date
+    let size: Double
+    
+    init( label: String, time: Binding<Date>, size: Double = Constants.UIHeaderTextSize ) {
+        self.label = label
+        self._time = time
+        self.size = size
+        
+    }
     
     private var timeBinding: Binding<Float> {
         Binding { Float(time.getHoursFromStartOfDay().round(to: 2)) }
@@ -305,7 +325,8 @@ struct TimeSelector: View {
                              maxValue: 23.5,
                              binding: timeBinding,
                              strBinding: timeLabel,
-                             textFieldWidth: 120)
+                             textFieldWidth: 120,
+                             size: size)
         }
     }
     

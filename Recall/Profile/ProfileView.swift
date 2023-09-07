@@ -19,7 +19,18 @@ struct ProfileView: View {
     
     @Binding var appPage: ContentView.EntryPage
     
+    @State var madeChanges: Bool = false
+    
+    @State var notificationsEnabled: Bool = RecallModel.index.notificationsEnabled
+    @State var notificationTime: Date = RecallModel.index.notificationsTime
+    
     let index = RecallModel.index
+    
+//    MARK: Methods
+    private func saveSettings() {
+        index.toggleNotifcations(to: notificationsEnabled, time: notificationTime)
+        madeChanges = false
+    }
     
 //    MARK: ViewBuilders
     
@@ -63,6 +74,7 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: Overview
     @ViewBuilder
     private func makeDemographicInfo() -> some View {
         
@@ -98,19 +110,59 @@ struct ProfileView: View {
         }
         .opaqueRectangularBackground(7, stroke: true)
         .padding(.bottom, 5)
+    }
+    
+//    MARK: settings
+    @ViewBuilder
+    private func makeSettings() -> some View {
         
-        makeSubButton(title: "Replay Tutorial", icon: "arrow.clockwise") {
-            index.replayTutorial()
-            appPage = .login
-        }
-        
-        makeSubButton(title: "reindex Data", icon: "tray.2") {
-            Task {
-                await RecallModel.index.initializeIndex()
+        VStack(alignment: .leading) {
+            
+            UniversalText( "Settings", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+            
+            VStack(alignment: .leading) {
+                    
+                UniversalText( "Reminders", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                    .padding(.top, 5)
+                
+                HStack {
+                    UniversalText( "Daily reminder", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                    Spacer()
+                    Toggle(isOn: $notificationsEnabled) { }
+                        .tint(Colors.tint)
+                        .onChange(of: notificationsEnabled) { newValue in
+                            madeChanges = (newValue != index.notificationsEnabled)
+                        }
+                }
+                
+                if notificationsEnabled {
+                    TimeSelector(label: "When would you like to be reminded?", time: $notificationTime, size: Constants.UIDefaultTextSize)
+                        .onChange(of: notificationTime) { newValue in
+                            madeChanges = !( newValue.matches(index.notificationsTime, to: .minute) && newValue.matches(index.notificationsTime, to: .hour) )
+                        }
+                }
+                
+                if madeChanges {
+                    ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeChanges
+                    } action: { saveSettings() }
+                }
+                
+            }
+            .opaqueRectangularBackground(7, stroke: true)
+            .padding(.bottom, 5)
+            
+            makeSubButton(title: "Replay Tutorial", icon: "arrow.clockwise") {
+                index.replayTutorial()
+                appPage = .login
+            }
+            
+            makeSubButton(title: "reindex Data", icon: "tray.2") {
+                Task { await RecallModel.index.initializeIndex() }
             }
         }
     }
     
+//    MARK: Header/Footers
     @ViewBuilder
     private func makePageHeader() -> some View {
         UniversalText(index.getFullName(), size: Constants.UITitleTextSize, font: Constants.titleFont)
@@ -119,7 +171,7 @@ struct ProfileView: View {
     
     @ViewBuilder
     private func makePageFooter() -> some View {
-        VStack {
+        HStack {
             LargeRoundedButton( "Edit", icon: "arrow.right", wide: true ) { showingEditingView = true }
 //            LargeRoundedButton( "Transfer Data", icon: "arrow.right", wide: true ) { showingDataTransfer = true }
             LargeRoundedButton("Signout", icon: "arrow.down", wide: true) {
@@ -137,13 +189,19 @@ struct ProfileView: View {
             makePageHeader()
                 .padding(.bottom)
             
-            makeDemographicInfo()
-            
-            Spacer()
-            
-            makePageFooter()
-                .padding(.bottom, 20)
-            
+            ScrollView(.vertical) {
+                VStack(alignment: .leading) {
+                    makeDemographicInfo()
+                    
+                    makeSettings()
+                        .padding(.bottom, 40)
+                    
+                    Spacer()
+                    
+                    makePageFooter()
+                        .padding(.bottom, 20)
+                }
+            }
         }
         .padding(7)
         .universalBackground()
