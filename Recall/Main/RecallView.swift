@@ -36,7 +36,7 @@ struct ContentView: View {
                     .environment(\.realmConfiguration, realmManager.configuration)
                 
             } else if !realmManager.profileLoaded {
-                ProfileCreationScene()
+                ProfileCreationView()
             }
             
             else if entryPage != .app && !RecallModel.index.finishedTutorial {
