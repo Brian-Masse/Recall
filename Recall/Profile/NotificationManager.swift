@@ -40,7 +40,7 @@ class NotificationManager {
     
     func makeNotificationRequest(from time: Date) {
         
-        var components = Calendar.current.dateComponents([ .hour, .minute ], from: time)
+        let components = Calendar.current.dateComponents([ .hour, .minute ], from: time)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         

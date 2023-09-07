@@ -63,6 +63,13 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+    func checkCompletion() -> Bool {
+        !self.firstName.isEmpty &&
+        !self.lastName.isEmpty &&
+        !self.email.isEmpty &&
+        self.phoneNumber != 0
+    }
+    
     func finishTutorial() {
         RealmManager.updateObject(self) { thawed in
             thawed.finishedTutorial = true

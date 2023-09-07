@@ -40,6 +40,14 @@ class RealmManager: ObservableObject {
     @Published var realmLoaded: Bool = false
     @Published var hasProfile: Bool = false
     
+    var profileLoaded: Bool {
+        if hasProfile {
+            return self.index.checkCompletion()
+        } else {
+            return false
+        }
+    }
+    
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
     lazy var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission { query in query.ownerID == RecallModel.ownerID
         
@@ -170,44 +178,36 @@ class RealmManager: ObservableObject {
     }
     
 //    MARK: Profile Functions
-    
-    private func addProfileSubscription() async {
-//        let _:EcheveriaProfile? = await self.addGenericSubcriptions(name: QuerySubKey.account.rawValue, query: profileQuery.baseQuery)
-    }
-    
-//    if the user has a profile, then skip past the create profile UI
-//    if not the profile objcet on EcheveriaModel will remain nil and the UI will show
+    @MainActor
     func checkProfile() async {
-//     the only place the subscription is added is when they create a profile
-//        if !self.checkSubscription(name: QuerySubKey.account.rawValue) { await self.addProfileSubscription() }
+//        RealmManager already has a query subscription to access the index
         
-//        DispatchQueue.main.sync {
-//            let profile = realm.objects(EcheveriaProfile.self).where { queryObject in
-//                queryObject.ownerID == self.user!.id
-//            }.first
-//            if profile != nil { registerProfileLocally(profile!) }
-//        }
+        let results: Results<RecallIndex> = RealmManager.retrieveObject()
+        
+        if let index = results.first {
+            registerIndexLocally(index)
+        } else {
+            createIndex()
+        }
     }
     
-//    If they dont, this function is called to create one. It is sent in from the CreateProfileView
-//    func addProfile( profile: EcheveriaProfile ) async {
-////        Add Subscription to donwload your profile
-//        await addProfileSubscription()
-//
-////        DispatchQueue.main.sync {
-////            profile.ownerID = user!.id
-////            EcheveriaModel.addObject(profile)
-////            registerProfileLocally(profile)
-////        }
-//    }
+//    If the user does not have an index, create one and add it to the database
+    private func createIndex() {
+        let index = RecallIndex()
+        index.ownerID = RecallModel.ownerID
+        index.dateJoined = .now
+        
+        RealmManager.addObject(index)
+        
+        registerIndexLocally(index)
+    }
     
 //    whether you're loading the profile from the databae or creating at startup, it should go throught this function to
 //    let the model know that the profile now has a profile and send that profile object to the model
-//    TODO: Im not sure if the model should store a copy of the profile. It might be better to pull directyl from the DB, but for now this works
-//    private func registerProfileLocally( _ profile: EcheveriaProfile ) {
-//        hasProfile = true
-//        EcheveriaModel.shared.setProfile(with: profile)
-//    }
+    private func registerIndexLocally( _ index: RecallIndex ) {
+        hasProfile = true
+        self.index = index
+    }
 
 //    MARK: Realm-Loaded Functions
 //    Called once the realm is loaded in OpenSyncedRealmView
@@ -216,27 +216,8 @@ class RealmManager: ObservableObject {
         self.realm = realm
         await self.addSubcriptions()
         
-        
-//        this still needs to be moved intot he correct part of the sign in process
-//        but since I dotn have the views to create a profile or anyting, it doesnt do much
-        makeRecallIndex()
-        
         self.realmLoaded = true
-    }
-    
-//    depending on what authetnication system you're using, when this is called will change
-//    for an email / password sign up, it will be when you are creating your profile
-//    for apple authentication, it will be right after you input your credentials / hit the sign in button
-    private func makeRecallIndex() {
-        
-        let results: Results<RecallIndex> = RealmManager.retrieveObject()
-        if let index = results.first {
-            self.index = index
-        } else {
-            self.index = RecallIndex(ownerID: user!.id, email: email, firstName: firstName, lastName: lastName)
-            RealmManager.addObject(self.index)
-        }
-        
+        await self.checkProfile()
     }
     
     private func addSubcriptions() async {

@@ -25,7 +25,6 @@ struct ContentView: View {
 
         Group {
             if !realmManager.signedIn {
-                
                 switch entryPage {
                 case .splashScreen: SplashScreen(page: $entryPage)
                 case .login: LoginView()
@@ -36,7 +35,11 @@ struct ContentView: View {
                 OpenFlexibleSyncRealmView()
                     .environment(\.realmConfiguration, realmManager.configuration)
                 
-            } else if entryPage != .app && !RecallModel.index.finishedTutorial {
+            } else if !realmManager.profileLoaded {
+                ProfileCreationScene()
+            }
+            
+            else if entryPage != .app && !RecallModel.index.finishedTutorial {
                 TutorialViews(page: $entryPage)
                 
             }else {
