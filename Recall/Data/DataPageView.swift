@@ -74,23 +74,16 @@ struct DataPageView: View {
                         QuickLinks(dudContent: DataBookMark.Events, value: value)
                         
                         
-                        if !hide {
-                            OverviewDataSection(goals: arrGoals)
-                                .environmentObject(dataModel )
-                            
-                            EventsDataSection()
-                                .environmentObject(dataModel )
-                            
-                            GoalsDataSection(goals: arrGoals)
-                                .environmentObject(dataModel )
-                        }
+//                        if !hide {
+                        OverviewDataSection(goals: arrGoals)
+                            .environmentObject(dataModel )
                         
-                            
-                            
-                            
+                        EventsDataSection()
+                            .environmentObject(dataModel )
+                        
+                        GoalsDataSection(goals: arrGoals)
+                            .environmentObject(dataModel )
 //                        }
-//                        .tabViewStyle(.page)
-                        
                         
                         HStack {
                             Spacer()
