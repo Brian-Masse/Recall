@@ -20,8 +20,9 @@ struct LoginView: View {
     @State var email: String = ""
     @State var password: String = ""
     
-    @State var showingError: Bool = false
-    @State var message: String = ""
+    @State var showingAlert: Bool = false
+    @State var alertTitle: String = "Issue Signing In"
+    @State var alertMessage: String = ""
     
     @State var loggingIn: Bool = false
     
@@ -36,13 +37,15 @@ struct LoginView: View {
         
         if checkCompletion() {
             if let error = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
-                message = error
-                showingError = true
+                alertMessage = error
+                showingAlert = true
+                loggingIn = false
             }
             
         } else {
-            message = "please provide a valid email and password before continuing"
-            showingError = true
+            alertMessage = "please provide a valid email and password before continuing"
+            showingAlert = true
+            loggingIn = false
         }
     }
     
@@ -89,6 +92,8 @@ struct LoginView: View {
                                     
                                 case .failure(let error):
                                     print("Authorisation failed: \(error.localizedDescription)")
+                                    alertMessage = error.localizedDescription
+                                    showingAlert = true
                                 }
                             }
                             .signInWithAppleButtonStyle(colorScheme == .light ? .black : .white)
@@ -117,8 +122,13 @@ struct LoginView: View {
         .padding(7)
         .ignoresSafeArea()
         .universalBackground()
-        .defaultAlert($showingError, title: "Issue Signing in", description: self.message)
         .transition(.push(from: .trailing))
-//        .preferredColorScheme(.light)
+        .alert(alertTitle,
+               isPresented: $showingAlert) {
+            Button( "dismiss", role: .cancel ) {}
+        } message: {
+            Text( alertMessage )
+        }
+
     }
 }

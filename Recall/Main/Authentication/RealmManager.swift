@@ -100,7 +100,10 @@ class RealmManager: ObservableObject {
             self.email = fixedEmail
             let secondaryError = await authUser(credentials: credentials)
             
-            if secondaryError != nil { print("error authenticating registered user") }
+            if secondaryError != nil {
+                print("error authenticating registered user")
+                return secondaryError!.localizedDescription
+            }
 
         }
         
