@@ -7,5 +7,28 @@
 		<string>RenoMono.otf</string>
 		<string>Syne-VariableFont_wght.ttf</string>
 	</array>
+    
+    <key>CFBundleIcons</key>
+    <dict>
+        <key>CFBundleAlternateIcons</key>
+        <dict>
+            <key>dark</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>dark</string>
+                </array>
+            </dict>
+            <key>light</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>light</string>
+                </array>
+            </dict>
+        </dict>
+    </dict>
+    
+    
 </dict>
 </plist>

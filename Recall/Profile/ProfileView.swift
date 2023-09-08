@@ -13,6 +13,8 @@ struct ProfileView: View {
     
 //    MARK: Vars
     
+    @Namespace var profileNamespace
+    
     @State var showingDataTransfer: Bool = false
     @State var showingEditingView: Bool = false
     @State var ownerID: String = ""
@@ -23,6 +25,8 @@ struct ProfileView: View {
     
     @State var notificationsEnabled: Bool = RecallModel.index.notificationsEnabled
     @State var notificationTime: Date = RecallModel.index.notificationsTime
+    
+    @State var activeIcon: String = UIApplication.shared.alternateIconName ?? "light"
     
     let index = RecallModel.index
     
@@ -114,6 +118,81 @@ struct ProfileView: View {
     
 //    MARK: settings
     @ViewBuilder
+    private func makeReminderSettings() -> some View {
+        UniversalText( "Reminders", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            .padding(.top, 5)
+        
+        HStack {
+            UniversalText( "Daily reminder", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+            Spacer()
+            Toggle(isOn: $notificationsEnabled) { }
+                .tint(Colors.tint)
+                .onChange(of: notificationsEnabled) { newValue in
+                    madeChanges = (newValue != index.notificationsEnabled)
+                }
+        }
+        
+        if notificationsEnabled {
+            TimeSelector(label: "When would you like to be reminded?", time: $notificationTime, size: Constants.UIDefaultTextSize)
+                .onChange(of: notificationTime) { newValue in
+                    madeChanges = !( newValue.matches(index.notificationsTime, to: .minute) && newValue.matches(index.notificationsTime, to: .hour) )
+                }
+        }
+        
+        if madeChanges {
+            ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeChanges
+            } action: { saveSettings() }
+        }
+    }
+    
+    @ViewBuilder
+    private func makeIconPicker(icon: String) -> some View {
+        let active = icon == activeIcon
+        VStack {
+            Image(icon)
+                .resizable()
+                .frame(width: 75, height: 75)
+                .cornerRadius(15)
+                .shadow(radius: 5)
+            
+            UniversalText( icon, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+                .if(active) { view in view.foregroundColor(.black) }
+                .if(!active) { view in view.universalTextStyle() }
+        }
+        .padding(.horizontal, 25)
+        .padding(5)
+        .background( VStack {
+            if active {
+                Rectangle()
+                    .universalForegroundColor()
+                    .cornerRadius(Constants.UIDefaultCornerRadius)
+                    .matchedGeometryEffect(id: "background", in: profileNamespace)
+            }
+            
+        })
+        .onTapGesture {
+            withAnimation { activeIcon = icon }
+            UIApplication.shared.setAlternateIconName(icon) { error in
+                if let err = error { print( err.localizedDescription ) }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func makeIconSettings() -> some View {
+        UniversalText( "Icon", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+        
+        HStack {
+            Spacer()
+            makeIconPicker(icon: "light")
+            Spacer()
+            makeIconPicker(icon: "dark")
+            Spacer()
+        }
+    }
+    
+    
+    @ViewBuilder
     private func makeSettings() -> some View {
         
         VStack(alignment: .leading) {
@@ -121,31 +200,10 @@ struct ProfileView: View {
             UniversalText( "Settings", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
             
             VStack(alignment: .leading) {
-                    
-                UniversalText( "Reminders", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
-                    .padding(.top, 5)
+                makeReminderSettings()
+                    .padding(.bottom)
                 
-                HStack {
-                    UniversalText( "Daily reminder", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-                    Spacer()
-                    Toggle(isOn: $notificationsEnabled) { }
-                        .tint(Colors.tint)
-                        .onChange(of: notificationsEnabled) { newValue in
-                            madeChanges = (newValue != index.notificationsEnabled)
-                        }
-                }
-                
-                if notificationsEnabled {
-                    TimeSelector(label: "When would you like to be reminded?", time: $notificationTime, size: Constants.UIDefaultTextSize)
-                        .onChange(of: notificationTime) { newValue in
-                            madeChanges = !( newValue.matches(index.notificationsTime, to: .minute) && newValue.matches(index.notificationsTime, to: .hour) )
-                        }
-                }
-                
-                if madeChanges {
-                    ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeChanges
-                    } action: { saveSettings() }
-                }
+                makeIconSettings()
                 
             }
             .opaqueRectangularBackground(7, stroke: true)
@@ -185,7 +243,6 @@ struct ProfileView: View {
     var body: some View {
         
         VStack(alignment: .leading) {
-                
             makePageHeader()
                 .padding(.bottom)
             

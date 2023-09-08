@@ -99,6 +99,7 @@ class RecallDataModel: ObservableObject {
           }
       }
     
+    @MainActor
     private func indexGoalMetCount() async {
         for goal in goals {
             let data = await goal.countGoalMet(from: events)

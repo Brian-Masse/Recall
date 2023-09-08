@@ -168,11 +168,14 @@ private struct TintBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     var model = RecallModel.shared
     
+    let padding: CGFloat?
+    
     func body(content: Content) -> some View {
         content
-            .padding()
+            .if(padding == nil) { view in view.padding() }
+            .if(padding != nil) { view in view.padding(padding!) }
             .foregroundColor(.black)
-            .background( model.activeColor )
+            .universalBackgroundColor()
             .cornerRadius(Constants.UIDefaultCornerRadius)
     }
 }
@@ -330,8 +333,8 @@ extension View {
         modifier(AccentBackground(cornerRadius: cornerRadius))
     }
     
-    func tintRectangularBackground() -> some View {
-        modifier(TintBackground())
+    func tintRectangularBackground(_ padding: CGFloat? = nil) -> some View {
+        modifier(TintBackground(padding: padding))
     }
     
     func onBecomingVisible(perform action: @escaping () -> Void) -> some View {
