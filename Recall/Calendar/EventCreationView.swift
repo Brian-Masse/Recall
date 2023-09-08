@@ -172,7 +172,16 @@ struct CalendarEventCreationView: View {
     }
     
     private func checkCompletion() -> Bool {
-        !self.title.isEmpty && !self.category.label.isEmpty
+        if endTime < startTime {
+            self.alertTitle = "Incomplete Form"
+            self.alertMessage = "make sure the event end time is after the event start time"
+            return false
+        }
+        
+        self.alertTitle = "Incomplete Form"
+        self.alertMessage = "Please provide a title, start and end times, and a tag before creating the event"
+        
+        return !self.title.isEmpty && !self.category.label.isEmpty
     }
     
     private func fillInformation(from event: RecallCalendarEvent) {
@@ -351,7 +360,13 @@ struct CalendarEventCreationView: View {
                                  goalRatings: Dictionary(),
                                  color: Colors.tint)
         }
-        
-        .defaultAlert($showingAlert, title: "Incomplete Form", description: "Please provide a title, start and end times, and a tag before creating the event")
+    
+        .alert(alertTitle,
+               isPresented: $showingAlert) {
+            Button("dimiss", role: .cancel) { }
+        } message: {
+            Text(alertMessage)
+        }
+
     }
 }
