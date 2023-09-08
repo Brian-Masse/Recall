@@ -83,6 +83,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     }
     
     @MainActor
+//    if you are turning the notifications on, it will handle notification requests, as well as setting up the actual notifiations
     func toggleNotifcations(to enabled: Bool, time: Date) {
         RealmManager.updateObject(self) { thawed in
             if !enabled {
@@ -93,6 +94,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
                 thawed.notificationsEnabled = true
                 
                 NotificationManager.shared.requestNotifcationPermissions()
+                
                 setNotificationTime(to: time)
             }
         }
@@ -105,6 +107,15 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
             
             NotificationManager.shared.makeNotificationRequest(from: time)
         }
+    }
+    
+//    This runs after the user has created their profile, (in turn setting their name, number, email, and birthday)
+//    some of the functions in this method are redundant
+    func postProfileCreationInit() {
+        
+        Task { await self.toggleNotifcations(to: true, time: notificationsTime ) }
+        NotificationManager.shared.makeNotificationRequest(from: notificationsTime)
+        NotificationManager.shared.makeBirthdayNotificationRequest(from:  dateOfBirth )
     }
     
 //    MARK: Convenience Functions

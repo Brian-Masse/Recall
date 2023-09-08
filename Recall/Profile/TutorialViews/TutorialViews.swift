@@ -271,6 +271,5 @@ struct TutorialViews: View {
             }
 
         }
-        .transition(.opacity)
     }
 }

@@ -10,12 +10,18 @@ import UserNotifications
 
 class NotificationManager {
     
+//    MARK: Vars
     static let shared = NotificationManager()
     
     static let reminderNotificationIdentifier = "reminderNotificationIdentifier"
     static let reminderTitle = "Time for your daily Recall"
     static let reminderMessage = "Take a few moments to recall the events and pace of your day today."
     
+    static let birthdayNotificationIdentifier = "birthdayNotificationIdentifier"
+    static var birthdayTitle: String { "Happy birthday \(RecallModel.index.firstName)!" }
+    static let birthdayMessage = "Have a great day today :)"
+    
+//    MARK: Class Methods
     @MainActor
     func requestNotifcationPermissions() {
         
@@ -29,24 +35,44 @@ class NotificationManager {
         }
     }
     
-    private func makeReminderNotification() -> UNMutableNotificationContent {
-        let content = UNMutableNotificationContent()
-        content.title = NotificationManager.reminderTitle
-        content.body = NotificationManager.reminderMessage
-        content.sound = .ringtoneSoundNamed(.init("Tri-tone"))
-        return content
-        
-    }
-    
     func makeNotificationRequest(from time: Date) {
+        let content = makeNotificationContent(title: NotificationManager.reminderTitle,
+                                              body: NotificationManager.reminderMessage)
         
         let components = Calendar.current.dateComponents([ .hour, .minute ], from: time)
         
+        makeCalendarNotificationRequest(components: components,
+                                        identifier: NotificationManager.reminderNotificationIdentifier,
+                                        content: content)
+    }
+    
+    func makeBirthdayNotificationRequest( from date: Date ) {
+        let content = makeNotificationContent(title: NotificationManager.birthdayTitle,
+                                              body: NotificationManager.birthdayMessage)
+        
+        let components = Calendar.current.dateComponents([ .day, .month ], from: date)
+        
+        makeCalendarNotificationRequest(components: components,
+                                        identifier: NotificationManager.birthdayNotificationIdentifier,
+                                        content: content)
+        
+        
+    }
+    
+//    MARK: Production Methods
+    private func makeNotificationContent(title: String, body: String) -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .ringtoneSoundNamed(.init("Tri-tone"))
+        return content
+    }
+    
+    private func makeCalendarNotificationRequest(components: DateComponents, identifier: String, content: UNMutableNotificationContent ) {
+        
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         
-        let content = makeReminderNotification()
-        
-        let request = UNNotificationRequest(identifier: NotificationManager.reminderNotificationIdentifier,
+        let request = UNNotificationRequest(identifier: identifier,
                                             content: content,
                                             trigger: trigger)
         
@@ -56,5 +82,4 @@ class NotificationManager {
     func removeReminderNotification() {
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [NotificationManager.reminderNotificationIdentifier])
     }
-    
 }

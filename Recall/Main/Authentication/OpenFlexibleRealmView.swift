@@ -14,6 +14,8 @@ struct OpenFlexibleSyncRealmView: View {
     @State var showingAlert: Bool = false
     @State var title: String = ""
     @State var alertMessage: String = ""
+
+    @Binding var page: ContentView.EntryPage
     
     @AsyncOpen(appId: "application-0-incki", timeout: .min) var asyncOpen
     
@@ -62,6 +64,8 @@ struct OpenFlexibleSyncRealmView: View {
                             loadingCase(icon: "shippingbox", title: "Loading Assests")
                                 .task {
                                     await RecallModel.realmManager.authRealm(realm: realm)
+                                
+                                    page = .profileCreation
 //                                    await RecallModel.realmManager.checkProfile()
                                 }
                         }

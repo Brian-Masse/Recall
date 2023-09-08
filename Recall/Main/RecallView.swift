@@ -12,6 +12,8 @@ struct ContentView: View {
     enum EntryPage {
         case splashScreen
         case login
+        case profileCreation
+        case tutorial
         case app
     }
     
@@ -32,17 +34,20 @@ struct ContentView: View {
                 }
                 
             } else if !realmManager.realmLoaded {
-                OpenFlexibleSyncRealmView()
+                OpenFlexibleSyncRealmView(page: $entryPage)
                     .environment(\.realmConfiguration, realmManager.configuration)
+                    .slideTransition()
                 
-            } else if !realmManager.profileLoaded {
-                ProfileCreationView()
+            } else if entryPage == .profileCreation && !realmManager.profileLoaded {
+                ProfileCreationView(page: $entryPage)
+                    .slideTransition()
             }
             
-            else if entryPage != .app && !RecallModel.index.finishedTutorial {
+            else if entryPage == .tutorial && !RecallModel.index.finishedTutorial {
                 TutorialViews(page: $entryPage)
+                    .slideTransition()
                 
-            }else {
+            } else {
                 MainView(appPage: $entryPage)
                     .onAppear() { entryPage = .app }
             }

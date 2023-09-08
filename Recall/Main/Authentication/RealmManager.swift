@@ -196,6 +196,7 @@ class RealmManager: ObservableObject {
         let index = RecallIndex()
         index.ownerID = RecallModel.ownerID
         index.dateJoined = .now
+        index.email = self.email
         
         RealmManager.addObject(index)
         
