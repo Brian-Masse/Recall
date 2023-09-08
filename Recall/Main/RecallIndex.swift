@@ -88,7 +88,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         RealmManager.updateObject(self) { thawed in
             if !enabled {
                 thawed.notificationsEnabled = false
-                NotificationManager.shared.removeReminderNotification()
+                NotificationManager.shared.clearNotifications()
             }
             else {
                 thawed.notificationsEnabled = true

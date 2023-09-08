@@ -23,8 +23,9 @@ struct CategoriesPageView: View {
         .if( activePage == page ) { view in view.tintRectangularBackground() }
         .if( activePage != page ) { view in view.secondaryOpaqueRectangularBackground() }
         .onTapGesture {
-            withAnimation { activePage = page
-            }
+//            withAnimation {
+                activePage = page
+//            }
         }
     }
     
@@ -150,6 +151,7 @@ struct CategoriesPageView: View {
                     }
                     .opaqueRectangularBackground(7, stroke: true)
                     .padding(.bottom, Constants.UIBottomOfPagePadding)
+                    .padding(.top)
                 }
             } else {
                 VStack {
@@ -193,7 +195,6 @@ struct CategoriesPageView: View {
                 TemplatesTab(events: events).tag( TagPage.templates )
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .padding(.top)
         }
         .padding(7)
         .universalBackground()

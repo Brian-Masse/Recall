@@ -98,7 +98,7 @@ struct OpenFlexibleSyncRealmView: View {
                 }
                 .frame(width: geo.size.width / 2.5)
                 .opaqueRectangularBackground(7, stroke: true)
-                .shadow(radius: 20)
+//                .shadow(radius: 20)
                 .padding()
                 .alert(isPresented: $showingAlert) { Alert(
                     title: Text(title),

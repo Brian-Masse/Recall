@@ -59,6 +59,12 @@ class NotificationManager {
         
     }
     
+    func clearNotifications() {
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [NotificationManager.reminderNotificationIdentifier,
+                                                                                          NotificationManager.birthdayNotificationIdentifier
+                                                                                         ])
+    }
+    
 //    MARK: Production Methods
     private func makeNotificationContent(title: String, body: String) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
@@ -77,9 +83,5 @@ class NotificationManager {
                                             trigger: trigger)
         
         UNUserNotificationCenter.current().add(request)
-    }
-    
-    func removeReminderNotification() {
-        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [NotificationManager.reminderNotificationIdentifier])
     }
 }

@@ -174,6 +174,8 @@ class RealmManager: ObservableObject {
             user.logOut { error in
                 if let error = error { print("error logging out: \(error.localizedDescription)") }
                 
+                NotificationManager.shared.clearNotifications()
+                
                 DispatchQueue.main.sync {
                     self.signedIn = false
                     self.hasProfile = false
@@ -192,9 +194,12 @@ class RealmManager: ObservableObject {
         
         if let index = results.first {
             registerIndexLocally(index)
+            index.toggleNotifcations(to: index.notificationsEnabled, time: index.notificationsTime)
         } else {
             createIndex()
         }
+        
+        
     }
     
 //    If the user does not have an index, create one and add it to the database
