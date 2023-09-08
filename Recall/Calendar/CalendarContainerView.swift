@@ -110,10 +110,10 @@ struct CalendarContainer: View {
                 if dragValue.translation.width < 0 { slideDirection = .right }
                 if dragValue.translation.width > 0 { slideDirection = .left }
                 
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    if dragValue.translation.width < 0 { currentDay += Constants.DayTime }
-                    if dragValue.translation.width > 0 { currentDay -= Constants.DayTime }
-                }
+//                withAnimation(.easeInOut(duration: 0.25)) {
+//                    if dragValue.translation.width < 0 { currentDay += Constants.DayTime }
+//                    if dragValue.translation.width > 0 { currentDay -= Constants.DayTime }
+//                }
                 
             }
     }
@@ -221,7 +221,7 @@ struct CalendarContainer: View {
                 }
             }
             .onTapGesture { }
-//            .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
+            .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
         }
     }
 }

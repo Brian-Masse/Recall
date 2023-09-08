@@ -111,6 +111,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
 //    This runs after the user has created their profile, (in turn setting their name, number, email, and birthday)
 //    some of the functions in this method are redundant
+    @MainActor
     func postProfileCreationInit() {
         
         Task { await self.toggleNotifcations(to: true, time: notificationsTime ) }

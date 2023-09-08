@@ -23,12 +23,17 @@ struct LoginView: View {
     @State var showingError: Bool = false
     @State var message: String = ""
     
+    @State var loggingIn: Bool = false
+    
     private func formsFilledIn() -> Bool {
         !email.isEmpty && !password.isEmpty
     }
     
 //    MARK: Methods
     private func submit() async {
+        
+        loggingIn = true
+        
         if checkCompletion() {
             if let error = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
                 message = error
@@ -96,9 +101,15 @@ struct LoginView: View {
                     }
                     
                     
-                    ConditionalLargeRoundedButton(title: "create / login",
-                                                  icon: "arrow.forward",
-                                                  condition: checkCompletion) { Task { await submit() }  }
+                    ZStack {
+                        ConditionalLargeRoundedButton(title: "create / login",
+                                                      icon: "arrow.forward",
+                                                      condition: checkCompletion) { Task { await submit() }  }
+                        
+                        if loggingIn {
+                            ProgressView()
+                        }
+                    }.onAppear() { loggingIn = false }
                     
                 }
                 .universalTextStyle()

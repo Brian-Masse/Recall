@@ -34,7 +34,7 @@ struct ProfileCreationView: View {
         func getName() -> String {
             switch self {
             case .reminders:    return "preferences"
-            case .complete:     return ""
+            case .complete:     return "complete"
             case .splash:       return "introduction"
             default:            return "demographics"
             }
@@ -76,6 +76,7 @@ struct ProfileCreationView: View {
         }
     }
     
+    @MainActor
     private func submit(skipTutorial: Bool) {
         
         withAnimation {
@@ -98,24 +99,32 @@ struct ProfileCreationView: View {
     
 //    MARK: ViewBuilders
     
+    
+    
+    @MainActor
     @ViewBuilder
     private func makeHeader() -> some View {
         
         ZStack {
             HStack {
-                if activeScene.rawValue > 0 {
-                    Image(systemName: "arrow.backward")
-                    UniversalText( "back", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                    Spacer()
-                }
+                Image(systemName: "arrow.backward")
+                UniversalText( "back", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                Spacer()
             }
             .onTapGesture { withAnimation {
+                if activeScene.rawValue == 0 {
+                    RecallModel.realmManager.logoutUser()
+                    page = .splashScreen
+                }
                 activeScene = activeScene.returnScene()
             } }
             
             HStack {
                 Spacer()
-                UniversalText( activeScene.getName(), size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                VStack {
+                    UniversalText( activeScene.getName(), size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                    makeProgressBar()
+                }
                 Spacer()
             }
         }
@@ -128,6 +137,28 @@ struct ProfileCreationView: View {
             progressScene()
         }
     }
+    
+//    MARK: Progress Bar
+    @ViewBuilder
+    private func makeProgressBar() -> some View {
+        
+        ZStack(alignment: .leading) {
+            Rectangle()
+                .cornerRadius(Constants.UIDefaultCornerRadius)
+                .universalTextStyle()
+                .opacity(0.2)
+                .frame(width: 50, height: 10)
+            
+            let progress = Double( activeScene.rawValue ) / Double( ProfileCreationScene.allCases.count - 1 )
+            
+            Rectangle()
+                .cornerRadius(Constants.UIDefaultCornerRadius)
+                .universalForegroundColor()
+                .frame(width: 50 * progress, height: 10)
+            
+        }
+        
+    }
 
     @ViewBuilder
     private func makeSplashScreen() -> some View {
@@ -135,7 +166,7 @@ struct ProfileCreationView: View {
             Spacer()
             UniversalText("Get started by creating your Recall profile", size: Constants.UITitleTextSize, font: Constants.titleFont)
                 .padding(.trailing, 50)
-                .universalForegroundColor()
+                .foregroundColor(.black)
                 .onAppear { showingContinueButton = true }
             Spacer()
         }
@@ -316,6 +347,7 @@ struct ProfileCreationView: View {
         
     }
     
+    @MainActor
     @ViewBuilder
     private func makeCompletionScreen() -> some View {
         

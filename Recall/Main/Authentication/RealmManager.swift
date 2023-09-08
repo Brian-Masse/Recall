@@ -78,6 +78,7 @@ class RealmManager: ObservableObject {
             if let token = credential.identityToken {
                 let idTokenString = String(data: token, encoding: .utf8)
                 let realmCredentials = Credentials.apple(idToken: idTokenString!)
+                
                 Task {
                     await RecallModel.realmManager.authUser(credentials: realmCredentials )
                 }
@@ -97,6 +98,7 @@ class RealmManager: ObservableObject {
         let error =  await registerUser(fixedEmail, password)
         if error == nil {
             let credentials = Credentials.emailPassword(email: fixedEmail, password: password)
+            self.email = fixedEmail
             let secondaryError = await authUser(credentials: credentials)
             
             if secondaryError != nil { print("error authenticating registered user") }

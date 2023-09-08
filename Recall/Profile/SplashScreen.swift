@@ -30,7 +30,8 @@ struct SplashScreen: View {
                             UniversalText( "Recall", size: Constants.UILargeTextSize, font: Constants.titleFont )
                             UniversalText( "The best non-calendar, calendar tool.", size: Constants.UISubHeaderTextSize, font: Constants.mainFont, textAlignment: .trailing )
                         }
-                        .universalForegroundColor()
+                        .foregroundColor(.black)
+//                        .universalForegroundColor()
                         
                     }
                     Spacer()

@@ -82,8 +82,8 @@ struct MainView: View {
             HStack(spacing: 10) {
                 TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .calendar, title: "Recall", icon: "calendar")
                     .padding(.leading, pageSelection == .calendar ? 0 : 10 )
-                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .categories, title: "Tags", icon: "tag")
                 TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .goals, title: "Goals", icon: "flag.checkered")
+                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .categories, title: "Tags", icon: "tag")
                 TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .data, title: "Data", icon: "chart.bar")
                     .padding(.trailing, pageSelection == .data ? 0 : 10 )
             }
@@ -122,8 +122,8 @@ struct MainView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
                 CalendarPageView(events: arrEvents, appPage: $appPage)                              .tag( MainPage.calendar )
-                CategoriesPageView(events: arrEvents ).tag( MainPage.categories )
                 GoalsPageView(events: arrEvents ).tag( MainPage.goals )
+                CategoriesPageView(events: arrEvents ).tag( MainPage.categories )
                 DataPageView(events: arrEvents, page: $currentPage)                                  .tag( MainPage.data )
 //                Text("hi")                                  .tag( MainPage.data )
             }

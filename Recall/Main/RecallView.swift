@@ -30,7 +30,7 @@ struct ContentView: View {
                 switch entryPage {
                 case .splashScreen: SplashScreen(page: $entryPage)
                 case .login: LoginView()
-                default: EmptyView()
+                default: Text("hi").onAppear() { entryPage = .splashScreen }
                 }
                 
             } else if !realmManager.realmLoaded {
