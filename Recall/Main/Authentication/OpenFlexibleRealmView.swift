@@ -26,8 +26,9 @@ struct OpenFlexibleSyncRealmView: View {
         var body: some View {
             VStack {
                 ResizeableIcon(icon: icon, size: Constants.UIHeaderTextSize)
-                UniversalText(title, size: Constants.UISubHeaderTextSize, wrap: true)
+                UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: true)
             }
+            .universalTextStyle()
         }
     }
     
@@ -65,8 +66,7 @@ struct OpenFlexibleSyncRealmView: View {
                                 .task {
                                     await RecallModel.realmManager.authRealm(realm: realm)
                                 
-                                    page = .profileCreation
-//                                    await RecallModel.realmManager.checkProfile()
+                                    withAnimation { page = .profileCreation }
                                 }
                         }
                         
@@ -74,7 +74,7 @@ struct OpenFlexibleSyncRealmView: View {
                         VStack {
                             loadingCase(icon: "server.rack", title: "Downloading Realm from Server")
                             ProgressView(progress)
-                                .tint(Colors.main)
+                                .tint(.gray)
                         }
                         
                     case .error(let error):
@@ -86,11 +86,18 @@ struct OpenFlexibleSyncRealmView: View {
                             }
                     }
                     
-                    RoundedButton(label: "cancel", icon: "chevron.left", action: dismissScreen, shrink: true)
+                    HStack {
+                        Spacer()
+                        Image(systemName: "arrow.backward")
+                        UniversalText( "cancel", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                        Spacer()
+                    }
+                    .universalTextStyle()
+                    .secondaryOpaqueRectangularBackground()
+                    .onTapGesture { dismissScreen() }
                 }
-                .frame(width: geo.size.width / 3)
-                .padding()
-                .rectangularBackgorund()
+                .frame(width: geo.size.width / 2.5)
+                .opaqueRectangularBackground(7, stroke: true)
                 .shadow(radius: 20)
                 .padding()
                 .alert(isPresented: $showingAlert) { Alert(

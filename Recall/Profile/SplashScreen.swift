@@ -30,8 +30,7 @@ struct SplashScreen: View {
                             UniversalText( "Recall", size: Constants.UILargeTextSize, font: Constants.titleFont )
                             UniversalText( "The best non-calendar, calendar tool.", size: Constants.UISubHeaderTextSize, font: Constants.mainFont, textAlignment: .trailing )
                         }
-                        .foregroundColor(.black)
-//                        .universalForegroundColor()
+                        .universalTextStyle()
                         
                     }
                     Spacer()
@@ -51,15 +50,6 @@ struct SplashScreen: View {
         .padding()
         .padding(.bottom)
         .universalBackground()
-        .overlay(
-            Image("PaperNoise")
-                .resizable()
-                .blendMode( colorScheme == .light ? .multiply : .lighten)
-                .opacity( colorScheme == .light ? 0.65 : 0.25)
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-            
-        )
         .transition(.asymmetric(insertion: .push(from: .leading), removal: .push(from: .trailing)))
     }
 }

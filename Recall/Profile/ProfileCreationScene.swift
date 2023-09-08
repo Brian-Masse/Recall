@@ -166,7 +166,7 @@ struct ProfileCreationView: View {
             Spacer()
             UniversalText("Get started by creating your Recall profile", size: Constants.UITitleTextSize, font: Constants.titleFont)
                 .padding(.trailing, 50)
-                .foregroundColor(.black)
+                .universalTextStyle()
                 .onAppear { showingContinueButton = true }
             Spacer()
         }

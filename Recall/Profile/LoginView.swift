@@ -57,9 +57,8 @@ struct LoginView: View {
         VStack {
             
             VStack(alignment: .leading) {
-                UniversalText("Create an account with Recall", size: Constants.UITitleTextSize, font: Constants.titleFont)
-                    .padding(.bottom, 5)
-                    .foregroundColor(.black)
+                UniversalText("Create a Recall account", size: Constants.UITitleTextSize, font: Constants.titleFont)
+                    .padding(.bottom)
 
                 ZStack(alignment: .bottom) {
                     ScrollView(.vertical) {
@@ -106,21 +105,18 @@ struct LoginView: View {
                                                       icon: "arrow.forward",
                                                       condition: checkCompletion) { Task { await submit() }  }
                         
-                        if loggingIn {
-                            ProgressView()
-                        }
+                        if loggingIn { ProgressView() }
                     }.onAppear() { loggingIn = false }
                     
                 }
                 .universalTextStyle()
-                .opaqueRectangularBackground()
             }
         }
-        .padding(.top, 50)
+        .padding(.top, 60)
         .padding(.bottom, 30)
         .padding(7)
         .ignoresSafeArea()
-        .universalBackgroundColor(ignoreSafeAreas: .all)
+        .universalBackground()
         .defaultAlert($showingError, title: "Issue Signing in", description: self.message)
         .transition(.push(from: .trailing))
 //        .preferredColorScheme(.light)

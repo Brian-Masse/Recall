@@ -117,19 +117,23 @@ private struct OpaqueRectangularBackground: ViewModifier {
     
     let padding: CGFloat?
     let stroke: Bool
+    let texture: Bool
     
     func body(content: Content) -> some View {
         content
             .if(padding == nil) { view in view.padding() }
             .if(padding != nil) { view in view.padding(padding!) }
             .background(
-                Image("PaperNoise")
-                    .resizable()
-                    .blendMode( colorScheme == .light ? .multiply : .lighten)
-                    .opacity( colorScheme == .light ? 0.55 : 0.20)
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-                
+                VStack {
+                    if texture {
+                        Image("PaperNoise")
+                            .resizable()
+                            .blendMode( colorScheme == .light ? .multiply : .lighten)
+                            .opacity( colorScheme == .light ? 0.55 : 0.20)
+                            .ignoresSafeArea()
+                            .allowsHitTesting(false)
+                    }
+                }
             )
             .background(colorScheme == .light ? Colors.lightGrey : .black )
             .if(stroke) { view in
@@ -314,8 +318,8 @@ extension View {
         modifier(RectangularBackground(rounded: rounded, radius: radius))
     }
     
-    func opaqueRectangularBackground(_ padding: CGFloat? = nil, stroke: Bool = false) -> some View {
-        modifier(OpaqueRectangularBackground(padding: padding, stroke: stroke))
+    func opaqueRectangularBackground(_ padding: CGFloat? = nil, stroke: Bool = false, texture: Bool = true) -> some View {
+        modifier(OpaqueRectangularBackground(padding: padding, stroke: stroke, texture: texture))
     }
     
     func secondaryOpaqueRectangularBackground(_ padding: CGFloat? = nil) -> some View {

@@ -201,7 +201,9 @@ struct TutorialViews: View {
             
 //        MARK: Next Button
 //            This button also checks to make sure that when a new broad scene is ready, the view switches to it
-            ConditionalLargeRoundedButton(title: "continue", icon: "arrow.forward", condition: { nextButtonIsActive }) {
+            
+            let title = scene == .eventView ? "continue to Recall" : "continue"
+            ConditionalLargeRoundedButton(title: title, icon: "arrow.forward", condition: { nextButtonIsActive }) {
                 progressScene()
             }
         }

@@ -28,8 +28,8 @@ struct ContentView: View {
         Group {
             if !realmManager.signedIn {
                 switch entryPage {
-                case .splashScreen: SplashScreen(page: $entryPage)
-                case .login: LoginView()
+                case .splashScreen: SplashScreen(page: $entryPage).slideTransition()
+                case .login: LoginView().slideTransition()
                 default: Text("hi").onAppear() { entryPage = .splashScreen }
                 }
                 
@@ -38,18 +38,19 @@ struct ContentView: View {
                     .environment(\.realmConfiguration, realmManager.configuration)
                     .slideTransition()
                 
-            } else if entryPage == .profileCreation && !realmManager.profileLoaded {
+            } else if (entryPage == .profileCreation || !realmManager.profileLoaded) && !realmManager.profileLoaded {
                 ProfileCreationView(page: $entryPage)
                     .slideTransition()
             }
             
-            else if entryPage == .tutorial && !RecallModel.index.finishedTutorial {
+            else if (entryPage == .tutorial || !RecallModel.index.finishedTutorial) && !RecallModel.index.finishedTutorial {
                 TutorialViews(page: $entryPage)
                     .slideTransition()
                 
             } else {
                 MainView(appPage: $entryPage)
                     .onAppear() { entryPage = .app }
+                    .slideTransition()
             }
         }
         .onChange(of: colorScheme) { newValue in RecallModel.shared.setActiveColor(from: newValue) }

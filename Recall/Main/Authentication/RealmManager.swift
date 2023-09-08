@@ -9,8 +9,7 @@ import Foundation
 import RealmSwift
 import Realm
 import AuthenticationServices
-
-
+import SwiftUI
 
 //this handles logging in, and opening the right realm with the right credentials
 class RealmManager: ObservableObject {
@@ -154,7 +153,9 @@ class RealmManager: ObservableObject {
     @MainActor
     private func postAuthenticationInit() {
         self.setConfiguration()
-        self.signedIn = true
+        withAnimation {
+            self.signedIn = true
+        }
     }
     
     private func setConfiguration() {
