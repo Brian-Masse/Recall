@@ -56,17 +56,25 @@ struct GoalsOverTimeChart: ViewModifier {
 }
 
 struct ChartOverTimeXAxis: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
     func body(content: Content) -> some View {
         content
             .chartXAxis {
-                AxisMarks(values: .stride(by: .day)) { value in
+                let baseColor: Color = colorScheme == .dark ? .white : .black
+                let lighterColor = baseColor.opacity(0.5)
+
+                AxisMarks(preset: .extended, values: .stride(by: .day)) { value in
                     if let date = value.as( Date.self ) {
-                        let dateLabel = "\(date.formatted(.dateTime.day()))"
+                        let dateLabel = "\(date.formatted(.dateTime.day(.twoDigits)))"
 
                         let sundayLabel = !date.isSunday() ? "" : "Sun"
                         let bottomLabel = date.isFirstOfMonth() ? "\(date.formatted(.dateTime.month()))" : ( sundayLabel )
+                        
+                        AxisValueLabel(centered: true) {
+                            UniversalText("\( dateLabel)\n\(bottomLabel)", size: Constants.UISmallTextSize, textAlignment: .center)
+                        }.foregroundStyle(bottomLabel != "" ? baseColor : lighterColor)
 
-                        AxisValueLabel("\( dateLabel)\n\(bottomLabel)")
                     }
                 }
             }
