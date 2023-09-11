@@ -16,6 +16,9 @@ struct EventsDataSection: View {
     
     @EnvironmentObject var data: RecallDataModel
     
+    @Binding var page: MainView.MainPage
+    @Binding var currentDay: Date
+    
     var body: some View {
         
         VStack(alignment: .leading) {
@@ -51,13 +54,21 @@ struct EventsDataSection: View {
                 Group {
                     UniversalText("Activities", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
 
-                    ActivitiesPerDay("Hours per day, by tag", data: data.getHourlData(from: viewFilter), scrollable: viewFilter == 1 )
+                    ActivitiesPerDay("Hours per day, by tag",
+                                     data: data.getHourlData(from: viewFilter),
+                                     scrollable: viewFilter == 1,
+                                     page: $page,
+                                     currentDay: $currentDay)
                     EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: viewFilter), unit: "HR")
                     EventsDataSummaries.ActivityPerTag(data:        data.getCompressedHourlData(from: viewFilter), unit: "HR")
 
                     Seperator(orientation: .horizontal)
 
-                    ActivitiesPerDay("Events per day, by tag", data: data.getTagData(from: viewFilter), scrollable: viewFilter == 1 )
+                    ActivitiesPerDay("Events per day, by tag",
+                                     data: data.getTagData(from: viewFilter),
+                                     scrollable: viewFilter == 1,
+                                     page: $page,
+                                     currentDay: $currentDay )
                     EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedTagData(from: viewFilter), unit: "")
                     EventsDataSummaries.ActivityPerTag(data:        data.getCompressedTagData(from: viewFilter), unit: "")
 

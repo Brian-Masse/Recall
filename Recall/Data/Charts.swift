@@ -145,6 +145,31 @@ struct ActivitiesPerDay: View {
                 }
             }
         }
+        .chartOverlay() { proxy in
+            GeometryReader { innerProxy in
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .onTapGesture(perform: { point in
+                        if let date: Date = proxy.value(atX: point.x) {
+                            page = .calendar
+                            currentDay = date
+                        }
+                        
+                    })
+//                    .gesture(
+//                        DragGesture()
+//                            .onChanged{ value in
+//                                if let tag: String = proxy.value(atX: value.location.x - 30) {
+//                                    activeLabel = tag
+//                                }
+//                            }
+//                            .onEnded { value in
+//                                activeLabel = nil
+//                            }
+//                    )
+            }
+        }
         .frame(height: 220)
     }
     
@@ -152,10 +177,15 @@ struct ActivitiesPerDay: View {
     let data: [DataNode]
     let scrollable: Bool
     
-    init( _ title: String, data: [DataNode], scrollable: Bool = false ) {
+    @Binding var page: MainView.MainPage
+    @Binding var currentDay: Date
+    
+    init( _ title: String, data: [DataNode], scrollable: Bool = false, page: Binding<MainView.MainPage>, currentDay: Binding<Date>) {
         self.title = title
         self.data = data
         self.scrollable = scrollable
+        self._page = page
+        self._currentDay = currentDay
     }
     
     var body: some View {

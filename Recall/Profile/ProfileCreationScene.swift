@@ -431,6 +431,9 @@ struct ProfileCreationView: View {
                 makeNextButton()
             }
         }
+        .onTapGesture {
+            self.hideKeyboard()
+        }
         .padding(.bottom, 30)
         .padding(7)
         .universalBackground()

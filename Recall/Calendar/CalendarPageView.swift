@@ -25,7 +25,7 @@ struct CalendarPageView: View {
     let events: [RecallCalendarEvent]
     
     @State var showingCreateEventView: Bool = false
-    @State var currentDay: Date = .now
+    @Binding var currentDay: Date
     @State var swipeDirection: AnyTransition.SlideDirection = .right
 
     @State var showingProfileView: Bool = false

@@ -101,7 +101,8 @@ struct MainView: View {
         }
     }
     
-//    MARK: Body
+
+//    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     
     @ObservedResults( RecallCalendarEvent.self, where: { event in event.startTime > RecallModel.getEarliestEventDate() } ) var events
@@ -110,22 +111,25 @@ struct MainView: View {
     @State var currentPage: MainPage = .calendar
     @State var shouldRefreshData: Bool = false
     @Binding var appPage: ContentView.EntryPage
+    @State var currentDay: Date = .now
     
     private func refreshData(events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil) async {
         await RecallModel.dataModel.updateProperties(events: events ?? nil, goals: goals ?? nil)
     }
     
+    
+    //    MARK: Body
     var body: some View {
     
         let arrEvents = Array(events)
         
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
-                CalendarPageView(events: arrEvents, appPage: $appPage)                              .tag( MainPage.calendar )
-                GoalsPageView(events: arrEvents ).tag( MainPage.goals )
-                CategoriesPageView(events: arrEvents ).tag( MainPage.categories )
-                DataPageView(events: arrEvents, page: $currentPage)                                  .tag( MainPage.data )
-//                Text("hi")                                  .tag( MainPage.data )
+                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)      .tag( MainPage.calendar )
+                GoalsPageView(events: arrEvents )                           .tag( MainPage.goals )
+                CategoriesPageView(events: arrEvents )                      .tag( MainPage.categories )
+                DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)         .tag( MainPage.data )
+
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             

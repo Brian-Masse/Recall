@@ -91,6 +91,7 @@ struct CategoriesPageView: View {
                                 .padding(.bottom, Constants.UIBottomOfPagePadding)
                         }
                     }
+                    .padding(.top)
                 }
             } else {
                 VStack {

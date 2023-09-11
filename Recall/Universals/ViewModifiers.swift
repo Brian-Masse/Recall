@@ -16,10 +16,20 @@ private struct UniversalBackground: ViewModifier {
     let padding: Bool
     
     func body(content: Content) -> some View {
-        GeometryReader { geo in
+//        GeometryReader { geo in
             content
-        }
-        .edgesIgnoringSafeArea(.bottom)
+//                .ignoresSafeArea(.keyboard)
+//        }
+            .background(
+                Rectangle()
+                    .foregroundColor(.clear)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        content.hideKeyboard()
+                    }
+            )
+            .ignoresSafeArea(.container, edges: .bottom)
+//        .edgesIgnoringSafeArea(.bottom)
         .background(
             Image("PaperNoise")
                 .resizable()
@@ -27,7 +37,7 @@ private struct UniversalBackground: ViewModifier {
                 .opacity( colorScheme == .light ? 0.55 : 0.2)
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
-            
+
         )
         .background(colorScheme == .light ? Colors.lightGrey : .black)
     }

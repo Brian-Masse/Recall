@@ -47,6 +47,7 @@ struct DataPageView: View {
     }
     
     
+//    MARK: Vars
     let events: [RecallCalendarEvent]
     @ObservedResults( RecallCategory.self ) var tags
     @ObservedResults( RecallGoal.self ) var goals
@@ -54,10 +55,11 @@ struct DataPageView: View {
     @ObservedObject private var dataModel: RecallDataModel = RecallModel.dataModel
     
     @Binding var page: MainView.MainPage
-    
-//    MARK: Body
+    @Binding var currentDay: Date
     
     @State var hide: Bool = true
+    
+//    MARK: Body
     
     var body: some View {
         
@@ -75,10 +77,10 @@ struct DataPageView: View {
                         
                         
 //                        if !hide {
-                        OverviewDataSection(goals: arrGoals)
+                        OverviewDataSection(goals: arrGoals, currentDay: $currentDay, page: $page)
                             .environmentObject(dataModel )
                         
-                        EventsDataSection()
+                        EventsDataSection(page: $page, currentDay: $currentDay)
                             .environmentObject(dataModel )
                         
                         GoalsDataSection(goals: arrGoals)
