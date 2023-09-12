@@ -133,7 +133,7 @@ struct MainView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             
-            TabBar(pageSelection: $currentPage)
+//            TabBar(pageSelection: $currentPage)
             
         }
         
