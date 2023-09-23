@@ -84,7 +84,7 @@ class RecallGoalDataModel: ObservableObject {
 //            DispatchQueue.main.sync {
                 let count = event.getGoalPrgress(goal)
                 nodes.append(.init(date: event.startTime, count: count, category: "", goal: goal.label))
-//            }t
+//            }
             
             fastLoadCount += 1
             

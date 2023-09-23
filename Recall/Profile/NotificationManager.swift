@@ -30,7 +30,13 @@ class NotificationManager {
             if let error = error {
                 print("error requesting notifcation permission: \(error.localizedDescription)")
             } else {
-                if !success { RecallModel.index.notificationsEnabled = false }
+                if !success {
+                    DispatchQueue.main.sync {
+                        RealmManager.updateObject(RecallModel.index) { thawed in
+                            thawed.notificationsEnabled = false
+                        }
+                    }
+                }
             }
         }
     }

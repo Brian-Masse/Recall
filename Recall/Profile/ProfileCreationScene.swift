@@ -185,6 +185,7 @@ struct ProfileCreationView: View {
         }
         .slideTransition()
         .onAppear() {
+            if RealmManager.usedSignInWithApple { progressScene() }
             showingContinueButton = ( !firstName.isEmpty && !lastName.isEmpty )
         }
         .onChange(of: firstName)    { newValue in
@@ -279,8 +280,9 @@ struct ProfileCreationView: View {
                     .tintRectangularBackground()
                     .onTapGesture { withAnimation {
                         showingContinueButton = true
-                        enabledReminder = true
                         Task { await NotificationManager.shared.requestNotifcationPermissions() }
+                        enabledReminder = RecallModel.index.notificationsEnabled
+                        if !enabledReminder { progressScene() }
                     }}
                 
                 makeNotificationSelector(label: "no, thanks")

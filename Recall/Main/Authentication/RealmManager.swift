@@ -35,6 +35,11 @@ class RealmManager: ObservableObject {
     var lastName: String = ""
     var email: String = ""
     
+//   if the user uses signInWithApple, this will be set to true once it successfully retrieves the credentials
+//   Then the app will bypass the setup portion that asks for your first and last name
+//    This shoudl probably be persisted, so that if a user closes the app between signing in and setting up their profile, it wotn show it
+    static var usedSignInWithApple: Bool = false
+    
     @Published var signedIn: Bool = false
     @Published var realmLoaded: Bool = false
     @Published var hasProfile: Bool = false
@@ -78,9 +83,9 @@ class RealmManager: ObservableObject {
                 let idTokenString = String(data: token, encoding: .utf8)
                 let realmCredentials = Credentials.apple(idToken: idTokenString!)
                 
-                Task {
-                    await RecallModel.realmManager.authUser(credentials: realmCredentials )
-                }
+                RealmManager.usedSignInWithApple = true
+                Task { await RecallModel.realmManager.authUser(credentials: realmCredentials ) }
+                
             } else {
                 print("unable to retrieve idenitty token")
             }

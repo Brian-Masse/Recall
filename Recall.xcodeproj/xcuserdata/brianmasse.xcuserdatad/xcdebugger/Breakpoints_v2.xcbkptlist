@@ -851,8 +851,8 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "265"
-            endingLineNumber = "265"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
             landmarkName = "addGenericSubcriptions(name:query:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -947,8 +947,8 @@
             filePath = "Recall/Profile/ProfileCreationScene.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "435"
-            endingLineNumber = "435"
+            startingLineNumber = "437"
+            endingLineNumber = "437"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
