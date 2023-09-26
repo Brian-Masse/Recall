@@ -17,7 +17,6 @@ struct CalendarPageView: View {
         if date > currentDay { slideDirection = .right }
         else { slideDirection = .left }
         
-        
         withAnimation { currentDay = date }
     }
     

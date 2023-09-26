@@ -947,8 +947,8 @@
             filePath = "Recall/Profile/ProfileCreationScene.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "437"
-            endingLineNumber = "437"
+            startingLineNumber = "436"
+            endingLineNumber = "436"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -1139,42 +1139,10 @@
             filePath = "Recall/Profile/ProfileCreationScene.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
             landmarkName = "submit(skipTutorial:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "FC277ECF-E676-43D1-A3B5-B5DBEEEBC3A2 - acb9fefe9e1af555"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in Recall.ProfileCreationView.submit(skipTutorial: Swift.Bool) -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Profile/ProfileCreationScene.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "93"
-                  endingLineNumber = "93"
-                  offsetFromSymbolStart = "735">
-               </Location>
-               <Location
-                  uuid = "FC277ECF-E676-43D1-A3B5-B5DBEEEBC3A2 - acb9fefe9e1af555"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in Recall.ProfileCreationView.submit(skipTutorial: Swift.Bool) -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Profile/ProfileCreationScene.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "93"
-                  endingLineNumber = "93"
-                  offsetFromSymbolStart = "673">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

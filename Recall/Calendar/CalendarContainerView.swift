@@ -202,11 +202,11 @@ struct CalendarContainer: View {
                         }
 //                        .transition( transition )
 
-                        .if(slideDirection == .right) { view in view.overlay( Rectangle().foregroundColor(.red) )}
-                        .if(slideDirection == .left) { view in view.overlay( Rectangle().foregroundColor(.blue) )}
+//                        .if(slideDirection == .right) { view in view.overlay( Rectangle().foregroundColor(.red) )}
+//                        .if(slideDirection == .left) { view in view.overlay( Rectangle().foregroundColor(.blue) )}
                         
-//                        .if( slideDirection == .right ) { view in view.transition(AnyTransition.slideAwayTransition(.right)) }
-//                        .if( slideDirection == .left ) { view in view.transition(AnyTransition.slideAwayTransition(.left)) }
+                        .if( slideDirection == .right ) { view in view.transition(AnyTransition.slideAwayTransition(.right)) }
+                        .if( slideDirection == .left ) { view in view.transition(AnyTransition.slideAwayTransition(.left)) }
                         
                         Rectangle()
                             .foregroundColor(.white)
