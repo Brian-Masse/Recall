@@ -89,6 +89,7 @@ struct ProfileCreationView: View {
             RecallModel.index.postProfileCreationInit()
             
             if skipTutorial {
+                
                 RecallModel.index.finishTutorial()
                 page = .app
             }
