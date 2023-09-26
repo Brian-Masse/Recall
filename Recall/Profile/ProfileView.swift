@@ -28,6 +28,8 @@ struct ProfileView: View {
     
     @State var activeIcon: String = UIApplication.shared.alternateIconName ?? "light"
     
+    @State var showingError: Bool = false
+    
     let index = RecallModel.index
     
 //    MARK: Methods
@@ -217,6 +219,10 @@ struct ProfileView: View {
             makeSubButton(title: "reindex Data", icon: "tray.2") {
                 Task { await RecallModel.index.initializeIndex() }
             }
+            
+            makeSubButton(title: "delete account", icon: "shippingbox.and.arrow.backward") {
+                showingError = true
+            }
         }
     }
     
@@ -267,6 +273,14 @@ struct ProfileView: View {
             Button(role: .destructive) {
                 RecallModel.realmManager.transferDataOwnership(to: ownerID)
             } label: { Text("Transfer Data") }
+        }
+        .alert("Are you sure you want to delete your profile?", isPresented: $showingError) {
+            Button(role: .destructive) {
+                Task {
+                    RecallModel.realmManager.logoutUser()
+                    await RecallModel.realmManager.deleteProfile()
+                }
+            } label: { Text( "delete profile" ) }
         }
         .sheet(isPresented: $showingEditingView) {
             ProfileEditorView(email: index.email,

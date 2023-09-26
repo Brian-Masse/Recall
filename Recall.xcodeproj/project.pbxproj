@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */; };
 		C908FFFC2A8D461100E3BBEA /* OverviewDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFFB2A8D461100E3BBEA /* OverviewDataSection.swift */; };
+		C90E592B2ABFB93300D8D3A6 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = C90E592A2ABFB93300D8D3A6 /* SymbolPicker */; };
+		C90E592D2ABFBA9200D8D3A6 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C90E592C2ABFBA9200D8D3A6 /* Realm */; };
+		C90E592F2ABFBA9200D8D3A6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C90E592E2ABFBA9200D8D3A6 /* RealmSwift */; };
 		C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */; };
 		C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */; };
 		C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0062A67213F009F6C84 /* RecallCategory.swift */; };
@@ -24,8 +27,6 @@
 		C91BCF042A618437003C6DD6 /* RecallTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF032A618437003C6DD6 /* RecallTests.swift */; };
 		C91BCF0E2A618437003C6DD6 /* RecallUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF0D2A618437003C6DD6 /* RecallUITests.swift */; };
 		C91BCF102A618437003C6DD6 /* RecallUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF0F2A618437003C6DD6 /* RecallUITestsLaunchTests.swift */; };
-		C91BCF1E2A618601003C6DD6 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C91BCF1D2A618601003C6DD6 /* Realm */; };
-		C91BCF202A618601003C6DD6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C91BCF1F2A618601003C6DD6 /* RealmSwift */; };
 		C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF212A61C374003C6DD6 /* RealmManager.swift */; };
 		C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */; };
 		C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */; };
@@ -42,14 +43,12 @@
 		C928E15A2A7B546E00E981F1 /* EventsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E1592A7B546E00E981F1 /* EventsDataSection.swift */; };
 		C928E15C2A7C3B3300E981F1 /* GoalsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E15B2A7C3B3300E981F1 /* GoalsDataSection.swift */; };
 		C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F102A688855007E8537 /* UniversalForm.swift */; };
-		C94B1F142A6888C1007E8537 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = C94B1F132A6888C1007E8537 /* SymbolPicker */; };
 		C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F152A6891E9007E8537 /* CalendarPageView.swift */; };
 		C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F172A68931F007E8537 /* GoalsPageView.swift */; };
 		C94F06762A6AD9F200C99EA0 /* GoalPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F06752A6AD9F200C99EA0 /* GoalPreviewView.swift */; };
 		C94F06792A6AF84200C99EA0 /* RenoMono.otf in Resources */ = {isa = PBXBuildFile; fileRef = C94F06782A6AF84200C99EA0 /* RenoMono.otf */; };
 		C94F067C2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */; };
 		C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F067D2A6B215400C99EA0 /* GoalView.swift */; };
-		C954AACF2A76B60000897BCE /* FlowGrid in Frameworks */ = {isa = PBXBuildFile; productRef = C954AACE2A76B60000897BCE /* FlowGrid */; };
 		C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C954AAD02A76FA4E00897BCE /* Animations.swift */; };
 		C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */; };
 		C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033D2A868DEB00729334 /* RecallDataModel.swift */; };
@@ -165,10 +164,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C91BCF202A618601003C6DD6 /* RealmSwift in Frameworks */,
-				C91BCF1E2A618601003C6DD6 /* Realm in Frameworks */,
-				C954AACF2A76B60000897BCE /* FlowGrid in Frameworks */,
-				C94B1F142A6888C1007E8537 /* SymbolPicker in Frameworks */,
+				C90E592F2ABFBA9200D8D3A6 /* RealmSwift in Frameworks */,
+				C90E592D2ABFBA9200D8D3A6 /* Realm in Frameworks */,
+				C90E592B2ABFB93300D8D3A6 /* SymbolPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,10 +461,9 @@
 			);
 			name = Recall;
 			packageProductDependencies = (
-				C91BCF1D2A618601003C6DD6 /* Realm */,
-				C91BCF1F2A618601003C6DD6 /* RealmSwift */,
-				C94B1F132A6888C1007E8537 /* SymbolPicker */,
-				C954AACE2A76B60000897BCE /* FlowGrid */,
+				C90E592A2ABFB93300D8D3A6 /* SymbolPicker */,
+				C90E592C2ABFBA9200D8D3A6 /* Realm */,
+				C90E592E2ABFBA9200D8D3A6 /* RealmSwift */,
 			);
 			productName = Recall;
 			productReference = C91BCEEE2A618435003C6DD6 /* Recall.app */;
@@ -516,7 +513,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					C91BCEED2A618434003C6DD6 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -712,9 +709,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -770,9 +769,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -796,6 +797,7 @@
 				CODE_SIGN_ENTITLEMENTS = Recall/Recall.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Recall/Preview Content\"";
 				DEVELOPMENT_TEAM = LN4JU8GNV7;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -817,7 +819,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "Masse-Brian.Recall";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -838,6 +840,7 @@
 				CODE_SIGN_ENTITLEMENTS = Recall/Recall.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Recall/Preview Content\"";
 				DEVELOPMENT_TEAM = LN4JU8GNV7;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -859,7 +862,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "Masse-Brian.Recall";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -879,6 +882,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = LN4JU8GNV7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
@@ -902,6 +906,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = LN4JU8GNV7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
@@ -924,6 +929,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = LN4JU8GNV7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
@@ -946,6 +952,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = LN4JU8GNV7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
@@ -1031,25 +1038,20 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C91BCF1D2A618601003C6DD6 /* Realm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = Realm;
-		};
-		C91BCF1F2A618601003C6DD6 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
-		};
-		C94B1F132A6888C1007E8537 /* SymbolPicker */ = {
+		C90E592A2ABFB93300D8D3A6 /* SymbolPicker */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
 			productName = SymbolPicker;
 		};
-		C954AACE2A76B60000897BCE /* FlowGrid */ = {
+		C90E592C2ABFBA9200D8D3A6 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C954AACD2A76B60000897BCE /* XCRemoteSwiftPackageReference "FlowGrid" */;
-			productName = FlowGrid;
+			package = C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		C90E592E2ABFBA9200D8D3A6 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

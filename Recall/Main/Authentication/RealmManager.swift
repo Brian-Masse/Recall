@@ -174,14 +174,20 @@ class RealmManager: ObservableObject {
     }
     
     @MainActor
-    func logoutUser() {
+    func logoutUser(onMain: Bool = false) {
         if let user = self.user {
             user.logOut { error in
                 if let error = error { print("error logging out: \(error.localizedDescription)") }
                 
                 NotificationManager.shared.clearNotifications()
                 
-                DispatchQueue.main.sync {
+                if !onMain {
+                    DispatchQueue.main.sync {
+                        self.signedIn = false
+                        self.hasProfile = false
+                        self.realmLoaded = false
+                    }
+                } else {
                     self.signedIn = false
                     self.hasProfile = false
                     self.realmLoaded = false
@@ -191,6 +197,16 @@ class RealmManager: ObservableObject {
     }
     
 //    MARK: Profile Functions
+    
+    @MainActor
+    func deleteProfile() async {
+        
+//        TODO: This should actually delete the user, but that is a whole process, and I dont want to do it
+        self.logoutUser(onMain: true)
+//        RealmManager.deleteObject(RecallModel.index) { index in index.ownerID == RecallModel.ownerID }
+        
+    }
+    
     @MainActor
     func checkProfile() async {
 //        RealmManager already has a query subscription to access the index
@@ -203,7 +219,7 @@ class RealmManager: ObservableObject {
         } else {
             createIndex()
         }
-        
+
         
     }
     
