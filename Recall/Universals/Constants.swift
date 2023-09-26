@@ -16,8 +16,8 @@ class Colors {
     
     static let colorOptions: [Color] = [ accentGreen, blue, purple, grape, pink, red, yellow,  ]
     
-    static let lightGrey = makeColor(247, 255, 230)
-    static let secondaryLightColor = makeColor( 227, 235, 211 )
+    static let lightGrey = makeColor(255, 255, 255)
+    static let secondaryLightColor = makeColor( 235, 235, 235 )
     static let darkGrey = Color(red: 0.1, green: 0.1, blue: 0.1).opacity(0.9)
     static let accentGreen = makeColor(95, 255, 135)
     static let lightAccentGreen = makeColor(66, 122, 69)
