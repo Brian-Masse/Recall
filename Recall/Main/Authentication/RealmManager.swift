@@ -194,6 +194,17 @@ class RealmManager: ObservableObject {
                 }
             }
         }
+        
+        self.user = nil
+        
+        Task {
+            do {
+                try await self.clearAllSubscriptions()
+            } catch {
+                print("error clearing subscriptions: \(error.localizedDescription)")
+            }
+        }
+    
     }
     
 //    MARK: Profile Functions
@@ -203,6 +214,7 @@ class RealmManager: ObservableObject {
         
 //        TODO: This should actually delete the user, but that is a whole process, and I dont want to do it
         self.logoutUser(onMain: true)
+        
 //        RealmManager.deleteObject(RecallModel.index) { index in index.ownerID == RecallModel.ownerID }
         
     }
@@ -268,7 +280,7 @@ class RealmManager: ObservableObject {
         let _:GoalNode?             = await self.addGenericSubcriptions(name: QuerySubKey.goalNode.rawValue, query: goalsNodeQuery.baseQuery )
         let _:RecallIndex?          = await self.addGenericSubcriptions(name: QuerySubKey.index.rawValue, query: indexQuery.baseQuery )
         let _:DictionaryNode?       = await self.addGenericSubcriptions(name: QuerySubKey.dictionary.rawValue, query: dicQuery.baseQuery )
-        
+
     }
     
 //    MARK: Helper Functions
@@ -308,6 +320,18 @@ class RealmManager: ObservableObject {
         let subscriptions = self.realm.subscriptions
         let foundSubscriptions = subscriptions.first(named: name)
         return foundSubscriptions != nil
+    }
+    
+    @MainActor
+    func clearAllSubscriptions() async throws {
+        if let realm = self.realm {
+            
+            let subscriptions = realm.subscriptions
+            try await subscriptions.update {
+                subscriptions.removeAll(ofType: RecallCalendarEvent.self)
+                
+            }
+        }
     }
     
     func removeAllNonBaseSubscriptions() async {

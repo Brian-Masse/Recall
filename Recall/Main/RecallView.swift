@@ -50,6 +50,7 @@ struct ContentView: View {
             } else {
                 MainView(appPage: $entryPage)
                     .onAppear() { entryPage = .app }
+                    .environment(\.realmConfiguration, realmManager.configuration)
                     .slideTransition()
             }
         }

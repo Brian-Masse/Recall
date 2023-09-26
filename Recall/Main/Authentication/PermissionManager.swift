@@ -31,7 +31,7 @@ class QueryPermission<T: Object> {
         }
     }
     
-    let baseQuery: (Query<T>) -> Query<Bool>
+    var baseQuery: (Query<T>) -> Query<Bool>
     private var additionalQueries: [ WrappedQuery<T> ] = []
     
     init( baseQuery: @escaping (Query<T>) -> Query<Bool> ) {
