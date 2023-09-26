@@ -107,8 +107,8 @@ struct CalendarContainer: View {
             }
             .onEnded { dragValue in
 
-                if dragValue.translation.width < 0 { slideDirection = .right }
-                if dragValue.translation.width > 0 { slideDirection = .left }
+//                if dragValue.translation.width < 0 { slideDirection = .right }
+//                if dragValue.translation.width > 0 { slideDirection = .left }
                 
 //                withAnimation(.easeInOut(duration: 0.25)) {
 //                    if dragValue.translation.width < 0 { currentDay += Constants.DayTime }
@@ -156,11 +156,13 @@ struct CalendarContainer: View {
     
     @State var dragging: Bool = false
     @Binding var currentDay: Date
+    
     @Binding var slideDirection: AnyTransition.SlideDirection
+//    @Binding var transition: AnyTransition
     
     @Namespace private var animation
     
-    init( at currentDay: Binding<Date>, with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, swipeDirection: Binding<AnyTransition.SlideDirection> = Binding { .right } set: { _, _ in }, background: Bool = false, overrideHeight: CGFloat? = nil ) {
+    init( at currentDay: Binding<Date>, with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, slideDirection: Binding<AnyTransition.SlideDirection> = Binding { .right } set: { _, _ in }, background: Bool = false, overrideHeight: CGFloat? = nil ) {
         self.events = events
         self.startHour = startHour
         self.endHour = endHour
@@ -169,8 +171,10 @@ struct CalendarContainer: View {
         self.background = background
         self.overrideHeight = overrideHeight
         self._currentDay = currentDay
-        self._slideDirection = swipeDirection
+        self._slideDirection = slideDirection
     }
+    
+    
     
     var body: some View {
         VStack {
@@ -196,8 +200,13 @@ struct CalendarContainer: View {
                             }
                             .padding(.leading, 40)
                         }
-                        .if( slideDirection == .right ) { view in view.transition(AnyTransition.slideAwayTransition(.right)) }
-                        .if( slideDirection == .left ) { view in view.transition(AnyTransition.slideAwayTransition(.left)) }
+//                        .transition( transition )
+
+                        .if(slideDirection == .right) { view in view.overlay( Rectangle().foregroundColor(.red) )}
+                        .if(slideDirection == .left) { view in view.overlay( Rectangle().foregroundColor(.blue) )}
+                        
+//                        .if( slideDirection == .right ) { view in view.transition(AnyTransition.slideAwayTransition(.right)) }
+//                        .if( slideDirection == .left ) { view in view.transition(AnyTransition.slideAwayTransition(.left)) }
                         
                         Rectangle()
                             .foregroundColor(.white)

@@ -947,8 +947,8 @@
             filePath = "Recall/Profile/ProfileCreationScene.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "437"
-            endingLineNumber = "437"
+            startingLineNumber = "436"
+            endingLineNumber = "436"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -1014,6 +1014,118 @@
             startingLineNumber = "78"
             endingLineNumber = "78"
             landmarkName = "makeProgressOverTimeData(fastLoad:recentData:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "840C92C9-A909-4CFD-9665-69CA455D9F6C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Calendar/CalendarContainerView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
+            landmarkName = "swipeGesture"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "840C92C9-A909-4CFD-9665-69CA455D9F6C - 976f5625bdb75323"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (SwiftUI.DragGesture.Value) -&gt; () in Recall.CalendarContainer.swipeGesture.getter : some"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Calendar/CalendarContainerView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "110"
+                  endingLineNumber = "110"
+                  offsetFromSymbolStart = "159">
+               </Location>
+               <Location
+                  uuid = "840C92C9-A909-4CFD-9665-69CA455D9F6C - 976f5625bdb7522b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (SwiftUI.DragGesture.Value) -&gt; () in Recall.CalendarContainer.swipeGesture.getter : some"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Calendar/CalendarContainerView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "118"
+                  endingLineNumber = "118"
+                  offsetFromSymbolStart = "33">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "79EB704A-24A1-4B16-9CAB-0B12815D7941"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Main/Authentication/OpenFlexibleRealmView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "79EB704A-24A1-4B16-9CAB-0B12815D7941 - 92588d84fa624892"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #3 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(Recall.OpenFlexibleSyncRealmView.loadingCase, &lt;&lt;opaque return type of SwiftUI.View.statusBarHidden(Swift.Bool) -&gt; some&gt;&gt;.0)&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;SwiftUI.VStack&lt;&lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0&gt;, SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(Recall.OpenFlexibleSyncRealmView.loadingCase, &lt;&lt;opaque return type of SwiftUI.View.tint(Swift.Optional&lt;SwiftUI.Color&gt;) -&gt; some&gt;&gt;.0)&gt;&gt;&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of SwiftUI.View.onTapGesture(count: Swift.Int, perform: () -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.alert(isPresented: SwiftUI.Binding&lt;Swift.Bool&gt;, content: () -&gt; SwiftUI.Alert) -&gt; some&gt;&gt;.0 in closure #1 (SwiftUI.GeometryProxy) -&gt; &lt;&lt;opaque return type of SwiftUI.View.frame(width: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, height: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0 in Recall.OpenFlexibleSyncRealmView.body.getter : some"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/Authentication/OpenFlexibleRealmView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "69"
+                  endingLineNumber = "69"
+                  offsetFromSymbolStart = "200">
+               </Location>
+               <Location
+                  uuid = "79EB704A-24A1-4B16-9CAB-0B12815D7941 - 50e8950852c77ce3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #1 @Sendable () async -&gt; () in closure #3 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(Recall.OpenFlexibleSyncRealmView.loadingCase, &lt;&lt;opaque return type of SwiftUI.View.statusBarHidden(Swift.Bool) -&gt; some&gt;&gt;.0)&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt;, SwiftUI._ConditionalContent&lt;SwiftUI.VStack&lt;&lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0&gt;, SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(Recall.OpenFlexibleSyncRealmView.loadingCase, &lt;&lt;opaque return type of SwiftUI.View.tint(Swift.Optional&lt;SwiftUI.Color&gt;) -&gt; some&gt;&gt;.0)&gt;&gt;&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of SwiftUI.View.onTapGesture(count: Swift.Int, perform: () -&gt; ()) -&gt; some&gt;&gt;.0)&gt; in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.alert(isPresented: SwiftUI.Binding&lt;Swift.Bool&gt;, content: () -&gt; SwiftUI.Alert) -&gt; some&gt;&gt;.0 in closure #1 (SwiftUI.GeometryProxy) -&gt; &lt;&lt;opaque return type of SwiftUI.View.frame(width: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, height: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0 in Recall.OpenFlexibleSyncRealmView.body.getter : some"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Main/Authentication/OpenFlexibleRealmView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "69"
+                  endingLineNumber = "69"
+                  offsetFromSymbolStart = "72">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "31FAAD64-8849-4B9B-B1EA-EB767EFD7F82"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Profile/ProfileCreationScene.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
+            landmarkName = "submit(skipTutorial:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

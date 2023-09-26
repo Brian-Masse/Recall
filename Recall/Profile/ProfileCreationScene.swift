@@ -281,8 +281,6 @@ struct ProfileCreationView: View {
                     .onTapGesture { withAnimation {
                         showingContinueButton = true
                         Task { await NotificationManager.shared.requestNotifcationPermissions() }
-                        enabledReminder = RecallModel.index.notificationsEnabled
-                        if !enabledReminder { progressScene() }
                     }}
                 
                 makeNotificationSelector(label: "no, thanks")
@@ -303,6 +301,7 @@ struct ProfileCreationView: View {
                     .padding(.top)
             }
         }
+        .onAppear() { showingContinueButton = true }
         .slideTransition()
     }
     

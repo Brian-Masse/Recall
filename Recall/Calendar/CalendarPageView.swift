@@ -14,8 +14,9 @@ struct CalendarPageView: View {
 //    MARK: Convenience Functions
     
     private func setCurrentDay(with date: Date) {
-        if date > currentDay { swipeDirection = .right }
-        else { swipeDirection = .left }
+        if date > currentDay { slideDirection = .right }
+        else { slideDirection = .left }
+        
         
         withAnimation { currentDay = date }
     }
@@ -26,7 +27,8 @@ struct CalendarPageView: View {
     
     @State var showingCreateEventView: Bool = false
     @Binding var currentDay: Date
-    @State var swipeDirection: AnyTransition.SlideDirection = .right
+    @State var slideDirection: AnyTransition.SlideDirection = .right
+//    @State var transition: AnyTransition = .identity
 
     @State var showingProfileView: Bool = false
     @Binding var appPage: ContentView.EntryPage
@@ -165,7 +167,7 @@ struct CalendarPageView: View {
             }
         
             GeometryReader { geo in
-                CalendarContainer(at: $currentDay, with: Array(events), from: 0, to: 24, geo: geo, swipeDirection: $swipeDirection)
+                CalendarContainer(at: $currentDay, with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
             }
         }
         .padding()

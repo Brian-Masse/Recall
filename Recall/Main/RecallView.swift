@@ -47,7 +47,8 @@ struct ContentView: View {
                 TutorialViews(page: $entryPage)
                     .slideTransition()
                 
-            } else {
+            } 
+            else {
                 MainView(appPage: $entryPage)
                     .onAppear() { entryPage = .app }
                     .environment(\.realmConfiguration, realmManager.configuration)
