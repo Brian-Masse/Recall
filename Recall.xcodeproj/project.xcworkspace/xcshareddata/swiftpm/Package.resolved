@@ -1,0 +1,41 @@
+{
+  "pins" : [
+    {
+      "identity" : "flowgrid",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rdev/FlowGrid",
+      "state" : {
+        "revision" : "67b26028505b117020acd43ad5465cb59a5b0f3d",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core.git",
+      "state" : {
+        "revision" : "f1434caadda443b4ed2261b91ea4f43ab1ee2aa5",
+        "version" : "13.15.1"
+      }
+    },
+    {
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "2df43547c16fc2452e7d163f0424106cdf9aa8f7"
+      }
+    },
+    {
+      "identity" : "symbolpicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xnth97/SymbolPicker.git",
+      "state" : {
+        "revision" : "1e81757fc81fdee86f48d101eab0d0f8e9e0ec3d",
+        "version" : "1.4.2"
+      }
+    }
+  ],
+  "version" : 2
+}
