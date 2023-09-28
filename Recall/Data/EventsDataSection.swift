@@ -16,7 +16,7 @@ struct EventsDataSection: View {
     
     @EnvironmentObject var data: RecallDataModel
     
-    @Binding var page: MainView.MainPage
+    @Binding var page: MainPage
     @Binding var currentDay: Date
     
     var body: some View {

@@ -24,7 +24,7 @@ struct ContentView: View {
     @State var entryPage: EntryPage = .splashScreen
     
     var body: some View {
-
+        
         Group {
             if !realmManager.signedIn {
                 switch entryPage {
@@ -47,7 +47,7 @@ struct ContentView: View {
                 TutorialViews(page: $entryPage)
                     .slideTransition()
                 
-            } 
+            }
             else {
                 MainView(appPage: $entryPage)
                     .onAppear() { entryPage = .app }

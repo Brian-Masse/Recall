@@ -14,7 +14,7 @@ struct OverviewDataSection: View {
     @EnvironmentObject var data: RecallDataModel
     
     @Binding var currentDay: Date
-    @Binding var page: MainView.MainPage
+    @Binding var page: MainPage
 
     
 //    MARK: Body

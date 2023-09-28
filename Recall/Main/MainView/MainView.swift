@@ -13,17 +13,32 @@ import RealmSwift
 //MARK: MainView
 struct MainView: View {
     
-    enum MainPage: Int, Identifiable {
-        case calendar
-        case goals
-        case data
-        case categories
-        case templates
+    static let TabBarNodes: [TabBarNode] = [
+        .init("Recall",  icon: "calendar",       page: .calendar),
+        .init("Goals",   icon: "flag.checkered", page: .goals),
+        .init("Tags",    icon: "tag",            page: .categories),
+        .init("Data",    icon: "chart.bar",      page: .data)
+    ]
+    
+    static let MacOSTabBarNodes: [TabBarNode] = [
+        .init("Recall",     icon: "calendar",           page: .calendar),
         
-        var id: Int {
-            self.rawValue
-        }
-    }
+        .init("Goals",      icon: "flag.checkered",     page: .goals),
+        .init("High",       icon: "exclamationmark.3",  page: .calendar, indent: true),
+        .init("medium",     icon: "exclamationmark.2",  page: .calendar, indent: true),
+        .init("low",        icon: "exclamationmark",    page: .calendar, indent: true),
+        
+        .init("tags & templates",       icon: "tag",                page: .categories),
+        .init("Tags",       icon: "tag",                page: .calendar, indent: true),
+        .init("Templates",  icon: "airport.extreme",    page: .calendar, indent: true),
+        
+        .init("Data",       icon: "chart.bar",          page: .data),
+        .init("overview",   icon: "lines.measurement.horizontal",   page: .calendar, indent: true),
+        .init("events",     icon: "calendar.day.timeline.left",     page: .calendar, indent: true),
+        .init("goals",      icon: "flag.checkered",                 page: .calendar, indent: true),
+        
+    ]
+    
     
 //    MARK: Tabbar
     struct TabBar: View {
@@ -32,11 +47,11 @@ struct MainView: View {
         
         struct TabBarIcon: View {
             
-            @Binding var selection: MainView.MainPage
+            @Binding var selection: MainPage
             
             let namespace: Namespace.ID
             
-            let page: MainView.MainPage
+            let page: MainPage
             let title: String
             let icon: String
         
@@ -47,7 +62,6 @@ struct MainView: View {
 //                    UniversalText( title, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: false )
                     
                 }
-                
             }
             
             var body: some View {
@@ -76,7 +90,7 @@ struct MainView: View {
         }
         
         @Namespace private var tabBarNamespace
-        @Binding var pageSelection: MainView.MainPage
+        @Binding var pageSelection: MainPage
         
         var body: some View {
             HStack(spacing: 10) {
@@ -123,33 +137,41 @@ struct MainView: View {
     
         let arrEvents = Array(events)
         
-        ZStack(alignment: .bottom) {
-            TabView(selection: $currentPage) {
-                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)      .tag( MainPage.calendar )
-                GoalsPageView(events: arrEvents )                           .tag( MainPage.goals )
-                CategoriesPageView(events: arrEvents )                      .tag( MainPage.categories )
-                DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)         .tag( MainPage.data )
+        NavigationSplitView {
+            
+            MacOSSideBar(mainPage: $currentPage)
+            
+            
+        } detail: {
+            
+            ZStack(alignment: .bottom) {
+                TabView(selection: $currentPage) {
+                    CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)      .tag( MainPage.calendar )
+                    GoalsPageView(events: arrEvents )                           .tag( MainPage.goals )
+                    CategoriesPageView(events: arrEvents )                      .tag( MainPage.categories )
+                    DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)         .tag( MainPage.data )
 
+                }
+                #if os(iOS)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                #endif
+                TabBar(pageSelection: $currentPage)
+                
             }
-            #if os(iOS)
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            #endif
-            TabBar(pageSelection: $currentPage)
+            
+            .onAppear {
+                Task { await refreshData(events: Array(events), goals: Array(goals)) }
+                RecallModel.shared.setTint(from: colorScheme)
+                Constants.setupConstants()
+            }
+            .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
+            
+            .onChange(of: colorScheme) { newValue in
+                RecallModel.shared.setTint(from: newValue)
+            }
+            
             
         }
-        
-        .onAppear {
-            Task { await refreshData(events: Array(events), goals: Array(goals)) }
-            RecallModel.shared.setTint(from: colorScheme)
-            Constants.setupConstants()
-        }
-        .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
-        
-        .onChange(of: colorScheme) { newValue in
-            RecallModel.shared.setTint(from: newValue)
-        }
-        
-        
         .ignoresSafeArea()
         .universalBackground()
         

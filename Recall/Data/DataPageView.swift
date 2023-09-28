@@ -54,7 +54,7 @@ struct DataPageView: View {
     
     @ObservedObject private var dataModel: RecallDataModel = RecallModel.dataModel
     
-    @Binding var page: MainView.MainPage
+    @Binding var page: MainPage
     @Binding var currentDay: Date
     
     @State var hide: Bool = true

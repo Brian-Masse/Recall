@@ -177,10 +177,10 @@ struct ActivitiesPerDay: View {
     let data: [DataNode]
     let scrollable: Bool
     
-    @Binding var page: MainView.MainPage
+    @Binding var page: MainPage
     @Binding var currentDay: Date
     
-    init( _ title: String, data: [DataNode], scrollable: Bool = false, page: Binding<MainView.MainPage>, currentDay: Binding<Date>) {
+    init( _ title: String, data: [DataNode], scrollable: Bool = false, page: Binding<MainPage>, currentDay: Binding<Date>) {
         self.title = title
         self.data = data
         self.scrollable = scrollable
