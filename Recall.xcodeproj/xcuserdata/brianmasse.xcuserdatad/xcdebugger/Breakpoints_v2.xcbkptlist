@@ -956,54 +956,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "449F565C-BA91-4CD6-9B90-234584CE9D7F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Recall/Universals/ViewModifiers.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "body(content:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "449F565C-BA91-4CD6-9B90-234584CE9D7F - 642eef594b9de70e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Recall.UniversalBackground.body(content: SwiftUI._ViewModifier_Content&lt;Recall.UniversalBackground&gt;) -&gt; some"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Universals/ViewModifiers.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "28"
-                  endingLineNumber = "28"
-                  offsetFromSymbolStart = "2076">
-               </Location>
-               <Location
-                  uuid = "449F565C-BA91-4CD6-9B90-234584CE9D7F - 1d7ff71fb0cd0ff5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in Recall.UniversalBackground.body(content: SwiftUI._ViewModifier_Content&lt;Recall.UniversalBackground&gt;) -&gt; some"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode%20/Recall/Recall/Universals/ViewModifiers.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "28"
-                  endingLineNumber = "28"
-                  offsetFromSymbolStart = "25">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "293827C9-BBBB-4934-BD4A-A8B0E571DFFE"
             shouldBeEnabled = "No"
             ignoreCount = "0"

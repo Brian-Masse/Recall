@@ -38,7 +38,7 @@ struct ContentView: View {
                     .environment(\.realmConfiguration, realmManager.configuration)
                     .slideTransition()
                 
-            } else if (entryPage == .profileCreation || !realmManager.profileLoaded) && !realmManager.profileLoaded {
+            } else if (entryPage == .profileCreation || !realmManager.profileLoaded) {
                 ProfileCreationView(page: $entryPage)
                     .slideTransition()
             }

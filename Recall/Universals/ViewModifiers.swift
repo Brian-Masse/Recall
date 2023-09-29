@@ -9,6 +9,24 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
+struct EffectView: NSViewRepresentable {
+    @State var material: NSVisualEffectView.Material = .headerView
+    @State var blendingMode: NSVisualEffectView.BlendingMode = .withinWindow
+
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = material
+        view.blendingMode = blendingMode
+        return view
+    }
+    
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+        nsView.material = material
+        nsView.blendingMode = blendingMode
+    }
+}
+
+
 //MARK: Backgrounds
 private struct UniversalBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
@@ -16,32 +34,35 @@ private struct UniversalBackground: ViewModifier {
     let padding: Bool
     
     func body(content: Content) -> some View {
-//        GeometryReader { geo in
-            content
-//                .ignoresSafeArea(.keyboard)
-//        }
-            .background(
-                Rectangle()
-                    .foregroundColor(.clear)
-                    .contentShape(Rectangle())
-                #if os(iOS)
-                    .onTapGesture {
-                        content.hideKeyboard()
-                    }
-                #endif
-            )
-            .ignoresSafeArea(.container, edges: .bottom)
-//        .edgesIgnoringSafeArea(.bottom)
-        .background(
-            Image("PaperNoise")
-                .resizable()
-                .blendMode( colorScheme == .light ? .multiply : .lighten)
-                .opacity( colorScheme == .light ? 0.35 : 0.2)
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
+        
+        EffectView(material: .windowBackground)
+            .overlay {
+                content
+                    #if os(iOS)
+                    .background(
+                        Rectangle()
+                            .foregroundColor(.clear)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                content.hideKeyboard()
+                            }
+                    )
+                    #endif
+                    .ignoresSafeArea(.container, edges: .bottom)
+                    #if os(iOS)
+                    .background(
+                        Image("PaperNoise")
+                            .resizable()
+                            .blendMode( colorScheme == .light ? .multiply : .lighten)
+                            .opacity( colorScheme == .light ? 0.35 : 0.2)
+                            .ignoresSafeArea()
+                            .allowsHitTesting(false)
 
-        )
-        .background(colorScheme == .light ? Colors.lightGrey : .black)
+                    )
+                    .background(colorScheme == .light ? Colors.lightGrey : .black)
+                    #endif
+                
+            }
     }
 }
 
@@ -135,6 +156,7 @@ private struct OpaqueRectangularBackground: ViewModifier {
         content
             .if(padding == nil) { view in view.padding() }
             .if(padding != nil) { view in view.padding(padding!) }
+        #if os(iOS)
             .background(
                 VStack {
                     if texture {
@@ -147,6 +169,7 @@ private struct OpaqueRectangularBackground: ViewModifier {
                     }
                 }
             )
+        #endif
             .background(colorScheme == .light ? Colors.lightGrey : .black )
             .if(stroke) { view in
                 view
