@@ -170,7 +170,7 @@ struct TotalActivites: View {
         var dateIterator = goal.getStartDate()
         while dateIterator <= .now {
             let count = events.filter { event in event.startTime.matches(dateIterator, to: .day) }.reduce(0) { partialResult, event in
-                partialResult + event.getGoalPrgress(goal)
+                partialResult + event.getGoalProgressThreadInvariant(goal)
             }
             nodes.append(DataNode(date: dateIterator, count: (nodes.last?.count ?? 0) + count, category: "", goal: goal.label))
             dateIterator += Constants.DayTime
