@@ -153,6 +153,7 @@ private struct OpaqueRectangularBackground: ViewModifier {
     let texture: Bool
     
     func body(content: Content) -> some View {
+        
         content
             .if(padding == nil) { view in view.padding() }
             .if(padding != nil) { view in view.padding(padding!) }
@@ -169,8 +170,13 @@ private struct OpaqueRectangularBackground: ViewModifier {
                     }
                 }
             )
-        #endif
             .background(colorScheme == .light ? Colors.lightGrey : .black )
+        #elseif os(macOS)
+            .background(
+                EffectView(material: .windowBackground)
+            )
+        
+        #endif
             .if(stroke) { view in
                 view
                     .overlay(

@@ -11,6 +11,7 @@ import RealmSwift
 
 struct GoalsPageView: View {
     
+//    MARK: Vars
     @ObservedResults( RecallGoal.self ) var goals
     @ObservedResults( RecallCategory.self ) var categories
     
@@ -18,10 +19,35 @@ struct GoalsPageView: View {
     
     @State var showingGoalCreationView: Bool = false
     
+    
+//    MARK: ViewBuilder
+    @ViewBuilder
+    static func makeGoalPrioritySection( _ priority: RecallGoal.Priority, goals: [RecallGoal], events: [RecallCalendarEvent] ) -> some View {
+    
+        let filtered = goals.filter { goal in goal.priority == priority.rawValue }
+        
+        if filtered.count != 0 {
+            VStack(alignment: .leading) {
+                UniversalText( priority.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                
+                LazyVGrid(columns: [ .init(GridItem.Size.adaptive(minimum: 350, maximum: 800),
+                                           spacing: 10,
+                                           alignment: .center) ]) {
+                
+                    ForEach( Array(filtered), id: \.label ) { goal in
+                        GoalPreviewView(goal: goal, events: events)
+                            .padding(.bottom, 5)
+                    }
+                }
+            }.padding(.bottom)
+        }
+    }
+    
+    
+//    MARK: Body
     var body: some View {
         
         VStack(alignment: .leading) {
-            
             HStack {
                 UniversalText( "Goals", size: Constants.UITitleTextSize, font: .syneHeavy, true )
                 Spacer()
@@ -29,24 +55,10 @@ struct GoalsPageView: View {
             }
             
             ScrollView(.vertical) {
-//                LazyVStack {
                 LazyVStack(alignment: .leading) {
                     if goals.count != 0 {
-                        
                         ForEach( RecallGoal.Priority.allCases) { priority in
-                        
-                            let filtered = goals.filter { goal in goal.priority == priority.rawValue }
-                            
-                            if filtered.count != 0 {
-                                VStack(alignment: .leading) {
-                                    UniversalText( priority.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
-                                    
-                                    ForEach( Array(filtered), id: \.label ) { goal in
-                                        GoalPreviewView(goal: goal, events: events)
-                                            .padding(.bottom, 5)
-                                    }
-                                }.padding(.bottom)
-                            }
+                            GoalsPageView.makeGoalPrioritySection(priority, goals: Array(goals), events: events)
                         }
                     } else {
                         UniversalText( Constants.goalsSplashPurpose,
