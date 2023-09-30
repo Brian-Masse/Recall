@@ -214,21 +214,29 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     }
     
 //    This checks to see if this event has a multiplier for a specifc goal (ie. coding should have 'productive')
-//    @MainActor
+    @MainActor
     private func getGoalMultiplier(from goal: RecallGoal) -> Double {
         let key = goal.getEncryptionKey()
-        
-//        @MainActor
-//        func getRatings() -> [GoalNode] { Array(self.goalRatings) }
-        
-//        let ratings = getRatings()
         let data = goalRatings.first { node in node.key == key }?.data ?? "0"
         return Double(data) ?? 0
     }
     
-//    @MainActor
-    func getGoalPrgress(_ goal: RecallGoal) -> Double {
-        if RecallGoal.GoalType.getRawType(from: goal.type) == .hourly { return getLengthInHours() * getGoalMultiplier(from: goal) }
+    func getGoalPrgress(_ goal: RecallGoal) async -> Double {
+        let multiplier = await getGoalMultiplier(from: goal)
+        if RecallGoal.GoalType.getRawType(from: goal.type) == .hourly { return getLengthInHours() * multiplier }
+        else if goal.targetTag?.label ?? "" == self.category?.label ?? "-" { return 1 }
+        return 0
+    }
+    
+//    to avoid certain crashes the standard 'getGoalMultiplier' should mostly be run on the main thread
+//    however, there are certain cases where its technically difficult to do so, but will not elicit a crash to run it on any thread
+//    for those cases, run this function, it does the same work as 'getGoalProgress' but on any thread
+    func getGoalProgressThreadInvariant( _ goal: RecallGoal ) -> Double {
+        let key = goal.getEncryptionKey()
+        let data = goalRatings.first { node in node.key == key }?.data ?? "0"
+        let multiplier = Double(data) ?? 0
+        
+        if RecallGoal.GoalType.getRawType(from: goal.type) == .hourly { return getLengthInHours() * multiplier }
         else if goal.targetTag?.label ?? "" == self.category?.label ?? "-" { return 1 }
         return 0
     }
