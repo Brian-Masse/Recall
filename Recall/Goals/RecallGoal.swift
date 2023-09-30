@@ -296,7 +296,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         
         let filtered = events.filter { event in event.startTime > startDate.resetToStartOfDay() && event.endTime < (startDate + step) }
         return filtered.reduce(0) { partialResult, event in
-            partialResult + event.getGoalPrgress(self)
+            partialResult + event.getGoalProgressThreadInvariant(self)
         }
     }
     
@@ -311,7 +311,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         while dateIterator <= .now {
             let endDate = dateIterator + step
             let count = events.filter { event in event.startTime > dateIterator && event.startTime < endDate }.reduce(0) { partialResult, event in
-                partialResult + event.getGoalPrgress(self)
+                partialResult + event.getGoalProgressThreadInvariant(self)
             }
             metCount += (count >= Double(targetHours) ? 1 : 0)
             dateIterator += step
@@ -326,7 +326,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     func getAverage(from events: [RecallCalendarEvent]) async -> Double {
         let numberOfTimePeriods = await getNumberOfTimePeriods()
         
-        let allEvents = events.reduce(0) { partialResult, event in partialResult + event.getGoalPrgress(self) }
+        let allEvents = events.reduce(0) { partialResult, event in partialResult + event.getGoalProgressThreadInvariant(self) }
         
         return allEvents / max(Double(numberOfTimePeriods) * Double(frequency) , 1)
     }
