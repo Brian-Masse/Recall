@@ -50,6 +50,7 @@
 		C94F067C2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */; };
 		C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F067D2A6B215400C99EA0 /* GoalView.swift */; };
 		C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C954AAD02A76FA4E00897BCE /* Animations.swift */; };
+		C97AF47F2AC7A34100F03812 /* MainViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97AF47E2AC7A34100F03812 /* MainViewLayout.swift */; };
 		C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */; };
 		C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033D2A868DEB00729334 /* RecallDataModel.swift */; };
 		C98F2F222A94134F00E92B30 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F212A94134F00E92B30 /* LoginView.swift */; };
@@ -137,6 +138,7 @@
 		C94F067B2A6AFAD300C99EA0 /* Syne-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Syne-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		C94F067D2A6B215400C99EA0 /* GoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalView.swift; sourceTree = "<group>"; };
 		C954AAD02A76FA4E00897BCE /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
+		C97AF47E2AC7A34100F03812 /* MainViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewLayout.swift; sourceTree = "<group>"; };
 		C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartsHelperStructs.swift; sourceTree = "<group>"; };
 		C98D033D2A868DEB00729334 /* RecallDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallDataModel.swift; sourceTree = "<group>"; };
 		C98F2F212A94134F00E92B30 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -430,6 +432,7 @@
 			isa = PBXGroup;
 			children = (
 				C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */,
+				C97AF47E2AC7A34100F03812 /* MainViewLayout.swift */,
 				C91BCEF32A618435003C6DD6 /* RecallView.swift */,
 				C9DB5C832AC53E770020EC39 /* MainViewNavigation.swift */,
 			);
@@ -624,6 +627,7 @@
 				C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */,
 				C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */,
 				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
+				C97AF47F2AC7A34100F03812 /* MainViewLayout.swift in Sources */,
 				C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */,
 				C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */,
 				C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */,
