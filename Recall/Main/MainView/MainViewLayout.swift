@@ -17,6 +17,7 @@ struct macOSMainViewNavigation: View {
     @Binding var appPage: ContentView.EntryPage
     @Binding var currentDay: Date
     
+    let arrGoals: [RecallGoal]
     let arrEvents: [RecallCalendarEvent]
     
     var body: some View {
@@ -29,12 +30,11 @@ struct macOSMainViewNavigation: View {
         } detail: {
             
             switch page {
-            case .calendar:         CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
-            case .goals:            GoalsPageView(events: arrEvents)
-            case .categories:       CategoriesPageView(events: arrEvents)
-            case .data:             DataPageView(events: arrEvents, page: $page, currentDay: $currentDay)
-            default: EmptyView()
+            case .calendar:                 CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
+            case let .goals(priority):      GoalsPageView(priority, events: arrEvents)
                 
+            case .categories:               CategoriesPageView(events: arrEvents)
+            case .data:                     DataPageView(events: arrEvents, page: $page, currentDay: $currentDay)
             }
         }
     }

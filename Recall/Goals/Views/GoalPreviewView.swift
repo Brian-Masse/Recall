@@ -103,9 +103,6 @@ struct GoalPreviewView: View {
             .padding(.bottom)
         }
         .opaqueRectangularBackground(0, stroke: true)
-        #if os(macOS)
-        .shadow(color: .black.opacity(0.5), radius: 20, x: 0, y: 10)
-        #endif
         .onTapGesture { showingGoalView = true }
         .contextMenu {
             Button { showingEditingView = true }  label:          { Label("edit", systemImage: "slider.horizontal.below.rectangle") }

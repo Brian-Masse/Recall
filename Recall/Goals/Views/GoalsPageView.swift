@@ -12,23 +12,32 @@ import RealmSwift
 struct GoalsPageView: View {
     
 //    MARK: Vars
+    
     @ObservedResults( RecallGoal.self ) var goals
     @ObservedResults( RecallCategory.self ) var categories
     
+    let priority: RecallGoal.Priority
     let events: [RecallCalendarEvent]
     
     @State var showingGoalCreationView: Bool = false
     
+    init( _ priority: RecallGoal.Priority, events: [RecallCalendarEvent] ) {
+        self.priority   = priority
+        self.events     = events
+        
+    }
     
-//    MARK: ViewBuilder
+//    MARK: ViewBuilders
     @ViewBuilder
-    static func makeGoalPrioritySection( _ priority: RecallGoal.Priority, goals: [RecallGoal], events: [RecallCalendarEvent] ) -> some View {
+    private static func makeGoalPrioritySection( _ priority: RecallGoal.Priority, goals: [RecallGoal], events: [RecallCalendarEvent], title: Bool = true ) -> some View {
     
         let filtered = goals.filter { goal in goal.priority == priority.rawValue }
         
         if filtered.count != 0 {
             VStack(alignment: .leading) {
-                UniversalText( priority.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                if title {
+                    UniversalText( priority.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                }
                 
                 LazyVGrid(columns: [ .init(GridItem.Size.adaptive(minimum: 350, maximum: 800),
                                            spacing: 10,
@@ -39,7 +48,23 @@ struct GoalsPageView: View {
                             .padding(.bottom, 5)
                     }
                 }
-            }.padding(.bottom)
+            }
+            .padding(.bottom)
+        }
+    }
+    
+//    MARK: Naming Functions
+    private func getPageName() -> String {
+        switch priority {
+        case .all:  return "Goals"
+        default:    return "\(priority.rawValue.firstUppercased ) Priority Goals"
+        }
+    }
+    
+    private func getButtonName() -> String {
+        switch priority {
+        case .all:  return "Add Goal"
+        default:    return "Add \(priority.rawValue.firstUppercased ) Priority Goal"
         }
     }
     
@@ -49,16 +74,25 @@ struct GoalsPageView: View {
         
         VStack(alignment: .leading) {
             HStack {
-                UniversalText( "Goals", size: Constants.UITitleTextSize, font: .syneHeavy, true )
+                UniversalText(getPageName(), size: Constants.UITitleTextSize, font: .syneHeavy, true )
                 Spacer()
-                LargeRoundedButton("Add Goal", icon: "arrow.up") { showingGoalCreationView = true }
+                LargeRoundedButton(getButtonName(), icon: "arrow.up") { showingGoalCreationView = true }
             }
             
             ScrollView(.vertical) {
                 LazyVStack(alignment: .leading) {
                     if goals.count != 0 {
-                        ForEach( RecallGoal.Priority.allCases) { priority in
-                            GoalsPageView.makeGoalPrioritySection(priority, goals: Array(goals), events: events)
+                        if priority == .all {
+                            ForEach( RecallGoal.Priority.allCases) { priority in
+                                GoalsPageView.makeGoalPrioritySection(priority,
+                                                                      goals: Array(goals),
+                                                                      events: events)
+                            }
+                        } else {
+                            GoalsPageView.makeGoalPrioritySection(priority,
+                                                                  goals: Array(goals),
+                                                                  events: events,
+                                                                  title: false)
                         }
                     } else {
                         UniversalText( Constants.goalsSplashPurpose,
@@ -71,6 +105,7 @@ struct GoalsPageView: View {
         }
         .padding(7)
         .universalBackground()
-        .sheet(isPresented: $showingGoalCreationView) { GoalCreationView.makeGoalCreationView(editing: false) }
+        .sheet(isPresented: $showingGoalCreationView) { GoalCreationView.makeGoalCreationView(editing: false,
+                                                                                              startingPriority: priority == .all ? .medium : priority) }
     }
 }

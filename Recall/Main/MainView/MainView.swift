@@ -18,7 +18,7 @@ struct MainView: View {
 //    These are how the different tab / side bars present the different pages of the app
     static let TabBarNodes: [TabBarNode] = [
         .init("Recall",  icon: "calendar",       page: .calendar),
-        .init("Goals",   icon: "flag.checkered", page: .goals),
+        .init("Goals",   icon: "flag.checkered", page: .goals()),
         .init("Tags",    icon: "tag",            page: .categories),
         .init("Data",    icon: "chart.bar",      page: .data)
     ]
@@ -26,10 +26,10 @@ struct MainView: View {
     static let MacOSTabBarNodes: [TabBarNode] = [
         .init("Recall",     icon: "calendar",           page: .calendar),
         
-        .init("Goals",      icon: "flag.checkered",     page: .goals),
-        .init("High",       icon: "exclamationmark.3",  page: .calendar, indent: true),
-        .init("medium",     icon: "exclamationmark.2",  page: .calendar, indent: true),
-        .init("low",        icon: "exclamationmark",    page: .calendar, indent: true),
+        .init("Goals",      icon: "flag.checkered",     page: .goals()),
+        .init("High",       icon: "exclamationmark.3",  page: .goals(.high), indent: true),
+        .init("medium",     icon: "exclamationmark.2",  page: .goals(.medium), indent: true),
+        .init("low",        icon: "exclamationmark",    page: .goals(.low), indent: true),
         
         .init("tags & templates",       icon: "tag",                page: .categories),
         .init("Tags",       icon: "tag",                page: .calendar, indent: true),
@@ -63,12 +63,14 @@ struct MainView: View {
     var body: some View {
     
         let arrEvents = Array(events)
+        let arrGoals = Array(goals)
 
         VStack {
 #if os(macOS)
             macOSMainViewNavigation(page: $currentPage,
                                     appPage: $appPage,
-                                    currentDay: $currentDay,
+                                    currentDay: $currentDay, 
+                                    arrGoals: arrGoals,
                                     arrEvents: arrEvents)
 #else
             

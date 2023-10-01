@@ -11,25 +11,45 @@ import SwiftUI
 
 //MARK: MainPage
 //These are the main pages that are displayed on iOS
-enum MainPage: Int, Identifiable, CaseIterable {
+enum MainPage: Identifiable, Equatable {
     case calendar
-    
-    case goals
-    case high
-    case medium
-    case low
-    
+    case goals( _ priority: RecallGoal.Priority = .all )
     case categories
-    case tags
-    case templates
-    
     case data
-    case overview
-    case events
     
-    var id: Int {
+    var id: Double {
         self.rawValue
     }
+}
+
+extension MainPage: RawRepresentable {
+    
+    public typealias RawValue = Double
+    
+    public init?(rawValue: RawValue) {
+        switch rawValue {
+        case 0:         self = .calendar
+        case 1:         self = .goals()
+        case 2:         self = .categories
+        case 3:         self = .data
+        default:
+            return nil
+        }
+    }
+    
+    public var rawValue: RawValue {
+        switch self {
+        case .calendar:     return 0
+        case let .goals(priority):
+//            This makes sure that the raw value for each subnode of .goals is automatically independent from each other, and from other MainPages
+//            The formula is mainly arbitrary
+            return pow(Double(2),1 / Double(priority.intRepresentation() + 2) )
+        
+        case .categories:   return 2
+        case .data:        return 3
+        }
+    }
+    
 }
 
 //MARK: TabBarNode
@@ -143,7 +163,7 @@ struct MacOSSideBar: View {
         .padding(.leading, node.indent ? 19 : 0 )
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
-        .if( mainPage.rawValue == node.page.rawValue) { view in
+        .if( mainPage == node.page) { view in
             view
                 .padding(MacOSSideBar.sideBarPadding)
                 .background(

@@ -126,11 +126,21 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         case high
         case medium
         case low
+        case all
         
         var id: String { self.rawValue }
         
         static func getRawType(from priority: String) -> Priority {
             Priority(rawValue: priority) ?? .medium
+        }
+        
+        public func intRepresentation() -> Int {
+            switch self {
+            case .high: return 0
+            case .medium: return 1
+            case .low: return 2
+            case .all: return 3
+            }
         }
     }
 //    MARK: Body

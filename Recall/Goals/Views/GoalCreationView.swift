@@ -13,7 +13,9 @@ struct GoalCreationView: View {
     
 //    MARK: ViewBuilders
     @ViewBuilder
-    static func makeGoalCreationView(editing: Bool, goal: RecallGoal? = nil) -> some View {
+//    startingPriority is used when creating a goal from a window that is only displaying a certain priority of goals
+//    ie that screen should only create goals that will immiedietly show up in that view
+    static func makeGoalCreationView(editing: Bool, goal: RecallGoal? = nil, startingPriority: RecallGoal.Priority = .medium) -> some View {
         if editing {
             GoalCreationView(editing: true,
                              goal: goal!,
@@ -32,7 +34,7 @@ struct GoalCreationView: View {
                              description: "",
                              frequence: .weekly,
                              targetHours: 7,
-                             priority: .medium,
+                             priority: startingPriority,
                              type: .hourly,
                              targetTag: nil,
                              creationDate: .now)
