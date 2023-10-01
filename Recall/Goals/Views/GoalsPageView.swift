@@ -27,6 +27,13 @@ struct GoalsPageView: View {
         
     }
     
+//    MARK: Constants
+    struct LocalConstants {
+        static let minimumGoalWidth: CGFloat = 350
+        static let maximumGoalWidth: CGFloat = 800
+        static let goalVerticalSpacing: CGFloat = 10
+    }
+    
 //    MARK: ViewBuilders
     @ViewBuilder
     private static func makeGoalPrioritySection( _ priority: RecallGoal.Priority, goals: [RecallGoal], events: [RecallCalendarEvent], title: Bool = true ) -> some View {
@@ -39,8 +46,8 @@ struct GoalsPageView: View {
                     UniversalText( priority.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
                 }
                 
-                LazyVGrid(columns: [ .init(GridItem.Size.adaptive(minimum: 350, maximum: 800),
-                                           spacing: 10,
+                LazyVGrid(columns: [ .init(GridItem.Size.adaptive(minimum: LocalConstants.minimumGoalWidth, maximum: LocalConstants.maximumGoalWidth),
+                                           spacing: LocalConstants.goalVerticalSpacing,
                                            alignment: .center) ]) {
                 
                     ForEach( Array(filtered), id: \.label ) { goal in

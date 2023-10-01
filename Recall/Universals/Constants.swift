@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Charts
 
-//@MainActor
+//MARK: Colors
 class Colors {
     static var tint: Color { RecallModel.shared.activeColor }
     static var main: Color { accentGreen }
@@ -34,6 +34,7 @@ class Colors {
     }
 }
 
+//MARK: Constants
 class Constants {
     
 //    font sizes
@@ -83,6 +84,12 @@ class Constants {
         Constants.setTagColorsDic()
         Constants.setGoalColorsDic()
     }
+    
+//    app
+    static let minAppWidth: CGFloat = 500
+    static let minAppHeight: CGFloat = 650
+    static let idealAppWidth: CGFloat = 1150
+    static let idealAppHeight: CGFloat = 820
     
 //    colorDictionaries:
     

@@ -55,6 +55,10 @@ struct ContentView: View {
                     .slideTransition()
             }
         }
+        .frame(minWidth: Constants.minAppWidth,
+               idealWidth: Constants.idealAppWidth,
+               minHeight: Constants.minAppHeight,
+               idealHeight: Constants.idealAppHeight)
         .onChange(of: colorScheme) { newValue in RecallModel.shared.setActiveColor(from: newValue) }
         .onAppear()                 { RecallModel.shared.setActiveColor(from: colorScheme) }
         
