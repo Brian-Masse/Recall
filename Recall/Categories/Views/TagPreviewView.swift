@@ -25,7 +25,7 @@ struct GoalTags: View {
                 UniversalText( goal.label + (multiplier <= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             }
             .secondaryOpaqueRectangularBackground()
-            .onTapGesture { showingGoalView = true }
+//            .onTapGesture { showingGoalView = true }
             .tag(goal.getEncryptionKey())
             .fullScreenCover(isPresented: $showingGoalView) {
                 GoalView(goal: goal, events: events)

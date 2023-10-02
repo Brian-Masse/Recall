@@ -1,15 +1,13 @@
 # Recall
 
-## **VERSION 1.01**
-
-## **Notes on Indexing System**
+## **VERSION 1.02**
 
 BUG FIXES:
 
-- Fixed an issue where signing in with Apple prevented users from accessing the tutorial
-- Fixed notification selection during profile creation
-- Fixed notification selection in settings page
-- Fixed a typo in Recall form
+- Fixed an issue that prevented data created in the tutorial from syncing to the rest of the app
+- Fixed an issue that caused the app to crash when clicking on a goal from the tag list
+
+## **Notes on Indexing System**
 
 _Updated on 9/3/23_
 

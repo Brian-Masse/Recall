@@ -50,10 +50,12 @@ struct ContentView: View {
             else if ( entryPage == .tutorial && !RecallModel.index.finishedTutorial ) {
                 TutorialViews(page: $entryPage)
                     .slideTransition()
+                    .environment(\.realmConfiguration, realmManager.configuration)
             }
             else if ( entryPage == .profileCreation && !RecallModel.realmManager.profileLoaded )  {
                 ProfileCreationView(page: $entryPage)
                     .slideTransition()
+                    .environment(\.realmConfiguration, realmManager.configuration)
             }
         }
         .onAppear()                 { RecallModel.shared.setActiveColor(from: colorScheme) }
