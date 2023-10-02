@@ -7,30 +7,11 @@
 
 import Foundation
 import SwiftUI
-import SymbolPicker
 
 //MARK: Basic
 
 
 //MARK: Icon Picker
-
-struct IconPicker: View {
-    
-    @Binding var icon: String
-    @State var showingPicker: Bool = false
-    
-    var body: some View {
-        HStack {
-            UniversalText("Icon", size: Constants.UIDefaultTextSize)
-            Image(systemName: icon)
-            Spacer()
-            Image(systemName: "chevron.right")
-        }
-        .onTapGesture { showingPicker = true }
-        .sheet(isPresented: $showingPicker) { SymbolPicker(symbol: $icon) }
-    }
-    
-}
 
 //MARK: Color Picker
 struct ColorPickerOption: View {

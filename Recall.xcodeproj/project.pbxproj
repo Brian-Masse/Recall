@@ -9,9 +9,6 @@
 /* Begin PBXBuildFile section */
 		C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */; };
 		C908FFFC2A8D461100E3BBEA /* OverviewDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFFB2A8D461100E3BBEA /* OverviewDataSection.swift */; };
-		C90E592B2ABFB93300D8D3A6 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = C90E592A2ABFB93300D8D3A6 /* SymbolPicker */; };
-		C90E592D2ABFBA9200D8D3A6 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C90E592C2ABFBA9200D8D3A6 /* Realm */; };
-		C90E592F2ABFBA9200D8D3A6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C90E592E2ABFBA9200D8D3A6 /* RealmSwift */; };
 		C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */; };
 		C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */; };
 		C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0062A67213F009F6C84 /* RecallCategory.swift */; };
@@ -42,6 +39,8 @@
 		C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923D51B2A8F119C00E432B9 /* RecallGoalDataModel.swift */; };
 		C928E15A2A7B546E00E981F1 /* EventsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E1592A7B546E00E981F1 /* EventsDataSection.swift */; };
 		C928E15C2A7C3B3300E981F1 /* GoalsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E15B2A7C3B3300E981F1 /* GoalsDataSection.swift */; };
+		C94AA4182ACB64460031CED9 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C94AA4172ACB64460031CED9 /* Realm */; };
+		C94AA41A2ACB64460031CED9 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C94AA4192ACB64460031CED9 /* RealmSwift */; };
 		C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F102A688855007E8537 /* UniversalForm.swift */; };
 		C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F152A6891E9007E8537 /* CalendarPageView.swift */; };
 		C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F172A68931F007E8537 /* GoalsPageView.swift */; };
@@ -164,9 +163,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C90E592F2ABFBA9200D8D3A6 /* RealmSwift in Frameworks */,
-				C90E592D2ABFBA9200D8D3A6 /* Realm in Frameworks */,
-				C90E592B2ABFB93300D8D3A6 /* SymbolPicker in Frameworks */,
+				C94AA41A2ACB64460031CED9 /* RealmSwift in Frameworks */,
+				C94AA4182ACB64460031CED9 /* Realm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,9 +459,8 @@
 			);
 			name = Recall;
 			packageProductDependencies = (
-				C90E592A2ABFB93300D8D3A6 /* SymbolPicker */,
-				C90E592C2ABFBA9200D8D3A6 /* Realm */,
-				C90E592E2ABFBA9200D8D3A6 /* RealmSwift */,
+				C94AA4172ACB64460031CED9 /* Realm */,
+				C94AA4192ACB64460031CED9 /* RealmSwift */,
 			);
 			productName = Recall;
 			productReference = C91BCEEE2A618435003C6DD6 /* Recall.app */;
@@ -819,7 +816,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "Masse-Brian.Recall";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -862,7 +859,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "Masse-Brian.Recall";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1038,17 +1035,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C90E592A2ABFB93300D8D3A6 /* SymbolPicker */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
-			productName = SymbolPicker;
-		};
-		C90E592C2ABFBA9200D8D3A6 /* Realm */ = {
+		C94AA4172ACB64460031CED9 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
 		};
-		C90E592E2ABFBA9200D8D3A6 /* RealmSwift */ = {
+		C94AA4192ACB64460031CED9 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
