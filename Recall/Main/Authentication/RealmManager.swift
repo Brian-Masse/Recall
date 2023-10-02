@@ -46,7 +46,6 @@ class RealmManager: ObservableObject {
     
     var profileLoaded: Bool {
         if hasProfile {
-            print("hasProfile: \(self.index.checkCompletion())")
             return self.index.checkCompletion()
         } else {
             return false

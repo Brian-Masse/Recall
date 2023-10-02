@@ -25,6 +25,7 @@ struct ProfileView: View {
     
     @State var notificationsEnabled: Bool = RecallModel.index.notificationsEnabled
     @State var notificationTime: Date = RecallModel.index.notificationsTime
+    @State var showingNotificationToggle: Bool = true
     
     @State var activeIcon: String = UIApplication.shared.alternateIconName ?? "light"
     
@@ -119,19 +120,83 @@ struct ProfileView: View {
     }
     
 //    MARK: settings
+    
+    @ViewBuilder
+    private func makeSettings() -> some View {
+        
+        VStack(alignment: .leading) {
+            
+            UniversalText( "Settings", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+            
+            VStack(alignment: .leading) {
+                makeReminderSettings()
+                    .padding(.bottom)
+                
+                makeIconSettings()
+                
+            }
+            .opaqueRectangularBackground(7, stroke: true)
+            .padding(.bottom, 5)
+            
+            makeSubButton(title: "Replay Tutorial", icon: "arrow.clockwise") {
+                index.replayTutorial()
+                appPage = .tutorial
+            }
+            
+            makeSubButton(title: "reindex Data", icon: "tray.2") {
+                Task { await RecallModel.index.initializeIndex() }
+            }
+            
+            makeSubButton(title: "delete account", icon: "shippingbox.and.arrow.backward") {
+                showingError = true
+            }
+        }
+    }
+    
+    private func makeNotificationMessage() async -> String {
+        let settings = await NotificationManager.shared.getNotificationStatus()
+        switch settings {
+        case .denied:   return ""
+        default: return ""
+        }
+    }
+    
+    @MainActor
+    private func checkStatus() async {
+        let status = await NotificationManager.shared.getNotificationStatus()
+        showingNotificationToggle = (status != .denied)
+    }
+    
     @ViewBuilder
     private func makeReminderSettings() -> some View {
+        
         UniversalText( "Reminders", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             .padding(.top, 5)
+            .onAppear { Task { await checkStatus() } }
         
         HStack {
             UniversalText( "Daily reminder", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             Spacer()
-            Toggle(isOn: $notificationsEnabled) { }
-                .tint(Colors.tint)
-                .onChange(of: notificationsEnabled) { newValue in
-                    madeChanges = (newValue != index.notificationsEnabled)
-                }
+            if showingNotificationToggle {
+                Toggle(isOn: $notificationsEnabled) { }
+                    .tint(Colors.tint)
+                    .onChange(of: notificationsEnabled) { newValue in
+                        
+                        if newValue {
+                            Task {
+                                let results = await NotificationManager.shared.requestNotifcationPermissions()
+                                notificationsEnabled = results
+                                await checkStatus()
+                            }
+                        }
+                        
+                        madeChanges = (newValue != index.notificationsEnabled)
+                    }
+            }
+        }
+        
+        if !showingNotificationToggle {
+            UniversalText( "Notifications are disabled, enable them in settings", size: Constants.UISmallTextSize, font: Constants.mainFont )
         }
         
         if notificationsEnabled {
@@ -147,6 +212,7 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: Icon Picker
     @ViewBuilder
     private func makeIconPicker(icon: String) -> some View {
         let active = icon == activeIcon
@@ -190,39 +256,6 @@ struct ProfileView: View {
             Spacer()
             makeIconPicker(icon: "dark")
             Spacer()
-        }
-    }
-    
-    
-    @ViewBuilder
-    private func makeSettings() -> some View {
-        
-        VStack(alignment: .leading) {
-            
-            UniversalText( "Settings", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-            
-            VStack(alignment: .leading) {
-                makeReminderSettings()
-                    .padding(.bottom)
-                
-                makeIconSettings()
-                
-            }
-            .opaqueRectangularBackground(7, stroke: true)
-            .padding(.bottom, 5)
-            
-            makeSubButton(title: "Replay Tutorial", icon: "arrow.clockwise") {
-                index.replayTutorial()
-                appPage = .login
-            }
-            
-            makeSubButton(title: "reindex Data", icon: "tray.2") {
-                Task { await RecallModel.index.initializeIndex() }
-            }
-            
-            makeSubButton(title: "delete account", icon: "shippingbox.and.arrow.backward") {
-                showingError = true
-            }
         }
     }
     

@@ -851,8 +851,8 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "299"
-            endingLineNumber = "299"
+            startingLineNumber = "298"
+            endingLineNumber = "298"
             landmarkName = "addGenericSubcriptions(name:query:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1148,22 +1148,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1821CAC8-8FD5-414B-8189-BA5FDE46C67F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Recall/Main/Authentication/RealmManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "49"
-            endingLineNumber = "49"
-            landmarkName = "profileLoaded"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "DDD29C74-2DD0-4A5A-ACB0-D1F9CB2DC286"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1171,8 +1155,8 @@
             filePath = "Recall/Main/RecallView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "66"
-            endingLineNumber = "66"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>

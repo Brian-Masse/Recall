@@ -22,6 +22,12 @@ class NotificationManager {
     static let birthdayMessage = "Have a great day today :)"
     
 //    MARK: Class Methods
+    
+    @MainActor
+    func getNotificationStatus() async -> UNAuthorizationStatus {
+        return await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+    }
+    
     @MainActor
     func requestNotifcationPermissions() async -> Bool {
         
@@ -37,10 +43,8 @@ class NotificationManager {
             do {
                 let results = try await UNUserNotificationCenter.current().requestAuthorization(options: options)
                 if !results {
-                    DispatchQueue.main.sync {
-                        RealmManager.updateObject(RecallModel.index) { thawed in
-                            thawed.notificationsEnabled = false
-                        }
+                    RealmManager.updateObject(RecallModel.index) { thawed in
+                        thawed.notificationsEnabled = false
                     }
                 }
                 return results

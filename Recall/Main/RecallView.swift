@@ -55,7 +55,15 @@ struct ContentView: View {
                 else if ( entryPage == .profileCreation && !RecallModel.realmManager.profileLoaded )  {
                     ProfileCreationView(page: $entryPage)
                         .slideTransition()
-                }
+                } 
+//                else {
+////                    catch all
+//                    Text("Hello :)")
+//                        .onAppear {
+//                            realmManager.logoutUser()
+//                            entryPage = .splashScreen
+//                        }
+//                }
             }
             
             Text( entryPage.rawValue )
@@ -66,8 +74,7 @@ struct ContentView: View {
             switch newValue {
             case .profileCreation:  if RecallModel.realmManager.profileLoaded { withAnimation { entryPage = .tutorial } }
             case .tutorial:         if RecallModel.index.finishedTutorial { withAnimation { entryPage = .app } }
-                
-                
+                    
             default: break
             }
         }
