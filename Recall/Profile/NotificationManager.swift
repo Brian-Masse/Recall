@@ -23,21 +23,33 @@ class NotificationManager {
     
 //    MARK: Class Methods
     @MainActor
-    func requestNotifcationPermissions() {
+    func requestNotifcationPermissions() async -> Bool {
         
-        let options: UNAuthorizationOptions = [ .alert, .sound ]
-        UNUserNotificationCenter.current().requestAuthorization(options: options) { (success, error) in
-            if let error = error {
-                print("error requesting notifcation permission: \(error.localizedDescription)")
-            } else {
-                if !success {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+
+        switch settings.authorizationStatus {
+        case .denied:       return false
+        case .authorized:   return true
+        case .notDetermined:
+            
+            let options: UNAuthorizationOptions = [ .alert, .sound ]
+            
+            do {
+                let results = try await UNUserNotificationCenter.current().requestAuthorization(options: options)
+                if !results {
                     DispatchQueue.main.sync {
                         RealmManager.updateObject(RecallModel.index) { thawed in
                             thawed.notificationsEnabled = false
                         }
                     }
                 }
+                return results
+            } catch {
+                print("error requesting notifcation permission: \(error.localizedDescription)")
+                return false
             }
+            
+            default:  return false
         }
     }
     

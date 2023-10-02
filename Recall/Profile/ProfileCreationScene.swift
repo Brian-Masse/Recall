@@ -280,7 +280,11 @@ struct ProfileCreationView: View {
                     .tintRectangularBackground()
                     .onTapGesture { withAnimation {
                         showingContinueButton = true
-                        Task { await NotificationManager.shared.requestNotifcationPermissions() }
+                        Task {
+                            let results = await NotificationManager.shared.requestNotifcationPermissions()
+                            if results { enabledReminder = true }
+                            else { progressScene() }
+                        }
                     }}
                 
                 makeNotificationSelector(label: "no, thanks")

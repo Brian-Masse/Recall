@@ -85,17 +85,20 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @MainActor
 //    if you are turning the notifications on, it will handle notification requests, as well as setting up the actual notifiations
     func toggleNotifcations(to enabled: Bool, time: Date) {
-        RealmManager.updateObject(self) { thawed in
-            if !enabled {
+        
+        if !enabled {
+            RealmManager.updateObject(self) { thawed in
                 thawed.notificationsEnabled = false
                 NotificationManager.shared.clearNotifications()
             }
-            else {
-                thawed.notificationsEnabled = true
+        } else {
+            Task {
+                let results = await NotificationManager.shared.requestNotifcationPermissions()
                 
-                NotificationManager.shared.requestNotifcationPermissions()
-                
-                setNotificationTime(to: time)
+                RealmManager.updateObject(self) { thawed in
+                    thawed.notificationsEnabled = results
+                    if results { setNotificationTime(to: time) }
+                }
             }
         }
     }

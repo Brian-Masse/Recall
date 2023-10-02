@@ -165,17 +165,20 @@ struct TutorialViews: View {
                     Group {
                         Image(systemName: "arrow.backward")
                         UniversalText( "back", size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
-                    }.onTapGesture { withAnimation { scene = scene.returnScene(in: broadScene) }}
+                    }
+                    .opacity(0.5)
+                    .onTapGesture { withAnimation { scene = scene.returnScene(in: broadScene) }}
                 }
                 
                 Spacer()
                 
-                Group {
+                HStack {
                     UniversalText( "skip", size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
                     Image(systemName: "arrow.forward")
-                }.onTapGesture { showSkipTutorialWarning = true }
+                }
+                .opacity(0.5)
+                .onTapGesture { showSkipTutorialWarning = true }
             }
-            .opacity(0.5)
             
             UniversalText(broadScene.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
         }

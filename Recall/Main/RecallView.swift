@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     
-    enum EntryPage {
+    enum EntryPage: String {
         case splashScreen
         case login
         case profileCreation
@@ -25,38 +25,51 @@ struct ContentView: View {
     
     var body: some View {
 
-        Group {
-            if !realmManager.signedIn {
-                switch entryPage {
-                case .splashScreen: SplashScreen(page: $entryPage).slideTransition()
-                case .login: LoginView().slideTransition()
-                default: Text("hi").onAppear() { entryPage = .splashScreen }
+        ZStack {
+            Group {
+                //            the logic flow of these screens is top down last to first.
+                //            This is so if any views additional conditions get 'cauhgt', as long as the scene progresses, the new screen will present
+                //            This is mainly to avoid getting caught on the profile creation scene
+                if !realmManager.signedIn {
+                    switch entryPage {
+                    case .splashScreen: SplashScreen(page: $entryPage).slideTransition()
+                    case .login: LoginView().slideTransition()
+                    default: Text("hi").onAppear() { entryPage = .splashScreen }
+                    }
                 }
-                
-            } else if !realmManager.realmLoaded {
-                OpenFlexibleSyncRealmView(page: $entryPage)
-                    .environment(\.realmConfiguration, realmManager.configuration)
-                    .slideTransition()
-                
-            } else if (entryPage == .profileCreation || !realmManager.profileLoaded) && !realmManager.profileLoaded {
-                ProfileCreationView(page: $entryPage)
-                    .slideTransition()
+                else if !realmManager.realmLoaded {
+                    OpenFlexibleSyncRealmView(page: $entryPage)
+                        .environment(\.realmConfiguration, realmManager.configuration)
+                        .slideTransition()
+                }
+                else if ( entryPage == .app ) {
+                    MainView(appPage: $entryPage)
+                        .onAppear() { entryPage = .app }
+                        .environment(\.realmConfiguration, realmManager.configuration)
+                        .slideTransition()
+                }
+                else if ( entryPage == .tutorial && !RecallModel.index.finishedTutorial ) {
+                    TutorialViews(page: $entryPage)
+                        .slideTransition()
+                }
+                else if ( entryPage == .profileCreation && !RecallModel.realmManager.profileLoaded )  {
+                    ProfileCreationView(page: $entryPage)
+                        .slideTransition()
+                }
             }
             
-            else if (entryPage == .tutorial || !RecallModel.index.finishedTutorial) && !RecallModel.index.finishedTutorial {
-                TutorialViews(page: $entryPage)
-                    .slideTransition()
+            Text( entryPage.rawValue )
+        }
+        .onAppear()                 { RecallModel.shared.setActiveColor(from: colorScheme) }
+        .onChange(of: colorScheme) { newValue in RecallModel.shared.setActiveColor(from: newValue) }
+        .onChange(of: entryPage)    { newValue in
+            switch newValue {
+            case .profileCreation:  if RecallModel.realmManager.profileLoaded { withAnimation { entryPage = .tutorial } }
+            case .tutorial:         if RecallModel.index.finishedTutorial { withAnimation { entryPage = .app } }
                 
-            } 
-            else {
-                MainView(appPage: $entryPage)
-                    .onAppear() { entryPage = .app }
-                    .environment(\.realmConfiguration, realmManager.configuration)
-                    .slideTransition()
+                
+            default: break
             }
         }
-        .onChange(of: colorScheme) { newValue in RecallModel.shared.setActiveColor(from: newValue) }
-        .onAppear()                 { RecallModel.shared.setActiveColor(from: colorScheme) }
-        
     }
 }
