@@ -1,6 +1,15 @@
 # Recall
 
+## **VERSION 1.01**
+
 ## **Notes on Indexing System**
+
+BUG FIXES:
+
+- Fixed an issue where signing in with Apple prevented users from accessing the tutorial
+- Fixed notification selection during profile creation
+- Fixed notification selection in settings page
+- Fixed a typo in Recall form
 
 _Updated on 9/3/23_
 
