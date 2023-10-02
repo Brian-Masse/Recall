@@ -25,48 +25,36 @@ struct ContentView: View {
     
     var body: some View {
 
-        ZStack {
-            Group {
-                //            the logic flow of these screens is top down last to first.
-                //            This is so if any views additional conditions get 'cauhgt', as long as the scene progresses, the new screen will present
-                //            This is mainly to avoid getting caught on the profile creation scene
-                if !realmManager.signedIn {
-                    switch entryPage {
-                    case .splashScreen: SplashScreen(page: $entryPage).slideTransition()
-                    case .login: LoginView().slideTransition()
-                    default: Text("hi").onAppear() { entryPage = .splashScreen }
-                    }
+        Group {
+//            the logic flow of these screens is top down last to first.
+//            This is so if any views additional conditions get 'cauhgt', as long as the scene progresses, the new screen will present
+//            This is mainly to avoid getting caught on the profile creation scene
+            if !realmManager.signedIn {
+                switch entryPage {
+                case .splashScreen: SplashScreen(page: $entryPage).slideTransition()
+                case .login: LoginView().slideTransition()
+                default: Text("hi").onAppear() { entryPage = .splashScreen }
                 }
-                else if !realmManager.realmLoaded {
-                    OpenFlexibleSyncRealmView(page: $entryPage)
-                        .environment(\.realmConfiguration, realmManager.configuration)
-                        .slideTransition()
-                }
-                else if ( entryPage == .app ) {
-                    MainView(appPage: $entryPage)
-                        .onAppear() { entryPage = .app }
-                        .environment(\.realmConfiguration, realmManager.configuration)
-                        .slideTransition()
-                }
-                else if ( entryPage == .tutorial && !RecallModel.index.finishedTutorial ) {
-                    TutorialViews(page: $entryPage)
-                        .slideTransition()
-                }
-                else if ( entryPage == .profileCreation && !RecallModel.realmManager.profileLoaded )  {
-                    ProfileCreationView(page: $entryPage)
-                        .slideTransition()
-                } 
-//                else {
-////                    catch all
-//                    Text("Hello :)")
-//                        .onAppear {
-//                            realmManager.logoutUser()
-//                            entryPage = .splashScreen
-//                        }
-//                }
             }
-            
-            Text( entryPage.rawValue )
+            else if !realmManager.realmLoaded {
+                OpenFlexibleSyncRealmView(page: $entryPage)
+                    .environment(\.realmConfiguration, realmManager.configuration)
+                    .slideTransition()
+            }
+            else if ( entryPage == .app ) {
+                MainView(appPage: $entryPage)
+                    .onAppear() { entryPage = .app }
+                    .environment(\.realmConfiguration, realmManager.configuration)
+                    .slideTransition()
+            }
+            else if ( entryPage == .tutorial && !RecallModel.index.finishedTutorial ) {
+                TutorialViews(page: $entryPage)
+                    .slideTransition()
+            }
+            else if ( entryPage == .profileCreation && !RecallModel.realmManager.profileLoaded )  {
+                ProfileCreationView(page: $entryPage)
+                    .slideTransition()
+            }
         }
         .onAppear()                 { RecallModel.shared.setActiveColor(from: colorScheme) }
         .onChange(of: colorScheme) { newValue in RecallModel.shared.setActiveColor(from: newValue) }

@@ -258,8 +258,8 @@ struct CalendarEventCreationView: View {
 //                         strBinding: startTimeLabel,
 //                         textFieldWidth: 120)
         
-        TimeSelector(label: "Whend did this event start?", time: $startTime)
-        TimeSelector(label: "Whend did this event end?", time: $endTime)
+        TimeSelector(label: "When did this event start?", time: $startTime)
+        TimeSelector(label: "When did this event end?", time: $endTime)
 //        SliderWithPrompt(label: "When did this event end?",
 //                         minValue: 0,
 //                         maxValue: 23.5,
