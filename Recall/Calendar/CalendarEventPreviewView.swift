@@ -32,10 +32,11 @@ struct CalendarEventPreviewView: View {
     
     let spacing: CGFloat
     let geo: GeometryProxy
+    let maxWidth: CGFloat
     let startHour: Int
     let events: [RecallCalendarEvent]
     
-    var overlapData: RecallCalendarEvent.OverlapData { event.getOverlapData(in: geo.size.width - 20, from: events) }
+    var overlapData: RecallCalendarEvent.OverlapData { event.getOverlapData(in: maxWidth, from: events) }
     
     @State var startDate: Date = .now
     @State var endDate: Date = .now

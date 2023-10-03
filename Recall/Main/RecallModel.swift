@@ -10,8 +10,14 @@ import SwiftUI
 
 //Main user ownerID
 //64b8478c84023dfb762af304
+
+//MARK: MacOS build command fix
+//xattr -cr /Users/brianmasse/Library/Developer/Xcode/DerivedData/Recall-aoakgfsrodkllbasrvktkmrcquvl/Build/Products/Debug/Recall.app
+
+
 let inDev = true
 
+//MARK: RecallModel
 struct RecallModel {
     
 //  OUTLOOK:    64e4235dadda1f970fc082ed
@@ -37,6 +43,7 @@ struct RecallModel {
     
     static let dateSnapping: TimeRounding = .quarter
     
+//    MARK: Class Methods
     @MainActor
     static func getDaysSinceFirstEvent() -> Double {
         (Date.now.timeIntervalSince(getEarliestEventDate() )) / Constants.DayTime

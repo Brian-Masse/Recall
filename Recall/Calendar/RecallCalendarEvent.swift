@@ -273,7 +273,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             
         }else {
             let firstMatchingCount = sortedOverlapCounts.first { i in sortedOverlapCounts.countAll { f in f == i } > 1 }
-            return (fullWidth - 50) / CGFloat((firstMatchingCount ?? 0) + 1)
+            return (fullWidth) / CGFloat((firstMatchingCount ?? 0) + 1)
         }
     }
     

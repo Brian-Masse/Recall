@@ -17,7 +17,9 @@ struct CalendarContainer: View {
         func makeTimeMarker(hour: CGFloat, label: String, color: Color) -> some View {
             VStack {
                 HStack(alignment: .top) {
-                    UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont, lighter: true  )
+                    if showingTimeMarker {
+                        UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont, lighter: true  )
+                    }
                     
                     Rectangle()
                         .frame(height: 1)
@@ -37,11 +39,24 @@ struct CalendarContainer: View {
             return ""
         }
         
+//        MARK: CalendarView vars
         let day: Date
         let spacing: CGFloat
         
         let startHour: Int
         let endHour: Int
+        
+        let showingCurrentTimeMarker: Bool
+        let showingTimeMarker: Bool
+        
+        init( day: Date, spacing: CGFloat, startHour: Int, endHour: Int, showingCurrentTimeMarker: Bool = true, showingTimeMarker: Bool = true ) {
+            self.day = day
+            self.spacing = spacing
+            self.startHour = startHour
+            self.endHour = endHour
+            self.showingCurrentTimeMarker = showingCurrentTimeMarker
+            self.showingTimeMarker = showingTimeMarker
+        }
         
         var body: some View {
             ZStack(alignment: .top) {
@@ -49,96 +64,204 @@ struct CalendarContainer: View {
                     makeTimeMarker(hour: CGFloat(hr), label: makeHourLabel(from: hr).uppercased(), color: .gray.opacity(0.4))
                 }
                 
-                makeTimeMarker(hour: CGFloat(Date.now.getHoursFromStartOfDay()), label: "", color: .red)
+                if showingCurrentTimeMarker {
+                    makeTimeMarker(hour: CGFloat(Date.now.getHoursFromStartOfDay()), label: "", color: .red)
+                }
             }
         }
     }
     
-    
-//    MARK: Dates Preview
-    struct DatesPreview: View {
+//    MARK: CalendarDateView
+//    This is an individual date view, it will display the events and calendar on that date
+//    it will also communicate interactions such as dragging
+    private struct CalendarDateView: View {
         
-        @ViewBuilder
-        func makeDateSelector(_ date: Date) -> some View {
-            UniversalText( "\(Calendar.current.component(.day, from: date))", size: Constants.UIDefaultTextSize)
-                .padding(7)
-                .onTapGesture { withAnimation { currentDay = date } }
+        let currentDay: Date
+        
+        let events: [RecallCalendarEvent]
+        
+//        sizing vars
+        let geo: GeometryProxy
+        let maxWidth: CGFloat
+        let startHour: Int
+        let endHour: Int
+        
+//        calendar control vars
+        @Binding var dragging: Bool
+        @Binding var slideDirection: AnyTransition.SlideDirection
+        
+        let showingTimeMarker: Bool
+        
+        private func filterEvents() -> [RecallCalendarEvent] {
+            events.filter { event in
+                event.startTime.matches(currentDay, to: .day) &&
+                event.startTime.matches(currentDay, to: .month) &&
+                event.startTime.matches(currentDay, to: .year)
+                
+            }
         }
         
-        @Binding var currentDay: Date
-        
+//        MARK: CalendarDateView body
         var body: some View {
             
-            HStack {
-                Image(systemName: "chevron.left")
-                    .padding(7)
-                    .rectangularBackgorund()
-                    .onTapGesture { currentDay -= Constants.DayTime }
-                Spacer()
-                
-                makeDateSelector( currentDay - 2 * Constants.DayTime )
-                makeDateSelector( currentDay - 1 * Constants.DayTime )
-                
-                UniversalText( "\(Calendar.current.component(.day, from: currentDay))", size: Constants.UIDefaultTextSize, true )
-                    .padding()
-                    .foregroundColor(Colors.tint)
-                    .rectangularBackgorund()
-                
-                makeDateSelector( currentDay + 1 * Constants.DayTime )
-                makeDateSelector( currentDay + 2 * Constants.DayTime )
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .padding(7)
-                    .rectangularBackgorund()
-                    .onTapGesture { currentDay += Constants.DayTime }
-            }
-        }
-    }
-    
-//    MARK: Gestures
-//    This doesn't do anything right now, because the horizontal gestures are being taken up by the tabView,
-//    mayble Ill remove those later ?
-    private var swipeGesture: some Gesture {
-        DragGesture(minimumDistance: 30)
-            .onChanged{ dragValue in
-//                print("dragging")
-            }
-            .onEnded { dragValue in
-
-//                if dragValue.translation.width < 0 { slideDirection = .right }
-//                if dragValue.translation.width > 0 { slideDirection = .left }
-                
-//                withAnimation(.easeInOut(duration: 0.25)) {
-//                    if dragValue.translation.width < 0 { currentDay += Constants.DayTime }
-//                    if dragValue.translation.width > 0 { currentDay -= Constants.DayTime }
-//                }
-                
-            }
-    }
-    
-    private func makeZoomGesture(geo: GeometryProxy) -> some Gesture {
-        MagnificationGesture()
-            .onChanged { scaleValue in
-                dragging = true
-//                height = min(max(geo.size.height, geo.size.height * 2 * scaleValue), geo.size.height * 4)
-            }
-            .onEnded { value in dragging = false }
-    }
-    
-    private func filterEvents() -> [RecallCalendarEvent] {
-        events.filter { event in
-            event.startTime.matches(currentDay, to: .day) &&
-            event.startTime.matches(currentDay, to: .month) &&
-            event.startTime.matches(currentDay, to: .year)
+            let spacing = geo.size.height / CGFloat( endHour - startHour )
             
+            ZStack(alignment: .topLeading) {
+                
+                CalendarView(day: currentDay,
+                             spacing: spacing,
+                             startHour: startHour,
+                             endHour: endHour,
+                             showingTimeMarker: showingTimeMarker)
+                
+                Group {
+                    let filtered = filterEvents()
+                    
+                    ForEach( filtered, id: \.self ) { event in
+                        CalendarEventPreviewView(event: event,
+                                                 spacing: spacing,
+                                                 geo: geo,
+                                                 maxWidth: maxWidth,
+                                                 startHour: startHour,
+                                                 events: filtered,
+                                                 dragging: $dragging)
+                    }
+                    .padding(.leading, showingTimeMarker ? 40 : 0)
+                }
+                .if( slideDirection == .right ) { view in view.transition(AnyTransition.slideAwayTransition(.right)) }
+                .if( slideDirection == .left ) { view in view.transition(AnyTransition.slideAwayTransition(.left)) }
+                
+                Rectangle()
+                    .foregroundColor(.white)
+                    .opacity( dragging ? 0.01 : 0 )
+                    .onTapGesture { dragging = false }
+                    .zIndex( 1 )
+            }
+            .frame(height: geo.size.height)
+            .padding(.bottom, Constants.UIBottomOfPagePadding)
         }
     }
     
-
-//    MARK: Body
     
+//    MARK: CalendarDatesScroller
+//    This is the scrolling VStack that wraps a calendar date view
+//    It also controls the gesture state of those views, such as preventing the screen from scroll as a user resizes an event
+    private struct CalendarDatesScroller<Content: View>: View {
+        
+        @State var dragging: Bool = false
+    
+//        This variable is mainly for styling this view in different ways
+        let background: Bool
+        
+        let contentBuilder: ( Binding<Bool> ) -> Content
+        
+        init(background: Bool, contentBuilder: @escaping ( Binding<Bool> ) -> Content ) {
+            self.background = background
+            self.contentBuilder = contentBuilder
+        }
+        
+    //    MARK: Gestures
+    //    This doesn't do anything right now, because the horizontal gestures are being taken up by the tabView,
+    //    mayble Ill remove those later ?
+        private var swipeGesture: some Gesture {
+            DragGesture(minimumDistance: 30)
+                .onChanged{ dragValue in }
+                .onEnded { dragValue in }
+        }
+        
+        private func makeZoomGesture(geo: GeometryProxy) -> some Gesture {
+            MagnificationGesture()
+                .onChanged { scaleValue in dragging = true }
+                .onEnded { value in dragging = false }
+            }
+            
+        
+//        MARK: CalendarDatesScroller body
+        var body: some View {
+            
+            ScrollViewReader { value in
+                ScrollView {
+                    contentBuilder( $dragging )
+                }
+                .scrollDisabled(dragging || background)
+                .onAppear() {
+                    if background { return }
+                    let id = Int(Date.now.getHoursFromStartOfDay().rounded(.down) )
+                    value.scrollTo( id, anchor: .center )
+                }
+                .if(background) { view in
+                    view.opaqueRectangularBackground(7, stroke: true)
+                }
+            }
+            .onTapGesture { }
+            .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
+        }
+    }
+
+
+    
+//    MARK: MacOSContainer
+//    This is the entire calendar page for macOS
+    struct MacOSContainer: View {
+        
+        @Binding var currentDay: Date
+        @Binding var slideDirection: AnyTransition.SlideDirection
+//        Slide direction needs to be a binding, because the calendar page view for iOS needs to control it from the date picker
+//        the dragging variable can be stored in the scroller, because it is never needed in the CalendarPage
+        
+        let events: [RecallCalendarEvent]
+        
+//        View options
+        let geo: GeometryProxy
+        let background: Bool
+        
+        
+        private func makeDateLabel(from date: Date) -> String {
+            date.formatted(date: .abbreviated, time: .omitted)
+        }
+        
+        var body: some View {
+        
+                
+            let numberOfDays: Int = Int((geo.size.width / 200).rounded(.down))
+
+            CalendarDatesScroller(background: background) { dragging in
+                
+                HStack {
+                    ForEach( 0..<numberOfDays, id: \.self ) { i in
+                        
+                        let date = currentDay - (Double(numberOfDays - i) * Constants.DayTime)
+                        
+                        VStack(alignment: .leading) {
+                            
+                            
+                            UniversalText( makeDateLabel(from: date), size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                                .padding(.bottom, 5)
+                            
+                            CalendarDateView(currentDay: date,
+                                             events: events,
+                                             geo: geo,
+                                             maxWidth: geo.size.width / CGFloat(numberOfDays),
+                                             startHour: 0,
+                                             endHour: 24,
+                                             dragging: dragging,
+                                             slideDirection: $slideDirection,
+                                             showingTimeMarker: i == 0 )
+                        }
+                        
+                        
+                    }
+                }
+                .padding(.bottom, 20)
+                
+            }
+        }
+        
+    }
+    
+    
+
+//    MARK: vars
     let geo: GeometryProxy
     let scale: CGFloat
     let events: [RecallCalendarEvent]
@@ -175,62 +298,16 @@ struct CalendarContainer: View {
     }
     
     
-    
+    //    MARK: Body
     var body: some View {
         VStack {
-        
-            let spacing = height / CGFloat( endHour - startHour )
             
-            ScrollViewReader { value in
-                ScrollView {
-                    ZStack(alignment: .topLeading) {
-                        
-                        CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
-                        
-                        Group {
-                            let filtered = filterEvents()
-                            
-                            ForEach( filtered, id: \.self ) { event in
-                                CalendarEventPreviewView(event: event,
-                                                         spacing: spacing,
-                                                         geo: geo,
-                                                         startHour: startHour,
-                                                         events: filtered,
-                                                         dragging: $dragging)
-                            }
-                            .padding(.leading, 40)
-                        }
-//                        .transition( transition )
-
-//                        .if(slideDirection == .right) { view in view.overlay( Rectangle().foregroundColor(.red) )}
-//                        .if(slideDirection == .left) { view in view.overlay( Rectangle().foregroundColor(.blue) )}
-                        
-                        .if( slideDirection == .right ) { view in view.transition(AnyTransition.slideAwayTransition(.right)) }
-                        .if( slideDirection == .left ) { view in view.transition(AnyTransition.slideAwayTransition(.left)) }
-                        
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .opacity( dragging ? 0.01 : 0 )
-                            .onTapGesture { dragging = false }
-                            .zIndex( 1 )
-                            
-                        
-                    }
-                    .frame(height: height)
-                    .padding(.bottom, Constants.UIBottomOfPagePadding)
-                }
-                .scrollDisabled(dragging || background)
-                .onAppear() {
-                    if background { return }
-                    let id = Int(Date.now.getHoursFromStartOfDay().rounded(.down) )
-                    value.scrollTo( id, anchor: .center )
-                }
-                .if(background) { view in
-                    view.opaqueRectangularBackground(7, stroke: true)
-                }
-            }
-            .onTapGesture { }
-            .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
+            MacOSContainer(currentDay: $currentDay,
+                           slideDirection: $slideDirection,
+                           events: events,
+                           geo: geo,
+                           background: background)
+            
         }
     }
 }
