@@ -81,12 +81,25 @@ extension TutorialViews {
 //        MARK: Basic Info
         @ViewBuilder
         private func makeNameView() -> some View {
-            TextFieldWithPrompt(title: "What is the name of your goal?", binding: $name)
-                .onChange(of: name) { newValue in
-                    if newValue.isEmpty { return }
-                    nextButtonIsActive = true
+            VStack(alignment: .leading) {
+                TextFieldWithPrompt(title: "What is the name of your goal?", binding: $name)
+                    .onChange(of: name) { newValue in
+                        if newValue.isEmpty { return }
+                        nextButtonIsActive = true
+                    }
+                    .padding(.bottom)
+                
+                Group {
+                    UniversalText("ie. Productivity - Be productive for 35 hours a week", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                        .padding(.bottom, 5)
+                    
+                    UniversalText("ie. Exercise every day", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                 }
-                .slideTransition()
+                .opacity(0.65)
+                .padding(.leading)
+                
+            }
+            .slideTransition()
         }
         
         @ViewBuilder

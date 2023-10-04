@@ -47,6 +47,7 @@ struct CalendarEventPreviewContentView: View {
     private let defaultQuarter: CGFloat = 13
     private let defaultHalf: CGFloat = 25
     private let minLength: CGFloat = 68.4
+    private let minDescriptionLength: CGFloat = 75
     
     @State var showingEvent: Bool = false
     
@@ -71,7 +72,14 @@ struct CalendarEventPreviewContentView: View {
                     }
                 }
                 
+                if height > minDescriptionLength {
+                    
+                    UniversalText( event.notes, size: Constants.UISmallTextSize, font: Constants.mainFont ).opacity(0.8)
+                    
+                }
+                
                 if height > minLength {
+                    
                     Spacer()
                     if width > minWidth {
                         HStack { makeMetadata(horiztonal: true) }
