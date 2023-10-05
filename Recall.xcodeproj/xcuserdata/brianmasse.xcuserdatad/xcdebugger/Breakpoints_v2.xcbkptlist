@@ -173,8 +173,8 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "285"
-            endingLineNumber = "285"
+            startingLineNumber = "288"
+            endingLineNumber = "288"
             landmarkName = "getOverlapData(in:from:)"
             landmarkType = "7">
          </BreakpointContent>

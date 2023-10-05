@@ -279,6 +279,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     func getOverlapData(in fullWidth: CGFloat, from events: [RecallCalendarEvent]) -> OverlapData {
         
+        
+        return OverlapData(width: fullWidth, offset: 0)
+        
         let overlaps = getOverlapNodes(from: events)
         let count = overlaps.count
         let width = getWidth(from: overlaps, in: fullWidth, from: events)
