@@ -75,7 +75,6 @@ struct DataPageView: View {
                         
                         QuickLinks(dudContent: DataBookMark.Events, value: value)
                         
-                        
 //                        if !hide {
                         OverviewDataSection(goals: arrGoals, currentDay: $currentDay, page: $page)
                             .environmentObject(dataModel )
