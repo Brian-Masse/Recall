@@ -170,7 +170,6 @@ struct ActivitiesPerDay: View {
 //                    )
             }
         }
-        .frame(height: 220)
     }
     
     let title: String
@@ -200,9 +199,11 @@ struct ActivitiesPerDay: View {
                 if scrollable {
                     ScrollChart(Int(days)) {
                         makeChart()
+                            .frame(height: 220)
                     }
                 }else {
                     makeChart()
+                        .frame(height: 300)
                 }
             }
             .padding(.bottom)
