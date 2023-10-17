@@ -186,6 +186,7 @@ struct TextFieldWithPrompt: View {
     }
 }
 
+//MARK: StyleSlider
 struct StyledSlider: View {
     
     let minValue: Float
@@ -210,6 +211,7 @@ struct StyledSlider: View {
     
 }
 
+//MARK: SlideWithPrompt
 struct SliderWithPrompt: View {
     
     let label: String
@@ -278,13 +280,22 @@ struct TimeSelector: View {
     
     let label: String
     @Binding var time: Date
+    @State var showingFineSelector: Bool = true
+    
     let size: Double
+    
+    static let fineSnappingInterval: Double = 5
     
     init( label: String, time: Binding<Date>, size: Double = Constants.UIHeaderTextSize ) {
         self.label = label
         self._time = time
         self.size = size
-        
+    }
+    
+//    when using the fine time slider, this function will round the slide value to a specific interval. The default is set to 5
+    private func roundFineTime( _ value: Double ) -> Double {
+        print(value)
+        return (value / TimeSelector.fineSnappingInterval).rounded(.down) * TimeSelector.fineSnappingInterval
     }
     
     private var timeBinding: Binding<Float> {
@@ -299,6 +310,13 @@ struct TimeSelector: View {
         set: { newValue, _ in }
     }
     
+    private var fineTimeBinding: Binding<Float> {
+        Binding { Float( roundFineTime(time.getMinutesFromStartOfHour()) ) }
+        set: { newValue, _ in
+            time = time.dateBySetting(minutes:  roundFineTime( Double(newValue) )  )
+        }
+    }
+    
     var body: some View {
         VStack {
             SliderWithPrompt(label: label,
@@ -308,6 +326,16 @@ struct TimeSelector: View {
                              strBinding: timeLabel,
                              textFieldWidth: 120,
                              size: size)
+            
+            if showingFineSelector {
+                
+                StyledSlider(minValue: 0,
+                             maxValue: 61,
+                             binding: fineTimeBinding,
+                             strBinding: timeLabel,
+                             textFieldWidth: 120)
+                
+            }
         }
     }
     

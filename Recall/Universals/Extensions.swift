@@ -50,6 +50,11 @@ extension Date {
         return Double(comps.minute ?? 0) / Constants.MinuteTime + Double(comps.hour ?? 0)
     }
     
+    func getMinutesFromStartOfHour() -> Double {
+        let comps = Calendar.current.dateComponents([.minute, .second], from: self)
+        return Double( comps.second ?? 0 ) / 60 + Double(comps.minute ?? 0)
+    }
+    
     func getYearsSince( _ date: Date ) -> Double {
         self.timeIntervalSince(date) / Constants.yearTime
     }
@@ -67,6 +72,14 @@ extension Date {
         let minutes = (hour - Double(intHour)) * Constants.MinuteTime
         
         return Calendar.current.date(bySettingHour: intHour, minute: Int(minutes), second: 0, of: self) ?? self
+    }
+    
+    func dateBySetting(minutes: Double) -> Date {
+        let hour = Calendar.current.dateComponents([.hour], from: self).hour ?? 0
+        let intMinutes = Int(minutes)
+        let seconds = ( minutes - Double(intMinutes) )
+        
+        return Calendar.current.date( bySettingHour: hour, minute: intMinutes, second: Int(seconds), of: self ) ?? self
     }
     
     func day() -> Int {
