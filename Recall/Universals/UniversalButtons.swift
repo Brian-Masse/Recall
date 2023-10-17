@@ -216,22 +216,34 @@ struct ConditionalLargeRoundedButton: View {
     let title: String
     let icon: String
     
+    let wide: Bool
+    let allowTapOnDisabled: Bool
+    
     let condition: () -> Bool
     let action: () -> Void
     
+    init( title: String, icon: String, wide: Bool = true, allowTapOnDisabled: Bool = false, condition: @escaping () -> Bool, action: @escaping () -> Void ) {
+        self.title = title
+        self.icon = icon
+        self.wide = wide
+        self.allowTapOnDisabled = allowTapOnDisabled
+        self.condition = condition
+        self.action = action
+    }
+    
     var body: some View {
         HStack {
-            Spacer()
-            UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+            if wide { Spacer() }
+            if title != "" { UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont) }
             Image(systemName: icon)
-            Spacer()
+            if wide { Spacer() }
             
         }
             .padding(10)
             .if( condition() ) { view in view.tintRectangularBackground() }
             .if( !condition() ) { view in view.secondaryOpaqueRectangularBackground() }
             .onTapGesture { withAnimation {
-                if condition() { action() }
+                if condition() || allowTapOnDisabled { action() }
             }}
     }
     

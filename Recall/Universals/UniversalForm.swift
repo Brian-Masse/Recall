@@ -294,8 +294,7 @@ struct TimeSelector: View {
     
 //    when using the fine time slider, this function will round the slide value to a specific interval. The default is set to 5
     private func roundFineTime( _ value: Double ) -> Double {
-        print(value)
-        return (value / TimeSelector.fineSnappingInterval).rounded(.down) * TimeSelector.fineSnappingInterval
+        (value / TimeSelector.fineSnappingInterval).rounded(.down) * TimeSelector.fineSnappingInterval
     }
     
     private var timeBinding: Binding<Float> {
@@ -310,6 +309,12 @@ struct TimeSelector: View {
         set: { newValue, _ in }
     }
     
+//    fine time bindings
+    private var fineTimeHourBinding: Binding<Float> {
+        Binding { Float(time.getHoursFromStartOfDay().rounded(.down) ) }
+        set: { newValue, _ in time = time.dateBySetting(hour: Double(newValue), ignoreMinutes: true) }
+    }
+    
     private var fineTimeBinding: Binding<Float> {
         Binding { Float( roundFineTime(time.getMinutesFromStartOfHour()) ) }
         set: { newValue, _ in
@@ -317,26 +322,49 @@ struct TimeSelector: View {
         }
     }
     
+    private var fineTimeLabel: Binding<String> {
+        Binding { "\(Int(roundFineTime( time.getMinutesFromStartOfHour() )))" }
+        set: { newValue, _ in }
+    }
+    
     var body: some View {
+        
         VStack {
-            SliderWithPrompt(label: label,
-                             minValue: 0,
-                             maxValue: 23.5,
-                             binding: timeBinding,
-                             strBinding: timeLabel,
-                             textFieldWidth: 120,
-                             size: size)
             
-            if showingFineSelector {
+            HStack {
+               
+                UniversalText(label,
+                              size: size,
+                              font: Constants.titleFont)
+                    .padding(.trailing, 5)
                 
+                Spacer()
+                
+                ConditionalLargeRoundedButton(title: "", icon: "camera.filters", wide: false, allowTapOnDisabled: true) { showingFineSelector } action: {
+                    withAnimation { showingFineSelector.toggle() }
+                }
+            }
+        
+            if !showingFineSelector {
                 StyledSlider(minValue: 0,
-                             maxValue: 61,
-                             binding: fineTimeBinding,
+                             maxValue: 23.75,
+                             binding: timeBinding,
                              strBinding: timeLabel,
                              textFieldWidth: 120)
                 
+            } else {
+                StyledSlider(minValue: 0,
+                             maxValue: 23.75,
+                             binding: fineTimeHourBinding,
+                             strBinding: timeLabel,
+                             textFieldWidth: 120)
+                
+                StyledSlider(minValue: 0,
+                             maxValue: 55,
+                             binding: fineTimeBinding,
+                             strBinding: fineTimeLabel,
+                             textFieldWidth: 120)
             }
         }
     }
-    
 }

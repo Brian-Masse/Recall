@@ -67,11 +67,14 @@ extension Date {
         Calendar.current.isDate(self, equalTo: secondDate, toGranularity: component)
     }
     
-    func dateBySetting(hour: Double) -> Date {
+    func dateBySetting(hour: Double, ignoreMinutes: Bool = false) -> Date {
         let intHour = Int(hour)
         let minutes = (hour - Double(intHour)) * Constants.MinuteTime
+        let recordedMinutes = Calendar.current.dateComponents([.minute], from: self).minute ?? 0
         
-        return Calendar.current.date(bySettingHour: intHour, minute: Int(minutes), second: 0, of: self) ?? self
+        return Calendar.current.date(bySettingHour: intHour, 
+                                     minute: !ignoreMinutes ? Int(minutes) : recordedMinutes,
+                                     second: 0, of: self) ?? self
     }
     
     func dateBySetting(minutes: Double) -> Date {
