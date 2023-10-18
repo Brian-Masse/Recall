@@ -21,7 +21,9 @@ struct ProfileView: View {
     
     @Binding var appPage: ContentView.EntryPage
     
-    @State var madeChanges: Bool = false
+//    When changing items in settings, set these to true to display a save button. This makes edditing settings more seamless.
+    @State var madeNotificationChanges: Bool = false
+    @State var madeDefaultEventLengthChanges: Bool = false
     
     @State var notificationsEnabled: Bool = RecallModel.index.notificationsEnabled
     @State var notificationTime: Date = RecallModel.index.notificationsTime
@@ -36,7 +38,7 @@ struct ProfileView: View {
 //    MARK: Methods
     private func saveSettings() {
         index.toggleNotifcations(to: notificationsEnabled, time: notificationTime)
-        madeChanges = false
+        madeNotificationChanges = false
     }
     
 //    MARK: ViewBuilders
@@ -153,6 +155,21 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: Event Settings
+    
+    @ViewBuilder
+    private func makeEventSettings() -> some View {
+        
+        UniversalText( "Events", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            .padding(.top, 5)
+        
+//        SliderWithPrompt(label: "Default Event Length",
+//                         minValue: <#T##Float#>, maxValue: <#T##Float#>, binding: <#T##Binding<Float>#>, strBinding: <#T##Binding<String>#>, textFieldWidth: <#T##CGFloat#>, size: <#T##Double#>)
+        
+    }
+    
+    
+//    MARK: Notification Settings
     private func makeNotificationMessage() async -> String {
         let settings = await NotificationManager.shared.getNotificationStatus()
         switch settings {
@@ -160,7 +177,7 @@ struct ProfileView: View {
         default: return ""
         }
     }
-    
+     
     @MainActor
     private func checkStatus() async {
         let status = await NotificationManager.shared.getNotificationStatus()
@@ -190,7 +207,7 @@ struct ProfileView: View {
                             }
                         }
                         
-                        madeChanges = (newValue != index.notificationsEnabled)
+                        madeNotificationChanges = (newValue != index.notificationsEnabled)
                     }
             }
         }
@@ -202,12 +219,12 @@ struct ProfileView: View {
         if notificationsEnabled {
             TimeSelector(label: "When would you like to be reminded?", time: $notificationTime, size: Constants.UIDefaultTextSize)
                 .onChange(of: notificationTime) { newValue in
-                    madeChanges = !( newValue.matches(index.notificationsTime, to: .minute) && newValue.matches(index.notificationsTime, to: .hour) )
+                    madeNotificationChanges = !( newValue.matches(index.notificationsTime, to: .minute) && newValue.matches(index.notificationsTime, to: .hour) )
                 }
         }
         
-        if madeChanges {
-            ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeChanges
+        if madeNotificationChanges {
+            ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeNotificationChanges
             } action: { saveSettings() }
         }
     }

@@ -31,6 +31,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
     //  Settings
     @Persisted var finishedTutorial: Bool = false
+    @Persisted var defaultEventLength: Double = Constants.HourTime * 2
     
     @Persisted var notificationsEnabled: Bool = false
     @Persisted var notificationsTime: Date = .now
