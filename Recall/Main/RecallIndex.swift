@@ -83,6 +83,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    MARK: Notifications
     @MainActor
 //    if you are turning the notifications on, it will handle notification requests, as well as setting up the actual notifiations
     func toggleNotifcations(to enabled: Bool, time: Date) {
@@ -113,6 +114,17 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    MARK: Events
+    
+    @MainActor
+    func setDefaultEventLength(to length: Double) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.defaultEventLength = length
+        }
+    }
+    
+    
+//    MARK: postProfileCreationInit
 //    This runs after the user has created their profile, (in turn setting their name, number, email, and birthday)
 //    some of the functions in this method are redundant
     @MainActor

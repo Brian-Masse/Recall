@@ -68,7 +68,7 @@ struct CalendarEventCreationView: View {
                                       event: nil,
                                       title: "",
                                       notes: "",
-                                      startTime: .now - Constants.HourTime * 5,
+                                      startTime: .now,
                                       endTime: .now + RecallModel.index.defaultEventLength,
                                       day: currentDay,
                                       category: RecallCategory(),

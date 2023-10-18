@@ -136,10 +136,11 @@ struct ProfileView: View {
             UniversalText( "Settings", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
             
             VStack(alignment: .leading) {
-                makeReminderSettings()
+                makeEventSettings()
                     .padding(.bottom)
                 
-                makeEventSettings()
+                makeReminderSettings()
+                    .padding(.bottom)
                 
                 makeIconSettings()
                 
@@ -188,7 +189,11 @@ struct ProfileView: View {
         
         
         UniversalText( "Events", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
-            .padding(.top, 5)
+            .padding(.vertical, 5)
+            .onChange(of: defaultEventLength) { newValue in
+                if newValue != RecallModel.index.defaultEventLength { madeDefaultEventLengthChanges = true }
+                else { madeDefaultEventLengthChanges = false }
+            }
         
         SliderWithPrompt(label: "Default Event Length",
                          minValue: 0, 
@@ -198,6 +203,12 @@ struct ProfileView: View {
                          textFieldWidth: 150,
                          size: Constants.UIDefaultTextSize)
         
+        if madeDefaultEventLengthChanges {
+            ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeDefaultEventLengthChanges } action: {
+                RecallModel.index.setDefaultEventLength(to: defaultEventLength)
+                madeDefaultEventLengthChanges = false
+            }
+        }
     }
     
     
