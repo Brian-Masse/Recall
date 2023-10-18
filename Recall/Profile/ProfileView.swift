@@ -25,9 +25,14 @@ struct ProfileView: View {
     @State var madeNotificationChanges: Bool = false
     @State var madeDefaultEventLengthChanges: Bool = false
     
+//    temporary settings: change these before committing them to the index when users hit save
     @State var notificationsEnabled: Bool = RecallModel.index.notificationsEnabled
     @State var notificationTime: Date = RecallModel.index.notificationsTime
     @State var showingNotificationToggle: Bool = true
+    
+    @State var defaultEventLength: Double = RecallModel.index.defaultEventLength
+    
+    
     
     @State var activeIcon: String = UIApplication.shared.alternateIconName ?? "light"
     
@@ -134,6 +139,8 @@ struct ProfileView: View {
                 makeReminderSettings()
                     .padding(.bottom)
                 
+                makeEventSettings()
+                
                 makeIconSettings()
                 
             }
@@ -157,14 +164,39 @@ struct ProfileView: View {
     
 //    MARK: Event Settings
     
+    private var eventLengthBinding: Binding<Float> {
+        Binding { Float(defaultEventLength) }
+        set: { newValue in
+            let multiplier = 15 * Constants.MinuteTime
+            defaultEventLength = (Double( newValue ) / multiplier).rounded(.down) * multiplier
+        }
+    }
+    
+    private var eventLengthTitleBinding: Binding<String> {
+        Binding {
+            let hours = (defaultEventLength / Constants.HourTime)
+            let hour = hours.rounded(.down)
+            let minutes = ((hours - hour) * 60).rounded(.down)
+            
+            return "\( Int(hour) )hr \( Int(minutes) ) mins"
+        } set: { _ in }
+        
+    }
+    
     @ViewBuilder
     private func makeEventSettings() -> some View {
+        
         
         UniversalText( "Events", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             .padding(.top, 5)
         
-//        SliderWithPrompt(label: "Default Event Length",
-//                         minValue: <#T##Float#>, maxValue: <#T##Float#>, binding: <#T##Binding<Float>#>, strBinding: <#T##Binding<String>#>, textFieldWidth: <#T##CGFloat#>, size: <#T##Double#>)
+        SliderWithPrompt(label: "Default Event Length",
+                         minValue: 0, 
+                         maxValue: Float(5 * Constants.HourTime),
+                         binding: eventLengthBinding,
+                         strBinding: eventLengthTitleBinding,
+                         textFieldWidth: 150,
+                         size: Constants.UIDefaultTextSize)
         
     }
     
