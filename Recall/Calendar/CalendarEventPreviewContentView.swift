@@ -7,9 +7,11 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
 struct CalendarEventPreviewContentView: View {
     
+//    MARK: View Builders
     @ViewBuilder
     private func makeMetadataTag(label: String, icon: String) -> some View {
         HStack {
@@ -34,10 +36,13 @@ struct CalendarEventPreviewContentView: View {
         }
     }
     
+//    MARK: Vars
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
     let width: CGFloat  //measured in pixels
     let height: CGFloat //measured in pixels
+    
+    @ObservedRealmObject var index = RecallModel.index
     
 //    arbitrary for now
     let minWidth: CGFloat = 250
@@ -51,6 +56,7 @@ struct CalendarEventPreviewContentView: View {
     
     @State var showingEvent: Bool = false
     
+//    MARK: Body
     var body: some View {
        
         ZStack {
@@ -59,6 +65,7 @@ struct CalendarEventPreviewContentView: View {
                 .cornerRadius(Constants.UIDefaultCornerRadius)
             
             VStack(alignment: .leading) {
+//                MARK: Title
                 HStack {
                     UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true)
                     
@@ -72,8 +79,9 @@ struct CalendarEventPreviewContentView: View {
                     }
                 }
                 
-                if height > minDescriptionLength {
-                    
+//                MARK: Content
+                
+                if height > minDescriptionLength && index.showNotesOnPreview {
                     UniversalText( event.notes, size: Constants.UISmallTextSize, font: Constants.mainFont ).opacity(0.8)
                     
                 }

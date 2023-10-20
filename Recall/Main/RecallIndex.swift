@@ -32,6 +32,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     //  Settings
     @Persisted var finishedTutorial: Bool = false
     @Persisted var defaultEventLength: Double = Constants.HourTime * 2
+    @Persisted var showNotesOnPreview: Bool = true
     
     @Persisted var notificationsEnabled: Bool = false
     @Persisted var notificationsTime: Date = .now
@@ -120,6 +121,13 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     func setDefaultEventLength(to length: Double) {
         RealmManager.updateObject(self) { thawed in
             thawed.defaultEventLength = length
+        }
+    }
+    
+    @MainActor
+    func setShowNotesOnPreview(to value: Bool) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.showNotesOnPreview = value
         }
     }
     

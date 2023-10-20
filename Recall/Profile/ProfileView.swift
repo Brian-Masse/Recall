@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
 @MainActor
 struct ProfileView: View {
@@ -26,19 +27,18 @@ struct ProfileView: View {
     @State var madeDefaultEventLengthChanges: Bool = false
     
 //    temporary settings: change these before committing them to the index when users hit save
+    @ObservedRealmObject var index = RecallModel.index
+    
     @State var notificationsEnabled: Bool = RecallModel.index.notificationsEnabled
     @State var notificationTime: Date = RecallModel.index.notificationsTime
     @State var showingNotificationToggle: Bool = true
     
     @State var defaultEventLength: Double = RecallModel.index.defaultEventLength
-    
-    
+
     
     @State var activeIcon: String = UIApplication.shared.alternateIconName ?? "light"
     
     @State var showingError: Bool = false
-    
-    let index = RecallModel.index
     
 //    MARK: Methods
     private func saveSettings() {
@@ -184,6 +184,11 @@ struct ProfileView: View {
         
     }
     
+    private var showingNotesOnPreviewBinding: Binding<Bool> {
+        Binding { index.showNotesOnPreview }
+        set: { newValue in index.setShowNotesOnPreview(to: newValue) }
+    }
+    
     @ViewBuilder
     private func makeEventSettings() -> some View {
         
@@ -194,21 +199,32 @@ struct ProfileView: View {
                 if newValue != RecallModel.index.defaultEventLength { madeDefaultEventLengthChanges = true }
                 else { madeDefaultEventLengthChanges = false }
             }
-        
-        SliderWithPrompt(label: "Default Event Length",
-                         minValue: 0, 
-                         maxValue: Float(5 * Constants.HourTime),
-                         binding: eventLengthBinding,
-                         strBinding: eventLengthTitleBinding,
-                         textFieldWidth: 150,
-                         size: Constants.UIDefaultTextSize)
-        
-        if madeDefaultEventLengthChanges {
-            ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeDefaultEventLengthChanges } action: {
-                RecallModel.index.setDefaultEventLength(to: defaultEventLength)
-                madeDefaultEventLengthChanges = false
+        VStack(alignment: .leading) {
+            SliderWithPrompt(label: "Default Event Length",
+                             minValue: 0,
+                             maxValue: Float(5 * Constants.HourTime),
+                             binding: eventLengthBinding,
+                             strBinding: eventLengthTitleBinding,
+                             textFieldWidth: 150,
+                             size: Constants.UIDefaultTextSize)
+            
+            if madeDefaultEventLengthChanges {
+                ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeDefaultEventLengthChanges } action: {
+                    RecallModel.index.setDefaultEventLength(to: defaultEventLength)
+                    madeDefaultEventLengthChanges = false
+                }
             }
         }
+            .padding(.bottom)
+        
+        
+        HStack {
+            UniversalText( "Show event notes on preview", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+            Spacer()
+            Toggle("", isOn: showingNotesOnPreviewBinding)
+        
+        }
+        .padding(.bottom)
     }
     
     
