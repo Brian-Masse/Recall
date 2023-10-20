@@ -368,3 +368,30 @@ struct TimeSelector: View {
         }
     }
 }
+
+//MARK: StyledToggle
+struct StyledToggle<C: View>: View {
+    
+    let title: C
+    let wide: Bool
+    let binding: Binding<Bool>
+    
+    init( _ binding: Binding<Bool>, wide: Bool = true, titleBuilder: () -> C ) {
+        self.binding = binding
+        self.title = titleBuilder()
+        self.wide = wide
+    }
+    
+    var body: some View {
+        
+        HStack {
+     
+            title
+            
+            if wide { Spacer() }
+            
+            Toggle("", isOn: binding)
+                .tint(Colors.tint)
+        }
+    }
+}

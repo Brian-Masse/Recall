@@ -193,7 +193,7 @@ struct ProfileView: View {
     private func makeEventSettings() -> some View {
         
         
-        UniversalText( "Events", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+        UniversalText( "Events", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
             .padding(.vertical, 5)
             .onChange(of: defaultEventLength) { newValue in
                 if newValue != RecallModel.index.defaultEventLength { madeDefaultEventLengthChanges = true }
@@ -218,11 +218,8 @@ struct ProfileView: View {
             .padding(.bottom)
         
         
-        HStack {
+        StyledToggle(showingNotesOnPreviewBinding) {
             UniversalText( "Show event notes on preview", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-            Spacer()
-            Toggle("", isOn: showingNotesOnPreviewBinding)
-        
         }
         .padding(.bottom)
     }
@@ -246,29 +243,24 @@ struct ProfileView: View {
     @ViewBuilder
     private func makeReminderSettings() -> some View {
         
-        UniversalText( "Reminders", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+        UniversalText( "Reminders", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
             .padding(.top, 5)
             .onAppear { Task { await checkStatus() } }
         
-        HStack {
+        StyledToggle($notificationsEnabled) {
             UniversalText( "Daily reminder", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-            Spacer()
-            if showingNotificationToggle {
-                Toggle(isOn: $notificationsEnabled) { }
-                    .tint(Colors.tint)
-                    .onChange(of: notificationsEnabled) { newValue in
-                        
-                        if newValue {
-                            Task {
-                                let results = await NotificationManager.shared.requestNotifcationPermissions()
-                                notificationsEnabled = results
-                                await checkStatus()
-                            }
-                        }
-                        
-                        madeNotificationChanges = (newValue != index.notificationsEnabled)
-                    }
+        }
+        .onChange(of: notificationsEnabled) { newValue in
+            
+            if newValue {
+                Task {
+                    let results = await NotificationManager.shared.requestNotifcationPermissions()
+                    notificationsEnabled = results
+                    await checkStatus()
+                }
             }
+            
+            madeNotificationChanges = (newValue != index.notificationsEnabled)
         }
         
         if !showingNotificationToggle {
@@ -324,7 +316,7 @@ struct ProfileView: View {
     
     @ViewBuilder
     private func makeIconSettings() -> some View {
-        UniversalText( "Icon", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+        UniversalText( "Icon", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
         
         HStack {
             Spacer()

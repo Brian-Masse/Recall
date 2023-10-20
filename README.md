@@ -23,6 +23,8 @@ I independently developed this project, from problem identification, project bra
 NEW FEATURES
 
 - added the notes of an event to the preview on the timeline
+- added a toggle to view notes on event previews
+- added the ability to set the default length of events
 
 BUG FIXES:
 
