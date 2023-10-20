@@ -129,6 +129,14 @@ struct ProfileView: View {
 //    MARK: settings
     
     @ViewBuilder
+    private func makeSettingsDivider() -> some View {
+        Rectangle()
+            .frame(height: 1)
+            .universalTextStyle()
+            .opacity(0.85)
+    }
+    
+    @ViewBuilder
     private func makeSettings() -> some View {
         
         VStack(alignment: .leading) {
@@ -139,13 +147,17 @@ struct ProfileView: View {
                 makeEventSettings()
                     .padding(.bottom)
                 
+                makeSettingsDivider()
+                
                 makeReminderSettings()
                     .padding(.bottom)
+                
+                makeSettingsDivider()
                 
                 makeIconSettings()
                 
             }
-            .opaqueRectangularBackground(7, stroke: true)
+            .opaqueRectangularBackground(stroke: true)
             .padding(.bottom, 5)
             
             makeSubButton(title: "Replay Tutorial", icon: "arrow.clockwise") {
@@ -189,6 +201,11 @@ struct ProfileView: View {
         set: { newValue in index.setShowNotesOnPreview(to: newValue) }
     }
     
+    private var fineTimeSelectorIsDefault: Binding<Bool> {
+        Binding { index.defaultFineTimeSelector }
+        set: { newValue in index.setDefaultFineTimeSelector(to: newValue) }
+    }
+    
     @ViewBuilder
     private func makeEventSettings() -> some View {
         
@@ -221,7 +238,13 @@ struct ProfileView: View {
         StyledToggle(showingNotesOnPreviewBinding) {
             UniversalText( "Show event notes on preview", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         }
-        .padding(.bottom)
+        .padding(.bottom, 5)
+        
+        StyledToggle(fineTimeSelectorIsDefault) {
+            UniversalText( "Universal fine time selection", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+        }
+        UniversalText( "All time sliders will default to fine selection when enabled.", size: Constants.UISmallTextSize, font: Constants.mainFont )
+            .padding(.horizontal)
     }
     
     

@@ -25,6 +25,7 @@ NEW FEATURES
 - added the notes of an event to the preview on the timeline
 - added a toggle to view notes on event previews
 - added the ability to set the default length of events
+- added a toggle to turn on universal fine time selection
 
 BUG FIXES:
 

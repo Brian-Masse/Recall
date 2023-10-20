@@ -280,7 +280,7 @@ struct TimeSelector: View {
     
     let label: String
     @Binding var time: Date
-    @State var showingFineSelector: Bool = true
+    @State var showingFineSelector: Bool = RecallModel.index.defaultFineTimeSelector
     
     let size: Double
     
