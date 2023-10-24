@@ -9,10 +9,20 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-enum TimeRounding: Int {
+enum TimeRounding: Int, CaseIterable, Identifiable {
     case hour = 1
     case halfHour = 2
     case quarter = 4
+    
+    var id: Int { self.rawValue }
+    
+    func getTitle() -> String {
+        switch self {
+        case .hour: return "hour"
+        case .halfHour: return "half hour"
+        case .quarter: return "quarter hour"
+        }
+    }
 }
 
 
@@ -36,6 +46,8 @@ struct CalendarEventPreviewView: View {
     let events: [RecallCalendarEvent]
     
     var overlapData: RecallCalendarEvent.OverlapData { event.getOverlapData(in: geo.size.width - 20, from: events) }
+    
+    @ObservedRealmObject var index = RecallModel.index
     
     @State var startDate: Date = .now
     @State var endDate: Date = .now
@@ -108,7 +120,7 @@ struct CalendarEventPreviewView: View {
                 startDate = getTime(from: clampPosition(dragGesture.location.y))
                 endDate   = startDate + (length * Constants.HourTime)
                 
-                roundedStartDate = getNearestTime(from: clampPosition(dragGesture.location.y), to: RecallModel.dateSnapping)
+                roundedStartDate = getNearestTime(from: clampPosition(dragGesture.location.y), to: index.dateSnapping)
             }
             .onEnded { dragGesture in
                 if dragging && !resizing {
@@ -126,11 +138,11 @@ struct CalendarEventPreviewView: View {
                 if !dragging || !resizing { return }
                 if direction == .up {
                     startDate        = min(getTime(from: clampPosition(dragGesture.location.y)), endDate - Constants.HourTime)
-                    roundedStartDate = min(getNearestTime(from: clampPosition(dragGesture.location.y), to: RecallModel.dateSnapping), endDate - Constants.HourTime)
+                    roundedStartDate = min(getNearestTime(from: clampPosition(dragGesture.location.y), to: index.dateSnapping), endDate - Constants.HourTime)
                     length           = endDate.timeIntervalSince(startDate) / Constants.HourTime
                 } else {
                     endDate             = max(getTime(from: clampPosition(dragGesture.location.y)), startDate + Constants.HourTime)
-                    let roundedEndDate  = max(getNearestTime(from: clampPosition(dragGesture.location.y), to: RecallModel.dateSnapping, roundingRule: .up), startDate + Constants.HourTime)
+                    let roundedEndDate  = max(getNearestTime(from: clampPosition(dragGesture.location.y), to: index.dateSnapping, roundingRule: .up), startDate + Constants.HourTime)
                     length              = endDate.timeIntervalSince(startDate) / Constants.HourTime
                     roundedStartDate    = roundedEndDate - length * Constants.HourTime
                 }

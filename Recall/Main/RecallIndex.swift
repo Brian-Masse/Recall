@@ -31,9 +31,11 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
     //  Settings
     @Persisted var finishedTutorial: Bool = false
+    
     @Persisted var defaultEventLength: Double = Constants.HourTime * 2
     @Persisted var showNotesOnPreview: Bool = true
     @Persisted var defaultFineTimeSelector: Bool = true
+    @Persisted var defaultEventSnapping: Int = TimeRounding.quarter.rawValue
     
     @Persisted var notificationsEnabled: Bool = false
     @Persisted var notificationsTime: Date = .now
@@ -139,6 +141,13 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+    @MainActor
+    func setDefaultTimeSnapping(to value: TimeRounding) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.defaultEventSnapping = value.rawValue
+        }
+    }
+    
     
 //    MARK: postProfileCreationInit
 //    This runs after the user has created their profile, (in turn setting their name, number, email, and birthday)
@@ -157,6 +166,12 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
     func getFullName() -> String {
         "\(firstName) \(lastName)"
+    }
+    
+//    when accessing the defaultDateSnapping variable somtimes it is conveinient to get the rawValue
+//    sometimes its conveinient to get the actual enum.
+    var dateSnapping: TimeRounding {
+        TimeRounding(rawValue: defaultEventSnapping) ?? .quarter
     }
     
     

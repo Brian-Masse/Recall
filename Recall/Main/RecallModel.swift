@@ -34,9 +34,6 @@ struct RecallModel {
         activeColor = colorScheme == .dark ? Colors.accentGreen : Colors.lightAccentGreen
     }
     
-    
-    static let dateSnapping: TimeRounding = .quarter
-    
     @MainActor
     static func getDaysSinceFirstEvent() -> Double {
         (Date.now.timeIntervalSince(getEarliestEventDate() )) / Constants.DayTime

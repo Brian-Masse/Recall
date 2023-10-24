@@ -34,7 +34,6 @@ struct ProfileView: View {
     @State var showingNotificationToggle: Bool = true
     
     @State var defaultEventLength: Double = RecallModel.index.defaultEventLength
-
     
     @State var activeIcon: String = UIApplication.shared.alternateIconName ?? "light"
     
@@ -47,7 +46,7 @@ struct ProfileView: View {
     }
     
 //    MARK: ViewBuilders
-    
+//    these are the buttons that appear below the main settings
     @ViewBuilder
     private func makeSubButton( title: String, icon: String, action: @escaping () -> Void ) -> some View {
         HStack {
@@ -60,6 +59,7 @@ struct ProfileView: View {
         .onTapGesture { action() }
     }
     
+//    these are the indivudal nodes that make up the contact section
     @ViewBuilder
     private func makeContactLabel( title: String, content: String ) -> some View {
         HStack {
@@ -71,6 +71,7 @@ struct ProfileView: View {
         .padding(.vertical, 5)
     }
     
+//    these are the big blocks that describe birthday and date joined
     @ViewBuilder
     private func makeDemographicLabel(mainText: String, secondaryText: String, tertiaryText: String) -> some View {
         VStack {
@@ -207,6 +208,16 @@ struct ProfileView: View {
     }
     
     @ViewBuilder
+    private func makeTimeSnappingSelector(title: String, option: TimeRounding) -> some View {
+           
+        UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+            .if(option.rawValue == index.defaultEventSnapping) { view in view.tintRectangularBackground() }
+            .if(option.rawValue != index.defaultEventSnapping) { view in view.secondaryOpaqueRectangularBackground() }
+            .onTapGesture { index.setDefaultTimeSnapping(to: option) }
+        
+    }
+    
+    @ViewBuilder
     private func makeEventSettings() -> some View {
         
         
@@ -244,7 +255,18 @@ struct ProfileView: View {
             UniversalText( "Universal fine time selection", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         }
         UniversalText( "All time sliders will default to fine selection when enabled.", size: Constants.UISmallTextSize, font: Constants.mainFont )
-            .padding(.horizontal)
+            .padding([.horizontal, .bottom])
+        
+        UniversalText( "Default event snapping", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+        HStack {
+            Spacer()
+            ForEach( TimeRounding.allCases ) { content in
+                makeTimeSnappingSelector(title: content.getTitle(), option: content)
+            }
+            Spacer()
+        }
+        UniversalText( "These are the time segments used when resizing events on the calendar page.", size: Constants.UISmallTextSize, font: Constants.mainFont )
+            .padding([.horizontal, .bottom])
     }
     
     

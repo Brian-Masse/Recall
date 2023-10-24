@@ -300,7 +300,7 @@ struct TimeSelector: View {
     private var timeBinding: Binding<Float> {
         Binding { Float(time.getHoursFromStartOfDay().round(to: 2)) }
         set: { newValue, _ in
-            time = time.dateBySetting(hour: Double(newValue)).round(to: RecallModel.dateSnapping)
+            time = time.dateBySetting(hour: Double(newValue)).round(to: RecallModel.index.dateSnapping)
         }
     }
     

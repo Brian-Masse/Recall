@@ -90,11 +90,13 @@ struct CalendarEventCreationView: View {
         
     }
     
+//    MARK: Vars
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedResults(RecallCalendarEvent.self) var events
     @ObservedResults(RecallCategory.self) var categories
     @ObservedResults(RecallGoal.self) var goals
+    @ObservedRealmObject var index = RecallModel.index
     
     @State var showingAlert: Bool = false
     @State var alertTitle: String = ""
@@ -197,7 +199,7 @@ struct CalendarEventCreationView: View {
     private var startTimeBinding: Binding<Float> {
         Binding { Float(startTime.getHoursFromStartOfDay().round(to: 2)) }
         set: { newValue, _ in
-            startTime = startTime.dateBySetting(hour: Double(newValue)).round(to: RecallModel.dateSnapping)
+            startTime = startTime.dateBySetting(hour: Double(newValue)).round(to: index.dateSnapping)
         }
     }
     
@@ -209,7 +211,7 @@ struct CalendarEventCreationView: View {
     private var endTimeBinding: Binding<Float> {
         Binding { Float(endTime.getHoursFromStartOfDay().round(to: 2)) }
         set: { newValue, _ in
-            endTime = endTime.dateBySetting(hour: Double(newValue)).round(to: RecallModel.dateSnapping)
+            endTime = endTime.dateBySetting(hour: Double(newValue)).round(to: index.dateSnapping)
         }
     }
     
