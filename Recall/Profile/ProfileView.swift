@@ -276,7 +276,7 @@ struct ProfileView: View {
         }
             .if(option.rawValue == index.defaultEventSnapping) { view in view.tintRectangularBackground() }
             .if(option.rawValue != index.defaultEventSnapping) { view in view.secondaryOpaqueRectangularBackground() }
-            .onTapGesture { index.setDefaultTimeSnapping(to: option) }
+            .onTapGesture { withAnimation { index.setDefaultTimeSnapping(to: option) } } 
     }
     
     @ViewBuilder
