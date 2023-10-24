@@ -1077,6 +1077,21 @@
                   endingLineNumber = "118"
                   offsetFromSymbolStart = "28">
                </Location>
+               <Location
+                  uuid = "840C92C9-A909-4CFD-9665-69CA455D9F6C - d718c05c984b2894"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(Recall.CalendarContainer.CalendarView, &lt;&lt;opaque return type of SwiftUI.View.if&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(_: Swift.Bool, contentBuilder: (&#x3c4;_0_0) -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.zIndex(Swift.Double) -&gt; some&gt;&gt;.0)&gt; in Recall.CalendarContainer.CalendarDateView.body.getter : some"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Calendar/CalendarContainerView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "111"
+                  endingLineNumber = "111"
+                  offsetFromSymbolStart = "1300">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
