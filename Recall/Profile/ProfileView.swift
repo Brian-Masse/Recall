@@ -45,6 +45,28 @@ struct ProfileView: View {
         madeNotificationChanges = false
     }
     
+    
+//    MARK: Constants
+    struct SettingsConstants {
+    
+//        events
+        static var showNotesOnPreviewLabel = "Show event notes on preview"
+        
+        static var universalFineSelectionLabel = "Universal fine time selection"
+        static var universalFineSelectionDescription = "All time sliders will default to fine selection when enabled."
+        
+        static var defaultTimeSnappingLabel = "Default event snapping"
+        static var defaultTimeSnappingDescription = "These are the time segments used when resizing events on the calendar and Recall pages."
+        
+//        notifications
+        static var notificationsDisabledWarning = "Notifications are disabled, enable them in settings"
+        static var notificationTimeSelectionLabel = "When would you like to be reminded?"
+        
+//        extra
+        static var deletionWarning = "Are you sure you want to delete your profile?"
+    }
+    
+    
 //    MARK: Overview
     
     
@@ -259,7 +281,7 @@ struct ProfileView: View {
     
     @ViewBuilder
     private func makeDefaultTimeSnappingSelector() -> some View {
-        UniversalText( "Default event snapping", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+        UniversalText(SettingsConstants.defaultTimeSnappingLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         HStack {
             ForEach( TimeRounding.allCases ) { content in
                 makeTimeSnappingSelector(title: content.getTitle(), option: content)
@@ -284,17 +306,17 @@ struct ProfileView: View {
         
 //        toggles
         StyledToggle(showingNotesOnPreviewBinding) {
-            UniversalText( "Show event notes on preview", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+            UniversalText( SettingsConstants.showNotesOnPreviewLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         }
         .padding(.bottom, 5)
         
         StyledToggle(fineTimeSelectorIsDefault) {
-            UniversalText( "Universal fine time selection", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+            UniversalText(SettingsConstants.universalFineSelectionLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         }
-        makeSettingsDescription("All time sliders will default to fine selection when enabled.")
+        makeSettingsDescription(SettingsConstants.universalFineSelectionDescription)
         
         makeDefaultTimeSnappingSelector()
-        makeSettingsDescription("These are the time segments used when resizing events on the calendar and Recall pages.")
+        makeSettingsDescription(SettingsConstants.defaultTimeSnappingDescription)
     }
     
     
@@ -337,11 +359,11 @@ struct ProfileView: View {
         }
         
         if !showingNotificationToggle {
-            UniversalText( "Notifications are disabled, enable them in settings", size: Constants.UISmallTextSize, font: Constants.mainFont )
+            UniversalText( SettingsConstants.notificationsDisabledWarning, size: Constants.UISmallTextSize, font: Constants.mainFont )
         }
         
         if notificationsEnabled {
-            TimeSelector(label: "When would you like to be reminded?", time: $notificationTime, size: Constants.UIDefaultTextSize)
+            TimeSelector(label: SettingsConstants.notificationTimeSelectionLabel, time: $notificationTime, size: Constants.UIDefaultTextSize)
                 .onChange(of: notificationTime) { newValue in
                     madeNotificationChanges = !( newValue.matches(index.notificationsTime, to: .minute) && newValue.matches(index.notificationsTime, to: .hour) )
                 }
@@ -451,7 +473,7 @@ struct ProfileView: View {
                 RecallModel.realmManager.transferDataOwnership(to: ownerID)
             } label: { Text("Transfer Data") }
         }
-        .alert("Are you sure you want to delete your profile?", isPresented: $showingError) {
+        .alert(SettingsConstants.deletionWarning, isPresented: $showingError) {
             Button(role: .destructive) {
                 Task {
                     RecallModel.realmManager.logoutUser()
