@@ -45,7 +45,11 @@ struct ProfileView: View {
         madeNotificationChanges = false
     }
     
-//    MARK: ViewBuilders
+//    MARK: Overview
+    
+    
+    
+//    MARK: OverviewViewBuilders
 //    these are the buttons that appear below the main settings
     @ViewBuilder
     private func makeSubButton( title: String, icon: String, action: @escaping () -> Void ) -> some View {
@@ -88,8 +92,8 @@ struct ProfileView: View {
             UniversalText( tertiaryText, size: Constants.UISmallTextSize, font: Constants.mainFont )
         }
     }
-    
-//    MARK: Overview
+
+//    MARK: OverviewBody
     @ViewBuilder
     private func makeDemographicInfo() -> some View {
         
@@ -129,6 +133,9 @@ struct ProfileView: View {
     
 //    MARK: settings
     
+    
+    
+//    MARK: Settings ViewBuilders
     @ViewBuilder
     private func makeSettingsDivider() -> some View {
         Rectangle()
@@ -137,6 +144,14 @@ struct ProfileView: View {
             .opacity(0.85)
     }
     
+//    if a certain setting needs to be described more, use this description block
+    private func makeSettingsDescription(_ text: String) -> some View {
+        UniversalText( text, size: Constants.UISmallTextSize, font: Constants.mainFont )
+            .padding(.leading, 5)
+            .padding( [.bottom, .trailing] )
+    }
+    
+//    MARK: Settings Body
     @ViewBuilder
     private func makeSettings() -> some View {
         
@@ -176,7 +191,7 @@ struct ProfileView: View {
         }
     }
     
-//    MARK: Event Settings
+//    MARK: Event Settings ViewBuilders
     
     private var eventLengthBinding: Binding<Float> {
         Binding { Float(defaultEventLength) }
@@ -194,39 +209,10 @@ struct ProfileView: View {
             
             return "\( Int(hour) )hr \( Int(minutes) ) mins"
         } set: { _ in }
-        
-    }
-    
-    private var showingNotesOnPreviewBinding: Binding<Bool> {
-        Binding { index.showNotesOnPreview }
-        set: { newValue in index.setShowNotesOnPreview(to: newValue) }
-    }
-    
-    private var fineTimeSelectorIsDefault: Binding<Bool> {
-        Binding { index.defaultFineTimeSelector }
-        set: { newValue in index.setDefaultFineTimeSelector(to: newValue) }
     }
     
     @ViewBuilder
-    private func makeTimeSnappingSelector(title: String, option: TimeRounding) -> some View {
-           
-        UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-            .if(option.rawValue == index.defaultEventSnapping) { view in view.tintRectangularBackground() }
-            .if(option.rawValue != index.defaultEventSnapping) { view in view.secondaryOpaqueRectangularBackground() }
-            .onTapGesture { index.setDefaultTimeSnapping(to: option) }
-        
-    }
-    
-    @ViewBuilder
-    private func makeEventSettings() -> some View {
-        
-        
-        UniversalText( "Events", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-            .padding(.vertical, 5)
-            .onChange(of: defaultEventLength) { newValue in
-                if newValue != RecallModel.index.defaultEventLength { madeDefaultEventLengthChanges = true }
-                else { madeDefaultEventLengthChanges = false }
-            }
+    private func makeDefaultEventLengthSelector() -> some View {
         VStack(alignment: .leading) {
             SliderWithPrompt(label: "Default Event Length",
                              minValue: 0,
@@ -243,9 +229,60 @@ struct ProfileView: View {
                 }
             }
         }
+    }
+    
+    private var showingNotesOnPreviewBinding: Binding<Bool> {
+        Binding { index.showNotesOnPreview }
+        set: { newValue in index.setShowNotesOnPreview(to: newValue) }
+    }
+    
+    private var fineTimeSelectorIsDefault: Binding<Bool> {
+        Binding { index.defaultFineTimeSelector }
+        set: { newValue in index.setDefaultFineTimeSelector(to: newValue) }
+    }
+    
+    @ViewBuilder
+    private func makeTimeSnappingSelector(title: String, option: TimeRounding) -> some View {
+        VStack(spacing: 0) {
+            Spacer()
+            HStack {
+                Spacer()
+                UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                Spacer()
+            }
+            Spacer()
+        }
+            .if(option.rawValue == index.defaultEventSnapping) { view in view.tintRectangularBackground() }
+            .if(option.rawValue != index.defaultEventSnapping) { view in view.secondaryOpaqueRectangularBackground() }
+            .onTapGesture { index.setDefaultTimeSnapping(to: option) }
+    }
+    
+    @ViewBuilder
+    private func makeDefaultTimeSnappingSelector() -> some View {
+        UniversalText( "Default event snapping", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+        HStack {
+            ForEach( TimeRounding.allCases ) { content in
+                makeTimeSnappingSelector(title: content.getTitle(), option: content)
+            }
+        }
+    }
+    
+    
+//    MARK: Event Settings Body
+    @ViewBuilder
+    private func makeEventSettings() -> some View {
+        
+        UniversalText( "Events", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+            .padding(.vertical, 5)
+            .onChange(of: defaultEventLength) { newValue in
+                if newValue != RecallModel.index.defaultEventLength { madeDefaultEventLengthChanges = true }
+                else { madeDefaultEventLengthChanges = false }
+            }
+    
+        makeDefaultEventLengthSelector()
             .padding(.bottom)
         
-        
+//        toggles
         StyledToggle(showingNotesOnPreviewBinding) {
             UniversalText( "Show event notes on preview", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         }
@@ -254,19 +291,10 @@ struct ProfileView: View {
         StyledToggle(fineTimeSelectorIsDefault) {
             UniversalText( "Universal fine time selection", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         }
-        UniversalText( "All time sliders will default to fine selection when enabled.", size: Constants.UISmallTextSize, font: Constants.mainFont )
-            .padding([.horizontal, .bottom])
+        makeSettingsDescription("All time sliders will default to fine selection when enabled.")
         
-        UniversalText( "Default event snapping", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-        HStack {
-            Spacer()
-            ForEach( TimeRounding.allCases ) { content in
-                makeTimeSnappingSelector(title: content.getTitle(), option: content)
-            }
-            Spacer()
-        }
-        UniversalText( "These are the time segments used when resizing events on the calendar page.", size: Constants.UISmallTextSize, font: Constants.mainFont )
-            .padding([.horizontal, .bottom])
+        makeDefaultTimeSnappingSelector()
+        makeSettingsDescription("These are the time segments used when resizing events on the calendar and Recall pages.")
     }
     
     
@@ -376,18 +404,21 @@ struct ProfileView: View {
     @ViewBuilder
     private func makePageHeader() -> some View {
         UniversalText(index.getFullName(), size: Constants.UITitleTextSize, font: Constants.titleFont)
-        UniversalText( RecallModel.ownerID, size: Constants.UISmallTextSize, font: Constants.mainFont )
     }
     
     @ViewBuilder
     private func makePageFooter() -> some View {
-        HStack {
-            LargeRoundedButton( "Edit", icon: "arrow.right", wide: true ) { showingEditingView = true }
-//            LargeRoundedButton( "Transfer Data", icon: "arrow.right", wide: true ) { showingDataTransfer = true }
-            LargeRoundedButton("Signout", icon: "arrow.down", wide: true) {
-                RecallModel.realmManager.logoutUser()
-                appPage = .splashScreen
+        VStack {
+            HStack {
+                LargeRoundedButton( "Edit", icon: "arrow.right", wide: true ) { showingEditingView = true }
+                LargeRoundedButton("Signout", icon: "arrow.down", wide: true) {
+                    RecallModel.realmManager.logoutUser()
+                    appPage = .splashScreen
+                }
             }
+            .padding(.bottom)
+            
+            UniversalText( RecallModel.ownerID, size: Constants.UISmallTextSize, font: Constants.mainFont )
         }
     }
     
