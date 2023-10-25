@@ -1,5 +1,10 @@
 # Recall
 
+<picture>
+    <!-- <source srcset="./icon_512x512@2x@2x.png" media="(prefers-color-scheme: dark)" alt="Recall by Brian Masse"> -->
+    <img src="./icon_512x512@2x@2x.png" alt="Recall by Brian Masse" style="width: 80px">
+</picture>
+
 ### **Product Description**
 
 Recall is a calendar based app designed around recording daily events to be able to view trends in productivity, goal completion, and time management over time. The core loop has users create personal, time-related **goals** (ie. Stay productive for 40hrs each week), and then each night, log and tag **events** that contribute to those goals. To automate this process, there is a tag system, where users create **tags** for the various types of events in their life (ie. Going to the gym, working on homework), which will then contribute all events of that tag to their respective goals. All user data is presented in a dedicated data page to show trends in goal completion, frequent / infrequent events, daily averages. These charts are designed to be glanceable to easily give users insights into their daily habits.
@@ -26,6 +31,7 @@ NEW FEATURES
 - added a toggle to view notes on event previews
 - added the ability to set the default length of events
 - added a toggle to turn on universal fine time selection
+- added a toggle to change default event snapping
 
 BUG FIXES:
 
