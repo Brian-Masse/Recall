@@ -137,7 +137,7 @@ struct CalendarContainer: View {
     }
     
 
-//    MARK: Body
+//    MARK: vars
     
     let geo: GeometryProxy
     let scale: CGFloat
@@ -158,7 +158,9 @@ struct CalendarContainer: View {
     @Binding var currentDay: Date
     
     @Binding var slideDirection: AnyTransition.SlideDirection
-//    @Binding var transition: AnyTransition
+
+    @State var selecting: Bool = false
+    @State var selection: [ RecallCalendarEvent ] = []
     
     @Namespace private var animation
     
@@ -175,7 +177,7 @@ struct CalendarContainer: View {
     }
     
     
-    
+//    MARK: Body
     var body: some View {
         VStack {
         
@@ -196,22 +198,23 @@ struct CalendarContainer: View {
                                                          geo: geo,
                                                          startHour: startHour,
                                                          events: filtered,
-                                                         dragging: $dragging)
+                                                         dragging: $dragging,
+                                                         selecting: $selecting,
+                                                         selection: $selection)
+                            
                             }
                             .padding(.leading, 40)
                         }
-//                        .transition( transition )
-
-//                        .if(slideDirection == .right) { view in view.overlay( Rectangle().foregroundColor(.red) )}
-//                        .if(slideDirection == .left) { view in view.overlay( Rectangle().foregroundColor(.blue) )}
-                        
                         .if( slideDirection == .right ) { view in view.transition(AnyTransition.slideAwayTransition(.right)) }
                         .if( slideDirection == .left ) { view in view.transition(AnyTransition.slideAwayTransition(.left)) }
                         
                         Rectangle()
                             .foregroundColor(.white)
                             .opacity( dragging ? 0.01 : 0 )
-                            .onTapGesture { dragging = false }
+                            .onTapGesture {
+                                dragging = false
+                                selecting = false
+                            }
                             .zIndex( 1 )
                             
                         

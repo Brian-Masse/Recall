@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
+//MARK: Time Rounding
 enum TimeRounding: Int, CaseIterable, Identifiable {
     case hour = 1
     case halfHour = 2
@@ -25,7 +26,7 @@ enum TimeRounding: Int, CaseIterable, Identifiable {
     }
 }
 
-
+//MARK: CalendarEventPreviewview
 //Should only be placed ontop of a caldndar container
 struct CalendarEventPreviewView: View {
     
@@ -62,6 +63,9 @@ struct CalendarEventPreviewView: View {
     @State var showingEditingScreen: Bool = false
     @State var showingDeletionAlert: Bool = false
     
+    @Binding var selecting: Bool
+    @Binding var selection: [RecallCalendarEvent]
+    
 //    MARK: Convenience Functions
     
     @MainActor
@@ -77,6 +81,14 @@ struct CalendarEventPreviewView: View {
         
     }
     
+//    this function runs anyitme a user selects any option from the context menu
+//    its meant to disable any features that may be incmpatible with the currently performered action
+    @MainActor
+    private func defaultContextMenuAction() {
+        selecting = false
+    }
+    
+//    MARK: Convenience vars
     private func clampPosition(_ pos: CGFloat ) -> CGFloat {
         min( max( 0, pos ), (24 * spacing) - 1 )
     }
@@ -238,11 +250,37 @@ struct CalendarEventPreviewView: View {
                 .frame(width: getWidth(), height: getHeight())
                 .overlay(makeLengthHandles())
                 .contextMenu {
-                    Button { beginMoving()  }  label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
-                    Button {beginResizing() } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
-                    Button {showingEditingScreen = true } label: { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
-                    Button {duplicate() } label: { Label("duplicate", systemImage: "rectangle.on.rectangle") }
+                    Button {
+                        defaultContextMenuAction()
+                        beginMoving()
+                    } label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
+                    
+                    Button {
+                        defaultContextMenuAction()
+                        beginResizing()
+                    } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
+                    
+                    Button {
+                        defaultContextMenuAction()
+                        showingEditingScreen = true
+                    } label: { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
+                    
+                    Button { 
+                        defaultContextMenuAction()
+                        duplicate()
+                    } label: { Label("duplicate", systemImage: "rectangle.on.rectangle") }
+                    
+                    Button {
+                        defaultContextMenuAction()
+                        selecting = true
+                        selection.append(event)
+                        MainView.presentHalfPage("test") {
+                            Text("hello!")
+                        }
+                    } label: { Label( "select", systemImage: "selection.pin.in.out" ) }
+                    
                     Button(role: .destructive) {
+                        defaultContextMenuAction()
                         if event.isTemplate { showingDeletionAlert = true }
                         else { event.delete() }
                     } label: { Label("delete", systemImage: "trash") }

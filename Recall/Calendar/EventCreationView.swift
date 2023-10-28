@@ -249,8 +249,8 @@ struct CalendarEventCreationView: View {
     
     @ViewBuilder
     private func makeOverviewQuestions() -> some View {
-        TextFieldWithPrompt(title: "What is the name of this event?", binding: $title)
-        TextFieldWithPrompt(title: "Leave an optional note", binding: $notes)
+        TextFieldWithPrompt(title: "What is the name of this event?", binding: $title, clearable: true)
+        TextFieldWithPrompt(title: "Leave an optional note", binding: $notes, clearable: true)
             .padding(.bottom)
         
 //        SliderWithPrompt(label: "When did this event start?",

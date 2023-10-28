@@ -167,21 +167,37 @@ struct BasicPicker<ListType:RandomAccessCollection, Content: View>: View where L
     }
 }
 
-//MARK: Styled Forms
+//MARK: TextFieldWithPrompt
 
 struct TextFieldWithPrompt: View {
     
     let title: String
     let binding: Binding<String>
+    let clearable: Bool
+    
+    init( title: String, binding: Binding<String>, clearable: Bool = false ) {
+        self.title = title
+        self.binding = binding
+        self.clearable = clearable
+    }
     
     var body: some View {
         
         VStack(alignment: .leading) {
             UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
             
-            TextField("", text: binding)
-                .secondaryOpaqueRectangularBackground()
-                .universalTextField()
+            HStack {
+                TextField("", text: binding)
+                    .padding( .trailing, 5 )
+                if clearable && !binding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    LargeRoundedButton("", icon: "xmark", wide: false, small: true) {
+                        withAnimation { binding.wrappedValue = "" }
+                    }
+                    .padding(-7)
+                }
+            }
+            .secondaryOpaqueRectangularBackground()
+            .universalTextField()
         }
     }
 }

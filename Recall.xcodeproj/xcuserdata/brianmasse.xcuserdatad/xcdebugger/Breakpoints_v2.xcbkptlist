@@ -205,8 +205,8 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
+            startingLineNumber = "187"
+            endingLineNumber = "187"
             landmarkName = "getNearestTime(from:to:roundingRule:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -237,8 +237,8 @@
             filePath = "Recall/Main/MainView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "refreshData(events:goals:)"
             landmarkType = "7">
             <Locations>
@@ -534,8 +534,8 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "258"
-            endingLineNumber = "258"
+            startingLineNumber = "296"
+            endingLineNumber = "296"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
@@ -1173,6 +1173,54 @@
             endingLineNumber = "92"
             landmarkName = "submit(skipTutorial:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "865D1A50-0D0C-4FCF-95C3-4FA1EC022159"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Main/MainView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "presentHalfPage(_:contentBuilder:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "865D1A50-0D0C-4FCF-95C3-4FA1EC022159 - a30e27fa44725b30"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static Recall.MainView.presentHalfPage&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: Swift.String, contentBuilder: () -&gt; &#x3c4;_0_0) -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/MainView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "180">
+               </Location>
+               <Location
+                  uuid = "865D1A50-0D0C-4FCF-95C3-4FA1EC022159 - 1062b232e4f8f3b3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in static Recall.MainView.presentHalfPage&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.View&gt;(_: Swift.String, contentBuilder: () -&gt; &#x3c4;_0_0) -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/MainView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "20">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

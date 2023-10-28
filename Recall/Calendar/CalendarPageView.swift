@@ -155,18 +155,20 @@ struct CalendarPageView: View {
     
     var body: some View {
         
-        VStack(alignment: .leading) {
-            
-            makeHeader()
-            
-            HStack {
-                makeDateSelectors()
+        ZStack {
+            VStack(alignment: .leading) {
                 
-                LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
-            }
-        
-            GeometryReader { geo in
-                CalendarContainer(at: $currentDay, with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
+                makeHeader()
+                
+                HStack {
+                    makeDateSelectors()
+                    
+                    LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
+                }
+                
+                GeometryReader { geo in
+                    CalendarContainer(at: $currentDay, with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
+                }
             }
         }
         .padding()

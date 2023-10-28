@@ -32,6 +32,7 @@ NEW FEATURES
 - added the ability to set the default length of events
 - added a toggle to turn on universal fine time selection
 - added a toggle to change default event snapping
+- added a button to quickly clear the title or description of an event
 
 BUG FIXES:
 

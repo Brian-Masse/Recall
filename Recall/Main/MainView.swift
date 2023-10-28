@@ -25,6 +25,21 @@ struct MainView: View {
         }
     }
     
+//    static var shared = MainView(
+    
+    @State static var showingHalfPage: Bool = false
+    static var halfPageTitle: String = ""
+    static var halfPageContent: AnyView? = nil
+    
+//    MARK: PresentHalfScreen
+    static func presentHalfPage<Content: View>( _ title: String, contentBuilder: () -> Content ) {
+        withAnimation { showingHalfPage = true }
+        
+        halfPageTitle = title
+        halfPageContent = AnyView(contentBuilder())
+        
+    }
+    
 //    MARK: Tabbar
     struct TabBar: View {
         
@@ -41,13 +56,7 @@ struct MainView: View {
             let icon: String
         
             @ViewBuilder private func makeIcon() -> some View {
-                VStack {
-                    Image(systemName: icon)
-//                    ResizeableIcon(icon: icon, size: Constants.UIDefaultTextSize + 2)
-//                    UniversalText( title, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: false )
-                    
-                }
-                
+                Image(systemName: icon)
             }
             
             var body: some View {
@@ -134,6 +143,14 @@ struct MainView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             
             TabBar(pageSelection: $currentPage)
+            
+            if MainView.showingHalfPage {
+                
+                HalfPageView(MainView.halfPageTitle) {
+                    MainView.halfPageContent
+                }
+                
+            }
             
         }
         
