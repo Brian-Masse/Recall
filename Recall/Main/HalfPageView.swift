@@ -46,14 +46,86 @@ struct HalfPageView<Content: View>: View {
                 
                 VStack(alignment: .leading) {
                     pageHeader()
-                    if showingEditorView { Spacer() }
+                    Spacer()
+                    content
+                        .padding( .horizontal, 5 )
+                        .padding(. bottom)
                 }
                 .frame(height: showingEditorView ? geo.size.height * (2/5) : geo.size.height * (1/10))
                 .secondaryOpaqueRectangularBackground()
-                .padding(.bottom, 20)
                 .shadow(color: .black.opacity(0.5), radius: 10, y: 15)
             }
         }
         .ignoresSafeArea()
+    }
+}
+
+
+//MARK: ViewModifiers
+//This is the publically accessible modifier that you attatch to a view that should present this half screen
+private struct HalfPageScreen<C: View>: ViewModifier {
+    
+    @Binding var presenting: Bool
+    let title: String
+    let content: C
+    
+    init( _ title: String, presenting: Binding<Bool>, contentBuilder: () -> C ) {
+        self.title = title
+        self._presenting = presenting
+        self.content = contentBuilder()
+    }
+    
+    func body( content: Content ) -> some View {
+        
+        ZStack {
+            content
+            
+            if presenting {
+                Text("")
+                    .opacity(0)
+                    .preference(key: HalfScreenToggleKey.self, value: true)
+                    .onAppear {
+                        
+                        HalfPageScreenReceiver.title = title
+                        HalfPageScreenReceiver.content = AnyView(self.content)
+                        
+                    }
+            }
+        }
+    }
+}
+
+//this shoudl not be publically accessed
+//there should be one instance of this on a high level view (ie. MainView) and is responsible
+//for capturing the changing preferences and displaying the halfpage screen
+private struct HalfPageScreenReceiver: ViewModifier {
+    
+    @Binding var showing: Bool
+    
+    static var title: String = ""
+    static var content: AnyView? = nil
+    
+    func body(content: Content) -> some View {
+        
+        ZStack {
+            content
+                .onPreferenceChange(HalfScreenToggleKey.self) { value in
+                    if value { withAnimation { showing = true } }
+                }
+            
+            if showing {
+                HalfPageView(HalfPageScreenReceiver.title) { HalfPageScreenReceiver.content }
+            }
+        }
+    }
+}
+
+extension View {
+    func halfPageScreen<C: View>( _ title: String, presenting: Binding<Bool>, contentBuilder: () -> C ) -> some View {
+        modifier( HalfPageScreen(title, presenting: presenting, contentBuilder: contentBuilder) )
+    }
+    
+    func halfPageScreenReceiver( showing: Binding<Bool> ) -> some View {
+        modifier( HalfPageScreenReceiver(showing: showing) )
     }
 }

@@ -25,21 +25,6 @@ struct MainView: View {
         }
     }
     
-//    static var shared = MainView(
-    
-    @State static var showingHalfPage: Bool = false
-    static var halfPageTitle: String = ""
-    static var halfPageContent: AnyView? = nil
-    
-//    MARK: PresentHalfScreen
-    static func presentHalfPage<Content: View>( _ title: String, contentBuilder: () -> Content ) {
-        withAnimation { showingHalfPage = true }
-        
-        halfPageTitle = title
-        halfPageContent = AnyView(contentBuilder())
-        
-    }
-    
 //    MARK: Tabbar
     struct TabBar: View {
         
@@ -122,6 +107,8 @@ struct MainView: View {
     @Binding var appPage: ContentView.EntryPage
     @State var currentDay: Date = .now
     
+    @State private var showingHalfPage: Bool = false
+    
     private func refreshData(events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil) async {
         await RecallModel.dataModel.updateProperties(events: events ?? nil, goals: goals ?? nil)
     }
@@ -135,25 +122,21 @@ struct MainView: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
                 CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)      .tag( MainPage.calendar )
+                    .halfPageScreenReceiver(showing: $showingHalfPage)
                 GoalsPageView(events: arrEvents )                           .tag( MainPage.goals )
                 CategoriesPageView(events: arrEvents )                      .tag( MainPage.categories )
                 DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)         .tag( MainPage.data )
 
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
+            .tabViewStyle(showingHalfPage ? .page(indexDisplayMode: .never) : .page)
             
-            TabBar(pageSelection: $currentPage)
-            
-            if MainView.showingHalfPage {
-                
-                HalfPageView(MainView.halfPageTitle) {
-                    MainView.halfPageContent
-                }
-                
+            if !showingHalfPage {
+                TabBar(pageSelection: $currentPage)
             }
             
+    
+            
         }
-        
         .onAppear {
             Task { await refreshData(events: Array(events), goals: Array(goals)) }
             RecallModel.shared.setTint(from: colorScheme)

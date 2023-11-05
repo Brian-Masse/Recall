@@ -274,9 +274,6 @@ struct CalendarEventPreviewView: View {
                         defaultContextMenuAction()
                         selecting = true
                         selection.append(event)
-                        MainView.presentHalfPage("test") {
-                            Text("hello!")
-                        }
                     } label: { Label( "select", systemImage: "selection.pin.in.out" ) }
                     
                     Button(role: .destructive) {
@@ -302,8 +299,12 @@ struct CalendarEventPreviewView: View {
                 }
             
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
+                .halfPageScreen("this is updated", presenting: $selecting) {
+                    Text("hello there!")
+                }
         }
         .zIndex( resizing || moving ? 5 : 0 )
+        
         
     }
 }
