@@ -49,8 +49,7 @@ struct HalfPageView<Content: View>: View {
 //    MARK: Body
     var body: some View {
         GeometryReader { geo in
-            VStack {
-                
+            VStack { 
                 Spacer()
                 
                 VStack(alignment: .leading) {
@@ -83,6 +82,8 @@ struct HalfPageView<Content: View>: View {
 //This is the publically accessible modifier that you attatch to a view that should present this half screen
 private struct HalfPageScreen<C: View>: ViewModifier {
     
+    @Environment(\.toggleScreenKey) var toggleScreen
+    
     @Binding var presenting: Bool
     let title: String
     let content: C
@@ -97,7 +98,8 @@ private struct HalfPageScreen<C: View>: ViewModifier {
         
         ZStack {
             content
-            
+                .onChange(of: toggleScreen) { newValue in presenting = newValue }
+
             if presenting {
                 Text("")
                     .opacity(0)
@@ -106,10 +108,6 @@ private struct HalfPageScreen<C: View>: ViewModifier {
                         HalfPageScreenReceiver.title = title
                         HalfPageScreenReceiver.content = AnyView(self.content)
                     }
-            } else {
-                Text("")
-                    .opacity(0)
-                    .preference(key: HalfScreenToggleKey.self, value: false)
             }
         }
     }
@@ -132,9 +130,16 @@ private struct HalfPageScreenReceiver: ViewModifier {
                 .onPreferenceChange(HalfScreenToggleKey.self) { value in
                     if value { withAnimation { showing = true } }
                 }
+                .environment(\.toggleScreenKey, showing)
             
             if showing {
                 HalfPageView(isPresenting: $showing, HalfPageScreenReceiver.title) { HalfPageScreenReceiver.content }
+            } else {
+                Text("")
+                    .opacity(0)
+                    .foregroundColor(.blue)
+                    .frame(height: 200)
+                    .preference(key: HalfScreenToggleKey.self, value: false)
             }
         }
     }
@@ -149,3 +154,32 @@ extension View {
         modifier( HalfPageScreenReceiver(showing: showing) )
     }
 }
+
+
+//MARK: Environment
+//This is used for sending data down from the receiver to the view presenting the halfPageView
+//For some reason the child view does not always detect a preference key change
+//so changing this environment var allows it capture when the view needs to be dismissed, and update the view that called it
+private struct ToggleScreenKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
+extension EnvironmentValues {
+    var toggleScreenKey: Bool {
+        get { self[ToggleScreenKey.self] }
+        set { self[ToggleScreenKey.self] = newValue }
+    }
+}
+
+
+//MARK: Preferences
+//this is used for sending data up from a view that wants to present a halfscreen
+//to the receiver that will actually present the screen on top of everything
+struct HalfScreenToggleKey: PreferenceKey {
+    static var defaultValue: Bool = false
+    
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
+}
+
