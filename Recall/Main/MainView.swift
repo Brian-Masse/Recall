@@ -128,7 +128,7 @@ struct MainView: View {
                 DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)         .tag( MainPage.data )
 
             }
-            .tabViewStyle(showingHalfPage ? .page(indexDisplayMode: .never) : .page)
+            .tabViewStyle(.page(indexDisplayMode: .never))
             
             if !showingHalfPage {
                 TabBar(pageSelection: $currentPage)

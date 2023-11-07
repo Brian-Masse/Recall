@@ -15,10 +15,15 @@ struct HalfPageView<Content: View>: View {
 //    This is the master switch for whether or not the pop up is showing
     @State var showingEditorView: Bool = true
     
+//    This is responsible for whether or not the display is showing or not
+//    when updating this value, the presenter of this screen will automatically dismiss the view
+    @Binding var presenting: Bool
+    
     let title: String
     let content: Content
     
-    init( _ title: String, contentBuilder: () -> Content ) {
+    init( isPresenting: Binding<Bool>, _ title: String, contentBuilder: () -> Content ) {
+        self._presenting = isPresenting
         self.title = title
         self.content = contentBuilder()
     }
@@ -34,6 +39,10 @@ struct HalfPageView<Content: View>: View {
             LargeRoundedButton("", icon: showingEditorView ? "arrow.down" : "arrow.up", wide: false) {
                 withAnimation { showingEditorView.toggle() }
             }
+            
+            LargeRoundedButton("", icon: "xmark", wide: false) {
+                withAnimation { presenting = false }
+            }
         }
     }
     
@@ -46,10 +55,19 @@ struct HalfPageView<Content: View>: View {
                 
                 VStack(alignment: .leading) {
                     pageHeader()
-                    Spacer()
-                    content
-                        .padding( .horizontal, 5 )
-                        .padding(. bottom)
+                    if showingEditorView {
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                content
+                                    .padding( .horizontal, 5 )
+                                    .padding(. bottom)
+                                Spacer()
+                            }
+                            Spacer()
+                        }
+                    }
                 }
                 .frame(height: showingEditorView ? geo.size.height * (2/5) : geo.size.height * (1/10))
                 .secondaryOpaqueRectangularBackground()
@@ -85,11 +103,13 @@ private struct HalfPageScreen<C: View>: ViewModifier {
                     .opacity(0)
                     .preference(key: HalfScreenToggleKey.self, value: true)
                     .onAppear {
-                        
                         HalfPageScreenReceiver.title = title
                         HalfPageScreenReceiver.content = AnyView(self.content)
-                        
                     }
+            } else {
+                Text("")
+                    .opacity(0)
+                    .preference(key: HalfScreenToggleKey.self, value: false)
             }
         }
     }
@@ -114,7 +134,7 @@ private struct HalfPageScreenReceiver: ViewModifier {
                 }
             
             if showing {
-                HalfPageView(HalfPageScreenReceiver.title) { HalfPageScreenReceiver.content }
+                HalfPageView(isPresenting: $showing, HalfPageScreenReceiver.title) { HalfPageScreenReceiver.content }
             }
         }
     }
