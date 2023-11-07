@@ -32,7 +32,8 @@ struct HalfPageView<Content: View>: View {
     @ViewBuilder
     private func pageHeader() -> some View {
         HStack {
-            UniversalText( title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            UniversalText( title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true )
+            
             
             Spacer()
             
@@ -54,6 +55,7 @@ struct HalfPageView<Content: View>: View {
                 
                 VStack(alignment: .leading) {
                     pageHeader()
+                        .padding()
                     if showingEditorView {
                         VStack {
                             Spacer()
@@ -69,8 +71,8 @@ struct HalfPageView<Content: View>: View {
                     }
                 }
                 .frame(height: showingEditorView ? geo.size.height * (2/5) : geo.size.height * (1/10))
-                .secondaryOpaqueRectangularBackground()
-                .shadow(color: .black.opacity(0.5), radius: 10, y: 15)
+                .opaqueRectangularBackground(0)
+                .shadow(color: .black.opacity(0.5), radius: 10, y: -15)
             }
         }
         .ignoresSafeArea()
@@ -108,6 +110,11 @@ private struct HalfPageScreen<C: View>: ViewModifier {
                         HalfPageScreenReceiver.title = title
                         HalfPageScreenReceiver.content = AnyView(self.content)
                     }
+            } else {
+//                if the view is dismissed from the child, this sends that intention up to the receiver
+                Text("")
+                    .opacity(0)
+                    .preference(key: HalfScreenToggleKey.self, value: false)
             }
         }
     }
@@ -128,7 +135,9 @@ private struct HalfPageScreenReceiver: ViewModifier {
         ZStack {
             content
                 .onPreferenceChange(HalfScreenToggleKey.self) { value in
-                    if value { withAnimation { showing = true } }
+                    if value { withAnimation { showing = true } } else {
+                        showing = false
+                    }
                 }
                 .environment(\.toggleScreenKey, showing)
             

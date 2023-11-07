@@ -81,13 +81,6 @@ struct CalendarEventPreviewView: View {
         
     }
     
-//    this function runs anyitme a user selects any option from the context menu
-//    its meant to disable any features that may be incmpatible with the currently performered action
-    @MainActor
-    private func defaultContextMenuAction() {
-        selecting = false
-    }
-    
 //    MARK: Convenience vars
     private func clampPosition(_ pos: CGFloat ) -> CGFloat {
         min( max( 0, pos ), (24 * spacing) - 1 )
@@ -173,7 +166,8 @@ struct CalendarEventPreviewView: View {
     }
     
 //    MARK: Struct Methods
-    
+//    this translates a position into a date
+//    it is involved in placing events on the timeline correctly
     private func getTime(from position: CGFloat) -> Date {
         let pos = position + ( CGFloat(startHour) * spacing )
         let hour = (pos / spacing).rounded(.down) + CGFloat(startHour)
@@ -182,6 +176,7 @@ struct CalendarEventPreviewView: View {
         return Calendar.current.date(bySettingHour: Int(hour), minute: Int(minutes), second: 0, of: startDate) ?? .now
     }
     
+//    this snaps the time to a set position based on the users preferences
     private func getNearestTime(from position: CGFloat, to timeRounding: TimeRounding, roundingRule: FloatingPointRoundingRule = .down ) -> Date {
         let pos = position + ( CGFloat(startHour) * spacing )
         var hour = (pos / spacing).rounded(.down)
@@ -195,7 +190,7 @@ struct CalendarEventPreviewView: View {
         
         return Calendar.current.date(bySettingHour: Int(hour), minute: Int(roundedMinutes), second: 0, of: startDate) ?? .now
     }
-    
+
     private func setup() {
         startDate = event.startTime
         endDate = event.endTime
@@ -204,6 +199,33 @@ struct CalendarEventPreviewView: View {
         let endTime = event.endTime.getHoursFromStartOfDay()
         length = endTime - startTime
     }
+    
+//    MARK: Input Response
+
+//    this function runs anyitme a user selects any option from the context menu
+//    its meant to disable any features that may be incmpatible with the currently performered action
+    @MainActor
+    private func defaultContextMenuAction() {
+        selecting = false
+    }
+    
+    private func toggleSelection() {
+        if let index = selection.firstIndex(where: { selectedEvent in
+            selectedEvent == event
+        }) {
+            selection.remove(at: index)
+        } else {
+            selection.append( event )
+        }
+    }
+    
+    private func onTap() {
+        if selecting { withAnimation { toggleSelection() }}
+        else { showingEvent = true }
+        
+        
+    }
+    
     
 //    MARK: Body
     @ViewBuilder
@@ -246,9 +268,15 @@ struct CalendarEventPreviewView: View {
                     .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: roundedStartDate))
             }
         
-            CalendarEventPreviewContentView(event: event, events: events, width: getWidth(), height: getHeight())
+            CalendarEventPreviewContentView(event: event,
+                                            events: events,
+                                            width: getWidth(),
+                                            height: getHeight(),
+                                            selecting: $selecting,
+                                            selection: $selection)
                 .frame(width: getWidth(), height: getHeight())
                 .overlay(makeLengthHandles())
+            
                 .contextMenu {
                     Button {
                         defaultContextMenuAction()
@@ -284,7 +312,7 @@ struct CalendarEventPreviewView: View {
                 }
                 .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
                 
-                .onTapGesture { showingEvent = true }
+                .onTapGesture { onTap() }
                 .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
                 .coordinateSpace(name: blockCoordinateSpaceKey)
             
@@ -297,10 +325,14 @@ struct CalendarEventPreviewView: View {
                 .sheet(isPresented: $showingEditingScreen) {
                     CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
                 }
+                .sheet(isPresented: $showingEvent) {
+                    CalendarEventView(event: event, events: events)
+                }
             
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
-                .halfPageScreen("this is updated", presenting: $selecting) {
-                    Text("hello there!")
+                .halfPageScreen("Select Events", presenting: $selecting) {
+                    EventSelectionEditorView(selecting: $selecting,
+                                             selection: $selection)
                 }
         }
         .zIndex( resizing || moving ? 5 : 0 )

@@ -127,15 +127,12 @@ struct MainView: View {
                 CategoriesPageView(events: arrEvents )                      .tag( MainPage.categories )
                 DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)         .tag( MainPage.data )
 
-            }
+            }   
             .tabViewStyle(.page(indexDisplayMode: .never))
             
             if !showingHalfPage {
                 TabBar(pageSelection: $currentPage)
             }
-            
-    
-            
         }
         .onAppear {
             Task { await refreshData(events: Array(events), goals: Array(goals)) }

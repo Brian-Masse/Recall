@@ -13,14 +13,77 @@ import RealmSwift
 struct EventSelectionEditorView: View {
 
 //    MARK: Vars
+//    this will likely not be used, its the var stored in the calendar container that says whether or not
+//    the user is selecting events
+//    it shouldnt be set here though, because thatll kinda fuck with the halfscreen presentation
+    @Binding var selecting: Bool
     
+    @Binding var selection: [ RecallCalendarEvent ]
 
+//    MARK: Struct Methods
+    private func onDismiss() {
+        if !selecting {
+            selection = []
+        }
+    }
+    
+    private func toggleEvent(_ event: RecallCalendarEvent) {
+        if let index = selection.firstIndex(of: event) {
+            selection.remove(at: index)
+        }
+    }
+    
+//    MARK: ViewBuilders
+    
+    @MainActor
+    @ViewBuilder
+    private func makeEventPreivew(_ event: RecallCalendarEvent) -> some View {
+        
+        HStack {
+            Image(systemName: "checkmark")
+            UniversalText( event.title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+        }
+            .padding()
+            .onTapGesture { toggleEvent(event) }
+            .background(
+                Rectangle()
+                    .foregroundStyle(event.getColor())
+                    .cornerRadius(Constants.UIDefaultCornerRadius)
+            )
+    }
+    
+    private func formatString() -> String {
+        selection.count == 1 ? "event" : "events"
+    }
+    
+    @MainActor
+    private func makeEventList() -> some View {
+        
+        VStack(alignment: .leading) {
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(selection) { event in
+                        makeEventPreivew(event)
+                    }
+                }
+            }
+            .secondaryOpaqueRectangularBackground(5)
+            HStack {
+                UniversalText( "\( selection.count ) \(formatString()) selected", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                Spacer()
+            }
+        }
+    }
+    
+    
     
 //    MARK: Body
     var body: some View {
 
         GeometryReader { geo in
-            VStack {
+            VStack(alignment: .leading) {
+                
+                makeEventList()
                 
 //                Spacer()
 //                
@@ -35,5 +98,8 @@ struct EventSelectionEditorView: View {
             }
         }
         .ignoresSafeArea()
+        .onDisappear() {
+            onDismiss()
+        }
     }
 }
