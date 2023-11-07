@@ -85,13 +85,15 @@ extension Date {
         return Calendar.current.date( bySettingHour: hour, minute: intMinutes, second: Int(seconds), of: self ) ?? self
     }
     
-    func dateBySetting( day: Int, month: Int, year: Int ) -> Date {
+    func dateBySetting( dateFrom date: Date ) -> Date {
         
-        var date = Calendar.current.date(bySetting: .day, value: day, of: self)
-        date = Calendar.current.date(bySetting: .month, value: month, of: self)
-        date = Calendar.current.date(bySetting: .year, value: year, of: self)
+        let components = Calendar.current.dateComponents([.hour, .minute, .second], from: self)
         
-        return date ?? self
+        return Calendar.current.date(bySettingHour: components.hour!,
+                                     minute: components.minute!,
+                                     second: components.second!,
+                                     of: date) ?? self
+        
     }
     
     func day() -> Int {

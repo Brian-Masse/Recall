@@ -93,14 +93,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    unlike updateDate, which sets the event's date to that new value, this only sets the date components
 //    preserving the time details
     func updateDateComponent(to date: Date) {
-        
-        let components = Calendar.current.dateComponents([ .day, .month, .year ], from: date)
-        let day = components.day!
-        let month = components.month!
-        let year = components.year!
-        
-        let newStart = self.startTime.dateBySetting(day: day, month: month, year: year)
-        let newEnd = self.endTime.dateBySetting(day: day, month: month, year: year)
+        let newStart = self.startTime.dateBySetting(dateFrom: date)
+        let newEnd = self.endTime.dateBySetting(dateFrom: date)
         
         RealmManager.updateObject(self) { thawed in
             thawed.startTime = newStart

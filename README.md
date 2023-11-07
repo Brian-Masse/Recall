@@ -23,7 +23,7 @@ I independently developed this project, from problem identification, project bra
 
 ## **Version History**
 
-### **Snapshot 1.02**
+### **Snapshot 1.2**
 
 NEW FEATURES
 
@@ -33,10 +33,12 @@ NEW FEATURES
 - added a toggle to turn on universal fine time selection
 - added a toggle to change default event snapping
 - added a button to quickly clear the title or description of an event
+- added a way to select and move events to different days
 
 BUG FIXES:
 
 - expanded the height of certain charts in the data page when viewing this week.
+- fixed the longstanding bug that caused the app to sometimes crash when switch off of the calendar page
 
 ### **Version 1.01**
 
