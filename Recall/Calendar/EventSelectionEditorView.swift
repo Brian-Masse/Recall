@@ -19,6 +19,8 @@ struct EventSelectionEditorView: View {
     @Binding var selecting: Bool
     
     @Binding var selection: [ RecallCalendarEvent ]
+    
+    @State var date: Date = Date.now
 
 //    MARK: Struct Methods
     private func onDismiss() {
@@ -31,6 +33,22 @@ struct EventSelectionEditorView: View {
         if let index = selection.firstIndex(of: event) {
             selection.remove(at: index)
         }
+    }
+    
+//    this runs on the first appear of the selector
+    private func setup() {
+        self.date = self.selection.first?.startTime ?? .now
+    }
+    
+    @MainActor
+    private func submit() {
+        
+        for event in selection {
+            event.updateDateComponent(to: date)
+        }
+        
+        withAnimation { selecting = false }
+        
     }
     
 //    MARK: ViewBuilders
@@ -75,15 +93,33 @@ struct EventSelectionEditorView: View {
         }
     }
     
+    @ViewBuilder
+    private func makeDateSelector() -> some View {
+        StyledDatePicker($date, title: "When did these events happen?", fontSize: Constants.UISubHeaderTextSize)
+    }
     
     
 //    MARK: Body
     var body: some View {
 
         GeometryReader { geo in
-            VStack(alignment: .leading) {
+            ZStack(alignment: .bottom) {
+                VStack(alignment: .leading) {
+                    ScrollView(.vertical) {
+                        
+                        makeEventList()
+                            .padding(.bottom)
+                        
+                        makeDateSelector()
+                            .padding(.bottom, 80)
+                        
+                        
+                        
+                    }
+                }
                 
-                makeEventList()
+                LargeRoundedButton("done", icon: "arrow.down") { submit() }
+                    .padding(.bottom, 30)
                 
 //                Spacer()
 //                
@@ -98,8 +134,7 @@ struct EventSelectionEditorView: View {
             }
         }
         .ignoresSafeArea()
-        .onDisappear() {
-            onDismiss()
-        }
+        .onDisappear() { onDismiss() }
+        .onAppear() { setup() }
     }
 }

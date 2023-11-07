@@ -411,3 +411,31 @@ struct StyledToggle<C: View>: View {
         }
     }
 }
+
+//MARK: StyledDatePicker
+
+struct StyledDatePicker: View {
+    
+    @Binding var date: Date
+    let title: String
+    let fontSize: CGFloat
+    
+    init( _ date: Binding<Date>, title: String, fontSize: CGFloat = Constants.UIHeaderTextSize ) {
+        self._date = date
+        self.title = title
+        self.fontSize = fontSize
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            UniversalText( title, size: fontSize, font: Constants.titleFont )
+            DatePicker(selection: $date, displayedComponents: .date) {
+                UniversalText( "select", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+            }
+            .tint(Colors.tint)
+            .secondaryOpaqueRectangularBackground()
+        }
+    }
+    
+    
+}

@@ -82,7 +82,7 @@ class RecallGoalDataModel: ObservableObject {
             if recentData && event.startTime < weekStart { return nodes }
             
 //            DispatchQueue.main.sync {
-                let count = event.getGoalPrgress(goal)
+                let count = await event.getGoalPrgress(goal)
                 nodes.append(.init(date: event.startTime, count: count, category: "", goal: goal.label))
 //            }
             

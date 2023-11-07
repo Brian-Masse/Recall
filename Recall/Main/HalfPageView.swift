@@ -11,9 +11,31 @@ import SwiftUI
 
 struct HalfPageView<Content: View>: View {
     
+    enum PageExpansion: Double {
+        case full
+        case half
+        case hide
+        
+        func getHeight() -> CGFloat {
+            switch self {
+            case .full: return 9/10
+            case .half: return 2/5
+            case .hide: return 3/20
+            }
+        }
+        
+        mutating func toggle() {
+            switch self {
+            case .hide: self = .half
+            default: self = .hide
+            }
+        }
+    }
+    
 //    MARK: Vars
 //    This is the master switch for whether or not the pop up is showing
-    @State var showingEditorView: Bool = true
+//    @State var showingEditorView: Bool = false
+    @State var pageExpansion: PageExpansion = .hide
     
 //    This is responsible for whether or not the display is showing or not
 //    when updating this value, the presenter of this screen will automatically dismiss the view
@@ -28,17 +50,36 @@ struct HalfPageView<Content: View>: View {
         self.content = contentBuilder()
     }
     
+    private var drag: some Gesture {
+        DragGesture()
+            .onChanged { dragGesture in }
+            .onEnded { dragGesture in
+                if dragGesture.location.y < dragGesture.startLocation.y {
+                    switch pageExpansion {
+                    case .full: withAnimation { pageExpansion = .full }
+                    case .half: withAnimation { pageExpansion = .full }
+                    case .hide: withAnimation { pageExpansion = .half }
+                    }
+                } else {
+                    switch pageExpansion {
+                    case .full: withAnimation { pageExpansion = .half }
+                    case .half: withAnimation { pageExpansion = .hide }
+                    case .hide: withAnimation { pageExpansion = .hide }
+                    }
+                }
+            }
+    }
+    
 //    MARK: ViewBuilders
     @ViewBuilder
     private func pageHeader() -> some View {
         HStack {
             UniversalText( title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true )
             
-            
             Spacer()
             
-            LargeRoundedButton("", icon: showingEditorView ? "arrow.down" : "arrow.up", wide: false) {
-                withAnimation { showingEditorView.toggle() }
+            LargeRoundedButton("", icon: pageExpansion != .hide ? "arrow.down" : "arrow.up", wide: false) {
+                withAnimation { pageExpansion.toggle() }
             }
             
             LargeRoundedButton("", icon: "xmark", wide: false) {
@@ -56,7 +97,7 @@ struct HalfPageView<Content: View>: View {
                 VStack(alignment: .leading) {
                     pageHeader()
                         .padding()
-                    if showingEditorView {
+                    if pageExpansion != .hide {
                         VStack {
                             Spacer()
                             HStack {
@@ -70,11 +111,12 @@ struct HalfPageView<Content: View>: View {
                         }
                     }
                 }
-                .frame(height: showingEditorView ? geo.size.height * (2/5) : geo.size.height * (1/10))
+                .frame(height: geo.size.height * pageExpansion.getHeight())
                 .opaqueRectangularBackground(0)
                 .shadow(color: .black.opacity(0.5), radius: 10, y: -15)
             }
         }
+        .gesture(drag)
         .ignoresSafeArea()
     }
 }
