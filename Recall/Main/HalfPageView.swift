@@ -122,7 +122,7 @@ struct HalfPageView<Content: View>: View {
                 }
                 .frame(height: geo.size.height * pageExpansion.getHeight())
                 .opaqueRectangularBackground(0, stroke: true)
-                .shadow(color: .black.opacity(0.4), radius: 10, y: -10)
+                .shadow(color: .black.opacity(0.4), radius: 10, y: -5)
             }
         }
         .gesture(drag)

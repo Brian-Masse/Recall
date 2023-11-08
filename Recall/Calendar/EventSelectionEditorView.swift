@@ -21,6 +21,8 @@ struct EventSelectionEditorView: View {
     @Binding var selection: [ RecallCalendarEvent ]
     
     @State var date: Date = Date.now
+    
+    @State var showingDeletetionAlert: Bool = false
 
 //    MARK: Struct Methods
     private func onDismiss() {
@@ -49,6 +51,26 @@ struct EventSelectionEditorView: View {
         
         withAnimation { selecting = false }
         
+    }
+    
+    @MainActor
+    private func template() {
+        for event in selection {
+            if !event.isTemplate {
+                event.toggleTemplate()
+            }
+        }
+        
+        withAnimation { selecting = false }
+    }
+    
+    @MainActor
+    private func delete() {
+        for event in selection {
+            event.delete(preserveTemplate: false)
+        }
+        
+        withAnimation { selecting = false }
     }
     
 //    MARK: ViewBuilders
@@ -128,10 +150,9 @@ struct EventSelectionEditorView: View {
                         .padding(.bottom)
                     
                     UniversalText("actions", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                    makeSubButton("template", icon: "rectangle.3.group") { }
-                    makeSubButton("favorite", icon: "arrow.up.right") { }
-                    makeSubButton("delete", icon: "trash") { }
-//                        .padding(.bottom, 50)
+                    makeSubButton("template", icon: "rectangle.3.group") { template() }
+                    makeSubButton("favorite", icon: "arrow.up.right") {  }
+                    makeSubButton("delete", icon: "trash") { showingDeletetionAlert = true }
                  
                     LargeRoundedButton("done", icon: "arrow.down", wide: true) { submit() }
                         .padding(.bottom, 30)
@@ -140,7 +161,14 @@ struct EventSelectionEditorView: View {
             }
         }
         .ignoresSafeArea()
+        .onTapGesture { }
         .onDisappear() { onDismiss() }
         .onAppear() { setup() }
+        .alert("delete events?", isPresented: $showingDeletetionAlert, actions: {
+            Button(role: .destructive) { delete() } label: { Text("delete") }
+            Button(role: .cancel) { } label: { Text("cancel") }
+        }) {
+            Text("This will delete all selected events. This cannot be undone.")
+        }
     }
 }
