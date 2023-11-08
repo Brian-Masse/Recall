@@ -37,6 +37,9 @@ struct CalendarEventPreviewContentView: View {
     }
     
 //    MARK: Vars
+    
+    @Environment(\.colorScheme) var colorScheme
+    
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
     let width: CGFloat  //measured in pixels
@@ -119,7 +122,7 @@ struct CalendarEventPreviewContentView: View {
 //            this handles the event appearance when the user is selecting a group of events to edit
            if selecting && !selected() {
                Rectangle()
-                   .foregroundColor(.white)
+                   .foregroundStyle(colorScheme == .dark ? .black : .white)
                    .opacity(0.7)
                    .cornerRadius(Constants.UIDefaultCornerRadius)
            }

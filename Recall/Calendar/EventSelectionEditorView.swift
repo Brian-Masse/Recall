@@ -61,6 +61,7 @@ struct EventSelectionEditorView: View {
             Image(systemName: "checkmark")
             UniversalText( event.title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         }
+            .foregroundStyle(.black)
             .padding()
             .onTapGesture { toggleEvent(event) }
             .background(
@@ -95,7 +96,21 @@ struct EventSelectionEditorView: View {
     
     @ViewBuilder
     private func makeDateSelector() -> some View {
-        StyledDatePicker($date, title: "When did these events happen?", fontSize: Constants.UISubHeaderTextSize)
+        StyledDatePicker($date, title: "Change the date of the events", fontSize: Constants.UISubHeaderTextSize)
+    }
+    
+    @ViewBuilder
+    private func makeSubButton( _ title: String, icon: String, action: @escaping () -> Void) -> some View {
+        
+        HStack {
+            Spacer()
+            UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            Image(systemName: icon)
+            Spacer()
+        }
+        .secondaryOpaqueRectangularBackground()
+        .onTapGesture { action() }
+        
     }
     
     
@@ -103,34 +118,25 @@ struct EventSelectionEditorView: View {
     var body: some View {
 
         GeometryReader { geo in
-            ZStack(alignment: .bottom) {
+            ScrollView(.vertical) {
                 VStack(alignment: .leading) {
-                    ScrollView(.vertical) {
-                        
-                        makeEventList()
-                            .padding(.bottom)
-                        
-                        makeDateSelector()
-                            .padding(.bottom, 80)
-                        
-                        
-                        
-                    }
+                    
+                    makeEventList()
+                        .padding(.bottom)
+                    
+                    makeDateSelector()
+                        .padding(.bottom)
+                    
+                    UniversalText("actions", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                    makeSubButton("template", icon: "rectangle.3.group") { }
+                    makeSubButton("favorite", icon: "arrow.up.right") { }
+                    makeSubButton("delete", icon: "trash") { }
+//                        .padding(.bottom, 50)
+                 
+                    LargeRoundedButton("done", icon: "arrow.down", wide: true) { submit() }
+                        .padding(.bottom, 30)
+                    
                 }
-                
-                LargeRoundedButton("done", icon: "arrow.down") { submit() }
-                    .padding(.bottom, 30)
-                
-//                Spacer()
-//                
-//                VStack(alignment: .leading) {
-//                    pageHeader()
-//                    if showingEditorView { Spacer() }
-//                }
-//                .frame(height: showingEditorView ? geo.size.height * (2/5) : geo.size.height * (1/10))
-//                .secondaryOpaqueRectangularBackground()
-//                .padding(.bottom, 20)
-//                .shadow(color: .black.opacity(0.5), radius: 10, y: 15)
             }
         }
         .ignoresSafeArea()

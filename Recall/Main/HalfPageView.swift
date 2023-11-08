@@ -62,12 +62,21 @@ struct HalfPageView<Content: View>: View {
                     }
                 } else {
                     switch pageExpansion {
-                    case .full: withAnimation { pageExpansion = .half }
+                    case .full: withAnimation { pageExpansion = .hide }
                     case .half: withAnimation { pageExpansion = .hide }
-                    case .hide: withAnimation { pageExpansion = .hide }
+                    case .hide: withAnimation { presenting = false }
                     }
                 }
             }
+    }
+    
+    private func tapGesture() {
+        switch pageExpansion {
+        case .full: withAnimation { pageExpansion = .hide }
+        case .half: withAnimation { pageExpansion = .hide }
+        case .hide: withAnimation { pageExpansion = .half }
+        }
+        
     }
     
 //    MARK: ViewBuilders
@@ -78,9 +87,9 @@ struct HalfPageView<Content: View>: View {
             
             Spacer()
             
-            LargeRoundedButton("", icon: pageExpansion != .hide ? "arrow.down" : "arrow.up", wide: false) {
-                withAnimation { pageExpansion.toggle() }
-            }
+//            LargeRoundedButton("", icon: pageExpansion != .hide ? "arrow.down" : "arrow.up", wide: false) {
+//                withAnimation { pageExpansion.toggle() }
+//            }
             
             LargeRoundedButton("", icon: "xmark", wide: false) {
                 withAnimation { presenting = false }
@@ -112,11 +121,12 @@ struct HalfPageView<Content: View>: View {
                     }
                 }
                 .frame(height: geo.size.height * pageExpansion.getHeight())
-                .opaqueRectangularBackground(0)
-                .shadow(color: .black.opacity(0.5), radius: 10, y: -15)
+                .opaqueRectangularBackground(0, stroke: true)
+                .shadow(color: .black.opacity(0.4), radius: 10, y: -10)
             }
         }
         .gesture(drag)
+        .onTapGesture { tapGesture() }
         .ignoresSafeArea()
     }
 }
