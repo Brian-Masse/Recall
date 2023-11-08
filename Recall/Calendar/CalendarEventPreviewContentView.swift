@@ -37,6 +37,9 @@ struct CalendarEventPreviewContentView: View {
     }
     
 //    MARK: Vars
+    
+    @Environment(\.colorScheme) var colorScheme
+    
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
     let width: CGFloat  //measured in pixels
@@ -54,7 +57,24 @@ struct CalendarEventPreviewContentView: View {
     private let minLength: CGFloat = 68.4
     private let minDescriptionLength: CGFloat = 75
     
-    @State var showingEvent: Bool = false
+    @Binding var selecting: Bool
+    @Binding var selection: [RecallCalendarEvent]
+    
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, selecting: Binding<Bool>? = nil, selection: Binding<[RecallCalendarEvent]>? = nil) {
+        
+        self.event = event
+        self.events = events
+        self.width = width
+        self.height = height
+        
+        self._selecting = (selecting == nil) ? Binding(get: { false }, set: { _ in }) : selecting!
+        self._selection = (selection == nil) ? Binding(get: { [] }, set: { _ in }) : selection!
+    }
+    
+    private func selected() -> Bool {
+        let index = selection.firstIndex(of: event)
+        return index != nil
+    }
     
 //    MARK: Body
     var body: some View {
@@ -80,10 +100,8 @@ struct CalendarEventPreviewContentView: View {
                 }
                 
 //                MARK: Content
-                
                 if height > minDescriptionLength && index.showNotesOnPreview {
                     UniversalText( event.notes, size: Constants.UISmallTextSize, font: Constants.mainFont ).opacity(0.8)
-                    
                 }
                 
                 if height > minLength {
@@ -100,16 +118,20 @@ struct CalendarEventPreviewContentView: View {
             .if(height > defaultQuarter) { view in
                 view.padding(.vertical, 5)
             }
+            
+//            this handles the event appearance when the user is selecting a group of events to edit
+           if selecting && !selected() {
+               Rectangle()
+                   .foregroundStyle(colorScheme == .dark ? .black : .white)
+                   .opacity(0.7)
+                   .cornerRadius(Constants.UIDefaultCornerRadius)
+           }
         }
         .foregroundColor(.black)
-        .onTapGesture { showingEvent = true }
         .if(height > defaultHalf) { view in
             view.padding(.vertical, 2)
         }
         .frame(maxHeight: height)
-        .sheet(isPresented: $showingEvent) {
-            CalendarEventView(event: event, events: events)
-        }
         
     }
 }

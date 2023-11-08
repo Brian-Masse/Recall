@@ -237,13 +237,8 @@ struct ProfileCreationView: View {
     private func makeDateOfBirthSelector() -> some View {
         
         VStack(alignment: .leading) {
-            UniversalText( "When is your birthday?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-            DatePicker(selection: $dateOfBirth, displayedComponents: .date) {
-                UniversalText( "select", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-            }
-            .tint(Colors.tint)
-            .secondaryOpaqueRectangularBackground()
-            .padding(.bottom)
+            
+            StyledDatePicker($dateOfBirth, title: "When is your birthday?")
             
             if !validateBirthday(dateOfBirth) {
                 UniversalText( "you must be 18 years or older.", size: Constants.UISmallTextSize, font: Constants.mainFont )

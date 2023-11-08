@@ -85,6 +85,17 @@ extension Date {
         return Calendar.current.date( bySettingHour: hour, minute: intMinutes, second: Int(seconds), of: self ) ?? self
     }
     
+    func dateBySetting( dateFrom date: Date ) -> Date {
+        
+        let components = Calendar.current.dateComponents([.hour, .minute, .second], from: self)
+        
+        return Calendar.current.date(bySettingHour: components.hour!,
+                                     minute: components.minute!,
+                                     second: components.second!,
+                                     of: date) ?? self
+        
+    }
+    
     func day() -> Int {
         Calendar.current.component(.day, from: self)
     }
@@ -170,13 +181,3 @@ extension String {
     }
 }
 
-
-//MARK: Preferences
-
-struct HalfScreenToggleKey: PreferenceKey {
-    static var defaultValue: Bool = false
-    
-    static func reduce(value: inout Bool, nextValue: () -> Bool) {
-        value = nextValue()
-    }
-}

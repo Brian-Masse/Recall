@@ -17,7 +17,7 @@ struct CategoriesPageView: View {
         HStack {
             Spacer()
             Image(systemName: "arrow.up.right")
-            UniversalText( page.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            UniversalText( page.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
             Spacer()
         }
         .if( activePage == page ) { view in view.tintRectangularBackground() }

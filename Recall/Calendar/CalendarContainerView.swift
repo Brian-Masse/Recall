@@ -127,6 +127,11 @@ struct CalendarContainer: View {
             .onEnded { value in dragging = false }
     }
     
+    private func tapGesture() {
+        if selecting { withAnimation { selecting = false }}
+        
+    }
+    
     private func filterEvents() -> [RecallCalendarEvent] {
         events.filter { event in
             event.startTime.matches(currentDay, to: .day) &&
@@ -232,7 +237,7 @@ struct CalendarContainer: View {
                     view.opaqueRectangularBackground(7, stroke: true)
                 }
             }
-            .onTapGesture { }
+            .onTapGesture { tapGesture() }
             .highPriorityGesture(swipeGesture, including: dragging ? .subviews : .all)
         }
     }
