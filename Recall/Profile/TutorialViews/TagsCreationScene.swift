@@ -125,7 +125,7 @@ extension TutorialViews {
         private func makeTagsView() -> some View {
             
             VStack(alignment: .leading) {
-                CategoriesPageView.TagTab(tags: Array(tags), events: Array(events))
+                TagPageView(tags: Array(tags), events: Array(events))
                 Spacer()
                 LargeRoundedButton("create another tag", icon: "arrow.up", wide: true) {
                     showingTagCreationView = true

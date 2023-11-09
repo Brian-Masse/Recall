@@ -150,7 +150,7 @@ struct EventSelectionEditorView: View {
                         .padding(.bottom)
                     
                     UniversalText("actions", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                    makeSubButton("template", icon: "rectangle.3.group") { template() }
+                    makeSubButton("template", icon: "viewfinder.rectangular") { template() }
                     makeSubButton("favorite", icon: "arrow.up.right") {  }
                     makeSubButton("delete", icon: "trash") { showingDeletetionAlert = true }
                  
@@ -161,7 +161,7 @@ struct EventSelectionEditorView: View {
             }
         }
         .ignoresSafeArea()
-        .onTapGesture { }
+        .onTapGesture {  }
         .onDisappear() { onDismiss() }
         .onAppear() { setup() }
         .alert("delete events?", isPresented: $showingDeletetionAlert, actions: {

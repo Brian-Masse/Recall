@@ -17,6 +17,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @Persisted var title: String = ""
     @Persisted var notes: String = ""
     @Persisted var isTemplate: Bool = false
+    @Persisted var isFavorite: Bool = false
     
     @Persisted var startTime: Date = .now
     @Persisted var endTime:   Date = .now + Constants.HourTime
@@ -162,9 +163,15 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     @MainActor
     func toggleTemplate() {
-        
         RealmManager.updateObject(self) { thawed in
             thawed.isTemplate = !self.isTemplate
+        }
+    }
+    
+    @MainActor
+    func toggleFavorite() {
+        RealmManager.updateObject(self) { thawed in
+            thawed.isFavorite = !self.isFavorite
         }
     }
     

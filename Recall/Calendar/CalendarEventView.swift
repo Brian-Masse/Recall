@@ -119,6 +119,7 @@ struct CalendarEventView: View {
         ScrollView(.horizontal) {
             HStack {
                 LargeRoundedButton("edit", icon: "arrow.up.forward", color: event.getColor())                { showingEditingScreen = true }
+                LargeRoundedButton("favorite", icon: "arrow.up.forward", color: event.getColor())       { event.toggleFavorite() }
                 LargeRoundedButton("template", icon: "arrow.up.forward", color: event.getColor())       { event.toggleTemplate() }
                 LargeRoundedButton("delete", icon: "arrow.up.forward", color: event.getColor())         {
                     if event.isTemplate { templateDeletionAlert = true }
