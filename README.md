@@ -27,13 +27,26 @@ I independently developed this project, from problem identification, project bra
 
 NEW FEATURES
 
+_visuals_
+
 - added the notes of an event to the preview on the timeline
+
+_settings_
+
 - added a toggle to view notes on event previews
 - added the ability to set the default length of events
 - added a toggle to turn on universal fine time selection
 - added a toggle to change default event snapping
+
+_features_
+
 - added a button to quickly clear the title or description of an event
 - added a way to select and move events to different days
+- added a way to favorite and view favorited events
+
+CHANGES:
+
+- redesigned the tag page
 
 BUG FIXES:
 
