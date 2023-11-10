@@ -27,10 +27,6 @@ I independently developed this project, from problem identification, project bra
 
 NEW FEATURES
 
-_visuals_
-
-- added the notes of an event to the preview on the timeline
-
 _settings_
 
 - added a toggle to view notes on event previews
@@ -43,9 +39,11 @@ _features_
 - added a button to quickly clear the title or description of an event
 - added a way to select and move events to different days
 - added a way to favorite and view favorited events
+- added a way to change the date of a single event
 
 CHANGES:
 
+- added the notes of an event to the preview on the timeline
 - redesigned the tag page
 
 BUG FIXES:

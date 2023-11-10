@@ -253,21 +253,8 @@ struct CalendarEventCreationView: View {
         TextFieldWithPrompt(title: "Leave an optional note", binding: $notes, clearable: true)
             .padding(.bottom)
         
-//        SliderWithPrompt(label: "When did this event start?",
-//                         minValue: 0,
-//                         maxValue: 23.5,
-//                         binding: startTimeBinding,
-//                         strBinding: startTimeLabel,
-//                         textFieldWidth: 120)
-        
         TimeSelector(label: "When did this event start?", time: $startTime)
         TimeSelector(label: "When did this event end?", time: $endTime)
-//        SliderWithPrompt(label: "When did this event end?",
-//                         minValue: 0,
-//                         maxValue: 23.5,
-//                         binding: endTimeBinding,
-//                         strBinding: endTimeLabel,
-//                         textFieldWidth: 120)
     }
     
     @ViewBuilder
@@ -317,6 +304,18 @@ struct CalendarEventCreationView: View {
         }
     }
     
+    @ViewBuilder
+    private func makeDateChanger() -> some View {
+        
+        VStack(alignment: .leading) {
+            if editing {
+                StyledDatePicker($day, title: "Change Event Date", fontSize: Constants.UIHeaderTextSize)
+            }
+            
+        }
+        
+    }
+    
     @State var showingTemplates: Bool = false
     @State var activeTempalte: RecallCalendarEvent? = nil
     @State var showingError: Bool = false
@@ -336,6 +335,9 @@ struct CalendarEventCreationView: View {
                             .padding(.bottom)
 
                         makeOverviewQuestions()
+                            .padding(.bottom)
+                        
+                        makeDateChanger()
                             .padding(.bottom)
                         
                         makeTagSelector()
