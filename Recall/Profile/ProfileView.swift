@@ -59,7 +59,10 @@ struct ProfileView: View {
         static var defaultTimeSnappingDescription = "These are the time segments used when resizing events on the calendar and Recall pages."
         
         static var recallAtEndOfLastEvent = "Moving Recall"
-        static var recallAtEndOfLastEventDescription = "Each Recall starts at the end of the last event."
+        static var recallAtEndOfLastEventDescription = "When enabled, each Recall starts at the end of the last event."
+        
+        static var recallStyleLabel = "Default Recall Style"
+        static var recallStyleDescription = "Choose the default way to recall your events"
         
 //        notifications
         static var notificationsDisabledWarning = "Notifications are disabled, enable them in settings"
@@ -217,41 +220,18 @@ struct ProfileView: View {
     }
     
 //    MARK: Event Settings ViewBuilders
-    
-    private var eventLengthBinding: Binding<Float> {
-        Binding { Float(defaultEventLength) }
-        set: { newValue in
-            let multiplier = 15 * Constants.MinuteTime
-            defaultEventLength = (Double( newValue ) / multiplier).rounded(.down) * multiplier
-        }
-    }
-    
-    private var eventLengthTitleBinding: Binding<String> {
-        Binding {
-            let hours = (defaultEventLength / Constants.HourTime)
-            let hour = hours.rounded(.down)
-            let minutes = ((hours - hour) * 60).rounded(.down)
-            
-            return "\( Int(hour) )hr \( Int(minutes) ) mins"
-        } set: { _ in }
-    }
-    
+
     @ViewBuilder
     private func makeDefaultEventLengthSelector() -> some View {
-        VStack(alignment: .leading) {
-            SliderWithPrompt(label: "Default Event Length",
-                             minValue: 0,
-                             maxValue: Float(5 * Constants.HourTime),
-                             binding: eventLengthBinding,
-                             strBinding: eventLengthTitleBinding,
-                             textFieldWidth: 150,
-                             size: Constants.UIDefaultTextSize)
-            
-            if madeDefaultEventLengthChanges {
-                ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeDefaultEventLengthChanges } action: {
-                    RecallModel.index.setDefaultEventLength(to: defaultEventLength)
-                    madeDefaultEventLengthChanges = false
-                }
+        LengthSelector("Default Event Length",
+                       length: $defaultEventLength,
+                       fontSize: Constants.UIDefaultTextSize,
+                       allowFineToggle: false)
+        
+        if madeDefaultEventLengthChanges {
+            ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeDefaultEventLengthChanges } action: {
+                RecallModel.index.setDefaultEventLength(to: defaultEventLength)
+                madeDefaultEventLengthChanges = false
             }
         }
     }
@@ -297,6 +277,33 @@ struct ProfileView: View {
         }
     }
     
+    private func makeDefaultRecallStyleSelectorOption(_ label: String, icon: String, option: Bool) -> some View {
+        HStack {
+            Spacer()
+            VStack {
+                Image(systemName: icon)
+                    .padding(.bottom, 5)
+                UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
+            }
+            Spacer()
+        }
+        .if( option == index.recallEventsWithEventTime ) { view in view.tintRectangularBackground() }
+        .if( option != index.recallEventsWithEventTime ) { view in view.secondaryOpaqueRectangularBackground() }
+        .onTapGesture { withAnimation { index.setDefaultRecallStyle(to: option) } }
+    }
+    
+    private func makeDefaultRecallStyleSelector() -> some View {
+        
+        VStack(alignment: .leading) {
+            UniversalText( SettingsConstants.recallStyleLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            HStack {
+                makeDefaultRecallStyleSelectorOption("Recall with event time", icon: "calendar", option: true)
+                makeDefaultRecallStyleSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: false)
+            }
+            makeSettingsDescription( SettingsConstants.recallStyleDescription )
+        }
+    }
+    
     
     
     
@@ -329,6 +336,8 @@ struct ProfileView: View {
             UniversalText( SettingsConstants.recallAtEndOfLastEvent, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
         }
         makeSettingsDescription(SettingsConstants.recallAtEndOfLastEventDescription)
+        
+        makeDefaultRecallStyleSelector()
         
         makeDefaultTimeSnappingSelector()
         makeSettingsDescription(SettingsConstants.defaultTimeSnappingDescription)

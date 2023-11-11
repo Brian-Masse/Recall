@@ -38,6 +38,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var defaultFineTimeSelector: Bool = true
     @Persisted var defaultEventSnapping: Int = TimeRounding.quarter.rawValue
     @Persisted var recallEventsAtEndOfLastRecall: Bool = true
+    @Persisted var recallEventsWithEventTime: Bool = true
     
     @Persisted var notificationsEnabled: Bool = false
     @Persisted var notificationsTime: Date = .now
@@ -172,6 +173,13 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     func setDefaultTimeSnapping(to value: TimeRounding) {
         RealmManager.updateObject(self) { thawed in
             thawed.defaultEventSnapping = value.rawValue
+        }
+    }
+    
+    @MainActor
+    func setDefaultRecallStyle(to value: Bool) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.recallEventsWithEventTime = value
         }
     }
     

@@ -122,7 +122,7 @@ struct CalendarEventCreationView: View {
     let favorite: Bool
 
     @State var showingAllGoals: Bool = false
-    @State var recallByLength: Bool = true
+    @State var recallByLength: Bool = !RecallModel.index.recallEventsWithEventTime
     
 //    MARK: Helper Functions
     
@@ -226,25 +226,6 @@ struct CalendarEventCreationView: View {
         set: { newValue, _ in }
     }
     
-    private var eventLengthBinding: Binding<Float> {
-        Binding { Float( eventLength ) }
-        set: { newValue, _ in
-            let multiplier = 15 * Constants.MinuteTime
-            let maxEndDate = endTime.resetToStartOfDay() + Constants.DayTime
-            eventLength = (Double( newValue ) / multiplier).rounded(.down) * multiplier
-            endTime = min(startTime + eventLength, maxEndDate)
-        }
-    }
-    
-    private var eventLengthLabelBinding: Binding<String> {
-        Binding {
-            let hours = eventLength / Constants.HourTime
-            let intHours = hours.rounded(.down)
-            let minutes = (hours - intHours) * 60
-            return "\(Int(intHours)) HR \(Int(minutes)) mins"
-        } set: { newValue, _ in }
-    }
-    
     
 //    MARK: SectionBuilders
     
@@ -293,12 +274,10 @@ struct CalendarEventCreationView: View {
     
     @ViewBuilder
     private func makeRecallTypeSelector() -> some View {
-        
         HStack {
             makeRecallTypeSelectorOption("Recall with event time", icon: "calendar", option: false)
             makeRecallTypeSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: true)
         }
-        
     }
     
     @ViewBuilder
@@ -309,13 +288,10 @@ struct CalendarEventCreationView: View {
     
         makeRecallTypeSelector()
         if recallByLength {
-            UniversalText( "How long is this event?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-            StyledSlider(minValue: Float(15 * Constants.MinuteTime),
-                         maxValue: Float(5 * Constants.HourTime),
-                         binding: eventLengthBinding,
-                         strBinding: eventLengthLabelBinding,
-                         textFieldWidth: 150)
-            
+            LengthSelector("How long is this event?", length: $eventLength) { length in
+                let maxEndTime = endTime.resetToStartOfDay() + Constants.DayTime
+                endTime = min( startTime + length, maxEndTime )
+            }
         } else {
             TimeSelector(label: "When did this event start?", time: $startTime)
             TimeSelector(label: "When did this event end?", time: $endTime)

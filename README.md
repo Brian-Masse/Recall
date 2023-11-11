@@ -34,6 +34,7 @@ _settings_
 - added a toggle to turn on universal fine time selection
 - added a toggle to change default event snapping
 - added a toggle to automatically start Recalls at the end of the most recent event
+- added a toggle to set the default Recall style
 
 _features_
 
