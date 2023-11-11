@@ -112,6 +112,7 @@ struct CalendarEventCreationView: View {
     @State var notes: String
     @State var startTime: Date
     @State var endTime: Date
+    @State var eventLength: Double = RecallModel.index.defaultEventLength
     @State var day: Date
     
     @State var category: RecallCategory
@@ -121,6 +122,7 @@ struct CalendarEventCreationView: View {
     let favorite: Bool
 
     @State var showingAllGoals: Bool = false
+    @State var recallByLength: Bool = true
     
 //    MARK: Helper Functions
     
@@ -224,6 +226,26 @@ struct CalendarEventCreationView: View {
         set: { newValue, _ in }
     }
     
+    private var eventLengthBinding: Binding<Float> {
+        Binding { Float( eventLength ) }
+        set: { newValue, _ in
+            let multiplier = 15 * Constants.MinuteTime
+            let maxEndDate = endTime.resetToStartOfDay() + Constants.DayTime
+            eventLength = (Double( newValue ) / multiplier).rounded(.down) * multiplier
+            endTime = min(startTime + eventLength, maxEndDate)
+        }
+    }
+    
+    private var eventLengthLabelBinding: Binding<String> {
+        Binding {
+            let hours = eventLength / Constants.HourTime
+            let intHours = hours.rounded(.down)
+            let minutes = (hours - intHours) * 60
+            return "\(Int(intHours)) HR \(Int(minutes)) mins"
+        } set: { newValue, _ in }
+    }
+    
+    
 //    MARK: SectionBuilders
     
     @ViewBuilder
@@ -252,13 +274,52 @@ struct CalendarEventCreationView: View {
     }
     
     @ViewBuilder
+    private func makeRecallTypeSelectorOption( _ label: String, icon: String, option: Bool ) -> some View {
+        
+        HStack {
+            Spacer()
+            VStack {
+                Image(systemName: icon)
+                    .padding(.bottom, 5)
+                UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
+            }
+            
+            Spacer()
+        }
+        .if( recallByLength == option ) { view in view.tintRectangularBackground(7) }
+        .if( recallByLength != option ) { view in view.secondaryOpaqueRectangularBackground(7) }
+        .onTapGesture { withAnimation { recallByLength = option } }
+    }
+    
+    @ViewBuilder
+    private func makeRecallTypeSelector() -> some View {
+        
+        HStack {
+            makeRecallTypeSelectorOption("Recall with event time", icon: "calendar", option: false)
+            makeRecallTypeSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: true)
+        }
+        
+    }
+    
+    @ViewBuilder
     private func makeOverviewQuestions() -> some View {
         TextFieldWithPrompt(title: "What is the name of this event?", binding: $title, clearable: true)
         TextFieldWithPrompt(title: "Leave an optional note", binding: $notes, clearable: true)
             .padding(.bottom)
-        
-        TimeSelector(label: "When did this event start?", time: $startTime)
-        TimeSelector(label: "When did this event end?", time: $endTime)
+    
+        makeRecallTypeSelector()
+        if recallByLength {
+            UniversalText( "How long is this event?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+            StyledSlider(minValue: Float(15 * Constants.MinuteTime),
+                         maxValue: Float(5 * Constants.HourTime),
+                         binding: eventLengthBinding,
+                         strBinding: eventLengthLabelBinding,
+                         textFieldWidth: 150)
+            
+        } else {
+            TimeSelector(label: "When did this event start?", time: $startTime)
+            TimeSelector(label: "When did this event end?", time: $endTime)
+        }
     }
     
     @ViewBuilder
