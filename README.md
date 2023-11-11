@@ -33,6 +33,7 @@ _settings_
 - added the ability to set the default length of events
 - added a toggle to turn on universal fine time selection
 - added a toggle to change default event snapping
+- added a toggle to automatically start Recalls at the end of the most recent event
 
 _features_
 
@@ -45,6 +46,7 @@ CHANGES:
 
 - added the notes of an event to the preview on the timeline
 - redesigned the tag page
+- made all context menus across the UI consistent
 
 BUG FIXES:
 

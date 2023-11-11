@@ -26,8 +26,7 @@ struct RecallModel {
 //        "64ba0fbbd6e75f291b404772"
     }
     static var index: RecallIndex { RecallModel.realmManager.index  }
-    
-//    @MainActor
+
     private(set) var activeColor: Color = Colors.main
     
     mutating func setActiveColor(from colorScheme: ColorScheme) {
@@ -54,4 +53,5 @@ struct RecallModel {
     }
     
     static let dataModel: RecallDataModel = RecallDataModel()
+
 }

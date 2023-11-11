@@ -157,7 +157,6 @@ struct CalendarPageView: View {
         
         ZStack {
             VStack(alignment: .leading) {
-                
                 makeHeader()
                 
                 HStack {

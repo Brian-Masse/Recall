@@ -58,6 +58,9 @@ struct ProfileView: View {
         static var defaultTimeSnappingLabel = "Default event snapping"
         static var defaultTimeSnappingDescription = "These are the time segments used when resizing events on the calendar and Recall pages."
         
+        static var recallAtEndOfLastEvent = "Moving Recall"
+        static var recallAtEndOfLastEventDescription = "Each Recall starts at the end of the last event."
+        
 //        notifications
         static var notificationsDisabledWarning = "Notifications are disabled, enable them in settings"
         static var notificationTimeSelectionLabel = "When would you like to be reminded?"
@@ -263,6 +266,11 @@ struct ProfileView: View {
         set: { newValue in index.setDefaultFineTimeSelector(to: newValue) }
     }
     
+    private var recallAtTheEndOfLastEventBinding: Binding<Bool> {
+        Binding { index.recallEventsAtEndOfLastRecall }
+        set: { newValue in index.setRecallAtEndOfLastEvent(to: newValue) }
+    }
+    
     @ViewBuilder
     private func makeTimeSnappingSelector(title: String, option: TimeRounding) -> some View {
         VStack(spacing: 0) {
@@ -290,6 +298,8 @@ struct ProfileView: View {
     }
     
     
+    
+    
 //    MARK: Event Settings Body
     @ViewBuilder
     private func makeEventSettings() -> some View {
@@ -314,6 +324,11 @@ struct ProfileView: View {
             UniversalText(SettingsConstants.universalFineSelectionLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         }
         makeSettingsDescription(SettingsConstants.universalFineSelectionDescription)
+        
+        StyledToggle(recallAtTheEndOfLastEventBinding) {
+            UniversalText( SettingsConstants.recallAtEndOfLastEvent, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+        }
+        makeSettingsDescription(SettingsConstants.recallAtEndOfLastEventDescription)
         
         makeDefaultTimeSnappingSelector()
         makeSettingsDescription(SettingsConstants.defaultTimeSnappingDescription)

@@ -44,13 +44,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         checkUpdateEarliestEvent()
         
         updateIndex()
+        updateRecentRecallEventEndTime(to: endTime)
     }
 
-//    Certain times the simulator crasehs because it cant access goalRatings on the correct thread.
-//    moving those functions onto the main thread would be virtually impossible, so instead we cache the data into a local variable
-//    that can be accessed on any thread at any time
-//    I have no idea what effect this will have on the memory required for the app
-//    this might not be a permenet solution
     @MainActor
     override init() {
         super.init()
@@ -75,6 +71,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
             
             updateIndex()
+            updateRecentRecallEventEndTime(to: endDate)
         }
         
         checkUpdateEarliestEvent()
@@ -86,6 +83,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.endTime = endDate ?? thawed.endTime
             
             updateIndex()
+            updateRecentRecallEventEndTime(to: thawed.endTime)
+        
         }
         
         checkUpdateEarliestEvent()
@@ -102,8 +101,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.endTime = newEnd
             
             updateIndex()
+            
         }
         
+        updateRecentRecallEventEndTime(to: newEnd)
         checkUpdateEarliestEvent()
     }
     
@@ -193,6 +194,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    When an event changes in any way (is created, updated, or deleted), it needs to quickly reindex the goalWasMet data...
     private func updateIndex() {
         Task { await RecallModel.index.updateEvent(self) }
+    }
+    
+    private func updateRecentRecallEventEndTime(to time: Date) {
+        RecallModel.index.setMostRecentRecallEvent(to: time)
     }
     
     @MainActor

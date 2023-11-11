@@ -64,12 +64,14 @@ struct CalendarEventCreationView: View {
     @ViewBuilder
     static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, template: Bool = false, favorite: Bool = false) -> some View {
         if !editing {
+            let startTime = RecallModel.index.recallEventsAtEndOfLastRecall ? RecallModel.index.getMostRecentRecallEnd(on: currentDay) : .now
+            
             CalendarEventCreationView(editing: false,
                                       event: nil,
                                       title: "",
                                       notes: "",
-                                      startTime: .now,
-                                      endTime: .now + RecallModel.index.defaultEventLength,
+                                      startTime: startTime,
+                                      endTime: startTime + RecallModel.index.defaultEventLength,
                                       day: currentDay,
                                       category: RecallCategory(),
                                       goalRatings: Dictionary(),
