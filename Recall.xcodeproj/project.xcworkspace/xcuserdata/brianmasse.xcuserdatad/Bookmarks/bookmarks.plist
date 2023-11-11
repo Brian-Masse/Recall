@@ -78,13 +78,13 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>.sheet(isPresented: $showingGoalView) {</string>
+				<string>.fullScreenCover(isPresented: $showingG</string>
 				<key>leading</key>
-				<string>            .onTapGesture { showingGoalView = true }
+				<string>//            .onTapGesture { showingGoalView = true }
             .tag(goal.getEncryptionKey())
             </string>
 				<key>trailing</key>
-				<string>
+				<string>oalView) {
                 GoalView(goal: goal, events: events)
             }
 </string>

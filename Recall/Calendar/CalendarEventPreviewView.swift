@@ -278,37 +278,43 @@ struct CalendarEventPreviewView: View {
                 .overlay(makeLengthHandles())
             
                 .contextMenu {
-                    Button {
+                    
+                    ContextMenuButton("move", icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") {
                         defaultContextMenuAction()
                         beginMoving()
-                    } label: { Label("move", systemImage: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") }
+                    }
                     
-                    Button {
+                    ContextMenuButton("resize", icon: "rectangle.expand.vertical") {
                         defaultContextMenuAction()
                         beginResizing()
-                    } label: { Label("resize", systemImage: "rectangle.expand.vertical") }
+                    }
                     
-                    Button {
+                    ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
                         defaultContextMenuAction()
                         showingEditingScreen = true
-                    } label: { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
+                    }
                     
-                    Button { 
+                    ContextMenuButton("duplicate", icon: "rectangle.on.rectangle") {
                         defaultContextMenuAction()
                         duplicate()
-                    } label: { Label("duplicate", systemImage: "rectangle.on.rectangle") }
+                    }
                     
-                    Button {
+                    ContextMenuButton("favorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
+                        defaultContextMenuAction()
+                        event.toggleFavorite()
+                    }
+                    
+                    ContextMenuButton("select", icon: "selection.pin.in.out") {
                         defaultContextMenuAction()
                         selecting = true
                         selection.append(event)
-                    } label: { Label( "select", systemImage: "selection.pin.in.out" ) }
+                    }
                     
-                    Button(role: .destructive) {
+                    ContextMenuButton("delete", icon: "trash", role: .destructive) {
                         defaultContextMenuAction()
                         if event.isTemplate { showingDeletionAlert = true }
                         else { event.delete() }
-                    } label: { Label("delete", systemImage: "trash") }
+                    }
                 }
                 .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
                 

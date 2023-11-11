@@ -62,7 +62,7 @@ struct GoalMultiplierSelector: View {
 struct CalendarEventCreationView: View {
     
     @ViewBuilder
-    static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, template: Bool = false) -> some View {
+    static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, template: Bool = false, favorite: Bool = false) -> some View {
         if !editing {
             CalendarEventCreationView(editing: false,
                                       event: nil,
@@ -73,7 +73,8 @@ struct CalendarEventCreationView: View {
                                       day: currentDay,
                                       category: RecallCategory(),
                                       goalRatings: Dictionary(),
-                                      template: template)
+                                      template: template,
+                                      favorite: favorite)
         } else {
             CalendarEventCreationView(editing: true,
                                       event: event,
@@ -84,10 +85,9 @@ struct CalendarEventCreationView: View {
                                       day: event!.startTime,
                                       category: event!.category ?? RecallCategory(),
                                       goalRatings: RecallCalendarEvent.translateGoalRatingList(event!.goalRatings),
-                                      template: false)
+                                      template: false,
+                                      favorite: false)
         }
-        
-        
     }
     
 //    MARK: Vars
@@ -116,6 +116,7 @@ struct CalendarEventCreationView: View {
     @State var goalRatings: Dictionary<String, String>
     
     let template: Bool
+    let favorite: Bool
 
     @State var showingAllGoals: Bool = false
     
@@ -162,6 +163,7 @@ struct CalendarEventCreationView: View {
                                             goalRatings: goalRatings)
             RealmManager.addObject(event)
             if template { event.toggleTemplate() }
+            if favorite { event.toggleFavorite() }
         } else {
             event!.update(title: title,
                           notes: notes,

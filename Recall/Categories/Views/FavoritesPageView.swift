@@ -7,14 +7,18 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
 struct FavoritesPageView: View {
     
+    let dateGroupings: [Calendar.Component ] = [ .year, .month, .day ]
     
 //    MARK: Vars
-    let events: [RecallCalendarEvent]
+    var events: [RecallCalendarEvent]
     
     @State var filteredEvents: [RecallCalendarEvent] = []
+    
+    @State var groupedEvents: Dictionary<Date, [RecallCalendarEvent]> = Dictionary()
     
     @State var dates: [Date] = []
     @State var grouping: Calendar.Component = .month
@@ -22,33 +26,49 @@ struct FavoritesPageView: View {
 //    MARK: Class Methods
     private func setup() {
         filteredEvents = filterEvents()
-        dates = getUniqueDates(filteredEvents: filteredEvents)
+        groupEvents()
     }
     
     private func filterEvents() -> [RecallCalendarEvent] {
-        events.filter { event in event.isFavorite }
+        events.filter { event in event.isFavorite }.sorted { event1, event2 in
+            event1.startTime > event2.startTime
+        }
     }
     
-    private func getUniqueDates(filteredEvents: [RecallCalendarEvent]) -> [Date] {
-        var dates: [Date] = []
+    private func groupEvents()  {
+        groupedEvents = Dictionary()
         for event in filteredEvents {
-            if !dates.contains(where: { date in date.matches(event.startTime, to: grouping) }) {
-                dates.append(event.startTime)
+            let dateKey = event.startTime.prioritizeComponent(grouping)
+            
+            if let _ = groupedEvents[dateKey] {
+                groupedEvents[dateKey]!.append(event)
+            } else {
+                groupedEvents[dateKey] = [ event ]
             }
         }
-        return dates
     }
-
+    
+    private func getDates() -> [Date] {
+        let dateFormatter = DateFormatter()
+        
+        return groupedEvents.map { key, value in key}.sorted { date1, date2 in
+            date1 > date2
+        }
+    }
     
 //    MARK: ViewBuilders
     struct DateCategory: View {
         
-        private func filterEvents( to date: Date, in filteredEvents: [RecallCalendarEvent] ) -> [RecallCalendarEvent] {
-            filteredEvents.filter { event in
-                event.startTime.matches(date, to: grouping)
-    //            let comp = Calendar.current.component(grouping, from: event.startTime)
-            }
-        }
+        let date: Date
+        let groupedEvents: [RecallCalendarEvent]
+        let events: [RecallCalendarEvent]
+        let geo: GeometryProxy
+        
+        @Binding var grouping: Calendar.Component
+        @State var showingFullSection: Bool = true
+        
+        @State var showingEventEditingView: Bool = false
+        @State var showingDeletionAlert: Bool = false
         
         private func makeDateLabel(date: Date) -> String {
             switch grouping {
@@ -59,17 +79,7 @@ struct FavoritesPageView: View {
             }
         }
         
-        let date: Date
-        let filteredEvents: [RecallCalendarEvent]
-        let events: [RecallCalendarEvent]
-        let geo: GeometryProxy
-        
-        @Binding var grouping: Calendar.Component
-        @State var showingFullSection: Bool = true
-        
         var body: some View {
-            let groupEvents = filterEvents(to: date, in: filteredEvents)
-            
             VStack(alignment: .leading) {
                 
                 HStack {
@@ -86,12 +96,38 @@ struct FavoritesPageView: View {
                 }
                 
                 if showingFullSection {
-                    ForEach( groupEvents ) { event in
+                    ForEach( groupedEvents ) { event in
                         CalendarEventPreviewContentView(event: event,
                                                         events: events,
                                                         width: geo.size.width - 50,
                                                         height: 100,
                                                         allowTapGesture: true)
+                        
+                        .sheet(isPresented: $showingEventEditingView) {
+                            CalendarEventCreationView.makeEventCreationView(currentDay: .now,
+                                                                            editing: true,
+                                                                            event: event)
+                        }
+                        
+                        .contextMenu {
+//                            ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
+//                                showingEventEditingView = true
+//                            }
+                            
+                            ContextMenuButton("unfavorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
+                                event.toggleFavorite()
+                            }
+                            
+                            ContextMenuButton("delete", icon: "trash", role: .destructive) {
+                                showingDeletionAlert = true
+                            }
+                        }
+                        .alert("delete favorite event", isPresented: $showingDeletionAlert, actions: {
+                            ContextMenuButton("delete", icon: "trash", role: .destructive) { event.delete() }
+                        }, message: {
+                            Text("This action cannot be undone.")
+                        })
+                        
                     }
                 }
             }
@@ -143,13 +179,16 @@ struct FavoritesPageView: View {
                         makeGroupingSelector()
                             .padding(.bottom, 7)
                         
-                        ForEach( dates.sorted(by: { date1, date2 in date1 > date2 }), id: \.timeIntervalSince1970 ) { date in
+                        let dates = getDates()
+                        
+                        ForEach( dates, id: \.self ) { date in
                             
                             DateCategory(date: date,
-                                         filteredEvents: filteredEvents,
+                                         groupedEvents: groupedEvents[date]!,
                                          events: events,
                                          geo: geo,
                                          grouping: $grouping)
+                            
                             
                             makeSeperator()
                                 .padding(.bottom, 7)
@@ -158,9 +197,11 @@ struct FavoritesPageView: View {
                     .padding(.bottom, Constants.UIBottomOfPagePadding)
                 }
             }
-        }.onChange(of: grouping) { newValue in
-            self.dates = getUniqueDates(filteredEvents: filteredEvents)
         }
+        .onChange(of: grouping) { _ in groupEvents() }
+        .onChange(of: events) {
+            
+            _ in groupEvents() }
         .onAppear { setup() }
     }
 }

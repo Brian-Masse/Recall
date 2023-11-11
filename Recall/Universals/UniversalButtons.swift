@@ -246,6 +246,28 @@ struct ConditionalLargeRoundedButton: View {
                 if condition() || allowTapOnDisabled { action() }
             }}
     }
+}
+
+//MARK: ContextMenuButton
+
+struct ContextMenuButton: View {
     
+    let title: String
+    let icon: String
+    let action: () -> Void
+    let role: ButtonRole?
     
+    init( _ title: String, icon: String, role: ButtonRole? = nil, action: @escaping () -> Void) {
+        self.title = title
+        self.icon = icon
+        self.role = role
+        self.action = action
+    }
+    
+    var body: some View {
+            
+        Button(role: role, action: action) {
+            Label(title, systemImage: icon)
+        }
+    }
 }

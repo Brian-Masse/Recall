@@ -22,8 +22,18 @@ struct TemplatePageView: View {
             GeometryReader { geo in
                 CalendarEventPreviewContentView(event: template, events: events, width: geo.size.width, height: 80)
                     .contextMenu {
-                        Button { showingEditingScreen = true }  label:          { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
-                        Button(role: .destructive) { showingDeletionAlert = true } label:    { Label("delete", systemImage: "trash") }
+                        ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
+                            showingEditingScreen = true
+                        }
+                        
+                        ContextMenuButton("untemplate", icon: "viewfinder.rectangular") {
+                            template.toggleTemplate()
+                        }
+                        
+                        ContextMenuButton("delete", icon: "trash", role: .destructive) {
+                            showingDeletionAlert = true
+                        }
+                        
                     }
                     .sheet(isPresented: $showingEditingScreen) {
                         CalendarEventCreationView.makeEventCreationView(currentDay: template.startTime, editing: true, event: template)

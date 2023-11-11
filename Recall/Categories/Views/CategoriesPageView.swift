@@ -18,6 +18,14 @@ struct CategoriesPageView: View {
         case favorites = "Favorites"
         
         var id: String { self.rawValue }
+
+        func getAddButtonName() -> String {
+            switch self {
+            case .tags: return "Create Tag"
+            case .templates: return "Template"
+            case .favorites: return "Favorite"
+            }
+        }
     }
     
 //    MARK: Page Picker
@@ -34,7 +42,7 @@ struct CategoriesPageView: View {
         }
         .if( activePage == page ) { view in view.tintRectangularBackground() }
         .if( activePage != page ) { view in view.secondaryOpaqueRectangularBackground() }
-        .onTapGesture { activePage = page }
+        .onTapGesture { withAnimation { activePage = page }}
     }
     
     @ViewBuilder
@@ -55,6 +63,9 @@ struct CategoriesPageView: View {
     
     @State var showingCreateTagView: Bool = false
     @State var showingCreateEventView: Bool = false
+    @State var showingCreateFavoriteEventView: Bool = false
+    
+    
     @State var activePage: TagPage = .tags
     
     let events: [RecallCalendarEvent] 
@@ -66,11 +77,13 @@ struct CategoriesPageView: View {
             VStack(alignment: .leading) {
                 
                 HStack {
-                    UniversalText( activePage == .tags ? "Tags" : "Templates", size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true )
+                    UniversalText( activePage.rawValue, size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true )
                     Spacer()
-                    LargeRoundedButton(activePage == .tags ? "Create Tag" : "Template", icon: "arrow.up") {
+                
+                    LargeRoundedButton(activePage.getAddButtonName(), icon: "arrow.up") {
                         if activePage == .tags { showingCreateTagView = true }
                         if activePage == .templates { showingCreateEventView = true }
+                        if activePage == .favorites { showingCreateFavoriteEventView = true }
                     }
                 }
                 
@@ -95,6 +108,9 @@ struct CategoriesPageView: View {
         }
         .sheet(isPresented: $showingCreateEventView) {
             CalendarEventCreationView.makeEventCreationView(currentDay: .now, template: true)
+        }
+        .sheet(isPresented: $showingCreateFavoriteEventView) {
+            CalendarEventCreationView.makeEventCreationView(currentDay: .now, favorite: true)
         }
     }
     
