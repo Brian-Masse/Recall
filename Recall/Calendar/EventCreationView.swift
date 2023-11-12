@@ -263,7 +263,7 @@ struct CalendarEventCreationView: View {
                 Image(systemName: icon)
                     .padding(.bottom, 5)
                 UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
-            }
+            }.padding(.horizontal, 15)
             
             Spacer()
         }

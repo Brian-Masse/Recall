@@ -62,6 +62,7 @@ class RealmManager: ObservableObject {
     @MainActor lazy var indexQuery: (QueryPermission<RecallIndex>)                 = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     @MainActor lazy var dicQuery: (QueryPermission<DictionaryNode>)                = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     
+    
     @MainActor
     init() {
         self.checkLogin()
@@ -260,9 +261,12 @@ class RealmManager: ObservableObject {
     func authRealm(realm: Realm) async {
         self.realm = realm
         await self.addSubcriptions()
+        await RecallModel.updateManager.initialize()
         
         self.realmLoaded = true
         await self.checkProfile()
+        
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
     }
     
     private func addSubcriptions() async {
@@ -284,22 +288,24 @@ class RealmManager: ObservableObject {
     }
     
 //    MARK: Helper Functions
-    func addGenericSubcriptions<T>(name: String, query: @escaping ((Query<T>) -> Query<Bool>) ) async -> T? where T:RealmSwiftObject  {
+    func addGenericSubcriptions<T>(realm: Realm? = nil, name: String, query: @escaping ((Query<T>) -> Query<Bool>) ) async -> T? where T:RealmSwiftObject  {
             
-        let subscriptions = self.realm.subscriptions
+        let localRealm = (realm == nil) ? self.realm! : realm!
+        let subscriptions = localRealm.subscriptions
         
         do {
             try await subscriptions.update {
                 
                 let querySub = QuerySubscription(name: name, query: query)
-
-                if checkSubscription(name: name) {
+                
+                if checkSubscription(name: name, realm: localRealm) {
                     let foundSubscriptions = subscriptions.first(named: name)!
                     foundSubscriptions.updateQuery(toType: T.self, where: query)
                 }
-                else { subscriptions.append(querySub)}
+                else { subscriptions.append(querySub) }
             }
         } catch { print("error adding subcription: \(error)") }
+        
         return nil
     }
     
@@ -316,8 +322,8 @@ class RealmManager: ObservableObject {
         } catch { print("error adding subcription: \(error)") }
     }
     
-    private func checkSubscription(name: String) -> Bool {
-        let subscriptions = self.realm.subscriptions
+    private func checkSubscription(name: String, realm: Realm) -> Bool {
+        let subscriptions = realm.subscriptions
         let foundSubscriptions = subscriptions.first(named: name)
         return foundSubscriptions != nil
     }
@@ -377,16 +383,23 @@ class RealmManager: ObservableObject {
         }
     }
     
-    static func writeToRealm(_ block: () -> Void ) {
+//    in all add, update, and delete transactions, the user has the option to pass in a realm
+//    if they want to write to a different realm.
+//    This is a convenience function either choose that realm, if it has a value, or the default realm
+    static func getRealm(from realm: Realm?) -> Realm {
+        realm ?? RecallModel.realmManager.realm
+    }
+    
+    static func writeToRealm(_ realm: Realm? = nil, _ block: () -> Void ) {
         do {
-            if RecallModel.realmManager.realm.isInWriteTransaction { block() }
-            else { try RecallModel.realmManager.realm.write(block) }
+            if getRealm(from: realm).isInWriteTransaction { block() }
+            else { try getRealm(from: realm).write(block) }
             
         } catch { print("ERROR WRITING TO REALM:" + error.localizedDescription) }
     }
     
-    static func updateObject<T: Object>(_ object: T, _ block: (T) -> Void, needsThawing: Bool = true) {
-        RealmManager.writeToRealm {
+    static func updateObject<T: Object>(realm: Realm? = nil, _ object: T, _ block: (T) -> Void, needsThawing: Bool = true) {
+        RealmManager.writeToRealm(realm) {
             guard let thawed = object.thaw() else {
                 print("failed to thaw object: \(object)")
                 return
@@ -395,28 +408,28 @@ class RealmManager: ObservableObject {
         }
     }
     
-    static func addObject<T:Object>( _ object: T ) {
-        self.writeToRealm { RecallModel.realmManager.realm.add(object) }
+    static func addObject<T:Object>( _ object: T, realm: Realm? = nil ) {
+        self.writeToRealm(realm) { getRealm(from: realm).add(object) }
     }
     
-    static func retrieveObject<T:Object>( where query: ( (Query<T>) -> Query<Bool> )? = nil ) -> Results<T> {
-        if query == nil { return RecallModel.realmManager.realm.objects(T.self) }
-        else { return RecallModel.realmManager.realm.objects(T.self).where(query!) }
+    static func retrieveObject<T:Object>( realm: Realm? = nil, where query: ( (Query<T>) -> Query<Bool> )? = nil ) -> Results<T> {
+        if query == nil { return getRealm(from: realm).objects(T.self) }
+        else { return getRealm(from: realm).objects(T.self).where(query!) }
     }
     
     @MainActor
-    static func retrieveObjects<T: Object>(where query: ( (T) -> Bool )? = nil ) -> [T] {
-        if query == nil { return Array(RecallModel.realmManager.realm.objects(T.self)) }
-        else { return Array(RecallModel.realmManager.realm.objects(T.self).filter(query!)  ) }
+    static func retrieveObjects<T: Object>(realm: Realm? = nil, where query: ( (T) -> Bool )? = nil) -> [T] {
+        if query == nil { return Array(getRealm(from: realm).objects(T.self)) }
+        else { return Array(getRealm(from: realm).objects(T.self).filter(query!)  ) }
         
         
     }
     
-    static func deleteObject<T: RealmSwiftObject>( _ object: T, where query: @escaping (T) -> Bool ) where T: Identifiable {
+    static func deleteObject<T: RealmSwiftObject>( _ object: T, where query: @escaping (T) -> Bool, realm: Realm? = nil ) where T: Identifiable {
         
-        if let obj = RecallModel.realmManager.realm.objects(T.self).filter( query ).first {
+        if let obj = getRealm(from: realm).objects(T.self).filter( query ).first {
             self.writeToRealm {
-                RecallModel.realmManager.realm.delete(obj)
+                getRealm(from: realm).delete(obj)
             }
         }
     }

@@ -739,8 +739,8 @@
             filePath = "Recall/Main/RecallModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
             landmarkName = "setActiveColor(from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -851,9 +851,9 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
-            landmarkName = "addGenericSubcriptions(name:query:)"
+            startingLineNumber = "303"
+            endingLineNumber = "303"
+            landmarkName = "addGenericSubcriptions(realm:name:query:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1188,6 +1188,22 @@
             startingLineNumber = "223"
             endingLineNumber = "223"
             landmarkName = "onTap()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9FEB38C9-04C0-47B6-B159-BC1C060F2ECD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Main/UpdateManager/UpdateManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "initialize()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

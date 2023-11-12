@@ -27,7 +27,7 @@ struct FavoritesPageView: View {
     private func setup() {
         filteredEvents = filterEvents()
         groupEvents()
-    }
+    }   
     
     private func filterEvents() -> [RecallCalendarEvent] {
         events.filter { event in event.isFavorite }.sorted { event1, event2 in
