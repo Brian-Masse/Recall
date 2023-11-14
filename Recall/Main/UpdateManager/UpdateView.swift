@@ -84,7 +84,7 @@ struct UpdateView: View {
                         
                         VStack {
                             if updateManager.outdatedUpdates.count > 0 {
-                                makeIndividualUpdateView(update: updateManager.outdatedUpdates[ updateManager.outdatedUpdates.count - 1 - activeUpdateIndex],
+                                makeIndividualUpdateView(update: updateManager.outdatedUpdates[activeUpdateIndex],
                                                          mainUpdate: true,
                                                          geo: geo)
                             }

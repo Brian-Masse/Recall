@@ -52,7 +52,6 @@ class UpdateManager: ObservableObject {
         
         self.saveVersion("1.0.0")
         
-
 //        if this function detects that the client is freshly updated, it will capture all the update logs
 //        and store them in the 'outdatedUpdates' var
         self.localVersion = retrieveLocalVersion()
@@ -69,7 +68,9 @@ class UpdateManager: ObservableObject {
         }
         let version = "1.0.0"
         let recentUpdateObject = RecallRecentUpdate(version: version)
-        RealmManager.addObject(  recentUpdateObject, realm: self.realm )
+        if RecallModel.ownerID == "64e3f9d5ac7aee58fbbceb37" {
+            RealmManager.addObject(  recentUpdateObject, realm: self.realm)
+        }
         return recentUpdateObject
     }
     
@@ -169,7 +170,7 @@ class UpdateManager: ObservableObject {
         if let user = self.user {
             let configuration = createConfiguration(user: user)
             do {
-                self.realm = try await Realm(configuration: configuration)
+                self.realm = try await Realm(configuration: configuration, downloadBeforeOpen: .always)
             } catch {
                 print( "error opening updateRealm: \(error.localizedDescription)" )
             }
