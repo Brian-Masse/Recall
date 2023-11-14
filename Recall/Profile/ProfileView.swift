@@ -185,7 +185,7 @@ struct ProfileView: View {
         
         VStack(alignment: .leading) {
             
-            UniversalText( "Settings", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+            UniversalText( "Preferences", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
             
             VStack(alignment: .leading) {
                 makeEventSettings()

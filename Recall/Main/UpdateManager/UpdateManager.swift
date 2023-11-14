@@ -50,7 +50,7 @@ class UpdateManager: ObservableObject {
         
         await self.openRealm()
         
-        self.saveVersion("1.0.0")
+//        self.saveVersion("1.0.0")
         
 //        if this function detects that the client is freshly updated, it will capture all the update logs
 //        and store them in the 'outdatedUpdates' var

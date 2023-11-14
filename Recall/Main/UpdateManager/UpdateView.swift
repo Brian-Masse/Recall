@@ -15,7 +15,7 @@ struct UpdateView: View {
 //    MARK: Vars
     @ObservedObject var updateManager = RecallModel.updateManager
     
-    @State var activeUpdateIndex: Int = 1
+    @State var activeUpdateIndex: Int = 0
     @State var activeUpdatePageIndex: Int = 0
     
 //    MARK: ViewBuilders
@@ -86,8 +86,7 @@ struct UpdateView: View {
         VStack(alignment: .leading) {
             
             UniversalText( page.pageTitle, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-                .padding(.bottom, 5)
-                .padding(.leading, 5)
+                .padding(5)
             
             if !page.imageName.isEmpty {
                 HStack {
