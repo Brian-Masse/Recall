@@ -15,10 +15,35 @@ struct UpdateView: View {
 //    MARK: Vars
     @ObservedObject var updateManager = RecallModel.updateManager
     
-    @State var activeUpdateIndex: Int = 0
-    
+    @State var activeUpdateIndex: Int = 1
+    @State var activeUpdatePageIndex: Int = 0
     
 //    MARK: ViewBuilders
+    
+    @ViewBuilder
+    private func makeTabViewIndicator( pageIndex: Int ) -> some View {
+        
+        Circle()
+            .frame(width: 7, height: 7)
+            .onTapGesture { withAnimation { activeUpdatePageIndex = pageIndex }}
+            .if(pageIndex != activeUpdatePageIndex) { view in
+                view.foregroundStyle( .gray.opacity(0.5) )
+            }
+            .if(pageIndex == activeUpdatePageIndex) { view in
+                view.universalForegroundColor()
+            }
+    }
+    
+    @ViewBuilder
+    private func makeTabViewIndicators(update: RecallUpdate) -> some View {
+        HStack {
+            Spacer()
+            ForEach(update.pages.indices, id: \.self) { i in
+                makeTabViewIndicator(pageIndex: i)
+            }
+            Spacer()
+        }
+    }
     
     @ViewBuilder
     private func makeIndividualUpdateView(update: RecallUpdate, mainUpdate: Bool, geo: GeometryProxy ) -> some View {
@@ -31,42 +56,60 @@ struct UpdateView: View {
                 .padding(.trailing, 20)
                 .padding(.bottom)
             
-            TabView {
-                ForEach( update.pages, id: \.pageDescription ) { page in
-                    makeUpdatePageView(page: page)
+            VStack {
+                if update.pages.count > 1 {
+                    TabView(selection: $activeUpdatePageIndex) {
+                        ForEach( update.pages.indices, id: \.self ) { i in
+                            makeUpdatePageView(page: update.pages[i], geo: geo).tag(i)
+                        }
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .frame(height: geo.size.height * (4.5/10))
+                    
+                    makeTabViewIndicators(update: update)
+                        .padding(.bottom, 5)
+                    
+                } else {
+                    makeUpdatePageView(page: update.pages[0], geo: geo, takeFullSapce: false)
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            .frame(height: geo.size.height * (4.5/10))
+            .if( update.pages.count > 1 ) { view in view.opaqueRectangularBackground(5, stroke: true) }
+            .padding(.bottom, 7)
             
             LargeRoundedButton("sounds good", icon: "arrow.forward", wide: true) { withAnimation { updateManager.dismissUpdateView() }}
         }
     }
     
     @ViewBuilder
-    private func makeUpdatePageView( page: RecallUpdatePage ) -> some View {
+    private func makeUpdatePageView( page: RecallUpdatePage, geo: GeometryProxy, takeFullSapce: Bool = true ) -> some View {
         
         VStack(alignment: .leading) {
             
             UniversalText( page.pageTitle, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
                 .padding(.bottom, 5)
+                .padding(.leading, 5)
             
             if !page.imageName.isEmpty {
                 HStack {
                     Spacer()
                     Image(page.imageName)
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: geo.size.width - 100)
+                        .clipped()
                     Spacer()
                 }
-                .padding(.bottom, 5)
+                .padding(.bottom)
             }
             
             UniversalText( page.pageDescription,
-                           size: page.imageName.isEmpty ? Constants.UIDefaultTextSize : Constants.UISmallTextSize,
+                           size: Constants.UISmallTextSize,
                            font: Constants.mainFont )
-                .padding(.bottom, 5)
-            Spacer()
+            .padding(.trailing, page.imageName.isEmpty ? 10 : 0)
+            .padding(.horizontal, 15)
+            .padding(.bottom, 5)
+            
+            if takeFullSapce { Spacer() }
         }
         
     }

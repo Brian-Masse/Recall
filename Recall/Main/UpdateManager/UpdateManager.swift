@@ -120,6 +120,25 @@ class UpdateManager: ObservableObject {
             
         }
     }
+    
+//    This should only be run once per update page. This is just an easier way to add pages than throught eh mongoDB website
+    @MainActor
+    private func addPage( _ page: RecallUpdatePage, to updateVersion: String ) {
+        
+        if let update: RecallUpdate = RealmManager.retrieveObjects(realm: self.realm, where: { query in
+            query.version == updateVersion
+        }).first {
+            
+            if !update.pages.contains(where: { updatePage in
+                updatePage.pageTitle == page.pageTitle
+            }) {
+                
+                RealmManager.updateObject(realm: self.realm, update) { thawed in
+                    update.pages.append(page)
+                }
+            }
+        }
+    }
 
     
 //    MARK: Convenience Function
