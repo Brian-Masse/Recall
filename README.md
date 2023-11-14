@@ -43,6 +43,7 @@ _features_
 - added a way to favorite and view favorited events
 - added a way to change the date of a single event
 - added a way to recall events by length
+- added a splash screen to show new features in an update
 
 CHANGES:
 

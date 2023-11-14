@@ -45,12 +45,35 @@ struct UpdateView: View {
         }
     }
     
+//    MARK: IndividualUpdateView
     @ViewBuilder
-    private func makeIndividualUpdateView(update: RecallUpdate, mainUpdate: Bool, geo: GeometryProxy ) -> some View {
+    private func makeShowAllUpdatesButton() -> some View {
+        Menu {
+            ForEach( updateManager.outdatedUpdates.indices, id: \.self ) { i in
+                let index = updateManager.outdatedUpdates.count - 1 - i
+                ContextMenuButton(updateManager.outdatedUpdates[index].version, icon: "arrow.right") {
+                    withAnimation { activeUpdateIndex = index }
+                }
+            }
+        } label: {
+            HStack {
+                Spacer()
+                UniversalText("View all udpates", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                Image(systemName: "arrow.up.doc")
+                Spacer()
+            }
+            .secondaryOpaqueRectangularBackground()
+            .universalTextStyle()
+        }
+    }
+    
+    @ViewBuilder
+    private func makeIndividualUpdateView(update: RecallUpdate, geo: GeometryProxy ) -> some View {
         
         VStack(alignment: .leading) {
             UniversalText( "Whats new in Recall?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
                 .padding(.bottom, 5)
+                .universalTextStyle()
             
             UniversalText( update.updateDescription, size: Constants.UISmallTextSize, font: Constants.mainFont)
                 .padding(.trailing, 20)
@@ -76,10 +99,13 @@ struct UpdateView: View {
             .if( update.pages.count > 1 ) { view in view.opaqueRectangularBackground(5, stroke: true) }
             .padding(.bottom, 7)
             
+            makeShowAllUpdatesButton()
+            
             LargeRoundedButton("sounds good", icon: "arrow.forward", wide: true) { withAnimation { updateManager.dismissUpdateView() }}
         }
     }
     
+//    MARK: UpdatePage
     @ViewBuilder
     private func makeUpdatePageView( page: RecallUpdatePage, geo: GeometryProxy, takeFullSapce: Bool = true ) -> some View {
         
@@ -110,7 +136,6 @@ struct UpdateView: View {
             
             if takeFullSapce { Spacer() }
         }
-        
     }
     
     
@@ -126,9 +151,7 @@ struct UpdateView: View {
                         
                         VStack {
                             if updateManager.outdatedUpdates.count > 0 {
-                                makeIndividualUpdateView(update: updateManager.outdatedUpdates[activeUpdateIndex],
-                                                         mainUpdate: true,
-                                                         geo: geo)
+                                makeIndividualUpdateView(update: updateManager.outdatedUpdates[activeUpdateIndex], geo: geo)
                             }
                         }
                         .opaqueRectangularBackground()

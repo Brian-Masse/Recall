@@ -22,7 +22,7 @@ class UpdateManager: ObservableObject {
     static let updateAppID = "recalupdateapp-rhkhr"
     static let globalOwnerId = "global-id"
     static let localVersionKey = "localVeresionKey"
-    static let deploymentVersion = "1.2.1"
+    static let deploymentVersion = "1.2.0"
     
     var localVersion: String = "0.0.0"
     
@@ -50,12 +50,10 @@ class UpdateManager: ObservableObject {
         
         await self.openRealm()
         
-//        self.saveVersion("1.0.0")
-        
 //        if this function detects that the client is freshly updated, it will capture all the update logs
 //        and store them in the 'outdatedUpdates' var
         self.localVersion = retrieveLocalVersion()
-    
+        
     }
     
 //    MARK: Version Management
@@ -89,7 +87,7 @@ class UpdateManager: ObservableObject {
                     outDatedVersions.contains { str in str == query.version }
                 }
                 
-                self.outdatedUpdates = updates
+                self.outdatedUpdates = updates.first!.version == UpdateManager.deploymentVersion ? updates : updates.reversed()
                 
                 return localVersion
             }
@@ -135,6 +133,23 @@ class UpdateManager: ObservableObject {
                 
                 RealmManager.updateObject(realm: self.realm, update) { thawed in
                     update.pages.append(page)
+                }
+            }
+        }
+    }
+    
+    @MainActor
+    private func updatePage( _ version: String, title: String, newTitle: String? = nil, newDescription: String? = nil ) {
+        
+        if let update: RecallUpdate = RealmManager.retrieveObject(realm: self.realm, where: { query in
+            query.version == version
+        }).first {
+            
+            if let updatePage = update.pages.first(where: { page in page.pageTitle == title }) {
+                RealmManager.updateObject(realm: self.realm, updatePage) { thawed in
+                    
+                    thawed.pageTitle = newTitle == nil ? thawed.pageTitle : newTitle!
+                    thawed.pageDescription = newDescription == nil ? thawed.pageDescription : newDescription!
                 }
             }
         }
@@ -255,47 +270,5 @@ class RecallRecentUpdate: Object {
             }
         }
         return versions
-    }
-}
-
-class RecallUpdate: Object {
-    
-    @Persisted(primaryKey: true) var _id: ObjectId
-    @Persisted var ownerId: String = UpdateManager.globalOwnerId
-    
-    @Persisted var version: String = "0.0.0"
-    @Persisted var updateDescription: String = ""
-    
-    @Persisted var pages: RealmSwift.List<RecallUpdatePage> = List()
-    
-    
-    convenience init( version: String, description: String, pages: [RecallUpdatePage] ) {
-        self.init()
-        self.version = version
-        self.updateDescription = description
-        
-        self.pages.append(objectsIn: pages)
-    }
-    
-}
-
-class RecallUpdatePage: Object {
-    
-    @Persisted(primaryKey: true) var _id: ObjectId
-    @Persisted var ownerId: String = UpdateManager.globalOwnerId
-    
-    @Persisted var pageTitle: String = ""
-    @Persisted var pageDescription: String = ""
-    
-    @Persisted var imageName: String = ""
-    
-    
-    convenience init( _ title: String, pageDescription: String, imageName: String = "" ) {
-        self.init()
-        
-        self.pageTitle = title
-        self.pageDescription = pageDescription
-        self.imageName = imageName
-        
     }
 }
