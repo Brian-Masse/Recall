@@ -49,8 +49,6 @@ struct FavoritesPageView: View {
     }
     
     private func getDates() -> [Date] {
-        let dateFormatter = DateFormatter()
-        
         return groupedEvents.map { key, value in key}.sorted { date1, date2 in
             date1 > date2
         }

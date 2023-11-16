@@ -74,8 +74,13 @@ struct CalendarEventView: View {
                 UniversalText("Notes", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
                     .padding(.bottom, 5)
                 
-                UniversalText( event.notes, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                    .padding(.trailing)
+                ScrollView(.vertical) {
+                    VStack {
+                        UniversalText( event.notes, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                            .padding(.trailing)
+                    }
+                }
+//                .frame(maxHeight: 250)
             }
         }
     }
