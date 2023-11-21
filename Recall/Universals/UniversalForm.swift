@@ -181,23 +181,39 @@ struct TextFieldWithPrompt: View {
         self.clearable = clearable
     }
     
+    @FocusState var focused: Bool
+    @State var showingClearButton: Bool = false
+    
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 5) {
             UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
             
-            HStack {
-                TextField("", text: binding)
-                    .padding( .trailing, 5 )
-                if clearable && !binding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    LargeRoundedButton("", icon: "xmark", wide: false, small: true) {
+            TextField("", text: binding, axis: .vertical)
+                .focused($focused)
+                .lineLimit(10)
+                .padding( .trailing, 5 )
+                .secondaryOpaqueRectangularBackground()
+                .universalTextField()
+                .onChange(of: self.focused) { value in
+                    withAnimation { self.showingClearButton = value }
+                }
+            
+            if showingClearButton && clearable && !binding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                VStack {
+                    HStack {
+                        Spacer()
+                        UniversalText( "clear", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                        Image(systemName: "xmark")
+                        Spacer()
+                        
+                    }
+                    .secondaryOpaqueRectangularBackground()
+                    .onTapGesture {
                         withAnimation { binding.wrappedValue = "" }
                     }
-                    .padding(-7)
-                }
+                }.transition(.opacity)
             }
-            .secondaryOpaqueRectangularBackground()
-            .universalTextField()
         }
     }
 }
