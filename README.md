@@ -23,7 +23,15 @@ I independently developed this project, from problem identification, project bra
 
 ## **Version History**
 
-### **Snapshot 1.2**
+### **Version 2.0.1**
+
+CHANGES:
+
+- redesigned the clear field button
+- made text field expand for multi-line entries
+- redesigned the date selector on the main page
+
+### **Version 2.0.0**
 
 NEW FEATURES
 
