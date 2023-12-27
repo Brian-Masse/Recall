@@ -53,24 +53,6 @@ private struct UniversalColoredBackground: ViewModifier {
             content
                 .universalBackground(padding: false)
                 .ignoresSafeArea()
-//                .background(
-//                    GeometryReader { geo in
-//                        VStack {
-////                            if colorScheme == .dark {
-//                            LinearGradient(colors: [color.opacity( colorScheme == .dark ? 0.1 : 0.25), .clear], startPoint: .top, endPoint: .bottom )
-//                                    .frame(maxHeight: 800)
-//                                Spacer()
-////                            }
-////                            else if colorScheme == .light {
-////                                Spacer()
-////                                LinearGradient(colors: [color.opacity(0.2), .clear], startPoint: .bottom, endPoint: .top )
-////                                    .frame(maxHeight: 800)
-////                            }
-//                        }
-//                    }
-//                        .universalBackground(padding: false)
-//                        .ignoresSafeArea()
-//                )
         }
     }
 }
@@ -95,7 +77,9 @@ private struct UniversalTextField: ViewModifier {
     func body(content: Content) -> some View {
         content
             .tint(Colors.tint)
-            .font(Font.custom(ProvidedFont.renoMono.rawValue, size: Constants.UIDefaultTextSize))
+        
+            
+            .font(Font.custom(ProvidedFont.renoMono.rawValue, fixedSize: Constants.UIDefaultTextSize))
     }
 }
 

@@ -22,7 +22,7 @@ class UpdateManager: ObservableObject {
     static let updateAppID = "recalupdateapp-rhkhr"
     static let globalOwnerId = "global-id"
     static let localVersionKey = "localVeresionKey"
-    static let deploymentVersion = "1.2.0"
+    static let deploymentVersion = "2.0.0"
     
     var localVersion: String = "0.0.0"
     
@@ -53,6 +53,12 @@ class UpdateManager: ObservableObject {
 //        if this function detects that the client is freshly updated, it will capture all the update logs
 //        and store them in the 'outdatedUpdates' var
         self.localVersion = retrieveLocalVersion()
+        
+//        This is a fail safe, if the user is on an outdated client, but no valid update screens exist, this simply bypasses the need to show it
+        if self.outdatedUpdates.count == 0 {
+            saveVersion(UpdateManager.deploymentVersion)
+            outdatedClient = false
+        }
         
     }
     
@@ -87,7 +93,8 @@ class UpdateManager: ObservableObject {
                     outDatedVersions.contains { str in str == query.version }
                 }
                 
-                self.outdatedUpdates = updates.first!.version == UpdateManager.deploymentVersion ? updates : updates.reversed()
+                
+                self.outdatedUpdates = updates.first?.version == UpdateManager.deploymentVersion ? updates : updates.reversed()
                 
                 return localVersion
             }

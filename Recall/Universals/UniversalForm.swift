@@ -189,12 +189,15 @@ struct TextFieldWithPrompt: View {
         VStack(alignment: .leading, spacing: 5) {
             UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
             
-            TextField("", text: binding, axis: .vertical)
+            UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            
+            TextField("", text: binding)
                 .focused($focused)
-                .lineLimit(10)
+                .lineLimit(1...)
+                .frame(maxWidth: .infinity)
                 .padding( .trailing, 5 )
-                .secondaryOpaqueRectangularBackground()
                 .universalTextField()
+                .secondaryOpaqueRectangularBackground()
                 .onChange(of: self.focused) { value in
                     withAnimation { self.showingClearButton = value }
                 }
