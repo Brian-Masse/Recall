@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 struct QuickLinks<EnumType: CaseIterable>: View where EnumType.AllCases: RandomAccessCollection, EnumType: Identifiable, EnumType:RawRepresentable, EnumType.RawValue == String {
     
@@ -17,7 +18,7 @@ struct QuickLinks<EnumType: CaseIterable>: View where EnumType.AllCases: RandomA
             Image(systemName: "arrow.up.forward")
             UniversalText(label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false)
         }
-        .tintRectangularBackground()
+        .rectangularBackground(style: .accent)
         .onTapGesture { withAnimation { proxy.scrollTo(label, anchor: .top) }}
     }
     
@@ -32,7 +33,9 @@ struct QuickLinks<EnumType: CaseIterable>: View where EnumType.AllCases: RandomA
                     makeContentsButton(label: content.rawValue, proxy: value)
                 }
             }
-        }.secondaryOpaqueRectangularBackground(7)    }
+        }
+        .rectangularBackground(7, style: .secondary)
+    }
 }
 
 

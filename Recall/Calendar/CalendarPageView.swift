@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 struct CalendarPageView: View {
     
@@ -96,7 +97,7 @@ struct CalendarPageView: View {
             .if(currentDay.matches(date, to: .day)) { view in
                 view
                     .padding()
-                    .tintRectangularBackground(0)
+                    .rectangularBackground(0, style: .accent)
             }
             .onTapGesture { setCurrentDay(with: date) }
     }
@@ -135,7 +136,7 @@ struct CalendarPageView: View {
             Spacer()
             
             ResizeableIcon(icon: "person", size: Constants.UIDefaultTextSize)
-                .secondaryOpaqueRectangularBackground()
+                .rectangularBackground(style: .secondary)
                 .padding(.leading)
                 .onTapGesture { showingProfileView = true }
         }

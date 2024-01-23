@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIUniversals
 
 struct CalendarContainer: View {
     
@@ -72,7 +73,7 @@ struct CalendarContainer: View {
             HStack {
                 Image(systemName: "chevron.left")
                     .padding(7)
-                    .rectangularBackgorund()
+                    .rectangularBackground(style: .primary)
                     .onTapGesture { currentDay -= Constants.DayTime }
                 Spacer()
                 
@@ -82,7 +83,7 @@ struct CalendarContainer: View {
                 UniversalText( "\(Calendar.current.component(.day, from: currentDay))", size: Constants.UIDefaultTextSize, true )
                     .padding()
                     .foregroundColor(Colors.tint)
-                    .rectangularBackgorund()
+                    .rectangularBackground(style: .primary)
                 
                 makeDateSelector( currentDay + 1 * Constants.DayTime )
                 makeDateSelector( currentDay + 2 * Constants.DayTime )
@@ -91,7 +92,7 @@ struct CalendarContainer: View {
                 
                 Image(systemName: "chevron.right")
                     .padding(7)
-                    .rectangularBackgorund()
+                    .rectangularBackground(style: .primary)
                     .onTapGesture { currentDay += Constants.DayTime }
             }
         }
@@ -234,7 +235,7 @@ struct CalendarContainer: View {
                     value.scrollTo( id, anchor: .center )
                 }
                 .if(background) { view in
-                    view.opaqueRectangularBackground(7, stroke: true)
+                    view.rectangularBackground(7, style: .primary, stroke: true)
                 }
             }
             .onTapGesture { tapGesture() }

@@ -41,7 +41,7 @@ struct GoalView: View {
         }
         .padding(5)
         .frame(width: 115)
-        .secondaryOpaqueRectangularBackground()
+        .rectangularBackground(style: .secondary)
         
     }
     
@@ -75,7 +75,7 @@ struct GoalView: View {
                 makeOverViewDataView(title: "created on", icon: "calendar.badge.clock", data: "\(goal.creationDate.formatted(date: .numeric, time: .omitted))")
             }
         }
-        .secondaryOpaqueRectangularBackground()
+        .rectangularBackground(style: .secondary)
         .padding(.bottom)
     }
     
@@ -91,9 +91,10 @@ struct GoalView: View {
                     Image(systemName: "arrow.up.right")
                     UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                     
-                }.opaqueRectangularBackground()
+                }
+                .rectangularBackground(style: .primary)
             }
-            .secondaryOpaqueRectangularBackground(7)
+            .rectangularBackground(7, style: .secondary)
         }
     }
     
@@ -107,7 +108,7 @@ struct GoalView: View {
                 LargeRoundedButton("change goal target", icon: "arrow.up.forward") { showingEditingScreen = true }
             }
         }
-        .secondaryOpaqueRectangularBackground(7)
+        .rectangularBackground(7, style: .secondary)
         .padding(.bottom)
     }
     
@@ -135,12 +136,12 @@ struct GoalView: View {
         ActivityPerDay(recentData: false, title: "activites per day", goal: goal, data: dataModel.progressOverTimeData)
             .frame(height: 160)
             .padding(5)
-            .secondaryOpaqueRectangularBackground()
+            .rectangularBackground(style: .secondary)
 
         TotalActivites(title: "total activities", goal: goal, events: events, showYAxis: true)
             .frame(height: 160)
             .padding(5)
-            .secondaryOpaqueRectangularBackground()
+            .rectangularBackground(style: .secondary)
     }
     
 //    MARK: Body

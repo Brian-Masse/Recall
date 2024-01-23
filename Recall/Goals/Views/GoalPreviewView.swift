@@ -99,7 +99,7 @@ struct GoalPreviewView: View {
 
             Spacer()
         }
-        .opaqueRectangularBackground(0, stroke: true)
+        .rectangularBackground(0, style: .primary, stroke: true)
         .onTapGesture { showingGoalView = true }
         .contextMenu {
             Button { showingEditingView = true }  label:          { Label("edit", systemImage: "slider.horizontal.below.rectangle") }

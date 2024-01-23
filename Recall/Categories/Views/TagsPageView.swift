@@ -29,7 +29,7 @@ struct TagPageView: View {
                    }
                }
            }
-           .opaqueRectangularBackground(stroke: true)
+           .rectangularBackground(style: .primary, stroke: true)
        }
        .padding(.bottom)
    }

@@ -64,7 +64,7 @@ struct TemplatePageView: View {
                         Wrapper(events: events, template: template)
                     }
                 }
-                .opaqueRectangularBackground(7, stroke: true)
+                .rectangularBackground(7, style: .primary, stroke: true)
                 .padding(.bottom, Constants.UIBottomOfPagePadding)
                 .padding(.top)
             }

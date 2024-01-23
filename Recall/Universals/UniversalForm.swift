@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIUniversals
 
 //MARK: Basic
 
@@ -29,7 +30,7 @@ struct ColorPickerOption: View {
                     .foregroundColor(color)
                     .frame(width: size, height: size)
                     .padding(7)
-                    .rectangularBackgorund()
+                    .rectangularBackground(style: .primary)
             } else {
                 Circle()
                     .foregroundColor(color)
@@ -197,7 +198,7 @@ struct TextFieldWithPrompt: View {
                 .frame(maxWidth: .infinity)
                 .padding( .trailing, 5 )
                 .universalTextField()
-                .secondaryOpaqueRectangularBackground()
+                .rectangularBackground(style: .secondary)
                 .onChange(of: self.focused) { value in
                     withAnimation { self.showingClearButton = value }
                 }
@@ -211,7 +212,7 @@ struct TextFieldWithPrompt: View {
                         Spacer()
                         
                     }
-                    .secondaryOpaqueRectangularBackground()
+                    .rectangularBackground(style: .secondary)
                     .onTapGesture {
                         withAnimation { binding.wrappedValue = "" }
                     }
@@ -238,7 +239,7 @@ struct StyledSlider: View {
                 .tint(Colors.tint)
             
             TextField("", text: strBinding)
-                .secondaryOpaqueRectangularBackground()
+                .rectangularBackground(style: .secondary)
                 .universalTextField()
                 .frame(width: textFieldWidth)
         }
@@ -568,7 +569,7 @@ struct StyledDatePicker: View {
                 UniversalText( "select", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
             .tint(Colors.tint)
-            .secondaryOpaqueRectangularBackground()
+            .rectangularBackground(style: .secondary)
         }
     }
     

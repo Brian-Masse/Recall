@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIUniversals
 
 //MARK: Events DataSummaries
 //All the data passed to summaries should be compressed
@@ -127,7 +128,7 @@ struct DataSummaryList: View {
                 .if(!striped) { view in view.padding(.bottom, 5) }
                 .if(striped) { view in view.padding(.horizontal, 7) }
                 .if(striped && !i.isMultiple(of: 2)) { view in
-                    view.secondaryOpaqueRectangularBackground(7)
+                    view.rectangularBackground(7, style: .secondary)
                 }
             }
         }

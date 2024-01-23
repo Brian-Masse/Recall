@@ -90,8 +90,8 @@ extension TutorialViews {
                             Image(systemName: "arrow.up.forward")
                             UniversalText(goal.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                         }
-                        .if(!hasGoalRating(at: key)) { view in view.secondaryOpaqueRectangularBackground() }
-                        .if(hasGoalRating(at: key)) { view in view.tintRectangularBackground() }
+                        .if(!hasGoalRating(at: key)) { view in view.rectangularBackground(style: .secondary) }
+                        .if(hasGoalRating(at: key)) { view in view.rectangularBackground(style: .accent) }
                         .onTapGesture {
                             if goalRatings[key] == nil { goalRatings[key] = "1" }
                             else { goalRatings[key] = nil }

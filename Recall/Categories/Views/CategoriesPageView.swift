@@ -40,8 +40,8 @@ struct CategoriesPageView: View {
             }
             Spacer()
         }
-        .if( activePage == page ) { view in view.tintRectangularBackground() }
-        .if( activePage != page ) { view in view.secondaryOpaqueRectangularBackground() }
+        .if( activePage == page ) { view in view.rectangularBackground(style: .accent) }
+        .if( activePage != page ) { view in view.rectangularBackground(style: .secondary) }
         .onTapGesture { withAnimation { activePage = page }}
     }
     

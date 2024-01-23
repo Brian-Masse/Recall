@@ -56,7 +56,7 @@ struct CalendarEventView: View {
             
             Spacer()
         }
-        .secondaryOpaqueRectangularBackground()
+        .rectangularBackground(style: .secondary)
     }
     
     @State var templateDeletionAlert: Bool = false
@@ -115,7 +115,7 @@ struct CalendarEventView: View {
                 UniversalText("Goal Progress", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
                 GoalTags(goalRatings: Array(event.goalRatings), events: events)
             }
-        }.opaqueRectangularBackground(7, stroke: true)
+        }.rectangularBackground(7, style: .primary, stroke: true)
     }
     
     @ViewBuilder
@@ -131,7 +131,7 @@ struct CalendarEventView: View {
                 }
             }
         }
-        .secondaryOpaqueRectangularBackground(7)
+        .rectangularBackground(7, style: .secondary)
     }
     
     @ViewBuilder

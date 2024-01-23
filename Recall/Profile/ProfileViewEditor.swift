@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 @MainActor
 struct ProfileEditorView: View {
@@ -82,11 +83,11 @@ struct ProfileEditorView: View {
             
             TextField("first name", text: $firstName)
                 .universalTextField()
-                .secondaryOpaqueRectangularBackground()
+                .rectangularBackground(style: .secondary)
             
             TextField("last name", text: $lastName)
                 .universalTextField()
-                .secondaryOpaqueRectangularBackground()
+                .rectangularBackground(style: .secondary)
         }
     }
     
@@ -99,7 +100,7 @@ struct ProfileEditorView: View {
             UniversalText( "phone number", size: Constants.UIHeaderTextSize, font: Constants.titleFont  )
             TextField( "phoneNumber", text: makePhoneNumberBinding() )
                 .universalTextField()
-                .secondaryOpaqueRectangularBackground()
+                .rectangularBackground(style: .secondary)
                 .keyboardType(.numberPad)
         }
     }
@@ -112,7 +113,7 @@ struct ProfileEditorView: View {
                 UniversalText( "select", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
             .tint(Colors.tint)
-            .secondaryOpaqueRectangularBackground()
+            .rectangularBackground(style: .secondary)
         }
         
     }
@@ -142,7 +143,7 @@ struct ProfileEditorView: View {
                         
                     }
                 }
-                .opaqueRectangularBackground()
+                .rectangularBackground(style: .primary)
                 
                 LargeRoundedButton("done", icon: "arrow.down") { submit() }
                     .padding(.bottom, 20)
@@ -150,7 +151,7 @@ struct ProfileEditorView: View {
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .universalBackgroundColor()
+        .universalStyledBackgrond(.accent)
         .defaultAlert($showingError,
                       title: "Incomplete Form",
                       description: "\(errorMessage)")

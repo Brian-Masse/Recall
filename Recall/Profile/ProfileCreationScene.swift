@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import SwiftUI
+import UIUniversals
 
 struct ProfileCreationView: View {
     
@@ -153,7 +154,7 @@ struct ProfileCreationView: View {
             
             Rectangle()
                 .cornerRadius(Constants.UIDefaultCornerRadius)
-                .universalForegroundColor()
+                .universalStyledBackgrond(.accent, onForeground: true)
                 .frame(width: 50 * progress, height: 10)
             
         }
@@ -272,7 +273,7 @@ struct ProfileCreationView: View {
 
             HStack {
                 makeNotificationSelector(label: "yes")
-                    .tintRectangularBackground()
+                    .rectangularBackground(style: .accent)
                     .onTapGesture { withAnimation {
                         showingContinueButton = true
                         Task {
@@ -283,7 +284,7 @@ struct ProfileCreationView: View {
                     }}
                 
                 makeNotificationSelector(label: "no, thanks")
-                    .secondaryOpaqueRectangularBackground()
+                    .rectangularBackground(style: .secondary)
                     .onTapGesture { withAnimation {
                         showingContinueButton = true
                         enabledReminder = false

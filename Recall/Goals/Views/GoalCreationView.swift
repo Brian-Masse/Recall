@@ -45,12 +45,12 @@ struct GoalCreationView: View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { frequence = selection }
             .if(frequence == selection) { view in
-                view.accentRectangularBackground()
+                view.rectangularBackground(25, style: .accent)
             }
             .if(frequence != selection) { view in
                 view
                     .padding(10)
-                    .secondaryOpaqueRectangularBackground()
+                    .rectangularBackground(style: .secondary)
             }
     }
     
@@ -58,23 +58,23 @@ struct GoalCreationView: View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { priority = selection }
             .if(priority == selection) { view in
-                view.accentRectangularBackground()
+                view.rectangularBackground(25, style: .accent)
             }
             .if(priority != selection) { view in
                 view
                     .padding(10)
-                    .secondaryOpaqueRectangularBackground()
+                    .rectangularBackground(style: .secondary)
             }
     }
     
     @ViewBuilder func makeTypePickerOption(label: String, selection: RecallGoal.GoalType) -> some View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { type = selection }
-            .if(type == selection) { view in view.accentRectangularBackground() }
+            .if(type == selection) { view in view.rectangularBackground(25, style: .accent) }
             .if(type != selection) { view in
                 view
                     .padding(10)
-                    .secondaryOpaqueRectangularBackground()
+                    .rectangularBackground(style: .secondary)
             }
     }
     
@@ -174,8 +174,8 @@ struct GoalCreationView: View {
                         UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                     }
                     .onTapGesture { targetTag = tag }
-                    .if( targetTag?.label ?? "" != tag.label ) { view in view.secondaryOpaqueRectangularBackground() }
-                    .if( targetTag?.label ?? "" == tag.label ) { view in view.tintRectangularBackground() }
+                    .if( targetTag?.label ?? "" != tag.label ) { view in view.rectangularBackground(style: .secondary) }
+                    .if( targetTag?.label ?? "" == tag.label ) { view in view.rectangularBackground(style: .accent) }
                 }
             }.padding(.bottom)
         }
@@ -234,7 +234,7 @@ struct GoalCreationView: View {
             }
             .padding(5)
             .universalTextStyle()
-            .opaqueRectangularBackground()
+            .rectangularBackground(style: .primary)
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)

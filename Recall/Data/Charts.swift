@@ -68,7 +68,7 @@ struct AverageActivityByTag: View {
                     RuleMark(x: .value("X", label))
                         .annotation(position: .top) {
                             UniversalText( label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                                .secondaryOpaqueRectangularBackground()
+                                .rectangularBackground(style: .secondary)
                         }
                         .foregroundStyle( Constants.tagColorsDic[ label ] ?? Colors.tint )
                 }
@@ -106,14 +106,6 @@ struct AverageActivityByTag: View {
                     }
                 }
             }
-//            .chartXAxis {
-//                AxisMarks { value in
-//                    AxisValueLabel(orientation: .vertical)
-//                }
-//            }
-//            .frame(width: 20 * CGFloat(tags.count))
-//        }
-//        .secondaryOpaqueRectangularBackground()
     }
 }
 

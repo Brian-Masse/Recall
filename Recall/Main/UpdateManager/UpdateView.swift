@@ -7,8 +7,7 @@
 
 import Foundation
 import SwiftUI
-
-
+import UIUniversals
 
 struct UpdateView: View {
     
@@ -30,7 +29,7 @@ struct UpdateView: View {
                 view.foregroundStyle( .gray.opacity(0.5) )
             }
             .if(pageIndex == activeUpdatePageIndex) { view in
-                view.universalForegroundColor()
+                view.universalStyledBackgrond(.accent, onForeground: true)
             }
     }
     
@@ -62,7 +61,7 @@ struct UpdateView: View {
                 Image(systemName: "arrow.up.doc")
                 Spacer()
             }
-            .secondaryOpaqueRectangularBackground()
+            .rectangularBackground(style: .secondary)
             .universalTextStyle()
         }
     }
@@ -96,7 +95,7 @@ struct UpdateView: View {
                     makeUpdatePageView(page: update.pages[0], geo: geo, takeFullSapce: false)
                 }
             }
-            .if( update.pages.count > 1 ) { view in view.opaqueRectangularBackground(5, stroke: true) }
+            .if( update.pages.count > 1 ) { view in view.rectangularBackground(5, style: .primary, stroke: true) }
             .padding(.bottom, 7)
             
             makeShowAllUpdatesButton()
@@ -146,7 +145,7 @@ struct UpdateView: View {
                 GeometryReader { geo in
                     ZStack {
                         Rectangle()
-                            .reversedUniversalTextStyle()
+                            .universalTextStyle(reversed: true)
                             .opacity(0.8)
                         
                         VStack {
@@ -154,7 +153,7 @@ struct UpdateView: View {
                                 makeIndividualUpdateView(update: updateManager.outdatedUpdates[activeUpdateIndex], geo: geo)
                             }
                         }
-                        .opaqueRectangularBackground()
+                        .rectangularBackground(style: .primary)
                         .shadow(color: .black.opacity(0.3),
                                 radius: 10, y: 10)
                         .padding()

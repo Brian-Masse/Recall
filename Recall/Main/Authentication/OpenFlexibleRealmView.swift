@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 struct OpenFlexibleSyncRealmView: View {
     
@@ -93,12 +94,11 @@ struct OpenFlexibleSyncRealmView: View {
                         Spacer()
                     }
                     .universalTextStyle()
-                    .secondaryOpaqueRectangularBackground()
+                    .rectangularBackground(style: .secondary)
                     .onTapGesture { dismissScreen() }
                 }
                 .frame(width: geo.size.width / 2.5)
-                .opaqueRectangularBackground(7, stroke: true)
-//                .shadow(radius: 20)
+                .rectangularBackground(7, style: .primary, stroke: true)
                 .padding()
                 .alert(isPresented: $showingAlert) { Alert(
                     title: Text(title),

@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-
+import UIUniversals
 
 //MARK: ViewModifiers
 
@@ -228,13 +228,13 @@ struct TutorialViews: View {
                 
                 Rectangle()
                     .cornerRadius(Constants.UIDefaultCornerRadius)
-                    .universalForegroundColor()
+                    .universalStyledBackgrond(.accent, onForeground: true )
                     .frame(width: 50 * progress, height: 10)
             }
             
         } else {
             Circle()
-                .if( scene.checkBroadSceneCompletion(from: passedScene)) { view in view.universalForegroundColor() }
+                .if( scene.checkBroadSceneCompletion(from: passedScene)) { view in view.universalStyledBackgrond(.accent, onForeground: true) }
                 .if( !scene.checkBroadSceneCompletion(from: passedScene)) { view in
                     view
                         .universalTextStyle()

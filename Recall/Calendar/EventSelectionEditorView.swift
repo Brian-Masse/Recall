@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
-
+import UIUniversals
 
 struct EventSelectionEditorView: View {
 
@@ -108,7 +108,7 @@ struct EventSelectionEditorView: View {
                     }
                 }
             }
-            .secondaryOpaqueRectangularBackground(5)
+            .rectangularBackground(5, style: .secondary)
             HStack {
                 UniversalText( "\( selection.count ) \(formatString()) selected", size: Constants.UISmallTextSize, font: Constants.mainFont )
                 Spacer()
@@ -130,7 +130,7 @@ struct EventSelectionEditorView: View {
             Image(systemName: icon)
             Spacer()
         }
-        .secondaryOpaqueRectangularBackground()
+        .rectangularBackground(style: .secondary)
         .onTapGesture { action() }
         
     }

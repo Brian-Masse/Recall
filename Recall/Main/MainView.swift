@@ -52,7 +52,7 @@ struct MainView: View {
                             .padding(.horizontal, 37)
                             .background {
                                 Rectangle()
-                                    .universalForegroundColor()
+                                    .universalStyledBackgrond(.accent, onForeground: true)
                                     .cornerRadius(70)
                                     .frame(width: 90, height: 90)
 //                                    .aspectRatio(1, contentMode: .fill)
