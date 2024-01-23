@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 extension TutorialViews {
 
@@ -22,7 +23,7 @@ extension TutorialViews {
         @State var sentTag: Bool = false
         
         @State var name: String = ""
-        @State var color: Color = Colors.tint
+        @State var color: Color = RecallModel.shared.activeColor
         @State var goalRatings: Dictionary<String, String> = Dictionary()
         
 
@@ -148,7 +149,7 @@ extension TutorialViews {
                                      tag: nil,
                                      label: "",
                                      goalRatings: Dictionary(),
-                                     color: Colors.tint)
+                                     color: RecallModel.shared.activeColor)
             }
             
         }

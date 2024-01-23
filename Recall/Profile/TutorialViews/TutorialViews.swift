@@ -164,7 +164,7 @@ struct TutorialViews: View {
                 if scene.rawValue >= 1 {
                     Group {
                         Image(systemName: "arrow.backward")
-                        UniversalText( "back", size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
+                        UniversalText( "back", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                     }
                     .opacity(0.5)
                     .onTapGesture { withAnimation { scene = scene.returnScene(in: broadScene) }}
@@ -173,7 +173,7 @@ struct TutorialViews: View {
                 Spacer()
                 
                 HStack {
-                    UniversalText( "skip", size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
+                    UniversalText( "skip", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                     Image(systemName: "arrow.forward")
                 }
                 .opacity(0.5)

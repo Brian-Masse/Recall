@@ -141,7 +141,7 @@ struct LargeFormRoundedButton: View {
         HStack {
             Spacer()
             Image(systemName: icon)
-            UniversalText(label, size: Constants.UIDefaultTextSize, lighter: true)
+            UniversalText(label, size: Constants.UIDefaultTextSize)
             Spacer()
         }
         .padding(.horizontal)
@@ -188,7 +188,7 @@ struct LargeRoundedButton: View {
         HStack {
             if wide { Spacer() }
             if label != "" {
-                UniversalText(label, size: Constants.UISubHeaderTextSize, font: .syneHeavy)
+                UniversalText(label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                     .minimumScaleFactor(0.7)
                     .lineLimit(1)
             }

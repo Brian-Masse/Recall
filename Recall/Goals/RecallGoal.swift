@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import UIUniversals
 
 //    MARK: Goal Node
 //    These will be stored in calendar events,

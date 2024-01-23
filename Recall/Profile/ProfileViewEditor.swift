@@ -112,7 +112,7 @@ struct ProfileEditorView: View {
             DatePicker(selection: $dateOfBirth, displayedComponents: .date) {
                 UniversalText( "select", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
-            .tint(Colors.tint)
+            .tint(RecallModel.shared.activeColor)
             .rectangularBackground(style: .secondary)
         }
         

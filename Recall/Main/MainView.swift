@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
-
+import UIUniversals
 
 //MARK: MainView
 struct MainView: View {
@@ -58,7 +58,7 @@ struct MainView: View {
 //                                    .aspectRatio(1, contentMode: .fill)
                                     .matchedGeometryEffect(id: "highlight", in: namespace)
                             }
-                            .shadow(color: Colors.tint.opacity(0.3), radius: 10)
+                            .shadow(color: RecallModel.shared.activeColor.opacity(0.3), radius: 10)
                         
                     } else {
                         makeIcon()

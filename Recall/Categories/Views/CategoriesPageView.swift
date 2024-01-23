@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
-
+import UIUniversals
 
 struct CategoriesPageView: View {
     
@@ -77,7 +77,7 @@ struct CategoriesPageView: View {
             VStack(alignment: .leading) {
                 
                 HStack {
-                    UniversalText( activePage.rawValue, size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true )
+                    UniversalText( activePage.rawValue, size: Constants.UITitleTextSize, font: Constants.titleFont, scale: true )
                     Spacer()
                 
                     LargeRoundedButton(activePage.getAddButtonName(), icon: "arrow.up") {
@@ -104,7 +104,7 @@ struct CategoriesPageView: View {
                                  tag: nil,
                                  label: "",
                                  goalRatings: Dictionary(),
-                                 color: Colors.tint)
+                                 color: RecallModel.shared.activeColor)
         }
         .sheet(isPresented: $showingCreateEventView) {
             CalendarEventCreationView.makeEventCreationView(currentDay: .now, template: true)

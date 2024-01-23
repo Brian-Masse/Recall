@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import SwiftUI
+import UIUniversals
 
 class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
@@ -155,7 +156,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     @MainActor
     func getColor() -> Color {
-        category?.getColor() ?? Colors.tint
+        category?.getColor() ?? RecallModel.shared.activeColor
     }
     
     func getTagLabel() -> String {

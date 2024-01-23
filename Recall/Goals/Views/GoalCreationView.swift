@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 struct GoalCreationView: View {
     
@@ -146,7 +147,7 @@ struct GoalCreationView: View {
                 .padding(.bottom)
         }
         
-        UniversalText("How frequently do you want to meet this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        UniversalText("How frequently do you want to meet this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
         HStack {
             Spacer()
             makePickerOptions(label: "Daily", selection: .daily)
@@ -157,7 +158,7 @@ struct GoalCreationView: View {
     
     @ViewBuilder
     private func makeTagSelection() -> some View {
-        UniversalText("What type of goal is this?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        UniversalText("What type of goal is this?", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
         HStack {
             Spacer()
             makeTypePickerOption(label: "hourly", selection: .hourly)
@@ -167,7 +168,7 @@ struct GoalCreationView: View {
         
         if type == .byTag {
             Group {
-                UniversalText("Which tag would you like to track?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+                UniversalText("Which tag would you like to track?", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                 WrappedHStack(collection: Array(tags)) { tag in
                     HStack {
                         Image(systemName: "tag")
@@ -194,7 +195,7 @@ struct GoalCreationView: View {
     
     @ViewBuilder
     private func makePrioritySelector() -> some View {
-        UniversalText("How would you like to prioritize this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        UniversalText("How would you like to prioritize this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
         HStack {
             Spacer()
             makePriorityPickerOptions(label: "High", selection: .high)
@@ -208,7 +209,7 @@ struct GoalCreationView: View {
     var body: some View {
         
         VStack(alignment: .leading) {
-            UniversalText(editing ? "Edit Goal" : "Create Goal", size: Constants.UITitleTextSize, font: Constants.titleFont, true)
+            UniversalText(editing ? "Edit Goal" : "Create Goal", size: Constants.UITitleTextSize, font: Constants.titleFont)
                 .padding(.bottom)
                 .foregroundColor(.black)
 
@@ -238,7 +239,7 @@ struct GoalCreationView: View {
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .background(Colors.tint)
+        .universalStyledBackgrond(.accent)
         .defaultAlert($showingAlert,
                       title: "Incomplete Form",
                       description: "Please provide a name, description, and target before creating the goal")

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Charts
+import UIUniversals
 
 struct EventsDataSection: View {
 

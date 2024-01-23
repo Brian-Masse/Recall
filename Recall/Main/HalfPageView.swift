@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-
+import UIUniversals
 
 struct HalfPageView<Content: View>: View {
     

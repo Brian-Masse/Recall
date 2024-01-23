@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIUniversals
 
 struct TagPageView: View {
 
@@ -15,7 +16,7 @@ struct TagPageView: View {
    private func makeTagList(from tags: [RecallCategory], title: String) -> some View {
        
        VStack(alignment: .leading) {
-           UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+           UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont)
            
            VStack {
                ForEach(tags) { tag in

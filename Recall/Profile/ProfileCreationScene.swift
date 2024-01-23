@@ -12,6 +12,8 @@ import UIUniversals
 
 struct ProfileCreationView: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
 //    MARK: ProfileCreationScene
     private enum ProfileCreationScene: Int, CaseIterable, Identifiable {
         
@@ -389,7 +391,7 @@ struct ProfileCreationView: View {
                 
                 makeCompletionScreenNode(title: "or jump straight into the app",
                                          icon: "arrow.forward",
-                                         color: Colors.tint,
+                                         color: Colors.getAccent(from: colorScheme),
                                          size: Constants.UIDefaultTextSize,
                                          verticalSpace: 10,
                                          hideMetaData: true) { showingError = true }

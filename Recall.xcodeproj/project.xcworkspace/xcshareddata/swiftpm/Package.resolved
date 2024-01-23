@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Brian-Masse/UIUniversals",
       "state" : {
-        "revision" : "dc0c47351c2035082325e2691a9944e9e86684fe",
-        "version" : "1.0.1"
+        "branch" : "main",
+        "revision" : "a828c501e8ad1001b01a907f8abd1cd5d502457a"
       }
     }
   ],

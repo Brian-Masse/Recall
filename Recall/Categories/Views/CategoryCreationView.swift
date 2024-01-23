@@ -16,7 +16,9 @@ struct CategoryCreationView: View {
     @ViewBuilder
     private func makeTextField(title: String, binding: Binding<String>) -> some View {
         VStack(alignment: .leading) {
-            UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+            UniversalText(title,
+                          size: Constants.UIHeaderTextSize,
+                          font: Constants.titleFont)
             
             TextField("", text: binding)
                 .rectangularBackground(style: .secondary)
@@ -152,7 +154,7 @@ struct CategoryCreationView: View {
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .background(Colors.tint)
+        .background(RecallModel.shared.activeColor)
         
         .defaultAlert($showingAlert,
                       title: "Incomplete Form",

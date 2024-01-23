@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
-//import FlowGrid
+import UIUniversals
 
 //MARK: GoalMultiplierSelector
 struct GoalMultiplierSelector: View {
@@ -395,7 +395,7 @@ struct CalendarEventCreationView: View {
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .background(Colors.tint)
+        .universalStyledBackgrond(.accent)
         
         .onChange(of: category) { newValue in goalRatings = RecallCalendarEvent.translateGoalRatingList(newValue.goalRatings) }
         .sheet(isPresented: $showingTagCreationView) {
@@ -403,7 +403,7 @@ struct CalendarEventCreationView: View {
                                  tag: nil,
                                  label: "",
                                  goalRatings: Dictionary(),
-                                 color: Colors.tint)
+                                 color: RecallModel.shared.activeColor)
         }
     
         .alert(alertTitle,

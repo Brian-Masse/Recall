@@ -53,12 +53,12 @@ struct CalendarPageView: View {
             let nowLabel        = formatDate(.now)
             
             if !matches {
-                UniversalText(currentLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true)
+                UniversalText(currentLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                 Image(systemName: "arrow.forward")
                     .opacity(0.8)
             }
             
-            UniversalText(nowLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
+            UniversalText(nowLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                 .onTapGesture { setCurrentDay(with: .now) }
         }
         .padding(.bottom)
@@ -132,7 +132,10 @@ struct CalendarPageView: View {
     @ViewBuilder
     private func makeHeader() -> some View {
         HStack {
-            UniversalText( "Today's Recall", size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, true, scale: true )
+            UniversalText( "Today's Recall",
+                           size: Constants.UITitleTextSize,
+                           font: Constants.titleFont,
+                           wrap: false, scale: true )
             Spacer()
             
             ResizeableIcon(icon: "person", size: Constants.UIDefaultTextSize)

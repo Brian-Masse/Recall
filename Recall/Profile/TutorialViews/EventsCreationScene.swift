@@ -134,7 +134,7 @@ extension TutorialViews {
                                      tag: nil,
                                      label: "",
                                      goalRatings: Dictionary(),
-                                     color: Colors.tint)
+                                     color: RecallModel.shared.activeColor)
             }
             .onChange(of: tag) { newValue in
                 if newValue.label != "" && !newValue.label.isEmpty {

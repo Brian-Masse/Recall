@@ -18,7 +18,7 @@ struct CalendarContainer: View {
         func makeTimeMarker(hour: CGFloat, label: String, color: Color) -> some View {
             VStack {
                 HStack(alignment: .top) {
-                    UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont, lighter: true  )
+                    UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont  )
                     
                     Rectangle()
                         .frame(height: 1)
@@ -80,9 +80,9 @@ struct CalendarContainer: View {
                 makeDateSelector( currentDay - 2 * Constants.DayTime )
                 makeDateSelector( currentDay - 1 * Constants.DayTime )
                 
-                UniversalText( "\(Calendar.current.component(.day, from: currentDay))", size: Constants.UIDefaultTextSize, true )
+                UniversalText( "\(Calendar.current.component(.day, from: currentDay))", size: Constants.UIDefaultTextSize )
                     .padding()
-                    .foregroundColor(Colors.tint)
+                    .foregroundColor(RecallModel.shared.activeColor)
                     .rectangularBackground(style: .primary)
                 
                 makeDateSelector( currentDay + 1 * Constants.DayTime )

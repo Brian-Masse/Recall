@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 struct GoalsPageView: View {
     
@@ -23,7 +24,9 @@ struct GoalsPageView: View {
         VStack(alignment: .leading) {
             
             HStack {
-                UniversalText( "Goals", size: Constants.UITitleTextSize, font: .syneHeavy, true )
+                UniversalText( "Goals",
+                               size: Constants.UITitleTextSize,
+                               font: Constants.titleFont)
                 Spacer()
                 LargeRoundedButton("Add Goal", icon: "arrow.up") { showingGoalCreationView = true }
             }
