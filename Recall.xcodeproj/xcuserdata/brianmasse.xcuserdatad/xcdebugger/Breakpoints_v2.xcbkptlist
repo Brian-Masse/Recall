@@ -239,8 +239,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "117"
             endingLineNumber = "117"
-            landmarkName = "refreshData(events:goals:)"
-            landmarkType = "7">
+            landmarkName = "MainView"
+            landmarkType = "14">
             <Locations>
                <Location
                   uuid = "5BA453C9-769D-426E-ADD8-902CB60A3FAD - 76fc597bacc7376c"
