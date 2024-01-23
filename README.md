@@ -23,17 +23,41 @@ I independently developed this project, from problem identification, project bra
 
 ## **Version History**
 
-### **Snapshot 1.2**
+### **Version 2.0.1**
+
+CHANGES:
+
+- redesigned the clear field button
+- made text field expand for multi-line entries
+- redesigned the date selector on the main page
+
+### **Version 2.0.0**
 
 NEW FEATURES
 
-- added the notes of an event to the preview on the timeline
+_settings_
+
 - added a toggle to view notes on event previews
 - added the ability to set the default length of events
 - added a toggle to turn on universal fine time selection
 - added a toggle to change default event snapping
+- added a toggle to automatically start Recalls at the end of the most recent event
+- added a toggle to set the default Recall style
+
+_features_
+
 - added a button to quickly clear the title or description of an event
 - added a way to select and move events to different days
+- added a way to favorite and view favorited events
+- added a way to change the date of a single event
+- added a way to recall events by length
+- added a splash screen to show new features in an update
+
+CHANGES:
+
+- added the notes of an event to the preview on the timeline
+- redesigned the tag page
+- made all context menus across the UI consistent
 
 BUG FIXES:
 

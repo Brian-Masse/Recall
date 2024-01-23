@@ -133,6 +133,8 @@ struct MainView: View {
             if !showingHalfPage {
                 TabBar(pageSelection: $currentPage)
             }
+            
+            UpdateView()
         }
         .onAppear {
             Task { await refreshData(events: Array(events), goals: Array(goals)) }

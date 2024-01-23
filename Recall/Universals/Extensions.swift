@@ -96,6 +96,25 @@ extension Date {
         
     }
     
+//    this only support year, month, and day, but can easily be expanded in the future
+    func prioritizeComponent( _ component: Calendar.Component ) -> Date {
+        
+        let components = Calendar.current.dateComponents([.year, .month, .day], from: self)
+        
+        var mutableComponents = DateComponents()
+        mutableComponents.year = components.year
+        
+        switch component {
+        case .month: mutableComponents.month = components.month
+        case .day:
+            mutableComponents.month = components.month
+            mutableComponents.day = components.day
+        default: break
+        }
+        
+        return Calendar.current.date(from: mutableComponents) ?? self
+    }
+    
     func day() -> Int {
         Calendar.current.component(.day, from: self)
     }

@@ -74,8 +74,13 @@ struct CalendarEventView: View {
                 UniversalText("Notes", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
                     .padding(.bottom, 5)
                 
-                UniversalText( event.notes, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                    .padding(.trailing)
+                ScrollView(.vertical) {
+                    VStack {
+                        UniversalText( event.notes, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                            .padding(.trailing)
+                    }
+                }
+//                .frame(maxHeight: 250)
             }
         }
     }
@@ -119,6 +124,7 @@ struct CalendarEventView: View {
         ScrollView(.horizontal) {
             HStack {
                 LargeRoundedButton("edit", icon: "arrow.up.forward", color: event.getColor())                { showingEditingScreen = true }
+                LargeRoundedButton("favorite", icon: "arrow.up.forward", color: event.getColor())       { event.toggleFavorite() }
                 LargeRoundedButton("template", icon: "arrow.up.forward", color: event.getColor())       { event.toggleTemplate() }
                 LargeRoundedButton("delete", icon: "arrow.up.forward", color: event.getColor())         {
                     if event.isTemplate { templateDeletionAlert = true }

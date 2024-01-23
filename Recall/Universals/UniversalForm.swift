@@ -181,23 +181,42 @@ struct TextFieldWithPrompt: View {
         self.clearable = clearable
     }
     
+    @FocusState var focused: Bool
+    @State var showingClearButton: Bool = false
+    
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 5) {
             UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
             
-            HStack {
-                TextField("", text: binding)
-                    .padding( .trailing, 5 )
-                if clearable && !binding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    LargeRoundedButton("", icon: "xmark", wide: false, small: true) {
+            UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            
+            TextField("", text: binding)
+                .focused($focused)
+                .lineLimit(1...)
+                .frame(maxWidth: .infinity)
+                .padding( .trailing, 5 )
+                .universalTextField()
+                .secondaryOpaqueRectangularBackground()
+                .onChange(of: self.focused) { value in
+                    withAnimation { self.showingClearButton = value }
+                }
+            
+            if showingClearButton && clearable && !binding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                VStack {
+                    HStack {
+                        Spacer()
+                        UniversalText( "clear", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                        Image(systemName: "xmark")
+                        Spacer()
+                        
+                    }
+                    .secondaryOpaqueRectangularBackground()
+                    .onTapGesture {
                         withAnimation { binding.wrappedValue = "" }
                     }
-                    .padding(-7)
-                }
+                }.transition(.opacity)
             }
-            .secondaryOpaqueRectangularBackground()
-            .universalTextField()
         }
     }
 }
@@ -380,6 +399,122 @@ struct TimeSelector: View {
                              binding: fineTimeBinding,
                              strBinding: fineTimeLabel,
                              textFieldWidth: 120)
+            }
+        }
+    }
+}
+
+//MARK: Length Selector
+
+struct LengthSelector: View {
+    
+    let label: String
+    let fontSize: Double
+    let onSetLengthAction: (Double) -> Void
+    let allowFineToggle: Bool
+    
+    @Binding var length: Double
+    @State var showingFineSelector: Bool = RecallModel.index.defaultFineTimeSelector
+    
+    init( _ label: String, length: Binding<Double>, fontSize: Double = Constants.UIHeaderTextSize, allowFineToggle: Bool = true, onSetLengthAction: @escaping (Double) -> Void = { _ in } ) {
+        self.label = label
+        self._length = length
+        self.fontSize = fontSize
+        self.allowFineToggle = allowFineToggle
+        self.onSetLengthAction = onSetLengthAction
+    
+    }
+    
+//    returns (hours, minutes)
+    private func getComponents() -> (Double, Double) {
+        let hours = length / Constants.HourTime
+        let intHours = hours.rounded(.down)
+        let minutes = (hours - intHours) * 60
+        return (intHours, minutes)
+    }
+    
+//    Standard Bindings
+    private var eventLengthBinding: Binding<Float> {
+        Binding { Float( length ) }
+        set: { newValue, _ in
+            let multiplier = 15 * Constants.MinuteTime
+            length = (Double( newValue ) / multiplier).rounded(.down) * multiplier
+            onSetLengthAction(length)
+        }
+    }
+    
+    private var eventLengthLabelBinding: Binding<String> {
+        Binding {
+            let components = getComponents()
+            return "\(Int(components.0)) HR \(Int(components.1)) mins"
+        } set: { newValue, _ in }
+    }
+    
+//    fine bindings
+    private var hourBinding: Binding<Float> {
+        Binding { Float(getComponents().0 * Constants.HourTime) }
+        set: { newValue, _ in
+            let minutes = getComponents().1
+            let roundedHours = (Double(newValue) / Constants.HourTime).rounded(.down) * Constants.HourTime
+            length = roundedHours + ( minutes * Constants.MinuteTime )
+            onSetLengthAction(length)
+        }
+    }
+    
+    private var minuteBinding: Binding<Float> {
+        Binding { Float(getComponents().1 * Constants.MinuteTime) }
+        set: { newValue, _ in
+            let hours = getComponents().0
+            let scalar: Double = (15 * Constants.MinuteTime )
+            let rounded = (Double(newValue) / scalar).rounded(.down) * scalar
+            length = ( hours * Constants.HourTime ) + rounded
+            onSetLengthAction(length)
+        }
+    }
+    
+    private var hourLabelBinding: Binding<String> {
+        Binding { "\(Int(getComponents().0)) HR" }
+        set: { _, _ in }
+    }
+    
+    private var minuteLabelBinding: Binding<String> {
+        Binding { "\(Int(getComponents().1)) mins" }
+        set: { _, _ in }
+    }
+    
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                UniversalText( label, size: fontSize, font: Constants.titleFont )
+                Spacer()
+                
+                if allowFineToggle {
+                    ConditionalLargeRoundedButton(title: "", icon: "camera.filters", wide: false, allowTapOnDisabled: true) { showingFineSelector } action: {
+                        withAnimation { showingFineSelector.toggle() }
+                    }
+                }
+            }
+            
+            if showingFineSelector && allowFineToggle {
+                StyledSlider(minValue: 0,
+                             maxValue: Float(5 * Constants.HourTime),
+                             binding: hourBinding,
+                             strBinding: hourLabelBinding,
+                             textFieldWidth: 115)
+                
+                StyledSlider(minValue: 0,
+                             maxValue: Float(45 * Constants.MinuteTime),
+                             binding: minuteBinding,
+                             strBinding: minuteLabelBinding,
+                             textFieldWidth: 115)
+                
+            } else {
+                StyledSlider(minValue: Float(15 * Constants.MinuteTime),
+                             maxValue: Float(5 * Constants.HourTime),
+                             binding: eventLengthBinding,
+                             strBinding: eventLengthLabelBinding,
+                             textFieldWidth: 150)
             }
         }
     }

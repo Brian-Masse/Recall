@@ -44,6 +44,7 @@ struct CalendarEventPreviewContentView: View {
     let events: [RecallCalendarEvent]
     let width: CGFloat  //measured in pixels
     let height: CGFloat //measured in pixels
+    let allowTapGesture: Bool
     
     @ObservedRealmObject var index = RecallModel.index
     
@@ -60,12 +61,15 @@ struct CalendarEventPreviewContentView: View {
     @Binding var selecting: Bool
     @Binding var selection: [RecallCalendarEvent]
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, selecting: Binding<Bool>? = nil, selection: Binding<[RecallCalendarEvent]>? = nil) {
+    @State var showingEvent: Bool = false
+    
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, selecting: Binding<Bool>? = nil, selection: Binding<[RecallCalendarEvent]>? = nil, allowTapGesture: Bool = false) {
         
         self.event = event
         self.events = events
         self.width = width
         self.height = height
+        self.allowTapGesture = allowTapGesture
         
         self._selecting = (selecting == nil) ? Binding(get: { false }, set: { _ in }) : selecting!
         self._selection = (selection == nil) ? Binding(get: { [] }, set: { _ in }) : selection!
@@ -131,7 +135,13 @@ struct CalendarEventPreviewContentView: View {
         .if(height > defaultHalf) { view in
             view.padding(.vertical, 2)
         }
+        .if(allowTapGesture) { view in
+            view.onTapGesture { showingEvent = true }
+        }
         .frame(maxHeight: height)
+        .sheet(isPresented: $showingEvent) {
+            CalendarEventView(event: event, events: events)
+        }
         
     }
 }

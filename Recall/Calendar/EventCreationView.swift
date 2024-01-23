@@ -62,18 +62,21 @@ struct GoalMultiplierSelector: View {
 struct CalendarEventCreationView: View {
     
     @ViewBuilder
-    static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, template: Bool = false) -> some View {
+    static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, template: Bool = false, favorite: Bool = false) -> some View {
         if !editing {
+            let startTime = RecallModel.index.recallEventsAtEndOfLastRecall ? RecallModel.index.getMostRecentRecallEnd(on: currentDay) : .now
+            
             CalendarEventCreationView(editing: false,
                                       event: nil,
                                       title: "",
                                       notes: "",
-                                      startTime: .now,
-                                      endTime: .now + RecallModel.index.defaultEventLength,
+                                      startTime: startTime,
+                                      endTime: startTime + RecallModel.index.defaultEventLength,
                                       day: currentDay,
                                       category: RecallCategory(),
                                       goalRatings: Dictionary(),
-                                      template: template)
+                                      template: template,
+                                      favorite: favorite)
         } else {
             CalendarEventCreationView(editing: true,
                                       event: event,
@@ -84,10 +87,9 @@ struct CalendarEventCreationView: View {
                                       day: event!.startTime,
                                       category: event!.category ?? RecallCategory(),
                                       goalRatings: RecallCalendarEvent.translateGoalRatingList(event!.goalRatings),
-                                      template: false)
+                                      template: false,
+                                      favorite: false)
         }
-        
-        
     }
     
 //    MARK: Vars
@@ -110,14 +112,17 @@ struct CalendarEventCreationView: View {
     @State var notes: String
     @State var startTime: Date
     @State var endTime: Date
+    @State var eventLength: Double = RecallModel.index.defaultEventLength
     @State var day: Date
     
     @State var category: RecallCategory
     @State var goalRatings: Dictionary<String, String>
     
     let template: Bool
+    let favorite: Bool
 
     @State var showingAllGoals: Bool = false
+    @State var recallByLength: Bool = !RecallModel.index.recallEventsWithEventTime
     
 //    MARK: Helper Functions
     
@@ -162,6 +167,7 @@ struct CalendarEventCreationView: View {
                                             goalRatings: goalRatings)
             RealmManager.addObject(event)
             if template { event.toggleTemplate() }
+            if favorite { event.toggleFavorite() }
         } else {
             event!.update(title: title,
                           notes: notes,
@@ -220,6 +226,7 @@ struct CalendarEventCreationView: View {
         set: { newValue, _ in }
     }
     
+    
 //    MARK: SectionBuilders
     
     @ViewBuilder
@@ -248,26 +255,47 @@ struct CalendarEventCreationView: View {
     }
     
     @ViewBuilder
+    private func makeRecallTypeSelectorOption( _ label: String, icon: String, option: Bool ) -> some View {
+        
+        HStack {
+            Spacer()
+            VStack {
+                Image(systemName: icon)
+                    .padding(.bottom, 5)
+                UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
+            }.padding(.horizontal, 15)
+            
+            Spacer()
+        }
+        .if( recallByLength == option ) { view in view.tintRectangularBackground(7) }
+        .if( recallByLength != option ) { view in view.secondaryOpaqueRectangularBackground(7) }
+        .onTapGesture { withAnimation { recallByLength = option } }
+    }
+    
+    @ViewBuilder
+    private func makeRecallTypeSelector() -> some View {
+        HStack {
+            makeRecallTypeSelectorOption("Recall with event time", icon: "calendar", option: false)
+            makeRecallTypeSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: true)
+        }
+    }
+    
+    @ViewBuilder
     private func makeOverviewQuestions() -> some View {
         TextFieldWithPrompt(title: "What is the name of this event?", binding: $title, clearable: true)
         TextFieldWithPrompt(title: "Leave an optional note", binding: $notes, clearable: true)
             .padding(.bottom)
-        
-//        SliderWithPrompt(label: "When did this event start?",
-//                         minValue: 0,
-//                         maxValue: 23.5,
-//                         binding: startTimeBinding,
-//                         strBinding: startTimeLabel,
-//                         textFieldWidth: 120)
-        
-        TimeSelector(label: "When did this event start?", time: $startTime)
-        TimeSelector(label: "When did this event end?", time: $endTime)
-//        SliderWithPrompt(label: "When did this event end?",
-//                         minValue: 0,
-//                         maxValue: 23.5,
-//                         binding: endTimeBinding,
-//                         strBinding: endTimeLabel,
-//                         textFieldWidth: 120)
+    
+        makeRecallTypeSelector()
+        if recallByLength {
+            LengthSelector("How long is this event?", length: $eventLength) { length in
+                let maxEndTime = endTime.resetToStartOfDay() + Constants.DayTime
+                endTime = min( startTime + length, maxEndTime )
+            }
+        } else {
+            TimeSelector(label: "When did this event start?", time: $startTime)
+            TimeSelector(label: "When did this event end?", time: $endTime)
+        }
     }
     
     @ViewBuilder
@@ -317,6 +345,18 @@ struct CalendarEventCreationView: View {
         }
     }
     
+    @ViewBuilder
+    private func makeDateChanger() -> some View {
+        
+        VStack(alignment: .leading) {
+            if editing {
+                StyledDatePicker($day, title: "Change Event Date", fontSize: Constants.UIHeaderTextSize)
+            }
+            
+        }
+        
+    }
+    
     @State var showingTemplates: Bool = false
     @State var activeTempalte: RecallCalendarEvent? = nil
     @State var showingError: Bool = false
@@ -336,6 +376,9 @@ struct CalendarEventCreationView: View {
                             .padding(.bottom)
 
                         makeOverviewQuestions()
+                            .padding(.bottom)
+                        
+                        makeDateChanger()
                             .padding(.bottom)
                         
                         makeTagSelector()

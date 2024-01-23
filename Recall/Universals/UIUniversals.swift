@@ -48,7 +48,7 @@ struct UniversalText: View {
             .dynamicTypeSize( ...DynamicTypeSize.accessibility1 )
             .lineSpacing(0.5)
             .minimumScaleFactor(scale ? 0.1 : 1)
-            .lineLimit(wrap ? 10 : 1)
+            .lineLimit(wrap ? 30 : 1)
             .multilineTextAlignment(alignment)
             .font( fixed ? Font.custom(font, fixedSize: size) : Font.custom(font, size: size) )
             .bold(bold)

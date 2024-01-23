@@ -14,6 +14,7 @@ import RealmSwift
 //Later I plan to use it to store abreiviated data marks, so Im not forced into downloading every event on every boot
 class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
+//    MARK: Vars
     @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var ownerID: String
     
@@ -36,6 +37,8 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var showNotesOnPreview: Bool = true
     @Persisted var defaultFineTimeSelector: Bool = true
     @Persisted var defaultEventSnapping: Int = TimeRounding.quarter.rawValue
+    @Persisted var recallEventsAtEndOfLastRecall: Bool = true
+    @Persisted var recallEventsWithEventTime: Bool = true
     
     @Persisted var notificationsEnabled: Bool = false
     @Persisted var notificationsTime: Date = .now
@@ -86,6 +89,24 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
             thawed.finishedTutorial = false
         }
     }
+    
+//    MARK: MostRecentRecall
+    private(set) var mostRecentRecallTime: Date? = nil
+    func getMostRecentRecallEnd( on date: Date ) -> Date {
+        
+        if let time = self.mostRecentRecallTime {
+            if time.matches(date, to: .day) {
+                return time
+            }
+        }
+        
+        return .now
+    }
+    
+    func setMostRecentRecallEvent(to time: Date) {
+        self.mostRecentRecallTime = time
+    }
+    
     
 //    MARK: Notifications
     @MainActor
@@ -142,9 +163,23 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     }
     
     @MainActor
+    func setRecallAtEndOfLastEvent(to value: Bool) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.recallEventsAtEndOfLastRecall = value
+        }
+    }
+    
+    @MainActor
     func setDefaultTimeSnapping(to value: TimeRounding) {
         RealmManager.updateObject(self) { thawed in
             thawed.defaultEventSnapping = value.rawValue
+        }
+    }
+    
+    @MainActor
+    func setDefaultRecallStyle(to value: Bool) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.recallEventsWithEventTime = value
         }
     }
     

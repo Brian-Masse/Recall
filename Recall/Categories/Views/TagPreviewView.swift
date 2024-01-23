@@ -97,10 +97,18 @@ struct TagPreviewView: View {
                 .padding(.leading)
             
         }
-//        .opaqueRectangularBackground(0)
         .contextMenu {
-            Button("edit") { showingEditTagView = true }
-            Button("delete") { tag.delete() }
+            ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
+                showingEditTagView = true
+            }
+            
+            ContextMenuButton( tag.isFavorite ? "unfavorite" : "favorite", icon: tag.isFavorite ? "xmark" : "checkmark") {
+                tag.toggleFavorite()
+            }
+            
+            ContextMenuButton("delete", icon: "trash", role: .destructive) {
+                tag.delete()
+            }
         }
         .sheet(isPresented: $showingEditTagView) {
             CategoryCreationView(editing: true,

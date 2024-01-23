@@ -69,17 +69,11 @@ struct CalendarPageView: View {
         let activeDay = date.matches(currentDay, to: .day)
         
         if activeDay {
-            VStack {
+            HStack {
                 UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
-                UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true )
+                UniversalText( month, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true )
             }
                 .foregroundColor(.black)
-                .overlay( VStack {
-                    Circle()
-                    .universalForegroundColor()
-                        .frame(width: 10, height: 10)
-                        .offset(y: -50)
-                })
         } else {
             UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.mainFont, wrap: false, scale: true)
                 .overlay {
@@ -102,14 +96,11 @@ struct CalendarPageView: View {
             .if(currentDay.matches(date, to: .day)) { view in
                 view
                     .padding()
-                    .background(
-                        Rectangle()
-                            .cornerRadius(Constants.UIDefaultCornerRadius)
-                            .universalForegroundColor()
-                            .matchedGeometryEffect(id: "string", in: calendarPageView) )
+                    .tintRectangularBackground(0)
             }
             .onTapGesture { setCurrentDay(with: date) }
     }
+
     
     @ViewBuilder
     private func makeDateSelectors() -> some View {
@@ -123,13 +114,15 @@ struct CalendarPageView: View {
                     }
                 }
                 .onAppear() {
-                    reader.scrollTo(0, anchor: .leading)
+                    reader.scrollTo(4, anchor: .trailing)
                 }.onChange(of: currentDay) { newValue in
                     if newValue.matches(Date.now, to: .day) {
-                        withAnimation { reader.scrollTo(0, anchor: .leading) }
+                        withAnimation { reader.scrollTo(4, anchor: .trailing) }
                     }
                 }
+                .makeDateSelectorsHStackSnapping()
             }
+            .makeDateSlectorsScrollViewSnapping()
             .scrollIndicators(.never)
         }
     }
@@ -157,7 +150,6 @@ struct CalendarPageView: View {
         
         ZStack {
             VStack(alignment: .leading) {
-                
                 makeHeader()
                 
                 HStack {
@@ -182,4 +174,24 @@ struct CalendarPageView: View {
         
     }
     
+}
+
+
+//    MARK: File level extensions
+//    swiftUI does not, in any convenient capacity allow you to write code conditional to software version
+//    the easiest (most possible) solution is to just have a bunch of extensions and only apply them to the views you need
+extension View {
+    @ViewBuilder
+    func makeDateSelectorsHStackSnapping() -> some View {
+        if #available(iOS 17, *) {
+            self.scrollTargetLayout()
+        } else { self }
+    }
+    
+    @ViewBuilder
+    func makeDateSlectorsScrollViewSnapping() -> some View {
+        if #available(iOS 17, *) {
+            self.scrollTargetBehavior(.viewAligned)
+        } else { self }
+    }
 }

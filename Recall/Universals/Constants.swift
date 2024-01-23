@@ -76,6 +76,7 @@ class Constants {
     static let goalsSplashPurpose: String = "Goals allow you to automatically count certain activities towards the personal goals in your life."
     
     static let templatesSplashPurpose: String = "Templates allow you save and quickly recall frequent events. To create a template, select an event and click 'make template'"
+    static let favoritesSplashPurpose: String =  "Favorites help you remember the experiences and moments most special to you. To favorite an event, select it and click 'favorite'"
     
 //    if there are any variables that need to be computed at the start, run their setup code here
     @MainActor

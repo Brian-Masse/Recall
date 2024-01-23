@@ -30,10 +30,10 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "276"
-            endingLineNumber = "276"
-            landmarkName = "RecallCalendarEvent"
-            landmarkType = "3">
+            startingLineNumber = "305"
+            endingLineNumber = "305"
+            landmarkName = "getWidth(from:in:from:)"
+            landmarkType = "7">
             <Locations>
                <Location
                   uuid = "6F00EDF2-3C24-4070-B68F-355C3A6C7ABC - f359c82011d69f17"
@@ -78,9 +78,9 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "275"
-            endingLineNumber = "275"
-            landmarkName = "getOverlapNodes(from:)"
+            startingLineNumber = "304"
+            endingLineNumber = "304"
+            landmarkName = "getWidth(from:in:from:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -141,10 +141,10 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
-            landmarkName = "checkFirstOverlap(with:)"
-            landmarkType = "9">
+            startingLineNumber = "295"
+            endingLineNumber = "295"
+            landmarkName = "getWidth(from:in:from:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -157,10 +157,10 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "262"
-            endingLineNumber = "262"
-            landmarkName = "RecallCalendarEvent"
-            landmarkType = "3">
+            startingLineNumber = "291"
+            endingLineNumber = "291"
+            landmarkName = "getWidth(from:in:from:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -173,9 +173,9 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
-            landmarkName = "getWidth(from:in:from:)"
+            startingLineNumber = "314"
+            endingLineNumber = "314"
+            landmarkName = "getOverlapData(in:from:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -221,8 +221,8 @@
             filePath = "Recall/Universals/Extensions.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "round(to:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -534,10 +534,10 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "247"
-            endingLineNumber = "247"
-            landmarkName = "makeLengthHandle(_:)"
-            landmarkType = "7">
+            startingLineNumber = "327"
+            endingLineNumber = "327"
+            landmarkName = "body"
+            landmarkType = "24">
             <Locations>
                <Location
                   uuid = "C700A05C-BB16-49F8-A5FD-BDF182AC61BE - 9ee4da46ad5a2298"
@@ -597,9 +597,9 @@
             filePath = "Recall/Calendar/RecallCalendarEvent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "208"
-            endingLineNumber = "208"
-            landmarkName = "delete(preserveTemplate:)"
+            startingLineNumber = "236"
+            endingLineNumber = "236"
+            landmarkName = "checkUpdateEarliestEvent()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -739,8 +739,8 @@
             filePath = "Recall/Main/RecallModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
             landmarkName = "setActiveColor(from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -851,9 +851,9 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
-            landmarkName = "addGenericSubcriptions(name:query:)"
+            startingLineNumber = "303"
+            endingLineNumber = "303"
+            landmarkName = "addGenericSubcriptions(realm:name:query:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1044,6 +1044,38 @@
             startingLineNumber = "92"
             endingLineNumber = "92"
             landmarkName = "submit(skipTutorial:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "37A4FED6-9697-46F0-A18A-BE7B92206846"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
+            landmarkName = "onTap()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9FEB38C9-04C0-47B6-B159-BC1C060F2ECD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Main/UpdateManager/UpdateManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "initialize()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
