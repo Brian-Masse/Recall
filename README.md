@@ -31,6 +31,8 @@ CHANGES:
 - made text field expand for multi-line entries
 - redesigned the date selector on the main page
 
+
+
 ### **Version 2.0.0**
 
 NEW FEATURES

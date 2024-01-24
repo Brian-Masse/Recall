@@ -691,8 +691,8 @@
             filePath = "Recall/Goals/RecallGoal.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
+            startingLineNumber = "216"
+            endingLineNumber = "216"
             landmarkName = "getGoalFromKey(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -707,8 +707,8 @@
             filePath = "Recall/Goals/RecallGoal.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "218"
-            endingLineNumber = "218"
+            startingLineNumber = "219"
+            endingLineNumber = "219"
             landmarkName = "getGoalFromKey(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -899,8 +899,8 @@
             filePath = "Recall/Goals/RecallGoal.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "352"
-            endingLineNumber = "352"
+            startingLineNumber = "353"
+            endingLineNumber = "353"
             landmarkName = "makeNewProgressIndex(with:on:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -931,8 +931,8 @@
             filePath = "Recall/Goals/RecallGoal.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "360"
-            endingLineNumber = "360"
+            startingLineNumber = "361"
+            endingLineNumber = "361"
             landmarkName = "updateProgressIndex(to:on:)"
             landmarkType = "7">
          </BreakpointContent>
