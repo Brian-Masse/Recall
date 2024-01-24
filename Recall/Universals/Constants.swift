@@ -10,67 +10,13 @@ import SwiftUI
 import Charts
 import UIUniversals
 
-////@MainActor
-//class Colors {
-//    static var tint: Color { RecallModel.shared.activeColor }
-//    static var main: Color { accentGreen }
-//    
-//    static let colorOptions: [Color] = [ accentGreen, blue, purple, grape, pink, red, yellow,  ]
-//    
-//    static let lightGrey = makeColor(255, 255, 255)
-//    static let secondaryLightColor = makeColor( 235, 235, 235 )
-//    static let darkGrey = Color(red: 0.1, green: 0.1, blue: 0.1).opacity(0.9)
-//    static let accentGreen = makeColor(95, 255, 135)
-//    static let lightAccentGreen = makeColor(66, 122, 69)
-//    
-//    static let yellow = makeColor(234, 169, 40)
-//    static let pink = makeColor(198, 62, 120)
-//    static let purple = makeColor(106, 38, 153)
-//    static let grape = makeColor(70, 42, 171)
-//    static let blue = makeColor(69, 121, 251)
-//    static let red = makeColor(236, 81, 46)
-//    
-//    private static func makeColor( _ r: CGFloat, _ g: CGFloat, _ b: CGFloat ) -> Color {
-//        Color(red: r / 255, green: g / 255, blue: b / 255)
-//    }
-//}
-
-//class Constants {
-//    
-////    font sizes
-//    static let UILargeTextSize: CGFloat     = 90
-//    static let UITitleTextSize: CGFloat     = 45
-//    static let UIHeaderTextSize: CGFloat    = 30
-//    static let UISubHeaderTextSize: CGFloat = 20
-//    static let UIDefaultTextSize: CGFloat   = 15
-//    static let UISmallTextSize: CGFloat     = 11
-//    
-////    extra
-//    static let UIDefaultCornerRadius: CGFloat = 20
-//    static let UILargeCornerRadius: CGFloat = 30
-//    static let UIBottomOfPagePadding: CGFloat = 130
-//    
-////    timings
-//    static let MinuteTime: Double = 60
-//    static let HourTime: Double = 3600
-//    static let DayTime: Double = 86400
-//    static let WeekTime: Double = 604800
-//    static let yearTime: Double = 31557600
-//    
-////    fonts
-//    static let titleFont: ProvidedFont = .syneHeavy
-//    static let mainFont: ProvidedFont = .renoMono
-//
-
-//}
-
+//MARK: Colors
 extension Colors {
-    
     static let colorOptions: [Color] = [ lightAccent, darkAccent, blue, purple, grape, pink, red, yellow,  ]
-    
 }
 
 
+//MARK: Constants
 extension Constants {
 //    forms
     static let UIFormSpacing      : CGFloat = 10
@@ -92,9 +38,6 @@ extension Constants {
         Constants.setTagColorsDic()
         Constants.setGoalColorsDic()
     }
-    
-    
-//    colorDictionaries:
     
 //    This is put in constants to avoid being computed every time a colored graph is displayed on screen
     static var tagColorsDic: Dictionary<String, Color> = Dictionary()
@@ -134,5 +77,4 @@ extension Constants {
         
         static let templatesSplashPurpose: String = "Templates allow you save and quickly recall frequent events. To create a template, select an event and click 'make template'"
         static let favoritesSplashPurpose: String =  "Favorites help you remember the experiences and moments most special to you. To favorite an event, select it and click 'favorite'"
-        
 }

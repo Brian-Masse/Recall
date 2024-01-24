@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import UIUniversals
+import UniversalDonationPackage
 
 struct CalendarPageView: View {
     
@@ -31,6 +32,7 @@ struct CalendarPageView: View {
 //    @State var transition: AnyTransition = .identity
 
     @State var showingProfileView: Bool = false
+    @State var showingDonationView: Bool = false
     @Binding var appPage: ContentView.EntryPage
     
     @Namespace private var calendarPageView
@@ -138,9 +140,14 @@ struct CalendarPageView: View {
                            wrap: false, scale: true )
             Spacer()
             
-            ResizeableIcon(icon: "person", size: Constants.UIDefaultTextSize)
+            
+            ResizeableIcon(icon: "bag", size: Constants.UIDefaultTextSize)
                 .rectangularBackground(style: .secondary)
                 .padding(.leading)
+                .onTapGesture { showingDonationView = true }
+            
+            ResizeableIcon(icon: "person", size: Constants.UIDefaultTextSize)
+                .rectangularBackground(style: .secondary)
                 .onTapGesture { showingProfileView = true }
         }
         
@@ -173,6 +180,9 @@ struct CalendarPageView: View {
         }
         .sheet(isPresented: $showingProfileView) {
             ProfileView(appPage: $appPage)
+        }
+        .sheet(isPresented: $showingDonationView) {
+            DonationView()
         }
         .universalBackground()
         

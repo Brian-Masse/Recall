@@ -10,53 +10,6 @@ import SwiftUI
 import Charts
 import UIUniversals
 
-//enum ProvidedFont: String {
-//    case renoMono = "RenoMono-Regular"
-//    case helvetica = "helvetica"
-//    case syneHeavy = "Syne-Bold"
-//    
-//}
-
-//MARK: UniversalText
-//struct UniversalText: View {
-//    @Environment(\.dynamicTypeSize) var dynamicTypeSize
-//    
-//    let text: String
-//    let size: CGFloat
-//    let bold: Bool
-//    let wrap: Bool
-//    let lighter: Bool
-//    let fixed: Bool
-//    let font: String
-//    let scale: Bool
-//    let alignment: TextAlignment
-//    
-//    init(_ text: String, size: CGFloat, font: ProvidedFont = .helvetica, wrap: Bool = true, lighter: Bool = false, _ bold: Bool = false, fixed: Bool = false, scale: Bool = false, textAlignment: TextAlignment = .leading) {
-//        self.text = text
-//        self.size = size
-//        self.bold = bold
-//        self.wrap = wrap
-//        self.lighter = lighter
-//        self.fixed = fixed
-//        self.scale = scale
-//        self.font = font.rawValue
-//        self.alignment = textAlignment
-//    }
-//    
-//    var body: some View {
-//        
-//        Text(text)
-//            .dynamicTypeSize( ...DynamicTypeSize.accessibility1 )
-//            .lineSpacing(0.5)
-//            .minimumScaleFactor(scale ? 0.1 : 1)
-//            .lineLimit(wrap ? 30 : 1)
-//            .multilineTextAlignment(alignment)
-//            .font( fixed ? Font.custom(font, fixedSize: size) : Font.custom(font, size: size) )
-//            .bold(bold)
-//            .opacity(lighter ? 0.8 : 1)
-//    }
-//}
-
 //MARK: ResizeableIcon
 struct ResizeableIcon: View {
     let icon: String

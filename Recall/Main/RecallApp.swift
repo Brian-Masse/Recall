@@ -13,12 +13,14 @@ struct RecallApp: App {
     
     private func setupUIUniversals() {
         
-        Colors.setColors(baseLight: nil,
-                         secondaryLight: nil,
-                         baseDark: nil,
-                         secondaryDark: nil,
-                         lightAccent: nil,
-                         darkAccent: .init(255, 0, 0))
+        Colors.setColors(baseLight:         .init(255, 255, 255),
+                         secondaryLight:    .init(235, 235, 235),
+                         baseDark:          .init(0, 0, 0),
+                         secondaryDark:     .init(25.5, 25.5, 25.5),
+                         lightAccent:       .init(66, 122, 69),
+                         darkAccent:        .init(95, 255, 135))
+        
+        Constants.UIDefaultCornerRadius = 20
         
         Constants.setFontSizes(UITitleTextSize: 45,
                                UIHeaderTextSize: 30,

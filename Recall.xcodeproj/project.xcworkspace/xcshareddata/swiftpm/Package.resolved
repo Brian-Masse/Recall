@@ -44,6 +44,15 @@
         "branch" : "main",
         "revision" : "a828c501e8ad1001b01a907f8abd1cd5d502457a"
       }
+    },
+    {
+      "identity" : "universaldonationpackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Brian-Masse/UniversalDonationPackage",
+      "state" : {
+        "branch" : "main",
+        "revision" : "52e6f5830999c55aa094dc1d5580b6d31cddb665"
+      }
     }
   ],
   "version" : 2
