@@ -10,15 +10,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>0</string>
+					<string>47</string>
 					<key>EndingLineNumber</key>
-					<string>125</string>
+					<string>107</string>
 					<key>StartingColumnNumber</key>
-					<string>0</string>
+					<string>8</string>
 					<key>StartingLineNumber</key>
-					<string>124</string>
+					<string>107</string>
 					<key>Timestamp</key>
-					<string>727741757.334343</string>
+					<string>717529239.5026391</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,15 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>        .fullScreenCover(isPresented: $showingGoalView) {
-</string>
+				<string>            UniversalText("\(dataModel.</string>
 				<key>leading</key>
-				<string>            Button(role: .destructive) { showingDeletionAlert = true } label:    { Label("delete", systemImage: "trash") }
-        }
-</string>
+				<string>                                  font: Constants.mainFont)
+                    Spacer()
+        </string>
 				<key>trailing</key>
-				<string>            GoalView(goal: goal, events: events)
-                .environmentObject(dataModel)
-        }
+				<string>roundedProgressData) / \(goal.targetHours)",
+                                  size: Constants.UISmallTextSize,
+                                  font: Constants.mainFont)
 </string>
 			</dict>
 			<key>type</key>
@@ -55,15 +54,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>0</string>
+					<string>51</string>
 					<key>EndingLineNumber</key>
-					<string>31</string>
+					<string>29</string>
 					<key>StartingColumnNumber</key>
-					<string>0</string>
+					<string>12</string>
 					<key>StartingLineNumber</key>
-					<string>30</string>
+					<string>29</string>
 					<key>Timestamp</key>
-					<string>727733216.680053</string>
+					<string>717529308.5213</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -79,16 +78,15 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            .fullScreenCover(isPresented: $showingGoalView) {
-</string>
+				<string>.fullScreenCover(isPresented: $showingG</string>
 				<key>leading</key>
 				<string>//            .onTapGesture { showingGoalView = true }
             .tag(goal.getEncryptionKey())
-</string>
+            </string>
 				<key>trailing</key>
-				<string>                GoalView(goal: goal, events: events)
+				<string>oalView) {
+                GoalView(goal: goal, events: events)
             }
-        }
 </string>
 			</dict>
 			<key>type</key>
