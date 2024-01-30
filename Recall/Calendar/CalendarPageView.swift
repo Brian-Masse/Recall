@@ -99,7 +99,7 @@ struct CalendarPageView: View {
             .if(currentDay.matches(date, to: .day)) { view in
                 view
                     .padding()
-                    .rectangularBackground(0, style: .accent)
+                    .rectangularBackground(0, style: .accent, foregroundColor: .black)
             }
             .onTapGesture { setCurrentDay(with: date) }
     }

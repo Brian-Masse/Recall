@@ -22,7 +22,8 @@ struct RecallApp: App {
         
         Constants.UIDefaultCornerRadius = 20
         
-        Constants.setFontSizes(UITitleTextSize: 45,
+        Constants.setFontSizes(UILargeTextSize: 90,
+                               UITitleTextSize: 45,
                                UIHeaderTextSize: 30,
                                UISubHeaderTextSize: 20,
                                UIDefeaultTextSize: 15,

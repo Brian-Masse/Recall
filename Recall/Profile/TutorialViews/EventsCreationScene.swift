@@ -108,7 +108,7 @@ extension TutorialViews {
                 UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             }
             .onTapGesture { self.tag = tag }
-            .if(self.tag.label == tag.label) { view in view.rectangularBackground(style: .accent)  }
+            .if(self.tag.label == tag.label) { view in view.rectangularBackground(style: .accent, foregroundColor: .black)  }
             .if(self.tag.label != tag.label) { view in view.rectangularBackground(style: .secondary) }
         }
         

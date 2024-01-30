@@ -46,7 +46,7 @@ struct GoalCreationView: View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { frequence = selection }
             .if(frequence == selection) { view in
-                view.rectangularBackground(25, style: .accent)
+                view.rectangularBackground(25, style: .accent, foregroundColor: .black)
             }
             .if(frequence != selection) { view in
                 view
@@ -59,7 +59,7 @@ struct GoalCreationView: View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { priority = selection }
             .if(priority == selection) { view in
-                view.rectangularBackground(25, style: .accent)
+                view.rectangularBackground(25, style: .accent, foregroundColor: .black)
             }
             .if(priority != selection) { view in
                 view
@@ -71,7 +71,7 @@ struct GoalCreationView: View {
     @ViewBuilder func makeTypePickerOption(label: String, selection: RecallGoal.GoalType) -> some View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { type = selection }
-            .if(type == selection) { view in view.rectangularBackground(25, style: .accent) }
+            .if(type == selection) { view in view.rectangularBackground(25, style: .accent, foregroundColor: .black) }
             .if(type != selection) { view in
                 view
                     .padding(10)
@@ -176,7 +176,7 @@ struct GoalCreationView: View {
                     }
                     .onTapGesture { targetTag = tag }
                     .if( targetTag?.label ?? "" != tag.label ) { view in view.rectangularBackground(style: .secondary) }
-                    .if( targetTag?.label ?? "" == tag.label ) { view in view.rectangularBackground(style: .accent) }
+                    .if( targetTag?.label ?? "" == tag.label ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
                 }
             }.padding(.bottom)
         }

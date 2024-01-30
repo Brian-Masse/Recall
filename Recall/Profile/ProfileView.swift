@@ -263,7 +263,7 @@ struct ProfileView: View {
             }
             Spacer()
         }
-        .if(option.rawValue == index.defaultEventSnapping) { view in view.rectangularBackground(style: .accent) }
+        .if(option.rawValue == index.defaultEventSnapping) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
         .if(option.rawValue != index.defaultEventSnapping) { view in view.rectangularBackground(style: .secondary) }
             .onTapGesture { withAnimation { index.setDefaultTimeSnapping(to: option) } }
     }
@@ -288,7 +288,7 @@ struct ProfileView: View {
             }
             Spacer()
         }
-        .if( option == index.recallEventsWithEventTime ) { view in view.rectangularBackground(style: .accent) }
+        .if( option == index.recallEventsWithEventTime ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
         .if( option != index.recallEventsWithEventTime ) { view in view.rectangularBackground(style: .secondary) }
         .onTapGesture { withAnimation { index.setDefaultRecallStyle(to: option) } }
     }

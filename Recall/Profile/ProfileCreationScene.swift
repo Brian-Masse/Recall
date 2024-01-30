@@ -275,7 +275,7 @@ struct ProfileCreationView: View {
 
             HStack {
                 makeNotificationSelector(label: "yes")
-                    .rectangularBackground(style: .accent)
+                    .rectangularBackground(style: .accent, foregroundColor: .black)
                     .onTapGesture { withAnimation {
                         showingContinueButton = true
                         Task {

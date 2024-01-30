@@ -29,7 +29,7 @@ struct DataPicker: View {
             UniversalText(label, size: fontSize, font: Constants.titleFont, wrap: false )
             Spacer()
         }
-        .if(selectedOption == option) { view in view.rectangularBackground(style: .accent) }
+        .if(selectedOption == option) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
         .if(selectedOption != option) { view in view.rectangularBackground(style: .secondary) }
         .onTapGesture { withAnimation { selectedOption = option } }
 //        .matchedGeometryEffect(id: "b", in: picker)

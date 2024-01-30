@@ -150,7 +150,7 @@ struct FavoritesPageView: View {
             Image(systemName: icon)
             Spacer()
         }
-        .if( grouping == selection ) { view in view.rectangularBackground(style: .accent) }
+        .if( grouping == selection ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
         .if( grouping != selection ) { view in view.rectangularBackground(style: .secondary) }
         .onTapGesture { withAnimation { grouping = selection }}
     }

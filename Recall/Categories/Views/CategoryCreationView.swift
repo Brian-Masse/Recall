@@ -97,7 +97,7 @@ struct CategoryCreationView: View {
                     UniversalText(goal.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                 }
                 .if(!hasGoalRating(at: key)) { view in view.rectangularBackground(style: .secondary) }
-                .if(hasGoalRating(at: key)) { view in view.rectangularBackground(style: .accent) }
+                .if(hasGoalRating(at: key)) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
                 .onTapGesture {
                     if goalRatings[key] == nil { goalRatings[key] = "1" }
                     else { goalRatings[key] = nil }

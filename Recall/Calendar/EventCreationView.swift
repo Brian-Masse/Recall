@@ -44,7 +44,7 @@ struct GoalMultiplierSelector: View {
             if showToggle {
                 Image(systemName: "checkmark")
                     .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 == 0 ) { view in view.rectangularBackground(style: .primary) }
-                    .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 != 0 ) { view in view.rectangularBackground(style: .accent) }
+                    .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 != 0 ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
                 
                     .onTapGesture {
                         let rating = Int(goalRatings[goal.key] ?? "0") ?? 0
@@ -145,7 +145,7 @@ struct CalendarEventCreationView: View {
             UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
         }
         .onTapGesture { category = tag }
-        .if(category.label == tag.label) { view in view.rectangularBackground(style: .accent)  }
+        .if(category.label == tag.label) { view in view.rectangularBackground(style: .accent, foregroundColor: .black)  }
         .if(category.label != tag.label) { view in view.rectangularBackground(style: .secondary) }
     }
     
@@ -244,7 +244,7 @@ struct CalendarEventCreationView: View {
                     Image(systemName: "arrow.up.right")
                     UniversalText(template.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                 }
-                .if( (activeTempalte?.title ?? "") == template.title ) { view in view.rectangularBackground(style: .accent) }
+                .if( (activeTempalte?.title ?? "") == template.title ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
                 .if( (activeTempalte?.title ?? "") != template.title ) { view in view.rectangularBackground(style: .secondary) }
                 .onTapGesture {
                     if (activeTempalte?.title ?? "") == template.title { activeTempalte = nil }
@@ -267,7 +267,7 @@ struct CalendarEventCreationView: View {
             
             Spacer()
         }
-        .if( recallByLength == option ) { view in view.rectangularBackground(7, style: .accent) }
+        .if( recallByLength == option ) { view in view.rectangularBackground(7, style: .accent, foregroundColor: .black) }
         .if( recallByLength != option ) { view in view.rectangularBackground(7, style: .secondary) }
         .onTapGesture { withAnimation { recallByLength = option } }
     }

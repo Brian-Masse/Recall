@@ -40,7 +40,7 @@ struct CategoriesPageView: View {
             }
             Spacer()
         }
-        .if( activePage == page ) { view in view.rectangularBackground(style: .accent) }
+        .if( activePage == page ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
         .if( activePage != page ) { view in view.rectangularBackground(style: .secondary) }
         .onTapGesture { withAnimation { activePage = page }}
     }

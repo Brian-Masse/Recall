@@ -18,7 +18,7 @@ struct QuickLinks<EnumType: CaseIterable>: View where EnumType.AllCases: RandomA
             Image(systemName: "arrow.up.forward")
             UniversalText(label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false)
         }
-        .rectangularBackground(style: .accent)
+        .rectangularBackground(style: .accent, foregroundColor: .black)
         .onTapGesture { withAnimation { proxy.scrollTo(label, anchor: .top) }}
     }
     

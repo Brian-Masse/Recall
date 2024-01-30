@@ -53,7 +53,7 @@ extension TutorialViews {
                     Spacer()
                     
                 }
-                .if( selected == option ) { view in view.rectangularBackground(style: .accent) }
+                .if( selected == option ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
                 .if( selected != option ) { view in view.rectangularBackground(style: .secondary) }
                 .onTapGesture { selected = option }
             }
