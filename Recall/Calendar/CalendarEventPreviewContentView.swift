@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 struct CalendarEventPreviewContentView: View {
     
@@ -15,7 +16,7 @@ struct CalendarEventPreviewContentView: View {
     @ViewBuilder
     private func makeMetadataTag(label: String, icon: String) -> some View {
         HStack {
-            if icon != "" { ResizeableIcon(icon: icon, size: Constants.UIDefaultTextSize) }
+            if icon != "" { ResizableIcon(icon, size: Constants.UIDefaultTextSize) }
             if label != "" { UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.titleFont, scale: true) }
         }
         .foregroundColor(.black)
@@ -91,7 +92,7 @@ struct CalendarEventPreviewContentView: View {
             VStack(alignment: .leading) {
 //                MARK: Title
                 HStack {
-                    UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, true, scale: true)
+                    UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, scale: true)
                     
                     Spacer()
                     

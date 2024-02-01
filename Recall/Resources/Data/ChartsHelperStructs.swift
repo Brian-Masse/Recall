@@ -8,6 +8,7 @@
 import Foundation
 import Charts
 import SwiftUI
+import UIUniversals
 
 //MARK: Data Picker
 struct DataPicker: View {
@@ -28,8 +29,8 @@ struct DataPicker: View {
             UniversalText(label, size: fontSize, font: Constants.titleFont, wrap: false )
             Spacer()
         }
-        .if(selectedOption == option) { view in view.tintRectangularBackground() }
-        .if(selectedOption != option) { view in view.secondaryOpaqueRectangularBackground() }
+        .if(selectedOption == option) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
+        .if(selectedOption != option) { view in view.rectangularBackground(style: .secondary) }
         .onTapGesture { withAnimation { selectedOption = option } }
 //        .matchedGeometryEffect(id: "b", in: picker)
         
@@ -41,7 +42,8 @@ struct DataPicker: View {
                 let label = labels[i]
                 makeSelector(from: label, option: i)
             }
-        }.secondaryOpaqueRectangularBackground(5)
+        }
+        .rectangularBackground(5, style: .secondary)
     }
 }
 
@@ -59,12 +61,12 @@ struct DataCollection<Content: View>: View {
     var body: some View {
         
         VStack(alignment: .leading) {
-            
             UniversalText( label, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
             
             LazyVStack(alignment: .leading) {
                 content
-            }.opaqueRectangularBackground(7, stroke: true)
+            }
+            .rectangularBackground(7, style: .primary, stroke: true)
         }
         .padding(.bottom)
     }

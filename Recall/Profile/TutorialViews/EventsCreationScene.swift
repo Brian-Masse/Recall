@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
-
+import UIUniversals
 
 extension TutorialViews {
 
@@ -108,8 +108,8 @@ extension TutorialViews {
                 UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             }
             .onTapGesture { self.tag = tag }
-            .if(self.tag.label == tag.label) { view in view.tintRectangularBackground()  }
-            .if(self.tag.label != tag.label) { view in view.secondaryOpaqueRectangularBackground() }
+            .if(self.tag.label == tag.label) { view in view.rectangularBackground(style: .accent, foregroundColor: .black)  }
+            .if(self.tag.label != tag.label) { view in view.rectangularBackground(style: .secondary) }
         }
         
         @ViewBuilder
@@ -134,7 +134,7 @@ extension TutorialViews {
                                      tag: nil,
                                      label: "",
                                      goalRatings: Dictionary(),
-                                     color: Colors.tint)
+                                     color: RecallModel.shared.activeColor)
             }
             .onChange(of: tag) { newValue in
                 if newValue.label != "" && !newValue.label.isEmpty {

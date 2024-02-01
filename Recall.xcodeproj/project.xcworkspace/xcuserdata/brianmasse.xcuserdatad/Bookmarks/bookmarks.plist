@@ -34,15 +34,15 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>.fullScreenCover(isPresented: $showingG</string>
+				<string>            UniversalText("\(dataModel.</string>
 				<key>leading</key>
-				<string>            Button(role: .destructive) { showingDeletionAlert = true } label:    { Label("delete", systemImage: "trash") }
-        }
+				<string>                                  font: Constants.mainFont)
+                    Spacer()
         </string>
 				<key>trailing</key>
-				<string>oalView) {
-            GoalView(goal: goal, events: events)
-                .environmentObject(dataModel)
+				<string>roundedProgressData) / \(goal.targetHours)",
+                                  size: Constants.UISmallTextSize,
+                                  font: Constants.mainFont)
 </string>
 			</dict>
 			<key>type</key>

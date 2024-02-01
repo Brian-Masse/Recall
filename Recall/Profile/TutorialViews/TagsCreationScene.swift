@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 extension TutorialViews {
 
@@ -22,7 +23,7 @@ extension TutorialViews {
         @State var sentTag: Bool = false
         
         @State var name: String = ""
-        @State var color: Color = Colors.tint
+        @State var color: Color = RecallModel.shared.activeColor
         @State var goalRatings: Dictionary<String, String> = Dictionary()
         
 
@@ -90,8 +91,8 @@ extension TutorialViews {
                             Image(systemName: "arrow.up.forward")
                             UniversalText(goal.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                         }
-                        .if(!hasGoalRating(at: key)) { view in view.secondaryOpaqueRectangularBackground() }
-                        .if(hasGoalRating(at: key)) { view in view.tintRectangularBackground() }
+                        .if(!hasGoalRating(at: key)) { view in view.rectangularBackground(style: .secondary) }
+                        .if(hasGoalRating(at: key)) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
                         .onTapGesture {
                             if goalRatings[key] == nil { goalRatings[key] = "1" }
                             else { goalRatings[key] = nil }
@@ -148,7 +149,7 @@ extension TutorialViews {
                                      tag: nil,
                                      label: "",
                                      goalRatings: Dictionary(),
-                                     color: Colors.tint)
+                                     color: RecallModel.shared.activeColor)
             }
             
         }

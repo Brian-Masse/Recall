@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 struct OpenFlexibleSyncRealmView: View {
     
@@ -25,7 +26,7 @@ struct OpenFlexibleSyncRealmView: View {
         
         var body: some View {
             VStack {
-                ResizeableIcon(icon: icon, size: Constants.UIHeaderTextSize)
+                ResizableIcon(icon, size: Constants.UIHeaderTextSize)
                 UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: true)
             }
             .universalTextStyle()
@@ -93,12 +94,11 @@ struct OpenFlexibleSyncRealmView: View {
                         Spacer()
                     }
                     .universalTextStyle()
-                    .secondaryOpaqueRectangularBackground()
+                    .rectangularBackground(style: .secondary)
                     .onTapGesture { dismissScreen() }
                 }
                 .frame(width: geo.size.width / 2.5)
-                .opaqueRectangularBackground(7, stroke: true)
-//                .shadow(radius: 20)
+                .rectangularBackground(7, style: .primary, stroke: true)
                 .padding()
                 .alert(isPresented: $showingAlert) { Alert(
                     title: Text(title),

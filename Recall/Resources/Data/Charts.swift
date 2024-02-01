@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Charts
 import RealmSwift
-
+import UIUniversals
 
 //MARK: Event Charts
 
@@ -68,9 +68,9 @@ struct AverageActivityByTag: View {
                     RuleMark(x: .value("X", label))
                         .annotation(position: .top) {
                             UniversalText( label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                                .secondaryOpaqueRectangularBackground()
+                                .rectangularBackground(style: .secondary)
                         }
-                        .foregroundStyle( Constants.tagColorsDic[ label ] ?? Colors.tint )
+                        .foregroundStyle( Constants.tagColorsDic[ label ] ?? RecallModel.shared.activeColor )
                 }
             }
             .chartYScale(domain: 0...(CGFloat(max) + ( recents ? 2 : 1 )))
@@ -106,14 +106,6 @@ struct AverageActivityByTag: View {
                     }
                 }
             }
-//            .chartXAxis {
-//                AxisMarks { value in
-//                    AxisValueLabel(orientation: .vertical)
-//                }
-//            }
-//            .frame(width: 20 * CGFloat(tags.count))
-//        }
-//        .secondaryOpaqueRectangularBackground()
     }
 }
 
@@ -221,8 +213,7 @@ struct GoalCompletionOverTime: View {
     
     let data: [DataNode]
     let unit: String
-    
-    
+
     var body: some View {
         
         VStack(alignment: .leading) {
@@ -234,12 +225,11 @@ struct GoalCompletionOverTime: View {
                         LineMark(x: .value("date", datum.date, unit: .day ),
                                  y: .value("count", datum.count))
                         .interpolationMethod(.cardinal)
-                        .foregroundStyle(Colors.tint)
-                        
+                        .foregroundStyle(RecallModel.shared.activeColor)
                         AreaMark(x: .value("date", datum.date, unit: .day ),
                                  y: .value("count", datum.count))
                         .interpolationMethod(.cardinal)
-                        .foregroundStyle( LinearGradient(colors: [Colors.tint.opacity(0.5), .clear], startPoint: .top, endPoint: .bottom ) )
+                        .foregroundStyle( LinearGradient(colors: [RecallModel.shared.activeColor.opacity(0.5), .clear], startPoint: .top, endPoint: .bottom ) )
                     }
                 }
                 .padding(.top)
@@ -337,8 +327,8 @@ struct GoalAverages: View {
             }
         }
         .colorChartByList([
-            "completed": Colors.tint,
-            "uncompleted": (colorScheme == .dark ? Colors.darkGrey : Colors.secondaryLightColor)
+            "completed": RecallModel.shared.activeColor,
+            "uncompleted": (colorScheme == .dark ? Colors.secondaryDark : Colors.secondaryLight)
         ])
         .frame(height: 150)
         .padding(.top, 5)
@@ -384,7 +374,7 @@ struct GoalsMetPercentageChart: View {
                     BarMark(x: .value("X", datum.goal),
                             y: .value("Y", datum.count))
                     .cornerRadius(Constants.UIBarMarkCOrnerRadius)
-                    .foregroundStyle(Colors.tint)
+                    .foregroundStyle(RecallModel.shared.activeColor)
                 }
             }
             .chartYAxis {
