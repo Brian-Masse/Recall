@@ -35,6 +35,24 @@
         "revision" : "e0601230feea4289760c0e5b68dbafa15aa59bfb",
         "version" : "1.5.1"
       }
+    },
+    {
+      "identity" : "uiuniversals",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Brian-Masse/UIUniversals",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b551beebb120ece9fb44301b77d1e054cbd25a22"
+      }
+    },
+    {
+      "identity" : "universaldonationpackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Brian-Masse/UniversalDonationPackage",
+      "state" : {
+        "branch" : "main",
+        "revision" : "52e6f5830999c55aa094dc1d5580b6d31cddb665"
+      }
     }
   ],
   "version" : 2

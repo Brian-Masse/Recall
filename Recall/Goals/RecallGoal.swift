@@ -21,8 +21,7 @@ class GoalNode: Object, Identifiable, OwnedRealmObject {
     @Persisted var key: String = ""
     @Persisted var data: String = ""
    
-    convenience init( ownerID: Strin
-                      g, key: String, data: String ) {
+    convenience init( ownerID: String, key: String, data: String ) {
         self.init()
        
         self.ownerID = ownerID
