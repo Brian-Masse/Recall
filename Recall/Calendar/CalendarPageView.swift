@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
+import UniversalDonationPackage
 
 struct CalendarPageView: View {
     
@@ -30,6 +32,7 @@ struct CalendarPageView: View {
 //    @State var transition: AnyTransition = .identity
 
     @State var showingProfileView: Bool = false
+    @State var showingDonationView: Bool = false
     @Binding var appPage: ContentView.EntryPage
     
     @Namespace private var calendarPageView
@@ -52,12 +55,12 @@ struct CalendarPageView: View {
             let nowLabel        = formatDate(.now)
             
             if !matches {
-                UniversalText(currentLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true)
+                UniversalText(currentLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                 Image(systemName: "arrow.forward")
                     .opacity(0.8)
             }
             
-            UniversalText(nowLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont, lighter: true )
+            UniversalText(nowLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                 .onTapGesture { setCurrentDay(with: .now) }
         }
         .padding(.bottom)
@@ -96,7 +99,7 @@ struct CalendarPageView: View {
             .if(currentDay.matches(date, to: .day)) { view in
                 view
                     .padding()
-                    .tintRectangularBackground(0)
+                    .rectangularBackground(0, style: .accent, foregroundColor: .black)
             }
             .onTapGesture { setCurrentDay(with: date) }
     }
@@ -131,12 +134,20 @@ struct CalendarPageView: View {
     @ViewBuilder
     private func makeHeader() -> some View {
         HStack {
-            UniversalText( "Today's Recall", size: Constants.UITitleTextSize, font: Constants.titleFont, wrap: false, true, scale: true )
+            UniversalText( "Today's Recall",
+                           size: Constants.UITitleTextSize,
+                           font: Constants.titleFont,
+                           wrap: false, scale: true )
             Spacer()
             
-            ResizeableIcon(icon: "person", size: Constants.UIDefaultTextSize)
-                .secondaryOpaqueRectangularBackground()
+            
+            ResizableIcon("bag", size: Constants.UIDefaultTextSize)
+                .rectangularBackground(style: .secondary)
                 .padding(.leading)
+                .onTapGesture { showingDonationView = true }
+            
+            ResizableIcon("person", size: Constants.UIDefaultTextSize)
+                .rectangularBackground(style: .secondary)
                 .onTapGesture { showingProfileView = true }
         }
         
@@ -169,6 +180,9 @@ struct CalendarPageView: View {
         }
         .sheet(isPresented: $showingProfileView) {
             ProfileView(appPage: $appPage)
+        }
+        .sheet(isPresented: $showingDonationView) {
+            DonationView()
         }
         .universalBackground()
         

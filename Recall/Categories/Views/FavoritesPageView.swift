@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 struct FavoritesPageView: View {
     
@@ -87,7 +88,7 @@ struct FavoritesPageView: View {
                     Image(systemName: showingFullSection ? "arrow.up" : "arrow.down")
                         .padding(5)
                         .padding(.horizontal)
-                        .secondaryOpaqueRectangularBackground(0)
+                        .rectangularBackground(0, style: .secondary)
                         .onTapGesture {
                             withAnimation { showingFullSection.toggle() }
                         }
@@ -149,8 +150,8 @@ struct FavoritesPageView: View {
             Image(systemName: icon)
             Spacer()
         }
-        .if( grouping == selection ) { view in view.tintRectangularBackground() }
-        .if( grouping != selection ) { view in view.secondaryOpaqueRectangularBackground() }
+        .if( grouping == selection ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
+        .if( grouping != selection ) { view in view.rectangularBackground(style: .secondary) }
         .onTapGesture { withAnimation { grouping = selection }}
     }
     

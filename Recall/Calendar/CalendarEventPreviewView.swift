@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 //MARK: Time Rounding
 enum TimeRounding: Int, CaseIterable, Identifiable {
@@ -250,7 +251,7 @@ struct CalendarEventPreviewView: View {
                         .padding()
                         .padding(.horizontal)
                         .foregroundColor(event.getColor())
-                        .rectangularBackgorund()
+                        .rectangularBackground(style: .primary)
                         .offset(y: direction == .up ? 20 : -20)
                         .onTapGesture { }
                         .simultaneousGesture(resizeGesture( direction ))

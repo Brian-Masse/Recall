@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIUniversals
 
 //Main user ownerID
 //64b8478c84023dfb762af304
@@ -31,10 +32,10 @@ struct RecallModel {
     static var index: RecallIndex { RecallModel.realmManager.index  }
     static let updateManager: UpdateManager = UpdateManager()
 
-    private(set) var activeColor: Color = Colors.main
+    private(set) var activeColor: Color = Colors.lightAccent
     
     mutating func setActiveColor(from colorScheme: ColorScheme) {
-        activeColor = colorScheme == .dark ? Colors.accentGreen : Colors.lightAccentGreen
+        activeColor = colorScheme == .dark ? Colors.darkAccent : Colors.lightAccent
     }
     
     @MainActor
@@ -49,7 +50,7 @@ struct RecallModel {
     
     @MainActor
     mutating func setTint(from colorScheme: ColorScheme ) {
-        activeColor = colorScheme == .dark ? Colors.accentGreen : Colors.lightAccentGreen
+        activeColor = colorScheme == .dark ? Colors.darkAccent : Colors.lightAccent
     }
     
     static func getTemplates(from events: [RecallCalendarEvent]) -> [RecallCalendarEvent] {

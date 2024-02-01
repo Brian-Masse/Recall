@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import UIUniversals
 
 
 //Each user will have one of these objects stored under their profile in the database

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 @MainActor
 struct ProfileView: View {
@@ -87,7 +88,7 @@ struct ProfileView: View {
             Image(systemName: icon)
             Spacer()
         }
-        .secondaryOpaqueRectangularBackground()
+        .rectangularBackground(style: .secondary)
         .onTapGesture { action() }
     }
     
@@ -115,7 +116,7 @@ struct ProfileView: View {
                 }
                 Spacer()
             }
-            .secondaryOpaqueRectangularBackground()
+            .rectangularBackground(style: .secondary)
             
             UniversalText( tertiaryText, size: Constants.UISmallTextSize, font: Constants.mainFont )
         }
@@ -155,7 +156,7 @@ struct ProfileView: View {
             makeContactLabel(title: "email", content: index.email)
             makeContactLabel(title: "phone number", content: "\(index.phoneNumber.formatIntoPhoneNumber())")
         }
-        .opaqueRectangularBackground(7, stroke: true)
+        .rectangularBackground(7, stroke: true)
         .padding(.bottom, 5)
     }
     
@@ -201,7 +202,7 @@ struct ProfileView: View {
                 makeIconSettings()
                 
             }
-            .opaqueRectangularBackground(stroke: true)
+            .rectangularBackground(stroke: true)
             .padding(.bottom, 5)
             
             makeSubButton(title: "Replay Tutorial", icon: "arrow.clockwise") {
@@ -262,9 +263,9 @@ struct ProfileView: View {
             }
             Spacer()
         }
-            .if(option.rawValue == index.defaultEventSnapping) { view in view.tintRectangularBackground() }
-            .if(option.rawValue != index.defaultEventSnapping) { view in view.secondaryOpaqueRectangularBackground() }
-            .onTapGesture { withAnimation { index.setDefaultTimeSnapping(to: option) } } 
+        .if(option.rawValue == index.defaultEventSnapping) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
+        .if(option.rawValue != index.defaultEventSnapping) { view in view.rectangularBackground(style: .secondary) }
+            .onTapGesture { withAnimation { index.setDefaultTimeSnapping(to: option) } }
     }
     
     @ViewBuilder
@@ -287,8 +288,8 @@ struct ProfileView: View {
             }
             Spacer()
         }
-        .if( option == index.recallEventsWithEventTime ) { view in view.tintRectangularBackground() }
-        .if( option != index.recallEventsWithEventTime ) { view in view.secondaryOpaqueRectangularBackground() }
+        .if( option == index.recallEventsWithEventTime ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
+        .if( option != index.recallEventsWithEventTime ) { view in view.rectangularBackground(style: .secondary) }
         .onTapGesture { withAnimation { index.setDefaultRecallStyle(to: option) } }
     }
     
@@ -419,7 +420,7 @@ struct ProfileView: View {
         .background( VStack {
             if active {
                 Rectangle()
-                    .universalForegroundColor()
+                    .universalStyledBackgrond(.accent, onForeground: true)
                     .cornerRadius(Constants.UIDefaultCornerRadius)
                     .matchedGeometryEffect(id: "background", in: profileNamespace)
             }

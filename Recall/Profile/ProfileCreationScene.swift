@@ -8,8 +8,11 @@
 import Foundation
 import RealmSwift
 import SwiftUI
+import UIUniversals
 
 struct ProfileCreationView: View {
+    
+    @Environment(\.colorScheme) var colorScheme
     
 //    MARK: ProfileCreationScene
     private enum ProfileCreationScene: Int, CaseIterable, Identifiable {
@@ -153,7 +156,7 @@ struct ProfileCreationView: View {
             
             Rectangle()
                 .cornerRadius(Constants.UIDefaultCornerRadius)
-                .universalForegroundColor()
+                .universalStyledBackgrond(.accent, onForeground: true)
                 .frame(width: 50 * progress, height: 10)
             
         }
@@ -272,7 +275,7 @@ struct ProfileCreationView: View {
 
             HStack {
                 makeNotificationSelector(label: "yes")
-                    .tintRectangularBackground()
+                    .rectangularBackground(style: .accent, foregroundColor: .black)
                     .onTapGesture { withAnimation {
                         showingContinueButton = true
                         Task {
@@ -283,7 +286,7 @@ struct ProfileCreationView: View {
                     }}
                 
                 makeNotificationSelector(label: "no, thanks")
-                    .secondaryOpaqueRectangularBackground()
+                    .rectangularBackground(style: .secondary)
                     .onTapGesture { withAnimation {
                         showingContinueButton = true
                         enabledReminder = false
@@ -313,7 +316,7 @@ struct ProfileCreationView: View {
             HStack {
                 UniversalText( title, size: size, font: Constants.titleFont )
                 Spacer()
-                ResizeableIcon(icon: icon, size: size)
+                ResizableIcon(icon, size: size)
             }
             
             if !hideMetaData {
@@ -388,7 +391,7 @@ struct ProfileCreationView: View {
                 
                 makeCompletionScreenNode(title: "or jump straight into the app",
                                          icon: "arrow.forward",
-                                         color: Colors.tint,
+                                         color: Colors.getAccent(from: colorScheme),
                                          size: Constants.UIDefaultTextSize,
                                          verticalSpace: 10,
                                          hideMetaData: true) { showingError = true }

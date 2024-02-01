@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-
+import UIUniversals
 
 struct HalfPageView<Content: View>: View {
     
@@ -121,7 +121,7 @@ struct HalfPageView<Content: View>: View {
                     }
                 }
                 .frame(height: geo.size.height * pageExpansion.getHeight())
-                .opaqueRectangularBackground(0, stroke: true)
+                .rectangularBackground(0, style: .primary, stroke: true)
                 .shadow(color: .black.opacity(0.4), radius: 10, y: -5)
             }
         }

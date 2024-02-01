@@ -82,6 +82,9 @@
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
+      <StoreKitConfigurationFileReference
+         identifier = "../../../../../Library/Developer/Xcode/DerivedData/Recall-gzrbcfxopthxgwctaoucaogxgpsq/SourcePackages/checkouts/UniversalDonationPackage/Sources/Resources/Donation.storekit">
+      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
