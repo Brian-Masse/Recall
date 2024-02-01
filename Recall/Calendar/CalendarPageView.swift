@@ -141,12 +141,12 @@ struct CalendarPageView: View {
             Spacer()
             
             
-            ResizeableIcon(icon: "bag", size: Constants.UIDefaultTextSize)
+            ResizableIcon("bag", size: Constants.UIDefaultTextSize)
                 .rectangularBackground(style: .secondary)
                 .padding(.leading)
                 .onTapGesture { showingDonationView = true }
             
-            ResizeableIcon(icon: "person", size: Constants.UIDefaultTextSize)
+            ResizableIcon("person", size: Constants.UIDefaultTextSize)
                 .rectangularBackground(style: .secondary)
                 .onTapGesture { showingProfileView = true }
         }

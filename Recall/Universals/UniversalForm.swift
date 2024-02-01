@@ -114,7 +114,7 @@ struct MultiPicker<ListType:Collection>: View where ListType:RangeReplaceableCol
                 }
             } label: {
                 Text( retrieveSelectionPreview())
-                ResizeableIcon(icon: "chevron.up.chevron.down", size: Constants.UIDefaultTextSize)
+                ResizableIcon("chevron.up.chevron.down", size: Constants.UIDefaultTextSize)
             }.universalStyledBackgrond(.accent, onForeground: true)
                 
             if #available(iOS 16.4, *) {
@@ -572,6 +572,40 @@ struct StyledDatePicker: View {
             .rectangularBackground(style: .secondary)
         }
     }
+}
+
+
+//MARK: CircularProgressBar
+struct CircularProgressView: View {
     
+    @Environment(\.colorScheme) var colorScheme
     
+    let currentValue: Double
+    let totalValue: Double
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(
+                    colorScheme == .dark ? .black : Colors.baseLight,
+                    lineWidth: Constants.UICircularProgressWidth
+                )
+            Circle()
+                .trim(from: 0, to: CGFloat(currentValue / totalValue) )
+                .stroke(
+                    RecallModel.shared.activeColor,
+                    style: StrokeStyle(
+                        lineWidth: Constants.UICircularProgressWidth,
+                        lineCap: .round
+                    )
+                )
+                .rotationEffect(.degrees(-90))
+            
+            VStack {
+                UniversalText("\(Int(currentValue)) / \(Int(totalValue))", size: Constants.UIHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
+                    .padding(.bottom, 5)
+                UniversalText("\(((currentValue / totalValue) * 100).round(to: 2)  )%", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            }.padding()
+        }
+    }
 }

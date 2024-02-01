@@ -26,7 +26,7 @@ struct OpenFlexibleSyncRealmView: View {
         
         var body: some View {
             VStack {
-                ResizeableIcon(icon: icon, size: Constants.UIHeaderTextSize)
+                ResizableIcon(icon, size: Constants.UIHeaderTextSize)
                 UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: true)
             }
             .universalTextStyle()

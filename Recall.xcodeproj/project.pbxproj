@@ -28,7 +28,6 @@
 		C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */; };
 		C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */; };
 		C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */; };
-		C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF2E2A61DD69003C6DD6 /* UIUniversals.swift */; };
 		C91BCF312A61DDBA003C6DD6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF302A61DDBA003C6DD6 /* Constants.swift */; };
 		C91BCF332A61DE55003C6DD6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF322A61DE55003C6DD6 /* Extensions.swift */; };
 		C91BCF352A61DE65003C6DD6 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91BCF342A61DE65003C6DD6 /* ViewModifiers.swift */; };
@@ -123,7 +122,6 @@
 		C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
 		C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallModel.swift; sourceTree = "<group>"; };
 		C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFlexibleRealmView.swift; sourceTree = "<group>"; };
-		C91BCF2E2A61DD69003C6DD6 /* UIUniversals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIUniversals.swift; sourceTree = "<group>"; };
 		C91BCF302A61DDBA003C6DD6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		C91BCF322A61DE55003C6DD6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		C91BCF342A61DE65003C6DD6 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
@@ -314,7 +312,6 @@
 		C91BCF2D2A61DD51003C6DD6 /* Universals */ = {
 			isa = PBXGroup;
 			children = (
-				C91BCF2E2A61DD69003C6DD6 /* UIUniversals.swift */,
 				C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */,
 				C91BCF302A61DDBA003C6DD6 /* Constants.swift */,
 				C94B1F102A688855007E8537 /* UniversalForm.swift */,
@@ -663,7 +660,6 @@
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,
 				C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */,
-				C91BCF2F2A61DD69003C6DD6 /* UIUniversals.swift in Sources */,
 				C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */,
 				C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */,
 				C98F2F272A945B7400E92B30 /* ProfileView.swift in Sources */,
