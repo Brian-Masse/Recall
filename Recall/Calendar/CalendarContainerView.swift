@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIUniversals
 
 struct CalendarContainer: View {
     
@@ -17,7 +18,7 @@ struct CalendarContainer: View {
         func makeTimeMarker(hour: CGFloat, label: String, color: Color) -> some View {
             VStack {
                 HStack(alignment: .top) {
-                    UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont, lighter: true  )
+                    UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont  )
                     
                     Rectangle()
                         .frame(height: 1)
@@ -72,17 +73,17 @@ struct CalendarContainer: View {
             HStack {
                 Image(systemName: "chevron.left")
                     .padding(7)
-                    .rectangularBackgorund()
+                    .rectangularBackground(style: .primary)
                     .onTapGesture { currentDay -= Constants.DayTime }
                 Spacer()
                 
                 makeDateSelector( currentDay - 2 * Constants.DayTime )
                 makeDateSelector( currentDay - 1 * Constants.DayTime )
                 
-                UniversalText( "\(Calendar.current.component(.day, from: currentDay))", size: Constants.UIDefaultTextSize, true )
+                UniversalText( "\(Calendar.current.component(.day, from: currentDay))", size: Constants.UIDefaultTextSize )
                     .padding()
-                    .foregroundColor(Colors.tint)
-                    .rectangularBackgorund()
+                    .foregroundColor(RecallModel.shared.activeColor)
+                    .rectangularBackground(style: .primary)
                 
                 makeDateSelector( currentDay + 1 * Constants.DayTime )
                 makeDateSelector( currentDay + 2 * Constants.DayTime )
@@ -91,7 +92,7 @@ struct CalendarContainer: View {
                 
                 Image(systemName: "chevron.right")
                     .padding(7)
-                    .rectangularBackgorund()
+                    .rectangularBackground(style: .primary)
                     .onTapGesture { currentDay += Constants.DayTime }
             }
         }
@@ -234,7 +235,7 @@ struct CalendarContainer: View {
                     value.scrollTo( id, anchor: .center )
                 }
                 .if(background) { view in
-                    view.opaqueRectangularBackground(7, stroke: true)
+                    view.rectangularBackground(7, style: .primary, stroke: true)
                 }
             }
             .onTapGesture { tapGesture() }

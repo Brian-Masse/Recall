@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 struct GoalPreviewView: View {
     
@@ -27,8 +28,6 @@ struct GoalPreviewView: View {
     @State var showingEditingView: Bool = false
     @State var showingDeletionAlert: Bool = false
     
-    let textFont: ProvidedFont = .renoMono
-    
     let events: [RecallCalendarEvent]
     
     @MainActor
@@ -36,9 +35,13 @@ struct GoalPreviewView: View {
         
         VStack {
             HStack(alignment: .center) {
-                UniversalText( goal.label, size: Constants.UIHeaderTextSize, font: .syneHeavy, true)
+                UniversalText( goal.label,
+                               size: Constants.UIHeaderTextSize,
+                               font: Constants.titleFont)
                 Spacer()
-                UniversalText( RecallGoal.GoalFrequence.getType(from: goal.frequency), size: Constants.UISmallTextSize, font: textFont )
+                UniversalText( RecallGoal.GoalFrequence.getType(from: goal.frequency),
+                               size: Constants.UISmallTextSize,
+                               font: Constants.mainFont )
             }
             .padding(.horizontal)
             .padding(.top)
@@ -47,18 +50,28 @@ struct GoalPreviewView: View {
             
             VStack {
                 HStack {
-                    UniversalText(goal.goalDescription, size: Constants.UISmallTextSize, font: textFont)
+                    UniversalText(goal.goalDescription, 
+                                  size: Constants.UISmallTextSize,
+                                  font: Constants.mainFont)
                         .frame(maxWidth: 80)
                         .padding(.vertical)
 
                     makeSeperator()
 
                     VStack(alignment: .trailing) {
-                        UniversalText("completed", size: Constants.UISmallTextSize, font: textFont)
-                        UniversalText("\(dataModel.goalMetData.0)", size: Constants.UIHeaderTextSize, font: textFont)
+                        UniversalText("completed",
+                                      size: Constants.UISmallTextSize,
+                                      font: Constants.mainFont)
+                        UniversalText("\(dataModel.goalMetData.0)",
+                                      size: Constants.UIHeaderTextSize,
+                                      font: Constants.mainFont)
 
-                        UniversalText("missed", size: Constants.UISmallTextSize, font: textFont)
-                        UniversalText("\(dataModel.goalMetData.1)", size: Constants.UIHeaderTextSize, font: textFont)
+                        UniversalText("missed",
+                                      size: Constants.UISmallTextSize,
+                                      font: Constants.mainFont)
+                        UniversalText("\(dataModel.goalMetData.1)",
+                                      size: Constants.UIHeaderTextSize,
+                                      font: Constants.mainFont)
                     }
 
                     makeSeperator()
@@ -79,18 +92,22 @@ struct GoalPreviewView: View {
 
                         Rectangle()
                             .cornerRadius(Constants.UIDefaultCornerRadius)
-                            .foregroundColor( colorScheme == .dark ? Colors.darkGrey : Colors.secondaryLightColor )
+                            .foregroundColor( colorScheme == .dark ? Colors.secondaryDark : Colors.secondaryLight )
 
                         Rectangle()
-                            .foregroundColor(Colors.tint)
+                            .universalStyledBackgrond(.accent, onForeground: true)
                             .frame(width: max(min(dataModel.roundedProgressData / Double(goal.targetHours) * geo.size.width, geo.size.width),0) )
                             .cornerRadius(Constants.UIDefaultCornerRadius)
                     }
                 }
                 HStack {
-                    UniversalText("current progress", size: Constants.UISmallTextSize, font: textFont)
+                    UniversalText("current progress",
+                                  size: Constants.UISmallTextSize,
+                                  font: Constants.mainFont)
                     Spacer()
-                    UniversalText("\(dataModel.roundedProgressData) / \(goal.targetHours)", size: Constants.UISmallTextSize, font: textFont)
+                    UniversalText("\(dataModel.roundedProgressData) / \(goal.targetHours)",
+                                  size: Constants.UISmallTextSize,
+                                  font: Constants.mainFont)
                 }
             }
             .frame(height: 40)
@@ -99,7 +116,7 @@ struct GoalPreviewView: View {
 
             Spacer()
         }
-        .opaqueRectangularBackground(0, stroke: true)
+        .rectangularBackground(0, style: .primary, stroke: true)
         .onTapGesture { showingGoalView = true }
         .contextMenu {
             Button { showingEditingView = true }  label:          { Label("edit", systemImage: "slider.horizontal.below.rectangle") }

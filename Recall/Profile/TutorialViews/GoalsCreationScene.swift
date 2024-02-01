@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 extension TutorialViews {
 
@@ -52,8 +53,8 @@ extension TutorialViews {
                     Spacer()
                     
                 }
-                .if( selected == option ) { view in view.tintRectangularBackground() }
-                .if( selected != option ) { view in view.secondaryOpaqueRectangularBackground() }
+                .if( selected == option ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
+                .if( selected != option ) { view in view.rectangularBackground(style: .secondary) }
                 .onTapGesture { selected = option }
             }
         }
@@ -146,7 +147,7 @@ extension TutorialViews {
                 }
                 Spacer()
             }
-            .secondaryOpaqueRectangularBackground()
+            .rectangularBackground(style: .secondary)
             
         }
         
@@ -163,7 +164,7 @@ extension TutorialViews {
                     makeMetaDataLabel(title: "\(goal.targetHours)", description: "hours")
                 }
             }
-            .opaqueRectangularBackground(7, stroke: true)
+            .rectangularBackground(7, style: .primary, stroke: true)
         }
         
         @ViewBuilder

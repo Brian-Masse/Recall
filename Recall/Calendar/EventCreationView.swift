@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
-//import FlowGrid
+import UIUniversals
 
 //MARK: GoalMultiplierSelector
 struct GoalMultiplierSelector: View {
@@ -43,8 +43,8 @@ struct GoalMultiplierSelector: View {
 
             if showToggle {
                 Image(systemName: "checkmark")
-                    .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 == 0 ) { view in view.opaqueRectangularBackground() }
-                    .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 != 0 ) { view in view.tintRectangularBackground() }
+                    .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 == 0 ) { view in view.rectangularBackground(style: .primary) }
+                    .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 != 0 ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
                 
                     .onTapGesture {
                         let rating = Int(goalRatings[goal.key] ?? "0") ?? 0
@@ -53,7 +53,7 @@ struct GoalMultiplierSelector: View {
                     }
             }
         }
-        .secondaryOpaqueRectangularBackground()
+        .rectangularBackground(style: .secondary)
     }
     
 }
@@ -145,8 +145,8 @@ struct CalendarEventCreationView: View {
             UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
         }
         .onTapGesture { category = tag }
-        .if(category.label == tag.label) { view in view.tintRectangularBackground()  }
-        .if(category.label != tag.label) { view in view.secondaryOpaqueRectangularBackground() }
+        .if(category.label == tag.label) { view in view.rectangularBackground(style: .accent, foregroundColor: .black)  }
+        .if(category.label != tag.label) { view in view.rectangularBackground(style: .secondary) }
     }
     
 //    MARK: Submit
@@ -244,8 +244,8 @@ struct CalendarEventCreationView: View {
                     Image(systemName: "arrow.up.right")
                     UniversalText(template.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                 }
-                .if( (activeTempalte?.title ?? "") == template.title ) { view in view.tintRectangularBackground() }
-                .if( (activeTempalte?.title ?? "") != template.title ) { view in view.secondaryOpaqueRectangularBackground() }
+                .if( (activeTempalte?.title ?? "") == template.title ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
+                .if( (activeTempalte?.title ?? "") != template.title ) { view in view.rectangularBackground(style: .secondary) }
                 .onTapGesture {
                     if (activeTempalte?.title ?? "") == template.title { activeTempalte = nil }
                     else { fillInformation(from: template) }
@@ -267,8 +267,8 @@ struct CalendarEventCreationView: View {
             
             Spacer()
         }
-        .if( recallByLength == option ) { view in view.tintRectangularBackground(7) }
-        .if( recallByLength != option ) { view in view.secondaryOpaqueRectangularBackground(7) }
+        .if( recallByLength == option ) { view in view.rectangularBackground(7, style: .accent, foregroundColor: .black) }
+        .if( recallByLength != option ) { view in view.rectangularBackground(7, style: .secondary) }
         .onTapGesture { withAnimation { recallByLength = option } }
     }
     
@@ -391,11 +391,11 @@ struct CalendarEventCreationView: View {
                 
                 LargeRoundedButton("done", icon: "arrow.down") { submit() }
             }
-            .opaqueRectangularBackground()
+            .rectangularBackground(style: .primary)
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .background(Colors.tint)
+        .universalStyledBackgrond(.accent)
         
         .onChange(of: category) { newValue in goalRatings = RecallCalendarEvent.translateGoalRatingList(newValue.goalRatings) }
         .sheet(isPresented: $showingTagCreationView) {
@@ -403,7 +403,7 @@ struct CalendarEventCreationView: View {
                                  tag: nil,
                                  label: "",
                                  goalRatings: Dictionary(),
-                                 color: Colors.tint)
+                                 color: RecallModel.shared.activeColor)
         }
     
         .alert(alertTitle,

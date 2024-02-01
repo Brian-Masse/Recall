@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 @MainActor
 struct CategoryCreationView: View {
@@ -15,10 +16,12 @@ struct CategoryCreationView: View {
     @ViewBuilder
     private func makeTextField(title: String, binding: Binding<String>) -> some View {
         VStack(alignment: .leading) {
-            UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+            UniversalText(title,
+                          size: Constants.UIHeaderTextSize,
+                          font: Constants.titleFont)
             
             TextField("", text: binding)
-                .secondaryOpaqueRectangularBackground()
+                .rectangularBackground(style: .secondary)
                 .universalTextField()
         }
     }
@@ -93,8 +96,8 @@ struct CategoryCreationView: View {
                     Image(systemName: "arrow.up.forward")
                     UniversalText(goal.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                 }
-                .if(!hasGoalRating(at: key)) { view in view.secondaryOpaqueRectangularBackground() }
-                .if(hasGoalRating(at: key)) { view in view.tintRectangularBackground() }
+                .if(!hasGoalRating(at: key)) { view in view.rectangularBackground(style: .secondary) }
+                .if(hasGoalRating(at: key)) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
                 .onTapGesture {
                     if goalRatings[key] == nil { goalRatings[key] = "1" }
                     else { goalRatings[key] = nil }
@@ -147,11 +150,11 @@ struct CategoryCreationView: View {
             .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
             .padding(5)
             .universalTextStyle()
-            .opaqueRectangularBackground()
+            .rectangularBackground(style: .primary)
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .background(Colors.tint)
+        .background(RecallModel.shared.activeColor)
         
         .defaultAlert($showingAlert,
                       title: "Incomplete Form",

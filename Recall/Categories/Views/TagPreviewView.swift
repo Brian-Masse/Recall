@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 //MARK: GoalTags
 struct GoalTags: View {
@@ -24,7 +25,7 @@ struct GoalTags: View {
                 Image( systemName: "arrow.up.forward" )
                 UniversalText( goal.label + (multiplier <= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             }
-            .secondaryOpaqueRectangularBackground()
+            .rectangularBackground(style: .secondary)
 //            .onTapGesture { showingGoalView = true }
             .tag(goal.getEncryptionKey())
             .fullScreenCover(isPresented: $showingGoalView) {

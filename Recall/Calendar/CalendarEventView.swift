@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIUniversals
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
@@ -48,7 +49,7 @@ struct CalendarEventView: View {
             Spacer()
             
             VStack {
-                ResizeableIcon(icon: icon, size: Constants.UISubHeaderTextSize)
+                ResizableIcon(icon, size: Constants.UISubHeaderTextSize)
                     .padding(5)
                 UniversalText(title, size: Constants.UISmallTextSize, font: Constants.mainFont)
             }
@@ -56,7 +57,7 @@ struct CalendarEventView: View {
             
             Spacer()
         }
-        .secondaryOpaqueRectangularBackground()
+        .rectangularBackground(style: .secondary)
     }
     
     @State var templateDeletionAlert: Bool = false
@@ -71,7 +72,7 @@ struct CalendarEventView: View {
             }.padding(.bottom, 5)
             
             if !event.notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                UniversalText("Notes", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
+                UniversalText("Notes", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                     .padding(.bottom, 5)
                 
                 ScrollView(.vertical) {
@@ -91,7 +92,7 @@ struct CalendarEventView: View {
         let times = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
         
         HStack {
-            UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, true ).padding(.bottom, 3)
+            UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont ).padding(.bottom, 3)
             Spacer()
             LargeRoundedButton("", icon: "arrow.down", color: event.getColor()) { presentationMode.wrappedValue.dismiss() }
         }
@@ -104,23 +105,23 @@ struct CalendarEventView: View {
     @ViewBuilder
     private func makeOverview() -> some View {
         
-        UniversalText("Overview", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        UniversalText("Overview", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
         VStack(alignment : .leading) {
 
-            UniversalText("Info", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
+            UniversalText("Info", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
             CalendarEventView.makeOverviewView(from: event, in: events)
                 .padding(.bottom)
             
             if event.goalRatings.count != 0 {
-                UniversalText("Goal Progress", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, true)
+                UniversalText("Goal Progress", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                 GoalTags(goalRatings: Array(event.goalRatings), events: events)
             }
-        }.opaqueRectangularBackground(7, stroke: true)
+        }.rectangularBackground(7, style: .primary, stroke: true)
     }
     
     @ViewBuilder
     private func makeQuickActions() -> some View {
-        UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont, true)
+        UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
         ScrollView(.horizontal) {
             HStack {
                 LargeRoundedButton("edit", icon: "arrow.up.forward", color: event.getColor())                { showingEditingScreen = true }
@@ -131,7 +132,7 @@ struct CalendarEventView: View {
                 }
             }
         }
-        .secondaryOpaqueRectangularBackground(7)
+        .rectangularBackground(7, style: .secondary)
     }
     
     @ViewBuilder

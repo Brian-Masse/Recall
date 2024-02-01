@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Charts
 import RealmSwift
+import UIUniversals
 
 //MARK: Scroll Chart
 struct ScrollChart<Content: View>: View {

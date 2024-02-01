@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import AuthenticationServices
+import UIUniversals
 
 //BundleID: Masse-Brian.Recall
 //KeyID: 22NTNRT72G
@@ -71,10 +72,10 @@ struct LoginView: View {
                             UniversalText( "Email + password", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
                             
                             TextField("email", text: $email)
-                                .secondaryOpaqueRectangularBackground()
+                                .rectangularBackground(style: .secondary)
                                 .universalTextField()
                             SecureField("password", text: $password)
-                                .secondaryOpaqueRectangularBackground()
+                                .rectangularBackground(style: .secondary)
                                 .universalTextField()
                                 .padding(.bottom)
                             
