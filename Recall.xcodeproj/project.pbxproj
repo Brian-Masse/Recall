@@ -47,6 +47,7 @@
 		C94F06762A6AD9F200C99EA0 /* GoalPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F06752A6AD9F200C99EA0 /* GoalPreviewView.swift */; };
 		C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F067D2A6B215400C99EA0 /* GoalView.swift */; };
 		C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C954AAD02A76FA4E00897BCE /* Animations.swift */; };
+		C97B2C412B5C9CA2004491A9 /* UniversalDonationPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C97B2C402B5C9CA2004491A9 /* UniversalDonationPackage */; };
 		C98198DA2AE9E46D0039AF9C /* EventSelectionEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98198D92AE9E46D0039AF9C /* EventSelectionEditorView.swift */; };
 		C98198DC2AE9ECC90039AF9C /* HalfPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98198DB2AE9ECC90039AF9C /* HalfPageView.swift */; };
 		C98CEE0F2AFFFC3E00B75924 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98CEE0E2AFFFC3E00B75924 /* UpdateManager.swift */; };

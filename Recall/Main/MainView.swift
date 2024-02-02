@@ -121,11 +121,17 @@ struct MainView: View {
         
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
-                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)      .tag( MainPage.calendar )
+                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
+                    .tag( MainPage.calendar )
                     .halfPageScreenReceiver(showing: $showingHalfPage)
-                GoalsPageView(events: arrEvents )                           .tag( MainPage.goals )
-                CategoriesPageView(events: arrEvents )                      .tag( MainPage.categories )
-                DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)         .tag( MainPage.data )
+                Text("hi")
+//                GoalsPageView(events: arrEvents )
+                    .tag( MainPage.goals )
+                CategoriesPageView(events: arrEvents )
+                    .tag( MainPage.categories )
+//                DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)
+                Text("hi")
+                    .tag( MainPage.data )
 
             }   
             .tabViewStyle(.page(indexDisplayMode: .never))

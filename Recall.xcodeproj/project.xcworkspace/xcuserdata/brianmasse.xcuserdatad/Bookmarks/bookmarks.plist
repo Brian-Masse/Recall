@@ -79,16 +79,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            .fullScreenCover(isPresented: $showingGoalView) {
+				<string>    var body: some View {
 </string>
 				<key>leading</key>
-				<string>//            .onTapGesture { showingGoalView = true }
-            .tag(goal.getEncryptionKey())
+				<string>    let events: [RecallCalendarEvent]
+    
 </string>
 				<key>trailing</key>
-				<string>                GoalView(goal: goal, events: events)
-            }
-        }
+				<string>        WrappedHStack(collection: goalRatings) { node in
+            VStack {
+                if Int(node.data) ?? 0 != 0 {
 </string>
 			</dict>
 			<key>type</key>
