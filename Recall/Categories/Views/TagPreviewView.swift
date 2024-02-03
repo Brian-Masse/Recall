@@ -21,16 +21,7 @@ struct GoalTags: View {
         let multiplier: Int
         
         var body: some View {
-            HStack {
-                Image( systemName: "arrow.up.forward" )
-                UniversalText( goal.label + (multiplier <= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-            }
-            .rectangularBackground(style: .secondary)
-//            .onTapGesture { showingGoalView = true }
-            .tag(goal.getEncryptionKey())
-            .fullScreenCover(isPresented: $showingGoalView) {
-                GoalView(goal: goal, events: events)
-            }
+            UniversalText( goal.label + (multiplier <= 1 ? "," : " x\(multiplier),"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )
         }
     }
     
@@ -87,7 +78,7 @@ struct TagPreviewView: View {
             HStack {
                 Image(systemName: "tag")
                     .foregroundColor(tag.getColor())
-                UniversalText(tag.label, size: Constants.UISubHeaderTextSize, font: Constants.mainFont)
+                UniversalText(tag.label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                 
                 Spacer()
                 
@@ -98,6 +89,7 @@ struct TagPreviewView: View {
                 .padding(.leading)
             
         }
+        .rectangularBackground(0, style: .primary, cornerRadius: 0)
         .contextMenu {
             ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
                 showingEditTagView = true

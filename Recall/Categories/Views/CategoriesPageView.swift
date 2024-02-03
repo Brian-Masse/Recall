@@ -91,8 +91,8 @@ struct CategoriesPageView: View {
                 
                 TabView(selection: $activePage) {
                     TagPageView(tags: Array(categories), events: events).tag( TagPage.tags )
-                    TemplatePageView(events: events).tag( TagPage.templates )
-                    FavoritesPageView(events: events).tag( TagPage.favorites )
+//                    TemplatePageView(events: events).tag( TagPage.templates )
+//                    FavoritesPageView(events: events).tag( TagPage.favorites )
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
