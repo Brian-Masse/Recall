@@ -54,15 +54,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>51</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>29</string>
+					<string>24</string>
 					<key>StartingColumnNumber</key>
-					<string>12</string>
+					<string>145</string>
 					<key>StartingLineNumber</key>
-					<string>29</string>
+					<string>23</string>
 					<key>Timestamp</key>
-					<string>717529308.5213</string>
+					<string>728615403.395269</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -78,15 +78,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>.fullScreenCover(isPresented: $showingG</string>
+				<string>
+</string>
 				<key>leading</key>
-				<string>//            .onTapGesture { showingGoalView = true }
-            .tag(goal.getEncryptionKey())
-            </string>
+				<string>        
+        var body: some View {
+            UniversalText( goal.label + (multiplier &lt;= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )</string>
 				<key>trailing</key>
-				<string>oalView) {
-                GoalView(goal: goal, events: events)
-            }
+				<string>        }
+    }
+    
 </string>
 			</dict>
 			<key>type</key>
