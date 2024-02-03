@@ -43,6 +43,8 @@ extension Constants {
     static var tagColorsDic: Dictionary<String, Color> = Dictionary()
     static var goalColorsDic: Dictionary<String, Color> = Dictionary()
     
+    
+    
     @MainActor
     static private func setTagColorsDic() {
         let tags: [RecallCategory] = RealmManager.retrieveObjects()
