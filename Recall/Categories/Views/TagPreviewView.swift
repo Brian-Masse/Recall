@@ -21,7 +21,7 @@ struct GoalTags: View {
         let multiplier: Int
         
         var body: some View {
-            UniversalText( goal.label + (multiplier <= 1 ? "," : " x\(multiplier),"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            UniversalText( goal.label + (multiplier <= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )
         }
     }
     
