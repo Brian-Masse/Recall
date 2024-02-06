@@ -81,9 +81,9 @@
 				<string>
 </string>
 				<key>leading</key>
-				<string>        
-        var body: some View {
-            UniversalText( goal.label + (multiplier &lt;= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )</string>
+				<string>        var body: some View {
+            UniversalText( goal.label + (multiplier &lt;= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                .rectangularBackground(10, style: .transparent)</string>
 				<key>trailing</key>
 				<string>        }
     }

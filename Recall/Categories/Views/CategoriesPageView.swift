@@ -90,9 +90,12 @@ struct CategoriesPageView: View {
                 makePagePicker(geo: geo)
                 
                 TabView(selection: $activePage) {
-                    TagPageView(tags: Array(categories), events: events).tag( TagPage.tags )
-//                    TemplatePageView(events: events).tag( TagPage.templates )
-//                    FavoritesPageView(events: events).tag( TagPage.favorites )
+                    TagPageView(tags: Array(categories), events: events)
+                        .tag( TagPage.tags )
+                    TemplatePageView(events: events)
+                        .tag( TagPage.templates )
+                    FavoritesPageView(events: events)
+                        .tag( TagPage.favorites )
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }

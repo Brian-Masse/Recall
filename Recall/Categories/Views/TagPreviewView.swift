@@ -22,6 +22,7 @@ struct GoalTags: View {
         
         var body: some View {
             UniversalText( goal.label + (multiplier <= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                .rectangularBackground(10, style: .transparent)
         }
     }
     
@@ -74,7 +75,7 @@ struct TagPreviewView: View {
     
     var body: some View {
         
-        VStack {
+        VStack(spacing: 5) {
             HStack {
                 Image(systemName: "tag")
                     .foregroundColor(tag.getColor())
@@ -86,7 +87,7 @@ struct TagPreviewView: View {
             }
             
             GoalTags(goalRatings: Array(tag.goalRatings), events: events)
-                .padding(.leading)
+                .padding(.leading, 25)
             
         }
         .rectangularBackground(0, style: .primary, cornerRadius: 0)

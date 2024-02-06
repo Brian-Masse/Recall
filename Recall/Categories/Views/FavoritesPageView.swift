@@ -193,6 +193,7 @@ struct FavoritesPageView: View {
                                 .padding(.bottom, 7)
                         }
                     }
+                    .padding(.vertical)
                     .padding(.bottom, Constants.UIBottomOfPagePadding)
                 }
             }
