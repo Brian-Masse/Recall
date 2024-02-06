@@ -57,6 +57,7 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
+<<<<<<< HEAD
 					<string>31</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
@@ -64,6 +65,15 @@
 					<string>30</string>
 					<key>Timestamp</key>
 					<string>727733216.680053</string>
+=======
+					<string>24</string>
+					<key>StartingColumnNumber</key>
+					<string>145</string>
+					<key>StartingLineNumber</key>
+					<string>23</string>
+					<key>Timestamp</key>
+					<string>728615403.395269</string>
+>>>>>>> main
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -79,6 +89,7 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
+<<<<<<< HEAD
 				<string>    var body: some View {
 </string>
 				<key>leading</key>
@@ -89,6 +100,18 @@
 				<string>        WrappedHStack(collection: goalRatings) { node in
             VStack {
                 if Int(node.data) ?? 0 != 0 {
+=======
+				<string>
+</string>
+				<key>leading</key>
+				<string>        
+        var body: some View {
+            UniversalText( goal.label + (multiplier &lt;= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )</string>
+				<key>trailing</key>
+				<string>        }
+    }
+    
+>>>>>>> main
 </string>
 			</dict>
 			<key>type</key>
