@@ -108,6 +108,8 @@ struct CalendarEventCreationView: View {
     let editing: Bool
     let event: RecallCalendarEvent?
     
+    @State var templates: [RecallCalendarEvent] = []
+    
     @State var title: String
     @State var notes: String
     @State var startTime: Date
@@ -239,7 +241,7 @@ struct CalendarEventCreationView: View {
             } }
         }
         if showingTemplates {
-            WrappedHStack(collection: RecallModel.getTemplates(from: Array(events))) { template in
+            WrappedHStack(collection: templates) { template in
                 HStack {
                     Image(systemName: "arrow.up.right")
                     UniversalText(template.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
@@ -404,6 +406,9 @@ struct CalendarEventCreationView: View {
                                  label: "",
                                  goalRatings: Dictionary(),
                                  color: RecallModel.shared.activeColor)
+        }
+        .task {
+            self.templates = await RecallModel.getTemplates(from: Array(events))
         }
     
         .alert(alertTitle,

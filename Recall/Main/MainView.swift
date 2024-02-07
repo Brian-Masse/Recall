@@ -27,9 +27,7 @@ struct MainView: View {
     
 //    MARK: Tabbar
     struct TabBar: View {
-        
-        @Environment(\.colorScheme) var colorScheme
-        
+
         struct TabBarIcon: View {
             
             @Binding var selection: MainView.MainPage
@@ -148,12 +146,6 @@ struct MainView: View {
             Constants.setupConstants()
         }
         .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
-        
-        .onChange(of: colorScheme) { newValue in
-            RecallModel.shared.setTint(from: newValue)
-        }
-        
-        
         .ignoresSafeArea()
         .universalBackground()
         

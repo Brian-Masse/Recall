@@ -35,7 +35,7 @@ struct RecallModel {
     private(set) var activeColor: Color = Colors.lightAccent
     
     mutating func setActiveColor(from colorScheme: ColorScheme) {
-        activeColor = colorScheme == .dark ? Colors.darkAccent : Colors.lightAccent
+//        activeColor = colorScheme == .dark ? Colors.darkAccent : Colors.lightAccent
     }
     
     @MainActor
@@ -53,7 +53,7 @@ struct RecallModel {
         activeColor = colorScheme == .dark ? Colors.darkAccent : Colors.lightAccent
     }
     
-    static func getTemplates(from events: [RecallCalendarEvent]) -> [RecallCalendarEvent] {
+    static func getTemplates(from events: [RecallCalendarEvent]) async -> [RecallCalendarEvent] {
         events.filter { event in event.isTemplate }
     }
     

@@ -54,29 +54,42 @@ struct TemplatePageView: View {
     
     let events: [RecallCalendarEvent]
     
+    @State var templatesLoaded: Bool = false
+    @State var templates: [RecallCalendarEvent] = []
+    
 //    MARK: Body
     var body: some View {
-        let templates = RecallModel.getTemplates(from: events)
         
-        if templates.count != 0 {
-            ScrollView(.vertical) {
-                VStack(alignment: .leading) {
-                    ForEach( templates ) { template in
-                        Wrapper(events: events, template: template)
+        VStack {
+            if templatesLoaded {
+                if templates.count != 0 {
+                    ScrollView(.vertical) {
+                        VStack(alignment: .leading) {
+                            ForEach( templates ) { template in
+                                Wrapper(events: events, template: template)
+                            }
+                        }
+                        .rectangularBackground(7, style: .primary, stroke: true)
+                        .padding(.bottom, Constants.UIBottomOfPagePadding)
+                        .padding(.top)
                     }
+                } else {
+                    UniversalText(Constants.templatesSplashPurpose,
+                                  size: Constants.UIDefaultTextSize,
+                                  font: Constants.mainFont)
                 }
-                .rectangularBackground(7, style: .primary, stroke: true)
-                .padding(.bottom, Constants.UIBottomOfPagePadding)
-                .padding(.top)
-            }
-        } else {
-            VStack {
-                UniversalText(Constants.templatesSplashPurpose,
-                              size: Constants.UIDefaultTextSize,
-                              font: Constants.mainFont)
+            } else {
                 
-                Spacer()
+                Rectangle()
+                    .foregroundStyle(.red)
             }
+            
+            Spacer()
         }
+        .task {
+            self.templates = await RecallModel.getTemplates(from: events)
+            self.templatesLoaded = true
+        }
+        .onDisappear { self.templatesLoaded = false }
     }
 }
