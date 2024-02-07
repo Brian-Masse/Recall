@@ -117,7 +117,8 @@ struct MainView: View {
         
         ZStack(alignment: .bottom) {
             TabView(selection: $currentPage) {
-                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
+//                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
+                Text("hi")
                     .tag( MainPage.calendar )
                     .halfPageScreenReceiver(showing: $showingHalfPage)
                 Text("hi")

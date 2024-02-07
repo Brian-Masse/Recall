@@ -72,27 +72,29 @@ struct CategoriesPageView: View {
     
 //    MARK: Body
     var body: some View {
-        
         GeometryReader { geo in
             VStack(alignment: .leading) {
-                
-                HStack {
-                    UniversalText( activePage.rawValue, size: Constants.UITitleTextSize, font: Constants.titleFont, scale: true )
-                    Spacer()
-                
-                    LargeRoundedButton(activePage.getAddButtonName(), icon: "arrow.up") {
-                        if activePage == .tags { showingCreateTagView = true }
-                        if activePage == .templates { showingCreateEventView = true }
-                        if activePage == .favorites { showingCreateFavoriteEventView = true }
+                Group {
+                    HStack {
+                        UniversalText( activePage.rawValue, size: Constants.UITitleTextSize, font: Constants.titleFont, scale: true )
+                        Spacer()
+                        
+                        LargeRoundedButton(activePage.getAddButtonName(), icon: "arrow.up") {
+                            if activePage == .tags { showingCreateTagView = true }
+                            if activePage == .templates { showingCreateEventView = true }
+                            if activePage == .favorites { showingCreateFavoriteEventView = true }
+                        }
                     }
-                }
-                
-                makePagePicker(geo: geo)
+                    
+                    makePagePicker(geo: geo)
+                }.padding(7)
                 
                 TabView(selection: $activePage) {
                     TagPageView(tags: Array(categories), events: events)
+                        .padding(7)
                         .tag( TagPage.tags )
                     TemplatePageView(events: events)
+                        .padding(7)
                         .tag( TagPage.templates )
 //                    FavoritesPageView(events: events)
 //                        .tag( TagPage.favorites )
@@ -100,7 +102,6 @@ struct CategoriesPageView: View {
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
         }
-        .padding(7)
         .universalBackground()
         .sheet(isPresented: $showingCreateTagView) {
             CategoryCreationView(editing: false,
