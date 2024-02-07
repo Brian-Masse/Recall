@@ -21,34 +21,34 @@ struct TemplatePageView: View {
         
         var body: some View {
             GeometryReader { geo in
-                CalendarEventPreviewContentView(event: template, events: events, width: geo.size.width, height: 80)
-                    .contextMenu {
-                        ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
-                            showingEditingScreen = true
-                        }
-                        
-                        ContextMenuButton("untemplate", icon: "viewfinder.rectangular") {
-                            template.toggleTemplate()
-                        }
-                        
-                        ContextMenuButton("delete", icon: "trash", role: .destructive) {
-                            showingDeletionAlert = true
-                        }
-                        
-                    }
-                    .sheet(isPresented: $showingEditingScreen) {
-                        CalendarEventCreationView.makeEventCreationView(currentDay: template.startTime, editing: true, event: template)
-                    }
+//                CalendarEventPreviewContentView(event: template, events: events, width: geo.size.width, height: 80)
+//                    .contextMenu {
+//                        ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
+//                            showingEditingScreen = true
+//                        }
+//                        
+//                        ContextMenuButton("untemplate", icon: "viewfinder.rectangular") {
+//                            template.toggleTemplate()
+//                        }
+//                        
+//                        ContextMenuButton("delete", icon: "trash", role: .destructive) {
+//                            showingDeletionAlert = true
+//                        }
+//                        
+//                    }
+//                    .sheet(isPresented: $showingEditingScreen) {
+//                        CalendarEventCreationView.makeEventCreationView(currentDay: template.startTime, editing: true, event: template)
+//                    }
             }
             .frame(height: 80)
             
-            .alert("Delete Associated Calendar Event?", isPresented: $showingDeletionAlert) {
-                Button(role: .cancel) { showingDeletionAlert = false } label:    { Text("cancel") }
-                Button(role: .destructive) { template.toggleTemplate() } label:    { Text("only delete template") }
-                Button(role: .destructive) { template.delete() } label:    { Text("delete template and event") }
-            } message: {
-                Text("Choosing to delete both template and event permanently deletes the calendar event that constructed this template. Choosing to only delete the template keeps the original event in your recall log.")
-            }
+//            .alert("Delete Associated Calendar Event?", isPresented: $showingDeletionAlert) {
+//                Button(role: .cancel) { showingDeletionAlert = false } label:    { Text("cancel") }
+//                Button(role: .destructive) { template.toggleTemplate() } label:    { Text("only delete template") }
+//                Button(role: .destructive) { template.delete() } label:    { Text("delete template and event") }
+//            } message: {
+//                Text("Choosing to delete both template and event permanently deletes the calendar event that constructed this template. Choosing to only delete the template keeps the original event in your recall log.")
+//            }
         }
     }
     

@@ -28,6 +28,7 @@ struct TagPageView: View {
                
                LazyVStack(alignment: .leading) {
                    ForEach(tags) { tag in
+                       
                        TagPreviewView(tag: tag, events: events)
                        
                        if tag.label != tags.last?.label ?? "" {
@@ -52,11 +53,18 @@ struct TagPageView: View {
         
         if tags.count != 0 {
             ScrollView(.vertical) {
-                makeTagList(from: favoriteTags, title: "Favorite Tags")
-                    .padding(.vertical)
                 
-                makeTagList(from: nonFavoriteTags, title: "All Tags")
-                    .padding(.bottom, Constants.UIBottomOfPagePadding)
+                LazyVStack(alignment: .leading) {
+                    ForEach(tags) { tag in
+                        TagPreviewView(tag: tag, events: events)
+                    }
+                }
+                
+//                makeTagList(from: favoriteTags, title: "Favorite Tags")
+//                    .padding(.vertical)
+//                
+//                makeTagList(from: nonFavoriteTags, title: "All Tags")
+//                    .padding(.bottom, Constants.UIBottomOfPagePadding)
                 
             }.task {
                 favoriteTags = await makeFavoriteTags()
