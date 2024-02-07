@@ -60,10 +60,10 @@ struct TemplatePageView: View {
 //    MARK: Body
     var body: some View {
         
-        VStack {
-            if templatesLoaded {
-                if templates.count != 0 {
-                    ScrollView(.vertical) {
+        ScrollView(.vertical) {
+            VStack(alignment: .leading) {
+                if templatesLoaded {
+                    if templates.count != 0 {
                         VStack(alignment: .leading) {
                             ForEach( templates ) { template in
                                 Wrapper(events: events, template: template)
@@ -72,19 +72,16 @@ struct TemplatePageView: View {
                         .rectangularBackground(7, style: .primary, stroke: true)
                         .padding(.bottom, Constants.UIBottomOfPagePadding)
                         .padding(.top)
+                    } else {
+                        UniversalText(Constants.templatesSplashPurpose,
+                                      size: Constants.UIDefaultTextSize,
+                                      font: Constants.mainFont)
                     }
                 } else {
-                    UniversalText(Constants.templatesSplashPurpose,
-                                  size: Constants.UIDefaultTextSize,
-                                  font: Constants.mainFont)
+                    LoadingPageView(count: 3, height: 100)
                 }
-            } else {
-                
-                Rectangle()
-                    .foregroundStyle(.red)
+                Spacer()
             }
-            
-            Spacer()
         }
         .task {
             self.templates = await RecallModel.getTemplates(from: events)

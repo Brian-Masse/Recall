@@ -81,8 +81,6 @@ struct MainView: View {
             }
             .padding(7)
             .frame(height: 104)
-
-//            .padding(.bottom, 18)
             .ignoresSafeArea()
             .universalTextStyle()
             .background(.thinMaterial)
