@@ -89,19 +89,22 @@ struct CategoriesPageView: View {
                     makePagePicker(geo: geo)
                 }.padding(7)
                 
-                TabView(selection: $activePage) {
+                TabView {
                     TagPageView(tags: Array(categories), events: events)
-                        .padding(7)
+                        .padding(.horizontal, 7)
                         .tag( TagPage.tags )
-                    TemplatePageView(events: events)
-                        .padding(7)
-                        .tag( TagPage.templates )
-//                    FavoritesPageView(events: events)
-//                        .tag( TagPage.favorites )
+                    
+//                    TemplatePageView(events: events)
+//                        .padding(7)
+//                        .tag( TagPage.templates )
+////                    FavoritesPageView(events: events)
+////                        .tag( TagPage.favorites )
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
+                .tabViewStyle(.page(indexDisplayMode: .never) )
+                .padding(.bottom, -40)
             }
         }
+//        .ignoresSafeArea()
         .universalBackground()
         .sheet(isPresented: $showingCreateTagView) {
             CategoryCreationView(editing: false,
@@ -117,5 +120,11 @@ struct CategoriesPageView: View {
             CalendarEventCreationView.makeEventCreationView(currentDay: .now, favorite: true)
         }
     }
+}
+
+
+#Preview {
+    
+    CategoriesPageView(events: [])
     
 }

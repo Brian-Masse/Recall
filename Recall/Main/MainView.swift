@@ -115,29 +115,33 @@ struct MainView: View {
     
         let arrEvents = Array(events)
         
-        ZStack(alignment: .bottom) {
-            TabView(selection: $currentPage) {
-//                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
-                Text("hi")
-                    .tag( MainPage.calendar )
-                    .halfPageScreenReceiver(showing: $showingHalfPage)
-                Text("hi")
-//                GoalsPageView(events: arrEvents )
-                    .tag( MainPage.goals )
-                CategoriesPageView(events: arrEvents )
-                    .tag( MainPage.categories )
-//                DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)
-                Text("hi")
-                    .tag( MainPage.data )
-
-            }   
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            
-            if !showingHalfPage {
-                TabBar(pageSelection: $currentPage)
+        
+        GeometryReader { geo in
+            ZStack(alignment: .bottom) {
+                TabView(selection: $currentPage) {
+                    //                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
+                                    Text("hi")
+                                        .tag( MainPage.calendar )
+                                        .halfPageScreenReceiver(showing: $showingHalfPage)
+                                    Text("hi")
+                    //                GoalsPageView(events: arrEvents )
+                                        .tag( MainPage.goals )
+                                    CategoriesPageView(events: arrEvents )
+                                        .tag( MainPage.categories )
+                                        .padding(.bottom, -Constants.UIBottomOfPagePadding)
+                    //                DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)
+                                    Text("hi")
+                                        .tag( MainPage.data )
+                }
+                .padding(.bottom, -Constants.UIBottomOfPagePadding)
+                
+    //            if !showingHalfPage {
+                    TabBar(pageSelection: $currentPage)
+    //            }
+                
+                UpdateView()
             }
-            
-            UpdateView()
+            .ignoresSafeArea()
         }
         .onAppear {
             Task { await refreshData(events: Array(events), goals: Array(goals)) }
@@ -145,9 +149,6 @@ struct MainView: View {
             Constants.setupConstants()
         }
         .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
-        .ignoresSafeArea()
         .universalBackground()
-        
-        
     }
 }

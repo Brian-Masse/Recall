@@ -23,20 +23,16 @@ struct TagPageView: View {
    @ViewBuilder
    private func makeTagList(from tags: [RecallCategory], title: String) -> some View {
        if tags.count != 0 {
-           LazyVStack(alignment: .leading) {
+           LazyVStack(alignment: .leading, spacing: 5) {
                UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                
                LazyVStack(alignment: .leading) {
                    ForEach(tags) { tag in
                        
-                       TagPreviewView(tag: tag, events: events)
-                       
-                       if tag.label != tags.last?.label ?? "" {
-                           Divider()
-                       }
+                       TagPreviewView(tag: tag)
                    }
                }
-               .rectangularBackground(style: .primary, stroke: true)
+               .rectangularBackground(7, style: .primary, stroke: true)
            }
            .padding(.bottom)
        }
@@ -48,36 +44,34 @@ struct TagPageView: View {
     @State var favoriteTags: [RecallCategory] = []
     @State var nonFavoriteTags: [RecallCategory] = []
     
+    @State var scrollViewPosition: CGPoint = .zero
+    
 //    MARK: Body
     var body: some View {
-        
-        if tags.count != 0 {
-            ScrollView(.vertical) {
-                
-                LazyVStack(alignment: .leading) {
-                    ForEach(tags) { tag in
-                        TagPreviewView(tag: tag, events: events)
+        VStack {
+            if tags.count != 0 {
+                BlurScroll(10, blurHeight: 0.5, scrollPositionBinding: $scrollViewPosition) {
+                    VStack {
+                        makeTagList(from: favoriteTags, title: "Favorite Tags")
+                            .padding(.vertical)
+                        
+                        makeTagList(from: nonFavoriteTags, title: "All Tags")
+                            .padding(.bottom, Constants.UIBottomOfPagePadding)
                     }
                 }
-                
-//                makeTagList(from: favoriteTags, title: "Favorite Tags")
-//                    .padding(.vertical)
-//                
-//                makeTagList(from: nonFavoriteTags, title: "All Tags")
-//                    .padding(.bottom, Constants.UIBottomOfPagePadding)
-                
-            }.task {
-                favoriteTags = await makeFavoriteTags()
-                nonFavoriteTags = await makeNonFavoriteTags()
-            }
-        } else {
-            VStack {
+                .task {
+                    favoriteTags = await makeFavoriteTags()
+                    nonFavoriteTags = await makeNonFavoriteTags()
+                }
+            } else {
                 UniversalText( Constants.tagSplashPurpose,
                                size: Constants.UIDefaultTextSize,
                                font: Constants.mainFont)
                 
                 Spacer()
             }
+            
+            Spacer()
         }
     }
 }

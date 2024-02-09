@@ -42,6 +42,11 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
         case preserveCustom
     }
     
+    static func == (lhs: RecallCategory, rhs: RecallCategory) -> Bool {
+        
+        lhs.isFavorite == rhs.isFavorite
+    }
+    
     @MainActor
     func update(label: String, goalRatings: Dictionary<String, String>, color: Color ) async {
         RealmManager.updateObject(self) { thawed in

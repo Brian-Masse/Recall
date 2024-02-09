@@ -32,11 +32,11 @@ struct GoalTags: View {
     var body: some View {
         WrappedHStack(collection: goalRatings) { node in
             VStack {
-                if Int(node.data) ?? 0 != 0 {
-                    if let goal = RecallGoal.getGoalFromKey( node.key ) {
-                        GoalTag(events: events, goal: goal, multiplier: Int(node.data)! )
-                    }
-                }
+//                if Int(node.data) ?? 0 != 0 {
+//                    if let goal = RecallGoal.getGoalFromKey( node.key ) {
+//                        GoalTag(events: events, goal: goal, multiplier: Int(node.data)! )
+//                    }
+//                }
             }
         }
     }
@@ -50,25 +50,15 @@ struct TagPreviewView: View {
     
     @ObservedRealmObject var tag: RecallCategory
     
-    let events: [RecallCalendarEvent]
+//    let events: [RecallCalendarEvent]
     
     @State var showingEditTagView: Bool = false
     
     @ViewBuilder
     private func makeFavoriteToggle() -> some View {
-        Group {
-            if tag.isFavorite {
-                HStack {
-                    UniversalText("Favorite", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                    Image(systemName: "checkmark")
-                }
-                
-            } else {
-                HStack {
-                    UniversalText("Favorite", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                    Image(systemName: "arrow.up")
-                }
-            }
+        HStack {
+            UniversalText("Favorite", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            Image(systemName: tag.isFavorite ? "checkmark" : "arrow.up")
         }
         .onTapGesture { withAnimation { tag.toggleFavorite() }}
     }
@@ -77,24 +67,23 @@ struct TagPreviewView: View {
         
         VStack(spacing: 5) {
             HStack {
-//                Image(systemName: "tag")
-//                    .foregroundColor(tag.getColor())
-//                Text(tag.label)
-//                    .padding(.vertical, 30)
-//                    .onAppear { print(tag.label) }
+                Image(systemName: "tag")
+                    .foregroundStyle(tag.getColor())
                 
-                UniversalTexts(tag.label, size: Constants.UISubHeaderTextSize)
+                UniversalText(tag.label, size: Constants.UISubHeaderTextSize)
                 
                 Spacer()
                 
-//                makeFavoriteToggle()
+                makeFavoriteToggle()
             }
             
 //            GoalTags(goalRatings: Array(tag.goalRatings), events: events)
 //                .padding(.leading, 25)
             
         }
-        .rectangularBackground(style: .primary, cornerRadius: 0)
+//        .rectangularBackground(0, style: .primary, cornerRadius: 0)
+        .padding(.vertical, 5)
+        .rectangularBackground(7, style: .transparent)
 //        .contextMenu {
 //            ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
 //                showingEditTagView = true
@@ -108,14 +97,12 @@ struct TagPreviewView: View {
 //                tag.delete()
 //            }
 //        }
-        .sheet(isPresented: $showingEditTagView) {
-            CategoryCreationView(editing: true,
-                                 tag: tag,
-                                 label: tag.label,
-                                 goalRatings: RecallCalendarEvent.translateGoalRatingList(tag.goalRatings),
-                                 color: tag.getColor())
-        }
-        
+//        .sheet(isPresented: $showingEditTagView) {
+//            CategoryCreationView(editing: true,
+//                                 tag: tag,
+//                                 label: tag.label,
+//                                 goalRatings: RecallCalendarEvent.translateGoalRatingList(tag.goalRatings),
+//                                 color: tag.getColor())
+//        }
     }
-    
 }
