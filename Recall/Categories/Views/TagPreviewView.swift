@@ -77,20 +77,24 @@ struct TagPreviewView: View {
         
         VStack(spacing: 5) {
             HStack {
-                Image(systemName: "tag")
-                    .foregroundColor(tag.getColor())
-                UniversalText(tag.label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+//                Image(systemName: "tag")
+//                    .foregroundColor(tag.getColor())
+//                Text(tag.label)
+//                    .padding(.vertical, 30)
+//                    .onAppear { print(tag.label) }
+                
+                UniversalTexts(tag.label, size: Constants.UISubHeaderTextSize)
                 
                 Spacer()
                 
-                makeFavoriteToggle()
+//                makeFavoriteToggle()
             }
             
-            GoalTags(goalRatings: Array(tag.goalRatings), events: events)
-                .padding(.leading, 25)
+//            GoalTags(goalRatings: Array(tag.goalRatings), events: events)
+//                .padding(.leading, 25)
             
         }
-//        .rectangularBackground(0, style: .primary, cornerRadius: 0)
+        .rectangularBackground(style: .primary, cornerRadius: 0)
 //        .contextMenu {
 //            ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
 //                showingEditTagView = true
