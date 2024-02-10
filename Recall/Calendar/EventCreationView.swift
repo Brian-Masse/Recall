@@ -151,6 +151,10 @@ struct CalendarEventCreationView: View {
         .if(category.label != tag.label) { view in view.rectangularBackground(style: .secondary) }
     }
     
+    private func getTemplates(from events: [RecallCalendarEvent]) async  {
+        self.templates = events.filter { event in event.isTemplate }
+    }
+    
 //    MARK: Submit
     private func submit() {
         setDay()
@@ -407,10 +411,7 @@ struct CalendarEventCreationView: View {
                                  goalRatings: Dictionary(),
                                  color: RecallModel.shared.activeColor)
         }
-        .task {
-            self.templates = await RecallModel.getTemplates(from: Array(events))
-        }
-    
+        .task { await getTemplates(from: Array(events)) }
         .alert(alertTitle,
                isPresented: $showingAlert) {
             Button("dimiss", role: .cancel) { }

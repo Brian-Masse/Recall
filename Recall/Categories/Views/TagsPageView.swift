@@ -53,7 +53,7 @@ struct TagPageView: View {
                 BlurScroll(10, blurHeight: 0.5, scrollPositionBinding: $scrollViewPosition) {
                     VStack {
                         makeTagList(from: favoriteTags, title: "Favorite Tags")
-                            .padding(.vertical)
+                            .padding(.vertical, 5)
                         
                         makeTagList(from: nonFavoriteTags, title: "All Tags")
                             .padding(.bottom, Constants.UIBottomOfPagePadding)

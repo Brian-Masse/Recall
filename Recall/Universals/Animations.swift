@@ -87,7 +87,7 @@ struct LoadingRectangle: View {
             
             Rectangle()
                 .foregroundStyle(.clear)
-                .frame(width: 10, height: height)
+                .frame(width: 10, height: height - 30)
             
             UniversalText("so :)",
                           size: Constants.UIDefaultTextSize, wrap: false)

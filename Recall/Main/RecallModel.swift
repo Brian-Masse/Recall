@@ -53,10 +53,10 @@ struct RecallModel {
         activeColor = colorScheme == .dark ? Colors.darkAccent : Colors.lightAccent
     }
     
-    static func getTemplates(from events: [RecallCalendarEvent]) async -> [RecallCalendarEvent] {
-        events.filter { event in event.isTemplate }
-    }
-    
     static let dataModel: RecallDataModel = RecallDataModel()
+    
+    static func wait(for seconds: Double) async {
+        try! await Task.sleep(nanoseconds: UInt64( seconds * pow( 10, 9 )) )
+    }
 
 }

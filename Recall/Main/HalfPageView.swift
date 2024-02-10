@@ -105,7 +105,7 @@ struct HalfPageView<Content: View>: View {
                 
                 VStack(alignment: .leading) {
                     pageHeader()
-                        .padding()
+                        .padding    ()
                     if pageExpansion != .hide {
                         VStack {
                             Spacer()
