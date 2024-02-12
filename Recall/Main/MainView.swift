@@ -25,9 +25,9 @@ struct MainView: View {
         }
     }
     
-//    MARK: Tabbar
+    //    MARK: Tabbar
     struct TabBar: View {
-
+        
         struct TabBarIcon: View {
             
             @Binding var selection: MainView.MainPage
@@ -37,7 +37,7 @@ struct MainView: View {
             let page: MainView.MainPage
             let title: String
             let icon: String
-        
+            
             @ViewBuilder private func makeIcon() -> some View {
                 Image(systemName: icon)
             }
@@ -53,7 +53,7 @@ struct MainView: View {
                                     .universalStyledBackgrond(.accent, onForeground: true)
                                     .cornerRadius(70)
                                     .frame(width: 90, height: 90)
-//                                    .aspectRatio(1, contentMode: .fill)
+                                //                                    .aspectRatio(1, contentMode: .fill)
                                     .matchedGeometryEffect(id: "highlight", in: namespace)
                             }
                             .shadow(color: RecallModel.shared.activeColor.opacity(0.3), radius: 10)
@@ -91,8 +91,8 @@ struct MainView: View {
         }
     }
     
-
-//    MARK: Vars
+    
+    //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     
     @ObservedResults( RecallCalendarEvent.self, where: { event in event.startTime > RecallModel.getEarliestEventDate() } ) var events
@@ -112,32 +112,31 @@ struct MainView: View {
     
     //    MARK: Body
     var body: some View {
-    
+        
         let arrEvents = Array(events)
         
         
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
                 TabView(selection: $currentPage) {
-                    //                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
-                                    Text("hi")
-                                        .tag( MainPage.calendar )
-                                        .halfPageScreenReceiver(showing: $showingHalfPage)
-                                    Text("hi")
+                    CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
+                        .tag( MainPage.calendar )
+                        .halfPageScreenReceiver(showing: $showingHalfPage)
+                    Text("hi")
                     //                GoalsPageView(events: arrEvents )
-                                        .tag( MainPage.goals )
-                                    CategoriesPageView(events: arrEvents )
-                                        .tag( MainPage.categories )
-                                        .padding(.bottom, -Constants.UIBottomOfPagePadding)
+                        .tag( MainPage.goals )
+                    CategoriesPageView(events: arrEvents )
+                        .tag( MainPage.categories )
+                        .padding(.bottom, -Constants.UIBottomOfPagePadding)
                     //                DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)
-                                    Text("hi")
-                                        .tag( MainPage.data )
+                    Text("hi")
+                        .tag( MainPage.data )
                 }
                 .padding(.bottom, -Constants.UIBottomOfPagePadding)
                 
-    //            if !showingHalfPage {
-                    TabBar(pageSelection: $currentPage)
-    //            }
+                //            if !showingHalfPage {
+                TabBar(pageSelection: $currentPage)
+                //            }
                 
                 UpdateView()
             }
