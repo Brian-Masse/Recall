@@ -20,9 +20,15 @@ struct GoalPreviewView: View {
     @State var showingEditingView: Bool = false
     @State var showingDeletionAlert: Bool = false
     
+    
+    
     let events: [RecallCalendarEvent]
     
 //    MARK: ViewModifiers
+    
+    
+        
+//    MARK: Header
     @ViewBuilder
     private func makeHeader() -> some View {
         HStack(alignment: .center) {
@@ -36,6 +42,7 @@ struct GoalPreviewView: View {
         }
     }
     
+//    MARK: MetaData
     @ViewBuilder
     private func makeMetaData() -> some View {
         VStack {
@@ -44,7 +51,7 @@ struct GoalPreviewView: View {
                               size: Constants.UISmallTextSize,
                               font: Constants.mainFont)
                     .frame(maxWidth: 80)
-                    .padding(.vertical)
+                    .padding(.vertical, 5)
 
                 Divider(vertical: true)
 
@@ -72,20 +79,22 @@ struct GoalPreviewView: View {
         .frame(height: 80)
     }
     
+//    MARK: ProgressBar
     @ViewBuilder
     private func makeProgressBar() -> some View {
         ZStack(alignment: .leading) {
             GeometryReader { geo in
 
-                HStack { Spacer() }
-                    .rectangularBackground(style: .secondary)
+                Rectangle()
+                    .universalStyledBackgrond(.secondary, onForeground: true)
+                    .cornerRadius(Constants.UIDefaultCornerRadius)
                 
                 Rectangle()
                     .universalStyledBackgrond(.accent, onForeground: true)
                     .frame(width: max(min(dataModel.roundedProgressData / Double(goal.targetHours) * geo.size.width, geo.size.width),0) )
                     .cornerRadius(Constants.UIDefaultCornerRadius)
             }
-        }.frame(height: 40)
+        }.frame(height: 20)
         
         HStack {
             UniversalText("current progress",
@@ -102,29 +111,34 @@ struct GoalPreviewView: View {
     @MainActor
     var body: some View {
         VStack {
-            
-            makeHeader()
-                .padding(.bottom, 7)
-        
-            makeMetaData()
-                .padding(.bottom, 7)
-
-            makeProgressBar()
-            
-            Spacer()
+            if dataModel.dataLoaded {
+                VStack(alignment: .leading) {
+                    makeHeader()
+                        .padding(.bottom, 7)
+                    
+                    makeMetaData()
+                        .padding(.bottom, 7)
+                    
+                    makeProgressBar()
+                    
+                    Spacer()
+                }
+                .rectangularBackground(style: .primary, stroke: true)
+                .onTapGesture { showingGoalView = true }
+                .contextMenu {
+                    ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") { showingEditingView = true }
+                    ContextMenuButton("delete", icon: "trash", role: .destructive) { showingDeletionAlert = true }
+                }
+            } else {
+                LoadingRectangle(height: 220)
+            }
         }
-        .rectangularBackground(style: .primary, stroke: true)
-        .onTapGesture { showingGoalView = true }
-        .contextMenu {
-            Button { showingEditingView = true }  label:          { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
-            Button(role: .destructive) { showingDeletionAlert = true } label:    { Label("delete", systemImage: "trash") }
-        }
+        .task { await dataModel.makeData(for: goal, with: events) }
         .fullScreenCover(isPresented: $showingGoalView) {
             GoalView(goal: goal, events: events)
                 .environmentObject(dataModel)
         }
         .sheet(isPresented: $showingEditingView) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
-        .task { await dataModel.makeData(for: goal, with: events) }
         .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
             Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
         }
