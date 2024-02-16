@@ -122,9 +122,10 @@ struct MainView: View {
                     CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
                         .tag( MainPage.calendar )
                         .halfPageScreenReceiver(showing: $showingHalfPage)
-                    Text("hi")
-                    //                GoalsPageView(events: arrEvents )
+                
+                    GoalsPageView(events: arrEvents )
                         .tag( MainPage.goals )
+                    
                     CategoriesPageView(events: arrEvents )
                         .tag( MainPage.categories )
                         .padding(.bottom, -Constants.UIBottomOfPagePadding)
