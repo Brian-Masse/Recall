@@ -163,36 +163,36 @@ class RecallDataModel: ObservableObject {
     @MainActor
     func onMainRefreshData() async {
 //        events
-//        hourlyData                  = await makeData { event in event.getLengthInHours() }
-//        compressedHourlyData        = await compressData(from: hourlyData)
-//        recentHourlyData            = await getRecentData(from: hourlyData)
-//        recentCompressedHourlyData  = await getRecentData(from: compressedHourlyData)
-////
-//        tagData                     = await makeData { _ in 1 }
-//        compressedTagData           = await compressData(from: tagData)
-//        recentTagData               = await getRecentData(from: tagData)
-//        recentCompressedTagData     = await getRecentData(from: compressedTagData)
+        hourlyData                  = await makeData { event in event.getLengthInHours() }
+        compressedHourlyData        = await compressData(from: hourlyData)
+        recentHourlyData            = await getRecentData(from: hourlyData)
+        recentCompressedHourlyData  = await getRecentData(from: compressedHourlyData)
 //
-//        totalHours                  = await getTotalHours(from: hourlyData)
-//        recentTotalHours            = await getTotalHours(from: recentHourlyData)
-////
-//////        goals
-//    
-//        await indexGoalMetCount()
-//        
-//        let countsOverTime              = await makeGoalsProgressOverTimeData()
-//        
-//        progressOverTime            = countsOverTime.0
-//        metOverTime                 = countsOverTime.1
-//        goalsMetOverTimeData        = countsOverTime.2
+        tagData                     = await makeData { _ in 1 }
+        compressedTagData           = await compressData(from: tagData)
+        recentTagData               = await getRecentData(from: tagData)
+        recentCompressedTagData     = await getRecentData(from: compressedTagData)
+
+        totalHours                  = await getTotalHours(from: hourlyData)
+        recentTotalHours            = await getTotalHours(from: recentHourlyData)
 //
-//        metData                     = await countNumberOfTimesMet()
-//        
-//        let totalData               = await getTotalMetData()
-//        totalGoalsMet               = totalData.0
-//        totalGoalsMetPercentage     = totalData.1
-//
-//        metPercentageData           = await makeCompletionPercentageData()
+////        goals
+    
+        await indexGoalMetCount()
+        
+        let countsOverTime              = await makeGoalsProgressOverTimeData()
+        
+        progressOverTime            = countsOverTime.0
+        metOverTime                 = countsOverTime.1
+        goalsMetOverTimeData        = countsOverTime.2
+
+        metData                     = await countNumberOfTimesMet()
+        
+        let totalData               = await getTotalMetData()
+        totalGoalsMet               = totalData.0
+        totalGoalsMetPercentage     = totalData.1
+
+        metPercentageData           = await makeCompletionPercentageData()
         
     }
     

@@ -77,9 +77,6 @@ struct ActivityPerDay: View {
     private func makeChart() -> some View {
         
         Chart {
-
-//            let _ = print(data.count)
-            
             ForEach(data) { datum in
                 BarMark(x: .value("date", datum.date, unit: .day ),
                         y: .value("count", datum.count), width: Constants.UIScrollableBarWidth)
@@ -104,21 +101,22 @@ struct ActivityPerDay: View {
                         
                         
                         
-                        //                    AxisValueLabel {
-                        //                        Text(dateLabel)
-                        ////                        UniversalText( dateLabel, size: Constants.UISmallTextSize, font: Constants.mainFont )
-                        //                    }
+                                            AxisValueLabel {
+                                                Text(dateLabel)
+                                                UniversalText( dateLabel, size: Constants.UISmallTextSize, font: Constants.mainFont )
+                                            }
                         
                         AxisValueLabel("\( dateLabel)\n\(bottomLabel)")
-                        //                        VStack(alignment: .leading) {
                         
-                        //                            Text(  )
-                        
-                        //                            UniversalText( , size: Constants.UISmallTextSize, font: Constants.mainFont)
-                        //                            UniversalText(bottomLabel, size: Constants.UISmallTextSize, font: Constants.mainFont)
-                        //                        }
-                        
-                        //
+//                        VStack(alignment: .leading) {
+//
+//                            Text(  )
+//
+//                            UniversalText( , size: Constants.UISmallTextSize, font: Constants.mainFont)
+//                            UniversalText(bottomLabel, size: Constants.UISmallTextSize, font: Constants.mainFont)
+//                        }
+//                        
+//                        
                         if date.matches(goal.creationDate, to: .day) {
                             AxisGridLine(centered: true, stroke: .init(lineWidth: 1, lineCap: .round, dash: [2, 6]))
                                 .foregroundStyle(.red)
