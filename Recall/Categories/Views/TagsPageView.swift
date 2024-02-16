@@ -52,8 +52,8 @@ struct TagPageView: View {
                     .onTapGesture { withAnimation { tag.toggleFavorite() }}
                 }
                 
-                makeGoalTags()
-                    .padding(.leading, 25)
+//                makeGoalTags()
+//                    .padding(.leading, 25)
             }
             .padding(.vertical, 5)
             .rectangularBackground(7, style: .secondary)
@@ -119,30 +119,28 @@ struct TagPageView: View {
     
 //    MARK: Body
     var body: some View {
-        VStack {
-            if tags.count != 0 {
-                BlurScroll(10, blurHeight: 0.5, scrollPositionBinding: $scrollViewPosition) {
-                    VStack {
-                        makeTagList(from: favoriteTags, title: "Favorite Tags")
-                            .padding(.vertical, 5)
-                        
-                        makeTagList(from: nonFavoriteTags, title: "All Tags")
-                            .padding(.bottom, Constants.UIBottomOfPagePadding)
-                    }
+        if tags.count != 0 {
+            BlurScroll(10, blurHeight: 0.5, scrollPositionBinding: $scrollViewPosition) {
+                VStack {
+                    makeTagList(from: favoriteTags, title: "Favorite Tags")
+                        .padding(.vertical, 5)
+                    
+                    makeTagList(from: nonFavoriteTags, title: "All Tags")
                 }
-                .task {
-                    favoriteTags = await makeFavoriteTags()
-                    nonFavoriteTags = await makeNonFavoriteTags()
-                }
-            } else {
+                .padding(.bottom, Constants.UIBottomOfPagePadding)
+            }
+            .task {
+                favoriteTags = await makeFavoriteTags()
+                nonFavoriteTags = await makeNonFavoriteTags()
+            }
+        } else {
+            VStack {
                 UniversalText( Constants.tagSplashPurpose,
                                size: Constants.UIDefaultTextSize,
                                font: Constants.mainFont)
                 
                 Spacer()
             }
-            
-            Spacer()
         }
     }
 }

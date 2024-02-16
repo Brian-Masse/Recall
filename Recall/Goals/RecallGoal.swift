@@ -326,13 +326,14 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         return(metCount, Int(numberOfTimePeriods.rounded(.up)) - metCount)
     }
     
-//    @MainActor
+    @MainActor
     func getAverage(from events: [RecallCalendarEvent]) async -> Double {
-        let numberOfTimePeriods = await getNumberOfTimePeriods()
+        let numberOfTimePeriods = getNumberOfTimePeriods()
         
-        let allEvents = events.reduce(0) { partialResult, event in partialResult + event.getGoalProgressThreadInvariant(self) }
-        
-        return allEvents / max(Double(numberOfTimePeriods) * Double(frequency) , 1)
+        var sumOfAllProgess: Double = 0
+        for event in events { sumOfAllProgess += await event.getGoalPrgress(self) }
+    
+        return sumOfAllProgess / max(Double(numberOfTimePeriods) * Double(frequency) , 1)
     }
     
 //    MARK: Indexxing Function

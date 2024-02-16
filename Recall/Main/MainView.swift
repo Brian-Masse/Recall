@@ -16,9 +16,8 @@ struct MainView: View {
     enum MainPage: Int, Identifiable {
         case calendar
         case goals
-        case data
         case categories
-        case templates
+        case data
         
         var id: Int {
             self.rawValue
@@ -109,39 +108,39 @@ struct MainView: View {
         await RecallModel.dataModel.updateProperties(events: events ?? nil, goals: goals ?? nil)
     }
     
+    @State var canDrag = false
+    
+    @State var uiTabarController: UITabBarController?
     
     //    MARK: Body
     var body: some View {
         
         let arrEvents = Array(events)
-        
-        
+        let arrGoals = Array(goals)
+    
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                TabView(selection: $currentPage) {
-                    CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
-                        .tag( MainPage.calendar )
-                        .halfPageScreenReceiver(showing: $showingHalfPage)
-                
-                    GoalsPageView(events: arrEvents )
-                        .tag( MainPage.goals )
+                NavigationView {
+                    TabView(selection: $currentPage) {
+                        CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
+                            .halfPageScreenReceiver(showing: $showingHalfPage)
+                            .tag( MainPage.calendar )
+                        
+                        GoalsPageView(goals: arrGoals, events: arrEvents )
+                            .tag( MainPage.goals )
+    
+                        CategoriesPageView(events: arrEvents )
+                            .tag( MainPage.categories )
                     
-                    CategoriesPageView(events: arrEvents )
-                        .tag( MainPage.categories )
-                        .padding(.bottom, -Constants.UIBottomOfPagePadding)
-                    //                DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)
-                    Text("hi")
-                        .tag( MainPage.data )
+                        Text("hi")
+                            .tag( MainPage.data )
+                    }
                 }
-                .padding(.bottom, -Constants.UIBottomOfPagePadding)
                 
-                //            if !showingHalfPage {
-                TabBar(pageSelection: $currentPage)
-                //            }
+                if !showingHalfPage { TabBar(pageSelection: $currentPage) }
                 
                 UpdateView()
             }
-            .ignoresSafeArea()
         }
         .onAppear {
             Task { await refreshData(events: Array(events), goals: Array(goals)) }

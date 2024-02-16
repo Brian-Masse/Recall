@@ -98,19 +98,22 @@ struct CategoriesPageView: View {
                 
                 TabView( selection: $activePage ) {
                     TagPageView(tags: Array(categories), events: events)
+                        .ignoresSafeArea()
                         .padding(.horizontal, 7)
                         .tag( TagPage.tags )
                     
                     TemplatePageView(events: events)
+                        .ignoresSafeArea()
                         .padding(.horizontal, 7)
                         .tag( TagPage.templates )
                     
                     FavoritesPageView(events: events)
+                        .ignoresSafeArea()
                         .padding(.horizontal, 7)
                         .tag( TagPage.favorites )
                 }
+                .ignoresSafeArea()
                 .tabViewStyle(.page(indexDisplayMode: .never) )
-                .padding(.bottom, -40)
             }
         }
         .universalBackground()

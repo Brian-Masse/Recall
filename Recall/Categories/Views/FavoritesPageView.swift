@@ -180,7 +180,7 @@ struct FavoritesPageView: View {
     var body: some View {
         
         GeometryReader { geo in
-            ScrollView {
+            BlurScroll(10, blurHeight: 0.5, scrollPositionBinding: $scrollPosition) {
                 LazyVStack(alignment: .leading) {
                     makeGroupingSelector()
                         .padding(.bottom, 7)
@@ -197,16 +197,13 @@ struct FavoritesPageView: View {
                             Divider()
                                 .padding(.bottom, 7)
                         }
-                        Rectangle()
-                            .foregroundStyle(.clear)
-                            .padding(.bottom, Constants.UIBottomOfPagePadding)
-                        
                     } else {
                         LoadingPageView(count: 5, height: 100)
                             .opacity(dataLoaded ? 0 : 1)
                         
                     }
                 }
+                .padding(.bottom, Constants.UIBottomOfPagePadding)
             }
         }
         .onChange(of: grouping) { _ in Task { await updateGrouping() } }

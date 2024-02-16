@@ -42,7 +42,7 @@
       "location" : "https://github.com/Brian-Masse/UIUniversals",
       "state" : {
         "branch" : "main",
-        "revision" : "d31e692d02a5c6b4e227bc07ccb746476ff24593"
+        "revision" : "f418c89ee4a4ec62c950f8b5962090039dd6f4eb"
       }
     },
     {
@@ -51,7 +51,7 @@
       "location" : "https://github.com/Brian-Masse/UniversalDonationPackage",
       "state" : {
         "branch" : "main",
-        "revision" : "52e6f5830999c55aa094dc1d5580b6d31cddb665"
+        "revision" : "3f3fa8768534092652a1115c7f1cbaf383d7e504"
       }
     }
   ],

@@ -71,26 +71,28 @@ struct TemplatePageView: View {
     
 //    MARK: Body
     var body: some View {
-        BlurScroll(10, scrollPositionBinding: $scrollPosition) {
-            VStack(alignment: .leading) {
-                if templatesLoaded {
-                    if templates.count != 0 {
-                        LazyVStack(alignment: .leading, spacing: 7) {
-                            ForEach( templates ) { template in
-                                EventContentView(events: events, template: template)
+        GeometryReader { geo in
+            BlurScroll(10, scrollPositionBinding: $scrollPosition) {
+                VStack(alignment: .leading) {
+                    if templatesLoaded {
+                        if templates.count != 0 {
+                            LazyVStack(alignment: .leading, spacing: 7) {
+                                ForEach( templates ) { template in
+                                    EventContentView(events: events, template: template)
+                                }
                             }
+                            .rectangularBackground(7, style: .primary, stroke: true)
+                            .padding(.bottom, Constants.UIBottomOfPagePadding)
+                        } else {
+                            UniversalText(Constants.templatesSplashPurpose,
+                                          size: Constants.UIDefaultTextSize,
+                                          font: Constants.mainFont)
                         }
-                        .rectangularBackground(7, style: .primary, stroke: true)
-                        .padding(.bottom, Constants.UIBottomOfPagePadding)
                     } else {
-                        UniversalText(Constants.templatesSplashPurpose,
-                                      size: Constants.UIDefaultTextSize,
-                                      font: Constants.mainFont)
+                        LoadingPageView(count: 3, height: 80)
                     }
-                } else {
-                    LoadingPageView(count: 3, height: 80)
+                    Spacer()
                 }
-                Spacer()
             }
         }
         .task { await getTemplates(from: events) }

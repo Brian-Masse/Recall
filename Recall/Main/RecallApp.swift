@@ -33,6 +33,8 @@ struct RecallApp: App {
         
         Constants.titleFont = FontProvider[.syneHeavy]
         Constants.mainFont = FontProvider[.renoMono]
+        
+        UITabBar.appearance().isHidden = true
     }
     
     init() {
