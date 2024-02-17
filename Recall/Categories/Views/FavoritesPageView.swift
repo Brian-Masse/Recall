@@ -180,7 +180,7 @@ struct FavoritesPageView: View {
     var body: some View {
         
         GeometryReader { geo in
-            BlurScroll(10, blurHeight: 0.5, scrollPositionBinding: $scrollPosition) {
+            ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(alignment: .leading) {
                     makeGroupingSelector()
                         .padding(.bottom, 7)

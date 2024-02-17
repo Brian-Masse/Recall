@@ -51,7 +51,7 @@ struct GoalsPageView: View {
             
             TabView {
                 if goals.count != 0 {
-                    BlurScroll(10, scrollPositionBinding: $scrollPositionBinding) {
+                    ScrollView(.vertical, showsIndicators: false) {
                         VStack(alignment: .leading) {
                             ForEach( RecallGoal.Priority.allCases) { priority in
                                 makeGoalsSection(priority: priority)

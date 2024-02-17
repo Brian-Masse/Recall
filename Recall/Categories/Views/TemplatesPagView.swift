@@ -72,7 +72,7 @@ struct TemplatePageView: View {
 //    MARK: Body
     var body: some View {
         GeometryReader { geo in
-            BlurScroll(10, scrollPositionBinding: $scrollPosition) {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading) {
                     if templatesLoaded {
                         if templates.count != 0 {

@@ -120,7 +120,7 @@ struct TagPageView: View {
 //    MARK: Body
     var body: some View {
         if tags.count != 0 {
-            BlurScroll(10, blurHeight: 0.5, scrollPositionBinding: $scrollViewPosition) {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     makeTagList(from: favoriteTags, title: "Favorite Tags")
                         .padding(.vertical, 5)
