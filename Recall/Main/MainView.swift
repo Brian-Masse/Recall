@@ -52,7 +52,6 @@ struct MainView: View {
                                     .universalStyledBackgrond(.accent, onForeground: true)
                                     .cornerRadius(70)
                                     .frame(width: 90, height: 90)
-                                //                                    .aspectRatio(1, contentMode: .fill)
                                     .matchedGeometryEffect(id: "highlight", in: namespace)
                             }
                         

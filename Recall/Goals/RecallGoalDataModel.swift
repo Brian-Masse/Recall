@@ -50,6 +50,8 @@ class RecallGoalDataModel: ObservableObject {
     @MainActor
     func makeData(for goal: RecallGoal, with events: [RecallCalendarEvent]) async {
         
+        if RecallModel.shared.goalDataValidated { return }
+        
 //        store the passed variables in for conveinient access throuhgout the class
         self.goal = goal
         self.events = await sortEvents(from: events)
@@ -65,6 +67,8 @@ class RecallGoalDataModel: ObservableObject {
             self.averageData =  averageData
             self.goalMetData =  goalMetData
         }
+        
+        RecallModel.shared.setGoalDataValidation(to: true)
     }
     
 //    This loads previews of data

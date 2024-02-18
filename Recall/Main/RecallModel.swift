@@ -47,4 +47,33 @@ struct RecallModel {
         try! await Task.sleep(nanoseconds: UInt64( seconds * pow( 10, 9 )) )
     }
 
+//    MARK: GoalDataModel
+//    when data is invalidated, when the user goes to the goals page view
+//    it will automatically refresh and re-render all data
+//    otherwise, it will just present the pre-rendered data
+//    this becomes invalidated anytime there is a change to tags, goals, or events
+//    it is not expensive to invalidate this variable (nothing will immediatley change)
+//    but it will implicitl queue work for later, so only set it whe its necessary
+    private(set) var goalDataValidated: Bool = false
+    
+    mutating func setGoalDataValidation(to validated: Bool) {
+        self.goalDataValidated = validated
+    }
+    
+//    This gets called anytime an event is created, modified, or deleted
+//    Any standard update behavior should be included in this function
+    func updateEvent(_ event: RecallCalendarEvent) {
+        RecallModel.shared.setGoalDataValidation(to: false)
+        
+        Task { await RecallModel.index.updateEvent(event) }
+    }
+    
+    func updateGoal(_ goal: RecallGoal) {
+        RecallModel.shared.setGoalDataValidation(to: false)
+    }
+    
+    func updateTag(_ tag: RecallCategory) {
+        RecallModel.shared.setGoalDataValidation(to: false)
+    }
+    
 }

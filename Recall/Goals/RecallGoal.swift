@@ -181,6 +181,8 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         if let id = targetTag?._id {
             if let retrievedTag = RecallCategory.getCategoryObject(from: id) { self.targetTag = retrievedTag }
         }
+        
+        RecallModel.shared.updateGoal(self)
     }
     
     func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?, creationDate: Date) {
@@ -198,10 +200,13 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
                 if let retrievedTag = RecallCategory.getCategoryObject(from: id) { thawed.targetTag = retrievedTag }
             }
         }
+        
+        RecallModel.shared.updateGoal(self)
     }
     
     func delete() {
         RealmManager.deleteObject(self) { goal in goal._id == self._id }
+        RecallModel.shared.updateGoal(self)
     }
     
 //    MARK: Convenience Functions
