@@ -121,8 +121,7 @@ struct CategoriesPageView: View {
             CategoryCreationView(editing: false,
                                  tag: nil,
                                  label: "",
-                                 goalRatings: Dictionary(),
-                                 color: RecallModel.shared.activeColor)
+                                 goalRatings: Dictionary())
         }
         .sheet(isPresented: $showingCreateEventView) {
             CalendarEventCreationView.makeEventCreationView(currentDay: .now, template: true)

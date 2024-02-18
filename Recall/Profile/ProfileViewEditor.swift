@@ -49,6 +49,8 @@ struct ProfileEditorView: View {
     
 //    MARK: Vars
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
+    
     let index = RecallModel.index
     
     @State var email: String
@@ -112,7 +114,7 @@ struct ProfileEditorView: View {
             DatePicker(selection: $dateOfBirth, displayedComponents: .date) {
                 UniversalText( "select", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
-            .tint(RecallModel.shared.activeColor)
+            .tint(Colors.getAccent(from: colorScheme))
             .rectangularBackground(style: .secondary)
         }
         

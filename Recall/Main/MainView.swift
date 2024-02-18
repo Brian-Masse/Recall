@@ -55,7 +55,6 @@ struct MainView: View {
                                 //                                    .aspectRatio(1, contentMode: .fill)
                                     .matchedGeometryEffect(id: "highlight", in: namespace)
                             }
-                            .shadow(color: RecallModel.shared.activeColor.opacity(0.3), radius: 10)
                         
                     } else {
                         makeIcon()
@@ -144,7 +143,6 @@ struct MainView: View {
         }
         .onAppear {
             Task { await refreshData(events: Array(events), goals: Array(goals)) }
-            RecallModel.shared.setTint(from: colorScheme)
             Constants.setupConstants()
         }
         .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }

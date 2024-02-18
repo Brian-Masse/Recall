@@ -408,8 +408,7 @@ struct CalendarEventCreationView: View {
             CategoryCreationView(editing: false,
                                  tag: nil,
                                  label: "",
-                                 goalRatings: Dictionary(),
-                                 color: RecallModel.shared.activeColor)
+                                 goalRatings: Dictionary())
         }
         .task { await getTemplates(from: Array(events)) }
         .alert(alertTitle,

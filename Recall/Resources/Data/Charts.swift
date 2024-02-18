@@ -70,7 +70,7 @@ struct AverageActivityByTag: View {
                             UniversalText( label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                                 .rectangularBackground(style: .secondary)
                         }
-                        .foregroundStyle( Constants.tagColorsDic[ label ] ?? RecallModel.shared.activeColor )
+                        .foregroundStyle( Constants.tagColorsDic[ label ] ?? .red )
                 }
             }
             .chartYScale(domain: 0...(CGFloat(max) + ( recents ? 2 : 1 )))
@@ -211,6 +211,8 @@ struct ActivitiesPerDay: View {
 //MARK: GoalCompletionOverTime
 struct GoalCompletionOverTime: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
     let data: [DataNode]
     let unit: String
 
@@ -225,11 +227,11 @@ struct GoalCompletionOverTime: View {
                         LineMark(x: .value("date", datum.date, unit: .day ),
                                  y: .value("count", datum.count))
                         .interpolationMethod(.cardinal)
-                        .foregroundStyle(RecallModel.shared.activeColor)
+                        .foregroundStyle(Colors.getAccent(from: colorScheme))
                         AreaMark(x: .value("date", datum.date, unit: .day ),
                                  y: .value("count", datum.count))
                         .interpolationMethod(.cardinal)
-                        .foregroundStyle( LinearGradient(colors: [RecallModel.shared.activeColor.opacity(0.5), .clear], startPoint: .top, endPoint: .bottom ) )
+                        .foregroundStyle( LinearGradient(colors: [Colors.getAccent(from: colorScheme).opacity(0.5), .clear], startPoint: .top, endPoint: .bottom ) )
                     }
                 }
                 .padding(.top)
@@ -282,15 +284,15 @@ struct GoalProgressOverTime: View {
 
 struct GoalAverages: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
     private enum Page: String, Identifiable {
         case all
         case average
         
         var id: String { self.rawValue }
     }
-    
-    @Environment(\.colorScheme) var colorScheme
-    
+
     @MainActor
     @ViewBuilder
     private func makeChart( makeYData: @escaping (DataNode) -> Double) -> some View {
@@ -327,7 +329,7 @@ struct GoalAverages: View {
             }
         }
         .colorChartByList([
-            "completed": RecallModel.shared.activeColor,
+            "completed": Colors.getAccent(from: colorScheme),
             "uncompleted": (colorScheme == .dark ? Colors.secondaryDark : Colors.secondaryLight)
         ])
         .frame(height: 150)
@@ -360,6 +362,8 @@ struct GoalAverages: View {
 //MARK: GoalsMetPercentageChart
 struct GoalsMetPercentageChart: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
     let title: String
     let data: [DataNode]
     let unit: String
@@ -374,7 +378,7 @@ struct GoalsMetPercentageChart: View {
                     BarMark(x: .value("X", datum.goal),
                             y: .value("Y", datum.count))
                     .cornerRadius(Constants.UIBarMarkCOrnerRadius)
-                    .foregroundStyle(RecallModel.shared.activeColor)
+                    .foregroundStyle(Colors.getAccent(from: colorScheme))
                 }
             }
             .chartYAxis {

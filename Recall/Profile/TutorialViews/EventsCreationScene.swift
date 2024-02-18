@@ -133,8 +133,7 @@ extension TutorialViews {
                 CategoryCreationView(editing: false,
                                      tag: nil,
                                      label: "",
-                                     goalRatings: Dictionary(),
-                                     color: RecallModel.shared.activeColor)
+                                     goalRatings: Dictionary())
             }
             .onChange(of: tag) { newValue in
                 if newValue.label != "" && !newValue.label.isEmpty {

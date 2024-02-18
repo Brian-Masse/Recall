@@ -35,12 +35,11 @@ struct CategoryCreationView: View {
     
     @State var label: String
     @State var goalRatings: Dictionary<String, String>
-    @State var color: Color
+    @State var color: Color = Colors.lightAccent
     
     @State var showingAlert: Bool = false
     
 //    MARK: Submit
-//    @MainActor
     private func submit() {
         
         if !checkCompletion() {
@@ -154,8 +153,7 @@ struct CategoryCreationView: View {
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .background(RecallModel.shared.activeColor)
-        
+        .universalStyledBackgrond(.accent)
         .defaultAlert($showingAlert,
                       title: "Incomplete Form",
                       description: "Please provide a label before creating the tag")

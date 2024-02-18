@@ -225,6 +225,8 @@ struct TextFieldWithPrompt: View {
 //MARK: StyleSlider
 struct StyledSlider: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
     let minValue: Float
     let maxValue: Float
     
@@ -236,7 +238,7 @@ struct StyledSlider: View {
     var body: some View {
         HStack {
             Slider(value: binding, in: minValue...maxValue )
-                .tint(RecallModel.shared.activeColor)
+                .tint(Colors.getAccent(from: colorScheme))
             
             TextField("", text: strBinding)
                 .rectangularBackground(style: .secondary)
@@ -524,6 +526,8 @@ struct LengthSelector: View {
 //MARK: StyledToggle
 struct StyledToggle<C: View>: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
     let title: C
     let wide: Bool
     let binding: Binding<Bool>
@@ -543,7 +547,7 @@ struct StyledToggle<C: View>: View {
             if wide { Spacer() }
             
             Toggle("", isOn: binding)
-                .tint(RecallModel.shared.activeColor)
+                .tint(Colors.getAccent(from: colorScheme))
         }
     }
 }
@@ -551,6 +555,8 @@ struct StyledToggle<C: View>: View {
 //MARK: StyledDatePicker
 
 struct StyledDatePicker: View {
+    
+    @Environment(\.colorScheme) var colorScheme
     
     @Binding var date: Date
     let title: String
@@ -568,7 +574,7 @@ struct StyledDatePicker: View {
             DatePicker(selection: $date, displayedComponents: .date) {
                 UniversalText( "select", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
-            .tint(RecallModel.shared.activeColor)
+            .tint(Colors.getAccent(from: colorScheme))
             .rectangularBackground(style: .secondary)
         }
     }
@@ -593,7 +599,7 @@ struct CircularProgressView: View {
             Circle()
                 .trim(from: 0, to: CGFloat(currentValue / totalValue) )
                 .stroke(
-                    RecallModel.shared.activeColor,
+                    Colors.getAccent(from: colorScheme),
                     style: StrokeStyle(
                         lineWidth: Constants.UICircularProgressWidth,
                         lineCap: .round

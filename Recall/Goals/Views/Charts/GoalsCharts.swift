@@ -52,6 +52,8 @@ struct DataNode: Identifiable {
 // This shows how many hours you spent doing something that contributed to a certain goal over time
 struct ActivityPerDay: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
     let recentData: Bool
 //    var timePeriod: Double { recentData ? 8 : .greatestFiniteMagnitude }
     
@@ -81,12 +83,12 @@ struct ActivityPerDay: View {
                 BarMark(x: .value("date", datum.date, unit: .day ),
                         y: .value("count", datum.count), width: Constants.UIScrollableBarWidth)
                 .cornerRadius(Constants.UIDefaultCornerRadius - 10)
-                .foregroundStyle(RecallModel.shared.activeColor)
+                .foregroundStyle(Colors.getAccent(from: colorScheme))
             }
 
             RuleMark(y: .value("Goal", goal.targetHours) )
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]) )
-                .foregroundStyle(RecallModel.shared.activeColor)
+                .foregroundStyle(Colors.getAccent(from: colorScheme))
         }
         .if(!recentData) { view in view.reversedXAxis() }
         .chartXAxis {
@@ -157,6 +159,8 @@ struct ActivityPerDay: View {
 //MARK: TotalActivites
 struct TotalActivites: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
     let title: String
     
     let goal: RecallGoal
@@ -188,13 +192,13 @@ struct TotalActivites: View {
                     ForEach(data) { datum in
                         LineMark(x: .value("date", datum.date, unit: .day ),
                                  y: .value("count", datum.count))
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Colors.getAccent(from: colorScheme))
                         .lineStyle(StrokeStyle(lineWidth: 2, dash: [3, 3]) )
                         
                         
                         AreaMark(x: .value("X", datum.date, unit: .day ),
                                  y: .value("Y", datum.count))
-                        .foregroundStyle( LinearGradient(colors: [RecallModel.shared.activeColor.opacity(0.5), .clear], startPoint: .top, endPoint: .bottom)  )
+                        .foregroundStyle( LinearGradient(colors: [Colors.getAccent(from: colorScheme).opacity(0.5), .clear], startPoint: .top, endPoint: .bottom)  )
                         
                     }
                 }

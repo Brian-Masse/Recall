@@ -54,67 +54,21 @@ struct CalendarContainer: View {
             }
         }
     }
-    
-    
-//    MARK: Dates Preview
-    struct DatesPreview: View {
-        
-        @ViewBuilder
-        func makeDateSelector(_ date: Date) -> some View {
-            UniversalText( "\(Calendar.current.component(.day, from: date))", size: Constants.UIDefaultTextSize)
-                .padding(7)
-                .onTapGesture { withAnimation { currentDay = date } }
-        }
-        
-        @Binding var currentDay: Date
-        
-        var body: some View {
-            
-            HStack {
-                Image(systemName: "chevron.left")
-                    .padding(7)
-                    .rectangularBackground(style: .primary)
-                    .onTapGesture { currentDay -= Constants.DayTime }
-                Spacer()
-                
-                makeDateSelector( currentDay - 2 * Constants.DayTime )
-                makeDateSelector( currentDay - 1 * Constants.DayTime )
-                
-                UniversalText( "\(Calendar.current.component(.day, from: currentDay))", size: Constants.UIDefaultTextSize )
-                    .padding()
-                    .foregroundColor(RecallModel.shared.activeColor)
-                    .rectangularBackground(style: .primary)
-                
-                makeDateSelector( currentDay + 1 * Constants.DayTime )
-                makeDateSelector( currentDay + 2 * Constants.DayTime )
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .padding(7)
-                    .rectangularBackground(style: .primary)
-                    .onTapGesture { currentDay += Constants.DayTime }
-            }
-        }
-    }
-    
+
 //    MARK: Gestures
 //    This doesn't do anything right now, because the horizontal gestures are being taken up by the tabView,
 //    mayble Ill remove those later ?
     private var swipeGesture: some Gesture {
         DragGesture(minimumDistance: 30)
-            .onChanged{ dragValue in
-//                print("dragging")
-            }
             .onEnded { dragValue in
 
-//                if dragValue.translation.width < 0 { slideDirection = .right }
-//                if dragValue.translation.width > 0 { slideDirection = .left }
+                if dragValue.translation.width < 0 { slideDirection = .right }
+                if dragValue.translation.width > 0 { slideDirection = .left }
                 
-//                withAnimation(.easeInOut(duration: 0.25)) {
-//                    if dragValue.translation.width < 0 { currentDay += Constants.DayTime }
-//                    if dragValue.translation.width > 0 { currentDay -= Constants.DayTime }
-//                }
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    if dragValue.translation.width < 0 { currentDay += Constants.DayTime }
+                    if dragValue.translation.width > 0 { currentDay -= Constants.DayTime }
+                }
                 
             }
     }
