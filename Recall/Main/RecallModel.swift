@@ -47,7 +47,7 @@ struct RecallModel {
         try! await Task.sleep(nanoseconds: UInt64( seconds * pow( 10, 9 )) )
     }
 
-//    MARK: GoalDataModel
+//    MARK: Data Validation
 //    when data is invalidated, when the user goes to the goals page view
 //    it will automatically refresh and re-render all data
 //    otherwise, it will just present the pre-rendered data
@@ -56,24 +56,47 @@ struct RecallModel {
 //    but it will implicitl queue work for later, so only set it whe its necessary
     private(set) var goalDataValidated: Bool = false
     
+    private(set) var dataOverviewValidated: Bool = false
+    private(set) var dataEventsValidated: Bool = false
+    private(set) var dataGoalsValidated: Bool = false
+    
     mutating func setGoalDataValidation(to validated: Bool) {
         self.goalDataValidated = validated
+    }
+    
+    mutating func setDataOverviewValidation(to validated: Bool) {
+        self.dataOverviewValidated = validated
+    }
+    
+    mutating func setDataEventsValidated(to validated: Bool) {
+        self.dataEventsValidated = validated
+    }
+    
+    mutating func setDataGoalsValidated(to validated: Bool) {
+        self.dataGoalsValidated = validated
     }
     
 //    This gets called anytime an event is created, modified, or deleted
 //    Any standard update behavior should be included in this function
     func updateEvent(_ event: RecallCalendarEvent) {
         RecallModel.shared.setGoalDataValidation(to: false)
+        RecallModel.shared.setDataOverviewValidation(to: false)
+        RecallModel.shared.setDataEventsValidated(to: false)
         
         Task { await RecallModel.index.updateEvent(event) }
     }
     
     func updateGoal(_ goal: RecallGoal) {
         RecallModel.shared.setGoalDataValidation(to: false)
+        RecallModel.shared.setDataOverviewValidation(to: false)
+        RecallModel.shared.setDataGoalsValidated(to: false)
     }
     
     func updateTag(_ tag: RecallCategory) {
         RecallModel.shared.setGoalDataValidation(to: false)
+        RecallModel.shared.setDataOverviewValidation(to: false)
+        RecallModel.shared.setDataOverviewValidation(to: false)
+        RecallModel.shared.setDataGoalsValidated(to: false)
     }
     
 }

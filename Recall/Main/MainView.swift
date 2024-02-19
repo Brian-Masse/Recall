@@ -143,12 +143,12 @@ struct MainView: View {
             }
         }
         .task {
-//            Task { await refreshData(events: Array(events), goals: Array(goals)) }
             Constants.setupConstants()
-            await RecallModel.dataModel.storeData( events: arrEvents, goals: arrGoals )
+            RecallModel.dataModel.storeData( events: arrEvents, goals: arrGoals )
         }
-//        .onChange(of: events)   { newValue in 
-//            Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
+        .onChange(of: events) { nEvents in RecallModel.dataModel.storeData( events: Array(nEvents)) }
+        
+
         .universalBackground()
     }
 }

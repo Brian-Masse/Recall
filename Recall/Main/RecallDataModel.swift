@@ -153,16 +153,19 @@ class RecallDataModel: ObservableObject {
         
 //    this simply takes in the most recent events and goals and stores it in the class
 //    then indexes the goals for use throuhgout most data aggregators
-    func storeData( events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil ) async  {
+    func storeData( events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil ) {
         self.events = events ?? self.events
         self.goals = goals ?? self.goals
         
-        await self.indexGoalMetCount()
+        Task { await self.indexGoalMetCount() }
     }
     
 //    MARK: Make Data
     @MainActor
     func makeOverviewData() async {
+        
+        if RecallModel.shared.dataOverviewValidated { return }
+        
         let hourlyData              = await makeData { event in event.getLengthInHours() }
             .sorted { event1, event2 in event1.date > event2.date }
         let compressedHourlyData    = await compressData(from: hourlyData)
@@ -177,6 +180,7 @@ class RecallDataModel: ObservableObject {
         self.goalsMetOverTimeData   = goalsMetOverTime
             .sorted { event1, event2 in event1.date > event2.date }
     
+        RecallModel.shared.setDataOverviewValidation(to: true)
         withAnimation { self.overviewDataLoaded = true }
     }
 
