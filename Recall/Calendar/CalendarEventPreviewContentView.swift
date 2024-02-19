@@ -92,7 +92,7 @@ struct CalendarEventPreviewContentView: View {
             VStack(alignment: .leading) {
 //                MARK: Title
                 HStack {
-                    UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont, scale: true)
+                    UniversalText( event.title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, scale: true)
                     
                     Spacer()
                     

@@ -50,46 +50,43 @@ struct DataPicker: View {
 //MARK: DataCollection
 struct DataCollection<Content: View>: View {
     
-    let label: String
+    let checkDataLoaded: () -> Bool
+    let makeData: () async -> Void
     let content: Content
     
-    init( _ label: String, @ViewBuilder content: ()->Content ) {
-        self.label = label
+    @State var presentable: Bool = true
+    
+    init( checkDataLoaded: @escaping () -> Bool, makeData: @escaping () async -> Void, @ViewBuilder content: ()->Content ) {
+        self.checkDataLoaded = checkDataLoaded
+        self.makeData = makeData
         self.content = content()
     }
     
     var body: some View {
-        
-        VStack(alignment: .leading) {
-            UniversalText( label, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-            
-            LazyVStack(alignment: .leading) {
-                content
+        VStack() {
+            if checkDataLoaded() && presentable {
+                ScrollView(.vertical) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        content
+                            .padding(.bottom)
+                        
+                        HStack {
+                            Spacer()
+                            UniversalText( RecallModel.ownerID, size: Constants.UISmallTextSize, font: Constants.mainFont  )
+                                .onTapGesture { print( RecallModel.ownerID ) }
+                                .padding(.bottom, Constants.UIBottomOfPagePadding)
+                            Spacer()
+                        }
+                    }
+                }
+            } else {
+                LoadingPageView(count: 2, height: 250)
+                Spacer()
             }
-            .rectangularBackground(7, style: .primary, stroke: true)
         }
-        .padding(.bottom)
-    }
-}
-
-//MARK: Seperator
-struct Seperator: View {
-    
-    enum Orientation {
-        case horizontal
-        case vertical
-    }
-    
-    let orientation: Orientation
-    
-    var body: some View {
-        Rectangle()
-            .universalTextField()
-//            .foregroundColor(.gray.opacity(0.2))
-            .if(orientation == .horizontal) { view in view.frame(height: 1)}
-            .if(orientation == .vertical) { view in view.frame(width: 1)}
-            .padding(.horizontal, 5)
-        
+        .onDisappear { presentable = false }
+        .onAppear { presentable = true }
+        .task { await makeData() }
     }
 }
 

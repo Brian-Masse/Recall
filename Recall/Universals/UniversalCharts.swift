@@ -26,7 +26,7 @@ struct ScrollChart<Content: View>: View {
 //        GeometryReader { geo in
         ScrollView(.horizontal) {
             content
-                .frame(width: Double(dataCount) * Constants.UIScrollableBarWidthDouble )
+                .frame(width: Double(dataCount) * 16 )
                 .padding(.trailing)
         }
 //        }

@@ -114,12 +114,14 @@ struct ActivitiesPerDay: View {
     
     @ViewBuilder
     private func makeChart() -> some View {
+        
         Chart {
-            ForEach(data) { datum in
+            ForEach(0...loadedDataCount, id: \.self) { i in
+                let datum = data[i]
                 
                 BarMark(x: .value("X", datum.date, unit: .day ),
                         y: .value("Y", datum.count),
-                        width: .automatic)
+                        width: 20)
                 .foregroundStyle(by: .value("series", datum.category))
                 .cornerRadius(Constants.UIBarMarkCOrnerRadius)
             }
@@ -149,20 +151,17 @@ struct ActivitiesPerDay: View {
                         }
                         
                     })
-//                    .gesture(
-//                        DragGesture()
-//                            .onChanged{ value in
-//                                if let tag: String = proxy.value(atX: value.location.x - 30) {
-//                                    activeLabel = tag
-//                                }
-//                            }
-//                            .onEnded { value in
-//                                activeLabel = nil
-//                            }
-//                    )
             }
         }
     }
+    
+    private func getMaxIndex() -> Int { min( data.count - 1, loadedDataCount ) }
+    private func daysSinceLastEvent() -> Int {
+        Int( Date.now.timeIntervalSince(data[getMaxIndex()].date) / Constants.DayTime)
+    }
+    
+//    this controls how much data will be rendered onAppear
+    static let initialLoadedDataCount: Int = 75
     
     let title: String
     let data: [DataNode]
@@ -170,6 +169,8 @@ struct ActivitiesPerDay: View {
     
     @Binding var page: MainView.MainPage
     @Binding var currentDay: Date
+    
+    @State var loadedDataCount: Int = initialLoadedDataCount
     
     init( _ title: String, data: [DataNode], scrollable: Bool = false, page: Binding<MainView.MainPage>, currentDay: Binding<Date>) {
         self.title = title
@@ -182,15 +183,27 @@ struct ActivitiesPerDay: View {
     var body: some View {
         
         VStack(alignment: .leading) {
+            HStack {
+                UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                 
-            let days = RecallModel.getDaysSinceFirstEvent()
-            
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                Spacer()
+                
+                HStack {
+                    UniversalText( "load more", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                    Image(systemName: "arrow.down.to.line")
+                }
+                .padding(5)
+                .onTapGesture { withAnimation {
+                    loadedDataCount += ActivitiesPerDay.initialLoadedDataCount
+                } }
+            }
             
             Group {
                 if scrollable {
-                    ScrollChart(Int(days)) {
+                    ScrollView(.horizontal) {
                         makeChart()
+                            .frame(width: Double(daysSinceLastEvent()) * (Constants.UIScrollableBarWidthDouble + 10) )
+                            .padding(.trailing)
                             .frame(height: 220)
                     }
                 }else {
@@ -198,7 +211,7 @@ struct ActivitiesPerDay: View {
                         .frame(height: 300)
                 }
             }
-            .padding(.bottom)
+            .rectangularBackground(style: .transparent, stroke: true)
         }
     }
 }
@@ -213,17 +226,40 @@ struct GoalCompletionOverTime: View {
     
     @Environment(\.colorScheme) var colorScheme
     
+    static let initialLoadedDataCount: Int = 100
+    
     let data: [DataNode]
     let unit: String
+    
+    @State var loadedDataCount: Int = initialLoadedDataCount
 
+    private func getMaxIndex() -> Int { min(loadedDataCount, data.count - 1) }
+    private func daysSinceLastEvent() -> Int {
+        Int(Date.now.timeIntervalSince(data[getMaxIndex()].date) / Constants.DayTime)
+    }
+    
     var body: some View {
-        
         VStack(alignment: .leading) {
-            UniversalText("Goals met per day", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            HStack {
+                UniversalText("Goals completion over time", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                
+                Spacer()
+                
+                HStack {
+                    UniversalText( "load more", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                    Image(systemName: "arrow.down.to.line")
+                }
+                .padding(5)
+                .onTapGesture { withAnimation {
+                    loadedDataCount += ActivitiesPerDay.initialLoadedDataCount
+                } }
+            }
             
-            ScrollChart(data.count) {
+            ScrollView(.horizontal) {
                 Chart {
-                    ForEach(data) { datum in
+                    ForEach(0...getMaxIndex(), id: \.self) { i in
+                        let datum = data[i]
+                        
                         LineMark(x: .value("date", datum.date, unit: .day ),
                                  y: .value("count", datum.count))
                         .interpolationMethod(.cardinal)
@@ -234,18 +270,17 @@ struct GoalCompletionOverTime: View {
                         .foregroundStyle( LinearGradient(colors: [Colors.getAccent(from: colorScheme).opacity(0.5), .clear], startPoint: .top, endPoint: .bottom ) )
                     }
                 }
-                .padding(.top)
+                .frame(width: Double(daysSinceLastEvent()) * 16 )
                 .goalsOverTimeChart(unit: unit)
                 .reversedXAxis()
                 .colorChartByGoal()
-            }
+            }.rectangularBackground(style: .transparent, stroke: true)
         }
     }
     
 }
 
 //MARK: Goal Progress over time
-
 struct GoalProgressOverTime: View {
     
     let title: String
@@ -281,7 +316,6 @@ struct GoalProgressOverTime: View {
 }
 
 //MARK: Goal Averages
-
 struct GoalAverages: View {
     
     @Environment(\.colorScheme) var colorScheme
@@ -296,15 +330,12 @@ struct GoalAverages: View {
     @MainActor
     @ViewBuilder
     private func makeChart( makeYData: @escaping (DataNode) -> Double) -> some View {
-
-//        in the future, this should also include the 'uncompleted' counts too
         Chart {
             ForEach(data) { datum in
                 if datum.category == "completed" {
-                    
                     BarMark(x: .value("X", datum.goal),
                             y: .value("Y", makeYData(datum)))
-                    .foregroundStyle(by: .value("Series", datum.category))
+                    .foregroundStyle(Colors.getAccent(from: colorScheme))
                     .cornerRadius(Constants.UIBarMarkCOrnerRadius)
                     
                     .annotation(position: .top, alignment: .top) { context in
@@ -328,12 +359,7 @@ struct GoalAverages: View {
                 }
             }
         }
-        .colorChartByList([
-            "completed": Colors.getAccent(from: colorScheme),
-            "uncompleted": (colorScheme == .dark ? Colors.secondaryDark : Colors.secondaryLight)
-        ])
         .frame(height: 150)
-        .padding(.top, 5)
     }
     
     let title: String
@@ -347,7 +373,7 @@ struct GoalAverages: View {
             
             let chartTitle = page == .all ? title : "Average \(title)"
             
-            UniversalText(chartTitle, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            UniversalText(chartTitle, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
             
             TabView(selection: $page) {
                 makeChart { node in node.count }.tag(Page.all)
@@ -355,6 +381,7 @@ struct GoalAverages: View {
             }
             .tabViewStyle(.page)
             .frame(height: 150)
+            .rectangularBackground(style: .transparent, stroke: true)
         }
     }
 }

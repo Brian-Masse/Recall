@@ -41,7 +41,7 @@ struct TagPageView: View {
                     Image(systemName: "tag")
                         .foregroundStyle(tag.getColor())
                     
-                    UniversalText(tag.label, size: Constants.UISubHeaderTextSize)
+                    UniversalText(tag.label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                     
                     Spacer()
                     

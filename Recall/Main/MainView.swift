@@ -94,6 +94,7 @@ struct MainView: View {
     
     @ObservedResults( RecallCalendarEvent.self, where: { event in event.startTime > RecallModel.getEarliestEventDate() } ) var events
     @ObservedResults( RecallGoal.self ) var goals
+    @ObservedResults( RecallCategory.self ) var tags
     
     @State var currentPage: MainPage = .calendar
     @State var shouldRefreshData: Bool = false
@@ -101,10 +102,6 @@ struct MainView: View {
     @State var currentDay: Date = .now
     
     @State private var showingHalfPage: Bool = false
-    
-    private func refreshData(events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil) async {
-        await RecallModel.dataModel.updateProperties(events: events ?? nil, goals: goals ?? nil)
-    }
     
     @State var canDrag = false
     
@@ -115,6 +112,7 @@ struct MainView: View {
         
         let arrEvents = Array(events)
         let arrGoals = Array(goals)
+        let arrTags = Array(tags)
     
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
@@ -130,7 +128,11 @@ struct MainView: View {
                         CategoriesPageView(events: arrEvents )
                             .tag( MainPage.categories )
                     
-                        Text("hi")
+                        DataPageView(events: arrEvents,
+                                     goals: arrGoals,
+                                     tags: arrTags,
+                                     mainViewPage: $currentPage,
+                                     currentDay: $currentDay)
                             .tag( MainPage.data )
                     }
                 }
@@ -140,11 +142,13 @@ struct MainView: View {
                 UpdateView()
             }
         }
-        .onAppear {
-            Task { await refreshData(events: Array(events), goals: Array(goals)) }
+        .task {
+//            Task { await refreshData(events: Array(events), goals: Array(goals)) }
             Constants.setupConstants()
+            await RecallModel.dataModel.storeData( events: arrEvents, goals: arrGoals )
         }
-        .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
+//        .onChange(of: events)   { newValue in 
+//            Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
         .universalBackground()
     }
 }

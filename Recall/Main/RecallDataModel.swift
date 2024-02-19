@@ -146,13 +146,38 @@ class RecallDataModel: ObservableObject {
 //    MARK: Body
     private(set) var events: [RecallCalendarEvent] = []
     private(set) var goals: [RecallGoal] = []
+    
+//    MARK: Data Loaded Functions
+//    This states whether the data needed to present the summary page is loaded
+    @Published var overviewDataLoaded: Bool = false
         
-    @MainActor
-    func updateProperties( events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil ) async {
+//    this simply takes in the most recent events and goals and stores it in the class
+//    then indexes the goals for use throuhgout most data aggregators
+    func storeData( events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil ) async  {
         self.events = events ?? self.events
         self.goals = goals ?? self.goals
         
-        await onMainRefreshData()
+        await self.indexGoalMetCount()
+    }
+    
+//    MARK: Make Data
+    @MainActor
+    func makeOverviewData() async {
+        let hourlyData              = await makeData { event in event.getLengthInHours() }
+            .sorted { event1, event2 in event1.date > event2.date }
+        let compressedHourlyData    = await compressData(from: hourlyData)
+        
+        let metData                 = await countNumberOfTimesMet()
+        let countsOverTime          = await makeGoalsProgressOverTimeData()
+        let goalsMetOverTime        = countsOverTime.2
+        
+        self.hourlyData             = hourlyData
+        self.compressedHourlyData   = compressedHourlyData
+        self.metData                = metData
+        self.goalsMetOverTimeData   = goalsMetOverTime
+            .sorted { event1, event2 in event1.date > event2.date }
+    
+        withAnimation { self.overviewDataLoaded = true }
     }
 
 //    MARK: Refresh
@@ -167,7 +192,7 @@ class RecallDataModel: ObservableObject {
         compressedHourlyData        = await compressData(from: hourlyData)
         recentHourlyData            = await getRecentData(from: hourlyData)
         recentCompressedHourlyData  = await getRecentData(from: compressedHourlyData)
-//
+        
         tagData                     = await makeData { _ in 1 }
         compressedTagData           = await compressData(from: tagData)
         recentTagData               = await getRecentData(from: tagData)
@@ -175,9 +200,8 @@ class RecallDataModel: ObservableObject {
 
         totalHours                  = await getTotalHours(from: hourlyData)
         recentTotalHours            = await getTotalHours(from: recentHourlyData)
-//
-////        goals
-    
+        
+//        goals
         await indexGoalMetCount()
         
         let countsOverTime              = await makeGoalsProgressOverTimeData()

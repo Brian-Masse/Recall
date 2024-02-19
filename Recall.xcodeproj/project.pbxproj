@@ -251,6 +251,7 @@
 				C91BCF3A2A61E0F0003C6DD6 /* Calendar */,
 				C9EA0EE22A6B48CF00E36EF1 /* Categories */,
 				C94B1F192A689329007E8537 /* Goals */,
+				C9186A942A789B8600398BF8 /* Data */,
 				C91BCEF82A618437003C6DD6 /* Preview Content */,
 			);
 			path = Recall;
@@ -460,7 +461,6 @@
 			isa = PBXGroup;
 			children = (
 				C91BCEF52A618437003C6DD6 /* Assets.xcassets */,
-				C9186A942A789B8600398BF8 /* Data */,
 				C9BFCC9A2AABC858007CDB6C /* Icons */,
 			);
 			path = Resources;
@@ -536,7 +536,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					C91BCEED2A618434003C6DD6 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -709,6 +709,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -769,6 +770,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

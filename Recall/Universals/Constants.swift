@@ -26,7 +26,7 @@ extension Constants {
 //    charts
     static let UICircularProgressWidth: CGFloat = 12
     static let UIBarMarkCOrnerRadius: CGFloat = 5
-    static let UIScrollableBarWidth: MarkDimension = 16
+    static let UIScrollableBarWidth: MarkDimension = 22
     static let UIScrollableBarWidthDouble: Double = 18
     
 //    exta
