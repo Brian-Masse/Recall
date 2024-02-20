@@ -58,8 +58,6 @@ struct ContentView: View {
                     .environment(\.realmConfiguration, realmManager.configuration)
             }
         }
-        .onAppear()                 { RecallModel.shared.setActiveColor(from: colorScheme) }
-        .onChange(of: colorScheme) { newValue in RecallModel.shared.setActiveColor(from: newValue) }
         .onChange(of: entryPage)    { newValue in
             switch newValue {
             case .profileCreation:  if RecallModel.realmManager.profileLoaded { withAnimation { entryPage = .tutorial } }

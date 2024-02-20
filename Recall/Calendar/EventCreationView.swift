@@ -108,6 +108,8 @@ struct CalendarEventCreationView: View {
     let editing: Bool
     let event: RecallCalendarEvent?
     
+    @State var templates: [RecallCalendarEvent] = []
+    
     @State var title: String
     @State var notes: String
     @State var startTime: Date
@@ -147,6 +149,10 @@ struct CalendarEventCreationView: View {
         .onTapGesture { category = tag }
         .if(category.label == tag.label) { view in view.rectangularBackground(style: .accent, foregroundColor: .black)  }
         .if(category.label != tag.label) { view in view.rectangularBackground(style: .secondary) }
+    }
+    
+    private func getTemplates(from events: [RecallCalendarEvent]) async  {
+        self.templates = events.filter { event in event.isTemplate }
     }
     
 //    MARK: Submit
@@ -239,7 +245,7 @@ struct CalendarEventCreationView: View {
             } }
         }
         if showingTemplates {
-            WrappedHStack(collection: RecallModel.getTemplates(from: Array(events))) { template in
+            WrappedHStack(collection: templates) { template in
                 HStack {
                     Image(systemName: "arrow.up.right")
                     UniversalText(template.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
@@ -402,10 +408,9 @@ struct CalendarEventCreationView: View {
             CategoryCreationView(editing: false,
                                  tag: nil,
                                  label: "",
-                                 goalRatings: Dictionary(),
-                                 color: RecallModel.shared.activeColor)
+                                 goalRatings: Dictionary())
         }
-    
+        .task { await getTemplates(from: Array(events)) }
         .alert(alertTitle,
                isPresented: $showingAlert) {
             Button("dimiss", role: .cancel) { }

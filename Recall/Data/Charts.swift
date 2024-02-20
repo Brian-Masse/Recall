@@ -50,10 +50,9 @@ struct AverageActivityByTag: View {
     var body: some View {
         
         let averageData = transformData()
-        let max = findMax(from: averageData)
+        let max = transformData().first?.count ?? 1.5
         
-        UniversalText( "Average Activity HR/DY", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-//        ScrollView(.horizontal) {
+        UniversalText( "Average Activity, HR/DY", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             Chart {
                 ForEach(averageData) { datum in
                     BarMark(x: .value("X", datum.category),
@@ -66,14 +65,15 @@ struct AverageActivityByTag: View {
                 
                 if let label = activeLabel {
                     RuleMark(x: .value("X", label))
-                        .annotation(position: .top) {
-                            UniversalText( label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                        .annotation(position: .overlay ) {
+                            UniversalText( label, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false )
+                                .frame(minWidth: 150)
                                 .rectangularBackground(style: .secondary)
                         }
-                        .foregroundStyle( Constants.tagColorsDic[ label ] ?? RecallModel.shared.activeColor )
+                        .foregroundStyle( Constants.tagColorsDic[ label ] ?? .red )
                 }
             }
-            .chartYScale(domain: 0...(CGFloat(max) + ( recents ? 2 : 1 )))
+            .chartYScale(domain: 0...max )
             .chartXAxis( tags.count >= 10 ? .hidden : .visible)
             .chartOverlay { proxy in
                 GeometryReader { innerProxy in
@@ -100,12 +100,15 @@ struct AverageActivityByTag: View {
                 AxisMarks(position: .leading) { value in
                     if let count = value.as(Double.self) {
                         AxisValueLabel {
-                            UniversalText("\(count.round(to: 2)) " + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                            Text(count.convertToString())
+                                .font(.caption2)
                         }
                         AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
                     }
                 }
             }
+            .frame(height: 130)
+            .rectangularBackground(style: .transparent, stroke: true)
     }
 }
 
@@ -114,12 +117,14 @@ struct ActivitiesPerDay: View {
     
     @ViewBuilder
     private func makeChart() -> some View {
+        
         Chart {
-            ForEach(data) { datum in
+            ForEach(0...getMaxIndex(), id: \.self) { i in
+                let datum = data[i]
                 
                 BarMark(x: .value("X", datum.date, unit: .day ),
                         y: .value("Y", datum.count),
-                        width: .automatic)
+                        width: 12)
                 .foregroundStyle(by: .value("series", datum.category))
                 .cornerRadius(Constants.UIBarMarkCOrnerRadius)
             }
@@ -149,20 +154,17 @@ struct ActivitiesPerDay: View {
                         }
                         
                     })
-//                    .gesture(
-//                        DragGesture()
-//                            .onChanged{ value in
-//                                if let tag: String = proxy.value(atX: value.location.x - 30) {
-//                                    activeLabel = tag
-//                                }
-//                            }
-//                            .onEnded { value in
-//                                activeLabel = nil
-//                            }
-//                    )
             }
         }
     }
+    
+    private func getMaxIndex() -> Int { min( data.count - 1, loadedDataCount ) }
+    private func daysSinceLastEvent() -> Int {
+        Int( Date.now.timeIntervalSince(data[getMaxIndex()].date) / Constants.DayTime)
+    }
+    
+//    this controls how much data will be rendered onAppear
+    static let initialLoadedDataCount: Int = 75
     
     let title: String
     let data: [DataNode]
@@ -170,6 +172,8 @@ struct ActivitiesPerDay: View {
     
     @Binding var page: MainView.MainPage
     @Binding var currentDay: Date
+    
+    @State var loadedDataCount: Int = initialLoadedDataCount
     
     init( _ title: String, data: [DataNode], scrollable: Bool = false, page: Binding<MainView.MainPage>, currentDay: Binding<Date>) {
         self.title = title
@@ -182,23 +186,37 @@ struct ActivitiesPerDay: View {
     var body: some View {
         
         VStack(alignment: .leading) {
+            HStack {
+                UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                 
-            let days = RecallModel.getDaysSinceFirstEvent()
-            
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                Spacer()
+                
+                HStack {
+                    UniversalText( "load more", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                    Image(systemName: "arrow.down.to.line")
+                }
+                .padding(5)
+                .onTapGesture { withAnimation {
+                    loadedDataCount += ActivitiesPerDay.initialLoadedDataCount
+                } }
+            }
             
             Group {
-                if scrollable {
-                    ScrollChart(Int(days)) {
+                if getMaxIndex() > 0 {
+                    if scrollable {
+                        ScrollView(.horizontal) {
+                            makeChart()
+                                .frame(width: Double(daysSinceLastEvent()) * 16 )
+                                .padding(.trailing)
+                                .frame(height: 220)
+                        }
+                    }else {
                         makeChart()
-                            .frame(height: 220)
+                            .frame(height: 300)
                     }
-                }else {
-                    makeChart()
-                        .frame(height: 300)
                 }
             }
-            .padding(.bottom)
+            .rectangularBackground(style: .transparent, stroke: true)
         }
     }
 }
@@ -211,57 +229,102 @@ struct ActivitiesPerDay: View {
 //MARK: GoalCompletionOverTime
 struct GoalCompletionOverTime: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
+    static let initialLoadedDataCount: Int = 50
+    
     let data: [DataNode]
     let unit: String
+    
+    @State var loadedDataCount: Int = initialLoadedDataCount
 
+    private func getMaxIndex() -> Int { min(loadedDataCount, data.count - 1) }
+    private func daysSinceLastEvent() -> Int {
+        Int(Date.now.timeIntervalSince(data[getMaxIndex()].date) / Constants.DayTime)
+    }
+    
     var body: some View {
-        
         VStack(alignment: .leading) {
-            UniversalText("Goals met per day", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            HStack {
+                UniversalText("Goals completion over time", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+                
+                Spacer()
+                
+                HStack {
+                    UniversalText( "load more", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                    Image(systemName: "arrow.down.to.line")
+                }
+                .padding(5)
+                .onTapGesture { withAnimation {
+                    loadedDataCount += ActivitiesPerDay.initialLoadedDataCount
+                } }
+            }
             
-            ScrollChart(data.count) {
+            ScrollView(.horizontal) {
                 Chart {
-                    ForEach(data) { datum in
+                    ForEach(0...getMaxIndex(), id: \.self) { i in
+                        let datum = data[i]
+                        
                         LineMark(x: .value("date", datum.date, unit: .day ),
                                  y: .value("count", datum.count))
                         .interpolationMethod(.cardinal)
-                        .foregroundStyle(RecallModel.shared.activeColor)
+                        .foregroundStyle(Colors.getAccent(from: colorScheme))
                         AreaMark(x: .value("date", datum.date, unit: .day ),
                                  y: .value("count", datum.count))
                         .interpolationMethod(.cardinal)
-                        .foregroundStyle( LinearGradient(colors: [RecallModel.shared.activeColor.opacity(0.5), .clear], startPoint: .top, endPoint: .bottom ) )
+                        .foregroundStyle( LinearGradient(colors: [Colors.getAccent(from: colorScheme).opacity(0.5), .clear], startPoint: .top, endPoint: .bottom ) )
                     }
                 }
-                .padding(.top)
+                .frame(width: Double(daysSinceLastEvent()) * 16 )
                 .goalsOverTimeChart(unit: unit)
                 .reversedXAxis()
                 .colorChartByGoal()
-            }
+            }.rectangularBackground(style: .transparent, stroke: true)
         }
     }
     
 }
 
 //MARK: Goal Progress over time
-
 struct GoalProgressOverTime: View {
     
     let title: String
     let data: [DataNode]
     let unit: String
     
+    
+//    this controls how much data will be rendered onAppear
+    static let initialLoadedDataCount: Int = 75
+    @State var loadedDataCount: Int = initialLoadedDataCount
+    
+    var maxIndex: Int { min( data.count - 1, loadedDataCount ) }
+    var daysSinceLastEvent: Int {
+        Int(Date.now.timeIntervalSince( data[maxIndex].date ) / Constants.DayTime)
+    }
+    
     var body: some View {
         
         VStack(alignment: .leading) {
-            
-            let days = RecallModel.getDaysSinceFirstEvent()
-            
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            
-            ScrollChart(Int(days)) {
+            HStack {
+                UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                 
+                Spacer()
+                
+                HStack {
+                    UniversalText( "load more", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                    Image(systemName: "arrow.down.to.line")
+                }
+                .padding(5)
+                .onTapGesture { withAnimation {
+                    loadedDataCount += GoalProgressOverTime.initialLoadedDataCount
+                } }
+            }
+            
+            ScrollView(.horizontal) {
                 Chart {
-                    ForEach(data) { datum in
+                    ForEach(0...loadedDataCount, id: \.self) { i in
+                        
+                        let datum = data[i]
                         
                         BarMark(x: .value("X", datum.date, unit: .day),
                                 y: .value("Y", datum.count),
@@ -270,17 +333,20 @@ struct GoalProgressOverTime: View {
                         .cornerRadius(Constants.UIBarMarkCOrnerRadius)
                     }
                 }
+                .frame(width: Double(daysSinceLastEvent) * 16 )
+                .chartYAxis(.hidden)
                 .reversedXAxis()
                 .colorChartByGoal()
                 .goalsOverTimeChart(unit: unit)
-            }
+            }.rectangularBackground(style: .transparent, stroke: true)
         }
     }
 }
 
 //MARK: Goal Averages
-
 struct GoalAverages: View {
+    
+    @Environment(\.colorScheme) var colorScheme
     
     private enum Page: String, Identifiable {
         case all
@@ -288,21 +354,16 @@ struct GoalAverages: View {
         
         var id: String { self.rawValue }
     }
-    
-    @Environment(\.colorScheme) var colorScheme
-    
+
     @MainActor
     @ViewBuilder
     private func makeChart( makeYData: @escaping (DataNode) -> Double) -> some View {
-
-//        in the future, this should also include the 'uncompleted' counts too
         Chart {
             ForEach(data) { datum in
                 if datum.category == "completed" {
-                    
                     BarMark(x: .value("X", datum.goal),
                             y: .value("Y", makeYData(datum)))
-                    .foregroundStyle(by: .value("Series", datum.category))
+                    .foregroundStyle(Colors.getAccent(from: colorScheme))
                     .cornerRadius(Constants.UIBarMarkCOrnerRadius)
                     
                     .annotation(position: .top, alignment: .top) { context in
@@ -326,12 +387,7 @@ struct GoalAverages: View {
                 }
             }
         }
-        .colorChartByList([
-            "completed": RecallModel.shared.activeColor,
-            "uncompleted": (colorScheme == .dark ? Colors.secondaryDark : Colors.secondaryLight)
-        ])
         .frame(height: 150)
-        .padding(.top, 5)
     }
     
     let title: String
@@ -345,7 +401,7 @@ struct GoalAverages: View {
             
             let chartTitle = page == .all ? title : "Average \(title)"
             
-            UniversalText(chartTitle, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            UniversalText(chartTitle, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
             
             TabView(selection: $page) {
                 makeChart { node in node.count }.tag(Page.all)
@@ -353,12 +409,15 @@ struct GoalAverages: View {
             }
             .tabViewStyle(.page)
             .frame(height: 150)
+            .rectangularBackground(style: .transparent, stroke: true)
         }
     }
 }
 
 //MARK: GoalsMetPercentageChart
 struct GoalsMetPercentageChart: View {
+    
+    @Environment(\.colorScheme) var colorScheme
     
     let title: String
     let data: [DataNode]
@@ -367,14 +426,14 @@ struct GoalsMetPercentageChart: View {
     var body: some View {
         VStack(alignment: .leading) {
             
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
             
             Chart {
                 ForEach(data) { datum in
                     BarMark(x: .value("X", datum.goal),
                             y: .value("Y", datum.count))
                     .cornerRadius(Constants.UIBarMarkCOrnerRadius)
-                    .foregroundStyle(RecallModel.shared.activeColor)
+                    .foregroundStyle(Colors.getAccent(from: colorScheme))
                 }
             }
             .chartYAxis {
@@ -387,8 +446,9 @@ struct GoalsMetPercentageChart: View {
                     }
                 }
             }
-            .frame(height: 150)
+            .frame(height: 160)
             .colorChartByGoal()
+            .rectangularBackground(style: .transparent, stroke: true)
         }
     }
 }

@@ -12,53 +12,62 @@ import UIUniversals
 
 struct GoalsPageView: View {
     
-    @ObservedResults( RecallGoal.self ) var goals
-    @ObservedResults( RecallCategory.self ) var categories
-    
+//    MARK: Vars
+    let goals: [RecallGoal]
     let events: [RecallCalendarEvent]
+    
+    @ObservedResults(RecallCategory.self) var tags
     
     @State var showingGoalCreationView: Bool = false
     
+    @State var scrollPositionBinding: CGPoint = .zero
+    
+    @ViewBuilder
+    private func makeGoalsSection(priority: RecallGoal.Priority) -> some View {
+        let filtered = goals.filter { goal in goal.priority == priority.rawValue }
+
+        if filtered.count != 0 {
+            VStack(alignment: .leading) {
+                UniversalText( priority.rawValue + " priority",
+                               size: Constants.UISubHeaderTextSize,
+                               font: Constants.titleFont )
+
+                ForEach( Array(filtered), id: \.label ) { goal in
+                    GoalPreviewView(goal: goal, events: events)
+                        .padding(.bottom, 5)
+                }
+            }.padding(.bottom)
+        }
+    }
+    
+//    MARK: Body
     var body: some View {
-        
         VStack(alignment: .leading) {
-            
             HStack {
-                UniversalText( "Goals",
-                               size: Constants.UITitleTextSize,
-                               font: Constants.titleFont)
+                UniversalText( "Goals", size: Constants.UITitleTextSize, font: Constants.titleFont)
                 Spacer()
                 LargeRoundedButton("Add Goal", icon: "arrow.up") { showingGoalCreationView = true }
             }
             
-            ScrollView(.vertical) {
-//                LazyVStack {
-                LazyVStack(alignment: .leading) {
-                    if goals.count != 0 {
-                        
-                        ForEach( RecallGoal.Priority.allCases) { priority in
-                        
-                            let filtered = goals.filter { goal in goal.priority == priority.rawValue }
-                            
-                            if filtered.count != 0 {
-                                VStack(alignment: .leading) {
-                                    UniversalText( priority.rawValue, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
-                                    
-                                    ForEach( Array(filtered), id: \.label ) { goal in
-                                        GoalPreviewView(goal: goal, events: events)
-                                            .padding(.bottom, 5)
-                                    }
-                                }.padding(.bottom)
+            TabView {
+                if goals.count != 0 {
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(alignment: .leading) {
+                            ForEach( RecallGoal.Priority.allCases) { priority in
+                                makeGoalsSection(priority: priority)
                             }
                         }
-                    } else {
-                        UniversalText( Constants.goalsSplashPurpose,
-                                       size: Constants.UIDefaultTextSize,
-                                       font: Constants.mainFont)
+                        .padding(.bottom, Constants.UIBottomOfPagePadding)
                     }
+                } else {
+                    UniversalText( Constants.goalsSplashPurpose,
+                                   size: Constants.UIDefaultTextSize,
+                                   font: Constants.mainFont)
                 }
-            .padding(.bottom, Constants.UIBottomOfPagePadding)
             }
+            .ignoresSafeArea()
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            
         }
         .padding(7)
         .universalBackground()

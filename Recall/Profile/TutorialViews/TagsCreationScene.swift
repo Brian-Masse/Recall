@@ -23,7 +23,7 @@ extension TutorialViews {
         @State var sentTag: Bool = false
         
         @State var name: String = ""
-        @State var color: Color = RecallModel.shared.activeColor
+        @State var color: Color = Colors.lightAccent
         @State var goalRatings: Dictionary<String, String> = Dictionary()
         
 
@@ -148,8 +148,7 @@ extension TutorialViews {
                 CategoryCreationView(editing: false,
                                      tag: nil,
                                      label: "",
-                                     goalRatings: Dictionary(),
-                                     color: RecallModel.shared.activeColor)
+                                     goalRatings: Dictionary())
             }
             
         }

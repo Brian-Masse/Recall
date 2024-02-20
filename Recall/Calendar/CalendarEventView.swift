@@ -114,7 +114,8 @@ struct CalendarEventView: View {
             
             if event.goalRatings.count != 0 {
                 UniversalText("Goal Progress", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                GoalTags(goalRatings: Array(event.goalRatings), events: events)
+//                TODO: This may be the same view as is present on the Tags, so you can possibly recycle that code
+//                GoalTags(goalRatings: Array(event.goalRatings), events: events)
             }
         }.rectangularBackground(7, style: .primary, stroke: true)
     }

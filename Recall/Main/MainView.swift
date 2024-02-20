@@ -16,19 +16,16 @@ struct MainView: View {
     enum MainPage: Int, Identifiable {
         case calendar
         case goals
-        case data
         case categories
-        case templates
+        case data
         
         var id: Int {
             self.rawValue
         }
     }
     
-//    MARK: Tabbar
+    //    MARK: Tabbar
     struct TabBar: View {
-        
-        @Environment(\.colorScheme) var colorScheme
         
         struct TabBarIcon: View {
             
@@ -39,7 +36,7 @@ struct MainView: View {
             let page: MainView.MainPage
             let title: String
             let icon: String
-        
+            
             @ViewBuilder private func makeIcon() -> some View {
                 Image(systemName: icon)
             }
@@ -55,10 +52,8 @@ struct MainView: View {
                                     .universalStyledBackgrond(.accent, onForeground: true)
                                     .cornerRadius(70)
                                     .frame(width: 90, height: 90)
-//                                    .aspectRatio(1, contentMode: .fill)
                                     .matchedGeometryEffect(id: "highlight", in: namespace)
                             }
-                            .shadow(color: RecallModel.shared.activeColor.opacity(0.3), radius: 10)
                         
                     } else {
                         makeIcon()
@@ -83,8 +78,6 @@ struct MainView: View {
             }
             .padding(7)
             .frame(height: 104)
-
-//            .padding(.bottom, 18)
             .ignoresSafeArea()
             .universalTextStyle()
             .background(.thinMaterial)
@@ -95,12 +88,13 @@ struct MainView: View {
         }
     }
     
-
-//    MARK: Vars
+    
+    //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     
     @ObservedResults( RecallCalendarEvent.self, where: { event in event.startTime > RecallModel.getEarliestEventDate() } ) var events
     @ObservedResults( RecallGoal.self ) var goals
+    @ObservedResults( RecallCategory.self ) var tags
     
     @State var currentPage: MainPage = .calendar
     @State var shouldRefreshData: Bool = false
@@ -109,54 +103,52 @@ struct MainView: View {
     
     @State private var showingHalfPage: Bool = false
     
-    private func refreshData(events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil) async {
-        await RecallModel.dataModel.updateProperties(events: events ?? nil, goals: goals ?? nil)
-    }
+    @State var canDrag = false
     
+    @State var uiTabarController: UITabBarController?
     
     //    MARK: Body
     var body: some View {
-    
+        
         let arrEvents = Array(events)
-        
-        ZStack(alignment: .bottom) {
-            TabView(selection: $currentPage) {
-                CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
-                    .tag( MainPage.calendar )
-                    .halfPageScreenReceiver(showing: $showingHalfPage)
-                Text("hi")
-//                GoalsPageView(events: arrEvents )
-                    .tag( MainPage.goals )
-                CategoriesPageView(events: arrEvents )
-                    .tag( MainPage.categories )
-//                DataPageView(events: arrEvents, page: $currentPage, currentDay: $currentDay)
-                Text("hi")
-                    .tag( MainPage.data )
-
-            }   
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            
-            if !showingHalfPage {
-                TabBar(pageSelection: $currentPage)
+        let arrGoals = Array(goals)
+        let arrTags = Array(tags)
+    
+        GeometryReader { geo in
+            ZStack(alignment: .bottom) {
+                NavigationView {
+                    TabView(selection: $currentPage) {
+                        CalendarPageView(events: arrEvents, currentDay: $currentDay, appPage: $appPage)
+                            .halfPageScreenReceiver(showing: $showingHalfPage)
+                            .tag( MainPage.calendar )
+                        
+                        GoalsPageView(goals: arrGoals, events: arrEvents )
+                            .tag( MainPage.goals )
+    
+                        CategoriesPageView(events: arrEvents )
+                            .tag( MainPage.categories )
+                    
+                        DataPageView(events: arrEvents,
+                                     goals: arrGoals,
+                                     tags: arrTags,
+                                     mainViewPage: $currentPage,
+                                     currentDay: $currentDay)
+                            .tag( MainPage.data )
+                    }
+                }
+                
+                if !showingHalfPage { TabBar(pageSelection: $currentPage) }
+                
+                UpdateView()
             }
-            
-            UpdateView()
         }
-        .onAppear {
-            Task { await refreshData(events: Array(events), goals: Array(goals)) }
-            RecallModel.shared.setTint(from: colorScheme)
+        .task {
             Constants.setupConstants()
+            RecallModel.dataModel.storeData( events: arrEvents, goals: arrGoals )
         }
-        .onChange(of: events)   { newValue in Task { await refreshData(events: Array(newValue), goals: Array(goals)) } }
+        .onChange(of: events) { nEvents in RecallModel.dataModel.storeData( events: Array(nEvents)) }
         
-        .onChange(of: colorScheme) { newValue in
-            RecallModel.shared.setTint(from: newValue)
-        }
-        
-        
-        .ignoresSafeArea()
+
         .universalBackground()
-        
-        
     }
 }

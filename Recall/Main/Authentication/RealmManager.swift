@@ -44,6 +44,8 @@ class RealmManager: ObservableObject {
     @Published var realmLoaded: Bool = false
     @Published var hasProfile: Bool = false
     
+    @Published var content: [String] = []
+    
     var profileLoaded: Bool {
         if hasProfile {
             return self.index.checkCompletion()
@@ -66,6 +68,10 @@ class RealmManager: ObservableObject {
     @MainActor
     init() {
         self.checkLogin()
+        
+        for i in 0...32 {
+            self.content.append( "element\(i)" )
+        }
     }
     
 //    MARK: Login Method Functions

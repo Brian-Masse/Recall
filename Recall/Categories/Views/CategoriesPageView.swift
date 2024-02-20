@@ -19,6 +19,7 @@ struct CategoriesPageView: View {
         
         var id: String { self.rawValue }
 
+//        This is the name on the button that displays next to the page title
         func getAddButtonName() -> String {
             switch self {
             case .tags: return "Create Tag"
@@ -27,6 +28,19 @@ struct CategoriesPageView: View {
             }
         }
     }
+    
+//    MARK: Vars
+    @Environment(\.colorScheme) var colorScheme
+    @ObservedResults( RecallCategory.self ) var categories
+    
+    @State var showingCreateTagView: Bool = false
+    @State var showingCreateEventView: Bool = false
+    @State var showingCreateFavoriteEventView: Bool = false
+    
+    
+    @State var activePage: TagPage = .tags
+    
+    let events: [RecallCalendarEvent]
     
 //    MARK: Page Picker
     @ViewBuilder
@@ -55,56 +69,59 @@ struct CategoriesPageView: View {
         .padding(.bottom, 5)
         .frame(height: geo.size.height / 10)
     }
-
-        
-//    MARK: Vars
-    @Environment(\.colorScheme) var colorScheme
-    @ObservedResults( RecallCategory.self ) var categories
     
-    @State var showingCreateTagView: Bool = false
-    @State var showingCreateEventView: Bool = false
-    @State var showingCreateFavoriteEventView: Bool = false
-    
-    
-    @State var activePage: TagPage = .tags
-    
-    let events: [RecallCalendarEvent] 
+//    MARK: Header
+    @ViewBuilder
+    private func makeHeader(_ geo: GeometryProxy) -> some View {
+        Group {
+            HStack {
+                UniversalText( activePage.rawValue, size: Constants.UITitleTextSize, font: Constants.titleFont, scale: true )
+                Spacer()
+                
+                LargeRoundedButton(activePage.getAddButtonName(), icon: "arrow.up") {
+                    if activePage == .tags { showingCreateTagView = true }
+                    if activePage == .templates { showingCreateEventView = true }
+                    if activePage == .favorites { showingCreateFavoriteEventView = true }
+                }
+            }
+            
+            makePagePicker(geo: geo)
+        }.padding(7)
+    }
     
 //    MARK: Body
     var body: some View {
-        
         GeometryReader { geo in
             VStack(alignment: .leading) {
                 
-                HStack {
-                    UniversalText( activePage.rawValue, size: Constants.UITitleTextSize, font: Constants.titleFont, scale: true )
-                    Spacer()
+                makeHeader(geo)
                 
-                    LargeRoundedButton(activePage.getAddButtonName(), icon: "arrow.up") {
-                        if activePage == .tags { showingCreateTagView = true }
-                        if activePage == .templates { showingCreateEventView = true }
-                        if activePage == .favorites { showingCreateFavoriteEventView = true }
-                    }
+                TabView( selection: $activePage ) {
+                    TagPageView(tags: Array(categories), events: events)
+                        .ignoresSafeArea()
+                        .padding(.horizontal, 7)
+                        .tag( TagPage.tags )
+                    
+                    TemplatePageView(events: events)
+                        .ignoresSafeArea()
+                        .padding(.horizontal, 7)
+                        .tag( TagPage.templates )
+                    
+                    FavoritesPageView(events: events)
+                        .ignoresSafeArea()
+                        .padding(.horizontal, 7)
+                        .tag( TagPage.favorites )
                 }
-                
-                makePagePicker(geo: geo)
-                
-                TabView(selection: $activePage) {
-                    TagPageView(tags: Array(categories), events: events).tag( TagPage.tags )
-//                    TemplatePageView(events: events).tag( TagPage.templates )
-//                    FavoritesPageView(events: events).tag( TagPage.favorites )
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
+                .ignoresSafeArea()
+                .tabViewStyle(.page(indexDisplayMode: .never) )
             }
         }
-        .padding(7)
         .universalBackground()
         .sheet(isPresented: $showingCreateTagView) {
             CategoryCreationView(editing: false,
                                  tag: nil,
                                  label: "",
-                                 goalRatings: Dictionary(),
-                                 color: RecallModel.shared.activeColor)
+                                 goalRatings: Dictionary())
         }
         .sheet(isPresented: $showingCreateEventView) {
             CalendarEventCreationView.makeEventCreationView(currentDay: .now, template: true)
@@ -113,5 +130,11 @@ struct CategoriesPageView: View {
             CalendarEventCreationView.makeEventCreationView(currentDay: .now, favorite: true)
         }
     }
+}
+
+
+#Preview {
+    
+    CategoriesPageView(events: [])
     
 }

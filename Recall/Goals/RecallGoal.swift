@@ -181,6 +181,8 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         if let id = targetTag?._id {
             if let retrievedTag = RecallCategory.getCategoryObject(from: id) { self.targetTag = retrievedTag }
         }
+        
+        RecallModel.shared.updateGoal(self)
     }
     
     func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?, creationDate: Date) {
@@ -198,10 +200,13 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
                 if let retrievedTag = RecallCategory.getCategoryObject(from: id) { thawed.targetTag = retrievedTag }
             }
         }
+        
+        RecallModel.shared.updateGoal(self)
     }
     
     func delete() {
         RealmManager.deleteObject(self) { goal in goal._id == self._id }
+        RecallModel.shared.updateGoal(self)
     }
     
 //    MARK: Convenience Functions
@@ -326,13 +331,14 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         return(metCount, Int(numberOfTimePeriods.rounded(.up)) - metCount)
     }
     
-//    @MainActor
+    @MainActor
     func getAverage(from events: [RecallCalendarEvent]) async -> Double {
-        let numberOfTimePeriods = await getNumberOfTimePeriods()
+        let numberOfTimePeriods = getNumberOfTimePeriods()
         
-        let allEvents = events.reduce(0) { partialResult, event in partialResult + event.getGoalProgressThreadInvariant(self) }
-        
-        return allEvents / max(Double(numberOfTimePeriods) * Double(frequency) , 1)
+        var sumOfAllProgess: Double = 0
+        for event in events { sumOfAllProgess += await event.getGoalPrgress(self) }
+    
+        return sumOfAllProgess / max(Double(numberOfTimePeriods) * Double(frequency) , 1)
     }
     
 //    MARK: Indexxing Function

@@ -14,7 +14,7 @@ struct RecallApp: App {
     private func setupUIUniversals() {
         
         Colors.setColors(baseLight:         .init(255, 255, 255),
-                         secondaryLight:    .init(235, 235, 235),
+                         secondaryLight:    .init(245, 245, 245),
                          baseDark:          .init(0, 0, 0),
                          secondaryDark:     .init(25.5, 25.5, 25.5),
                          lightAccent:       .init(66, 122, 69),
@@ -33,6 +33,8 @@ struct RecallApp: App {
         
         Constants.titleFont = FontProvider[.syneHeavy]
         Constants.mainFont = FontProvider[.renoMono]
+        
+        UITabBar.appearance().isHidden = true
     }
     
     init() {
