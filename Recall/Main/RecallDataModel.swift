@@ -150,6 +150,8 @@ class RecallDataModel: ObservableObject {
 //    MARK: Data Loaded Functions
 //    This states whether the data needed to present the summary page is loaded
     @Published var overviewDataLoaded: Bool = false
+    
+    @Published var eventsDataLoaded: Bool = false
         
 //    this simply takes in the most recent events and goals and stores it in the class
 //    then indexes the goals for use throuhgout most data aggregators
@@ -182,6 +184,37 @@ class RecallDataModel: ObservableObject {
     
         RecallModel.shared.setDataOverviewValidation(to: true)
         withAnimation { self.overviewDataLoaded = true }
+    }
+    
+    @MainActor
+    func makeEventsData() async {
+        
+        if RecallModel.shared.dataEventsValidated { return }
+        if !overviewDataLoaded { await makeOverviewData() }
+        
+        let tagData                     = await makeData { _ in 1 }
+            .sorted { event1, event2 in event1.date > event2.date }
+        let compressedTagData           = await compressData(from: tagData)
+        let recentTagData               = await getRecentData(from: tagData)
+        let recentCompressedTagData     = await getRecentData(from: compressedTagData)
+        
+        let recentHourlyData            = await getRecentData(from: hourlyData)
+        let recentCompressedHourlyData  = await compressData(from: recentHourlyData)
+        
+        let totalHours                  = await getTotalHours(from: self.hourlyData)
+        let recentTotalHours            = await getTotalHours(from: recentHourlyData)
+        
+        self.tagData                    = tagData
+        self.compressedTagData          = compressedTagData
+        self.recentTagData              = recentTagData
+        self.recentCompressedTagData    = recentCompressedTagData
+        self.recentCompressedHourlyData = recentCompressedHourlyData
+        self.recentHourlyData           = recentHourlyData
+        self.totalHours                 = totalHours
+        self.recentTotalHours           = recentTotalHours
+        
+        withAnimation { self.eventsDataLoaded = true }
+        
     }
 
 //    MARK: Refresh
@@ -226,28 +259,28 @@ class RecallDataModel: ObservableObject {
     
 //    MARK: Convenience Functions
     
-//    These functions handle whether to display all data or a select group of recent data
-    private func filterIsWeekly(_ viewFilter: Int) -> Bool {
-        viewFilter == 0
+    enum TimePeriod: Int {
+        case allTime
+        case recent
+    }
+
+    func getHourlData(from timePeriod: TimePeriod) -> [DataNode] {
+        timePeriod == .recent ? recentHourlyData : hourlyData
     }
     
-    func getHourlData(from viewFilter: Int) -> [DataNode] {
-        filterIsWeekly(viewFilter) ? recentHourlyData : hourlyData
+    func getCompressedHourlData(from timePeriod: TimePeriod) -> [DataNode] {
+        timePeriod == .recent ? recentCompressedHourlyData : compressedHourlyData
     }
     
-    func getCompressedHourlData(from viewFilter: Int) -> [DataNode] {
-        filterIsWeekly(viewFilter) ? recentCompressedHourlyData : compressedHourlyData
+    func getTagData(from timePeriod: TimePeriod) -> [DataNode] {
+        timePeriod == .recent ? recentTagData : tagData
     }
     
-    func getTagData(from viewFilter: Int) -> [DataNode] {
-        filterIsWeekly(viewFilter) ? recentTagData : tagData
+    func getCompressedTagData(from timePeriod: TimePeriod) -> [DataNode] {
+        timePeriod == .recent ? recentCompressedTagData : compressedTagData
     }
     
-    func getCompressedTagData(from viewFilter: Int) -> [DataNode] {
-        filterIsWeekly(viewFilter) ? recentCompressedTagData : compressedTagData
-    }
-    
-    func getTotalHours(from viewFilter: Int) -> Double {
-        filterIsWeekly(viewFilter) ? Double(recentTotalHours) : Double(totalHours)
+    func getTotalHours(from timePeriod: TimePeriod) -> Double {
+        timePeriod == .recent ? Double(recentTotalHours) : Double(totalHours)
     }
 }

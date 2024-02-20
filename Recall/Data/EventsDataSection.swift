@@ -12,71 +12,106 @@ import UIUniversals
 
 struct EventsDataSection: View {
 
-//    This determines whether its showing all time or just this week
-    @State var viewFilter: Int = 0
-    
+//    MARK: Vars
     @EnvironmentObject var data: RecallDataModel
     
     @Binding var page: MainView.MainPage
     @Binding var currentDay: Date
     
-    var body: some View {
-        
-        VStack(alignment: .leading) {
-            
-//            DataCollection("Events") {
-//                
-//                let timePeriod: Double = viewFilter == 0 ? 7 : RecallModel.getDaysSinceFirstEvent()
-//                
-//                Group {
-//                    LargeText(mainText: "\(data.getTotalHours(from: viewFilter).round(to: 2) )", subText: "hours")
-//                    Seperator(orientation: .horizontal)
-//                    LargeText(mainText: "\(data.getHourlData(from: viewFilter).count)", subText: "events")
-//                    Seperator(orientation: .horizontal)
-//                        .padding(.bottom)
-//                }
-//                
-//                DataPicker(optionsCount: 2, labels: ["This Week", "All Time"], fontSize: Constants.UISubHeaderTextSize, selectedOption: $viewFilter)
-//                    .padding(.bottom)
-//
-//                Group {
-//                    UniversalText("Daily Averages", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-//                        .padding(.bottom, 5)
-//
-//                    AverageActivityByTag(recents: viewFilter == 0, data: data.getHourlData(from: viewFilter), unit: "")
-//                    EventsDataSummaries.DailyAverage(data: data.getCompressedHourlData(from: viewFilter), unit: "HR/DY")
-//
-//                    LargeText(mainText: "\((Double(data.getTotalHours(from: viewFilter)) / timePeriod).round(to: 2))", subText: "HR/DY")
-//                        .padding(.vertical)
-//                }
-//
-//                Seperator(orientation: .horizontal)
-//                
-//                Group {
-//                    UniversalText("Activities", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-//
-//                    ActivitiesPerDay("Hours per day, by tag",
-//                                     data: data.getHourlData(from: viewFilter),
-//                                     scrollable: viewFilter == 1,
-//                                     page: $page,
-//                                     currentDay: $currentDay)
-//                    EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: viewFilter), unit: "HR")
-//                    EventsDataSummaries.ActivityPerTag(data:        data.getCompressedHourlData(from: viewFilter), unit: "HR")
-//
-//                    Seperator(orientation: .horizontal)
-//
-//                    ActivitiesPerDay("Events per day, by tag",
-//                                     data: data.getTagData(from: viewFilter),
-//                                     scrollable: viewFilter == 1,
-//                                     page: $page,
-//                                     currentDay: $currentDay )
-//                    EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedTagData(from: viewFilter), unit: "")
-//                    EventsDataSummaries.ActivityPerTag(data:        data.getCompressedTagData(from: viewFilter), unit: "")
-//
-////                    Seperator(orientation: .horizontal)
-//                }
-//            }
-        }.id( DataPageView.DataPage.Events.rawValue )
+    @State var timePeriod: RecallDataModel.TimePeriod = .allTime
+    
+    @State var dataPrepared: Bool = true
+    
+    private var daysInTimePeriod: Double {
+        timePeriod == .recent ? 7 : RecallModel.getDaysSinceFirstEvent()
     }
     
+//    MARK: ViewBuilder
+    @ViewBuilder
+    private func makeTimePeriodSelector( _ period: RecallDataModel.TimePeriod, label: String, icon: String ) -> some View {
+        
+        HStack {
+            Spacer()
+            UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            Image(systemName: icon)
+            Spacer()
+        }
+        .if( period != timePeriod) { view in view.rectangularBackground(style: .secondary) }
+        .if( period == timePeriod ) { view in
+            view
+                .foregroundStyle(.black)
+                .rectangularBackground(style: .accent)
+        }
+        .onTapGesture { withAnimation {
+            self.dataPrepared = false
+            self.timePeriod = period
+            
+            Task {
+                await RecallModel.wait(for: 0.5)
+                withAnimation { self.dataPrepared = true }
+            }
+        } }
+    }
+    
+    @ViewBuilder
+    private func makeTimePeriodSelector() -> some View {
+        VStack(alignment: .leading) {
+            UniversalText( "Time Period", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            
+            HStack {
+                makeTimePeriodSelector(.allTime, label: "All Time", icon: "calendar")
+                makeTimePeriodSelector(.recent, label: "This week", icon: "calendar.day.timeline.left")
+            }
+        }
+    }
+    
+    
+//    MARK: Body
+    var body: some View {
+        
+        DataCollection { data.eventsDataLoaded } makeData: { await data.makeEventsData() } content: {
+            
+            makeTimePeriodSelector()
+                .padding(.bottom)
+            
+            Group {
+                LargeText(mainText: "\((Double(data.getTotalHours(from: timePeriod)) / daysInTimePeriod).round(to: 2))",
+                          subText: "HR/DY")
+                
+                AverageActivityByTag(recents: timePeriod == .recent,
+                                     data: data.getCompressedHourlData(from: timePeriod),
+                                     unit: "")
+                
+                EventsDataSummaries.DailyAverage(data: data.getCompressedHourlData(from: timePeriod), unit: "HR/DY")
+            }
+            
+            Divider(strokeWidth: 1)
+            
+            Group {
+                LargeText(mainText: "\(data.getTotalHours(from: timePeriod).round(to: 2) )", subText: "hours")
+                LargeText(mainText: "\(data.getHourlData(from: timePeriod).count)", subText: "events")
+            }
+            
+            Divider(strokeWidth: 1)
+            
+            Group {
+                ActivitiesPerDay("Daily Recalls",
+                                 data: data.getHourlData(from: timePeriod),
+                                 scrollable: timePeriod == .allTime,
+                                 page: $page,
+                                 currentDay: $currentDay)
+                EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: timePeriod), unit: "HR")
+                EventsDataSummaries.ActivityPerTag(data:        data.getCompressedHourlData(from: timePeriod), unit: "HR")
+
+                ActivitiesPerDay("Daily Recalls, by tag",
+                                 data: data.`getTagData`(from: timePeriod),
+                                 scrollable: timePeriod == .allTime,
+                                 page: $page,
+                                 currentDay: $currentDay )
+                EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedTagData(from: timePeriod), unit: "")
+                EventsDataSummaries.ActivityPerTag(data:        data.getCompressedTagData(from: timePeriod), unit: "")
+
+            }
+        }
+    }
 }

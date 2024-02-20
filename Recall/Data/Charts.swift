@@ -50,10 +50,9 @@ struct AverageActivityByTag: View {
     var body: some View {
         
         let averageData = transformData()
-        let max = findMax(from: averageData)
+        let max = transformData().first?.count ?? 1.5
         
-        UniversalText( "Average Activity HR/DY", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-//        ScrollView(.horizontal) {
+        UniversalText( "Average Activity, HR/DY", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             Chart {
                 ForEach(averageData) { datum in
                     BarMark(x: .value("X", datum.category),
@@ -66,14 +65,15 @@ struct AverageActivityByTag: View {
                 
                 if let label = activeLabel {
                     RuleMark(x: .value("X", label))
-                        .annotation(position: .top) {
-                            UniversalText( label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                        .annotation(position: .overlay ) {
+                            UniversalText( label, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false )
+                                .frame(minWidth: 150)
                                 .rectangularBackground(style: .secondary)
                         }
                         .foregroundStyle( Constants.tagColorsDic[ label ] ?? .red )
                 }
             }
-            .chartYScale(domain: 0...(CGFloat(max) + ( recents ? 2 : 1 )))
+            .chartYScale(domain: 0...max )
             .chartXAxis( tags.count >= 10 ? .hidden : .visible)
             .chartOverlay { proxy in
                 GeometryReader { innerProxy in
@@ -106,6 +106,8 @@ struct AverageActivityByTag: View {
                     }
                 }
             }
+            .frame(height: 130)
+            .rectangularBackground(style: .transparent, stroke: true)
     }
 }
 
@@ -116,7 +118,7 @@ struct ActivitiesPerDay: View {
     private func makeChart() -> some View {
         
         Chart {
-            ForEach(0...loadedDataCount, id: \.self) { i in
+            ForEach(0...getMaxIndex(), id: \.self) { i in
                 let datum = data[i]
                 
                 BarMark(x: .value("X", datum.date, unit: .day ),
@@ -199,16 +201,18 @@ struct ActivitiesPerDay: View {
             }
             
             Group {
-                if scrollable {
-                    ScrollView(.horizontal) {
+                if getMaxIndex() > 0 {
+                    if scrollable {
+                        ScrollView(.horizontal) {
+                            makeChart()
+                                .frame(width: Double(daysSinceLastEvent()) * (Constants.UIScrollableBarWidthDouble + 10) )
+                                .padding(.trailing)
+                                .frame(height: 220)
+                        }
+                    }else {
                         makeChart()
-                            .frame(width: Double(daysSinceLastEvent()) * (Constants.UIScrollableBarWidthDouble + 10) )
-                            .padding(.trailing)
-                            .frame(height: 220)
+                            .frame(height: 300)
                     }
-                }else {
-                    makeChart()
-                        .frame(height: 300)
                 }
             }
             .rectangularBackground(style: .transparent, stroke: true)

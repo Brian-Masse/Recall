@@ -73,18 +73,24 @@ struct DataPageView: View {
         VStack(alignment: .leading) {
             
             UniversalText("Data", size: Constants.UITitleTextSize, font: Constants.titleFont)
+                .padding([.top, .horizontal], 7)
 
             makePageSelectors()
+                .padding(.horizontal, 7)
             
             TabView(selection: $currentPage) {
                 OverviewDataSection(goals: arrGoals, currentDay: $currentDay, page: $mainViewPage)
                     .tag(DataPage.Overview)
                     .environmentObject(dataModel )
+                    .padding(7)
+                    .ignoresSafeArea()
                 
-//                EventsDataSection(page: $mainViewPage, currentDay: $currentDay)
-//                    .tag(DataPage.Events)
-//                    .environmentObject(dataModel )
-//                
+                EventsDataSection(page: $mainViewPage, currentDay: $currentDay)
+                    .tag(DataPage.Events)
+                    .environmentObject(dataModel )
+                    .padding(7)
+                    .ignoresSafeArea()
+//
 //                GoalsDataSection(goals: arrGoals)
 //                    .tag(DataPage.Goals)
 //                    .environmentObject(dataModel )
@@ -92,7 +98,6 @@ struct DataPageView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea()
         }
-        .padding(7)
         .universalBackground()
     }
 }

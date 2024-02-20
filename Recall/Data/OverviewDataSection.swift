@@ -24,20 +24,22 @@ struct OverviewDataSection: View {
         DataCollection { data.overviewDataLoaded } makeData: { 
             await data.makeOverviewData()
         } content: {
-            
-            UniversalText("Events", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+
             ActivitiesPerDay("Daily Recalls",
-                             data: data.getHourlData(from: 1),
+                             data: data.getHourlData(from: .allTime),
                              scrollable: true,
                              page: $page,
                              currentDay: $currentDay
             )
-            EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: 1), unit: "HR")
+            EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: .allTime), unit: "HR")
+            
+            AverageActivityByTag(recents: false,
+                                 data: data.getCompressedHourlData(from: .allTime),
+                                 unit: "")
             
             Divider(strokeWidth: 1)
-            
-            UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-            GoalAverages(title: "Average Completion Averages", data: data.metData, unit: "")
+        
+            GoalAverages(title: "Goal Completions", data: data.metData, unit: "")
             GoalCompletionOverTime(data: data.goalsMetOverTimeData, unit: "")
                 .frame(height: 250)
             

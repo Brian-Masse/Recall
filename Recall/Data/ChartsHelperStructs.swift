@@ -10,43 +10,6 @@ import Charts
 import SwiftUI
 import UIUniversals
 
-//MARK: Data Picker
-struct DataPicker: View {
-    
-    let optionsCount: Int
-    let labels: [String]
-    
-    let fontSize: Double
-    
-    @Binding var selectedOption: Int
-    
-    @Namespace private var picker
-    
-    @ViewBuilder
-    private func makeSelector(from label: String, option: Int ) -> some View {
-        HStack {
-            Spacer()
-            UniversalText(label, size: fontSize, font: Constants.titleFont, wrap: false )
-            Spacer()
-        }
-        .if(selectedOption == option) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
-        .if(selectedOption != option) { view in view.rectangularBackground(style: .secondary) }
-        .onTapGesture { withAnimation { selectedOption = option } }
-//        .matchedGeometryEffect(id: "b", in: picker)
-        
-    }
-    
-    var body: some View {
-        HStack {
-            ForEach(0..<optionsCount, id: \.self) { i in
-                let label = labels[i]
-                makeSelector(from: label, option: i)
-            }
-        }
-        .rectangularBackground(5, style: .secondary)
-    }
-}
-
 //MARK: DataCollection
 struct DataCollection<Content: View>: View {
     
@@ -65,8 +28,8 @@ struct DataCollection<Content: View>: View {
     var body: some View {
         VStack() {
             if checkDataLoaded() && presentable {
-                ScrollView(.vertical) {
-                    VStack(alignment: .leading, spacing: 0) {
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(alignment: .leading, spacing: 0) {
                         content
                             .padding(.bottom)
                         
@@ -103,11 +66,14 @@ struct HideableDataCollection: ViewModifier {
      
         VStack(alignment: .leading) {
             HStack {
-                UniversalText( title, size: largeTitle ? Constants.UIHeaderTextSize : Constants.UIDefaultTextSize, font: Constants.titleFont )
                 Spacer()
-                if largeTitle   { LargeRoundedButton("", icon: showing ? "arrow.up" : "arrow.down") { toggleShowing() } }
-                else            { LargeRoundedButton("", icon: showing ? "arrow.up" : "arrow.down", small: true) { toggleShowing() } }
-            }.padding(.bottom)
+                UniversalText("see all data", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                Image(systemName: showing ? "arrow.up" : "arrow.down")
+                Spacer()
+            }
+            .rectangularBackground(7, style: .secondary)
+            .onTapGesture { withAnimation { showing.toggle() } }
+            .if(showing) { view in view.padding(.bottom) }
             
             if showing {
                 content
