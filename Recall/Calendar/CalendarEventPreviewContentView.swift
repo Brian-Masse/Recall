@@ -17,24 +17,61 @@ struct CalendarEventPreviewContentView: View {
     private func makeMetadataTag(label: String, icon: String) -> some View {
         HStack {
             if icon != "" { ResizableIcon(icon, size: Constants.UIDefaultTextSize) }
-            if label != "" { UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.titleFont, scale: true) }
+            if label != "" { UniversalText(label, size: Constants.UISmallTextSize, font: Constants.titleFont, scale: true) }
         }
         .foregroundColor(.black)
     }
     
     @ViewBuilder
-    private func makeMetadata(horiztonal: Bool) -> some View {
-        Group {
-            let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
-            
-            if event.isTemplate {
-                makeMetadataTag(label: "", icon: "doc.plaintext")
-                if horiztonal { Spacer() }
-            }
-            makeMetadataTag(label: "\(event.category?.label ?? "no tag")", icon: "tag")
-            if horiztonal { Spacer() }
-            makeMetadataTag(label: timeString, icon: "")
+    private func makeMetadata(addHorizontalSpacing: Bool) -> some View {
+        let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
+        
+        if event.isTemplate {
+            makeMetadataTag(label: "", icon: "doc.plaintext")
+            if addHorizontalSpacing { Spacer() }
         }
+        makeMetadataTag(label: "\(event.category?.label ?? "no tag")", icon: "tag")
+        if addHorizontalSpacing { Spacer() }
+        makeMetadataTag(label: timeString, icon: "")
+    }
+
+    @ViewBuilder
+    private func makeBody() -> some View {
+        UniversalText( event.title,
+                       size: Constants.UISubHeaderTextSize,
+                       font: Constants.titleFont,
+                       scale: true,
+                       minimumScaleFactor: 0.5)
+        
+        if height > minHeightForDescription && index.showNotesOnPreview && !event.notes.isEmpty {
+            UniversalText( event.notes,
+                           size: Constants.UISmallTextSize,
+                           font: Constants.mainFont )
+            .opacity(0.8)
+        }
+    }
+    
+//    MARK: Layouts
+    @ViewBuilder
+    private func makeFullLayout() -> some View {
+        VStack(alignment: .leading) {
+            makeBody()
+            
+            Spacer()
+            
+            if width < minWidth { makeMetadata(addHorizontalSpacing: false) }
+            else { HStack { makeMetadata(addHorizontalSpacing: true) } }
+        }
+        .padding(.bottom, 5)
+        .padding(.top, 2)
+    }
+    
+    @ViewBuilder
+    private func makeShortLayout() -> some View {
+        Spacer()
+        UniversalText( event.title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, scale: true, minimumScaleFactor: 0.1)
+            .padding(.vertical, -3)
+        Spacer()
     }
     
 //    MARK: Vars
@@ -49,15 +86,10 @@ struct CalendarEventPreviewContentView: View {
     
     @ObservedRealmObject var index = RecallModel.index
     
-//    arbitrary for now
+//   These are all relativley arbitrary values, but they've been found to work across a number of device sizes and text scales
     let minWidth: CGFloat = 250
-    
-//    These are the pixel heights for a quart, half, and 1.5 hour events with standard spacing
-//    The heights that are given to this view are in pixels, so you have to compare them to these values instead of 0.25, 0.5, and 2
-    private let defaultQuarter: CGFloat = 13
-    private let defaultHalf: CGFloat = 25
-    private let minLength: CGFloat = 68.4
-    private let minDescriptionLength: CGFloat = 75
+    private let minHeight: CGFloat = 60
+    private let minHeightForDescription: CGFloat = 68
     
     @Binding var selecting: Bool
     @Binding var selection: [RecallCalendarEvent]
@@ -83,62 +115,31 @@ struct CalendarEventPreviewContentView: View {
     
 //    MARK: Body
     var body: some View {
-       
+        
         ZStack {
             Rectangle()
                 .foregroundColor(event.getColor())
                 .cornerRadius(Constants.UIDefaultCornerRadius)
             
             VStack(alignment: .leading) {
-//                MARK: Title
-                HStack {
-                    UniversalText( event.title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, scale: true)
-                    
-                    Spacer()
-                    
-                    if width > minWidth && height > defaultHalf {
-                        Image(systemName: "arrow.up")
-                            .resizable()
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(maxHeight: Constants.UIHeaderTextSize)
-                    }
-                }
+                HStack {Spacer()}
                 
-//                MARK: Content
-                if height > minDescriptionLength && index.showNotesOnPreview {
-                    UniversalText( event.notes, size: Constants.UISmallTextSize, font: Constants.mainFont ).opacity(0.8)
-                }
+                if height < minHeight { makeShortLayout() }
+                else { makeFullLayout() }
                 
-                if height > minLength {
-                    
-                    Spacer()
-                    if width > minWidth {
-                        HStack { makeMetadata(horiztonal: true) }
-                    } else {
-                        VStack(alignment: .leading) { makeMetadata(horiztonal: false) }
-                    }
-                }
             }
             .padding(.horizontal)
-            .if(height > defaultQuarter) { view in
-                view.padding(.vertical, 5)
-            }
             
-//            this handles the event appearance when the user is selecting a group of events to edit
-           if selecting && !selected() {
-               Rectangle()
-                   .foregroundStyle(colorScheme == .dark ? .black : .white)
-                   .opacity(0.7)
-                   .cornerRadius(Constants.UIDefaultCornerRadius)
-           }
+            if selecting && !selected() {
+                Rectangle()
+                    .foregroundStyle(colorScheme == .dark ? .black : .white)
+                    .opacity(0.7)
+                    .cornerRadius(Constants.UIDefaultCornerRadius)
+            }
         }
         .foregroundColor(.black)
-        .if(height > defaultHalf) { view in
-            view.padding(.vertical, 2)
-        }
-        .if(allowTapGesture) { view in
-            view.onTapGesture { showingEvent = true }
-        }
+        .padding(.vertical, 2)
+        .if(allowTapGesture) { view in view.onTapGesture { showingEvent = true } }
         .frame(maxHeight: height)
         .sheet(isPresented: $showingEvent) {
             CalendarEventView(event: event, events: events)

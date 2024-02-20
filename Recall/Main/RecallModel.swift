@@ -44,7 +44,11 @@ struct RecallModel {
     }
     
     static func wait(for seconds: Double) async {
-        try! await Task.sleep(nanoseconds: UInt64( seconds * pow( 10, 9 )) )
+        do {
+            try await Task.sleep(nanoseconds: UInt64( seconds * pow( 10, 9 )) )
+        } catch {
+            print("failed to complete the wait: \(error.localizedDescription)")
+        }
     }
 
 //    MARK: Data Validation
