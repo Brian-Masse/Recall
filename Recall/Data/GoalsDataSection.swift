@@ -18,52 +18,32 @@ struct GoalsDataSection: View {
 //    MARK: Body
     var body: some View {
         
-        VStack(alignment: .leading) {
+        DataCollection { data.goalsDataLoaded } makeData: { await data.makeGoalsData() } content: {
+
+            Group {
+                GoalsMetPercentageChart(title: "Goals Completion Rates", data: data.metPercentageData, unit: "%")
+                GoalsDataSummaries.GoalsMetPercentageBreakdown(data: data.metPercentageData)
+                
+                LargeText(mainText: "\(Int(data.totalGoalsMet))", subText: "Goals met  ")
+                    .frame(height: 60)
+                LargeText(mainText: "\(data.totalGoalsMetPercentage.round(to: 1))", subText: "%")
+                    .frame(height: 60)
+                
+                GoalAverages(title: "Goal Completions", data: data.metData, unit: "")
+                GoalsDataSummaries.GoalsMetCount(data: data.metData.filter { node in node.category == "completed" } )
+                    .padding(.bottom, 7)
+            }
             
-//            DataCollection("Goals") {
-//                
-//                LargeText(mainText: "\(goals.count)", subText: "goals")
-//                Seperator(orientation: .horizontal)
-//                    .padding(.bottom)
-//                
-//                Group {
-//                    UniversalText("Goal Meeting Rates", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-//                    
-//                    GoalAverages(title: "Times Met", data: data.metData, unit: "")
-//                        .padding(.bottom)
-//                    
-//                    GoalsDataSummaries.GoalsMetCount(data: data.metData.filter { node in node.category == "completed" } )
-//                    
-//                    GoalsMetPercentageChart(title: "Goals Met Percentage", data: data.metPercentageData, unit: "%")
-//                    
-//                    GoalsDataSummaries.GoalsMetPercentageBreakdown(data: data.metPercentageData)
-//                        .padding(.bottom)
-//                    
-//                    Seperator(orientation: .horizontal)
-//                    LargeText(mainText: "\(Int(data.totalGoalsMet))", subText: "Goals met")
-//                    Seperator(orientation: .horizontal)
-//                    LargeText(mainText: "\(data.totalGoalsMetPercentage.round(to: 1))", subText: "% met")
-//                    Seperator(orientation: .horizontal)
-//                        .padding(.bottom)
-//
-//                }
-//                
-//                Group {
-//                    UniversalText("Goals Over Time", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-//                    
-//                    GoalCompletionOverTime(data: data.goalsMetOverTimeData, unit: "")
-//                        .frame(height: 200)
-//                        .padding(.bottom)
-//                    
-//                    GoalProgressOverTime(title: "Goal progress over time", data: data.progressOverTime, unit: "%")
-//                        .frame(height: 200)
-//                        .padding(.bottom)
-//                    
-//                    GoalProgressOverTime(title: "Goals met over time", data: data.metOverTime, unit: "")
-//                        .frame(height: 200)
-//                        .padding(.bottom)
-//                }   
-//            }
-        }.id( DataPageView.DataPage.Goals.rawValue )
+            Divider(strokeWidth: 1)
+            
+            Group {
+                GoalCompletionOverTime(data: data.goalsMetOverTimeData, unit: "")
+                    .frame(height: 250)
+                
+                GoalProgressOverTime(title: "Goal progress over time", data: data.progressOverTime, unit: "%")
+                    .frame(height: 260)
+                    .padding(.bottom)
+            } 
+        }
     }
 }

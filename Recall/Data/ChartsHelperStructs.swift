@@ -17,7 +17,7 @@ struct DataCollection<Content: View>: View {
     let makeData: () async -> Void
     let content: Content
     
-    @State var presentable: Bool = true
+    @State var presentable: Bool = false
     
     init( checkDataLoaded: @escaping () -> Bool, makeData: @escaping () async -> Void, @ViewBuilder content: ()->Content ) {
         self.checkDataLoaded = checkDataLoaded
@@ -48,8 +48,11 @@ struct DataCollection<Content: View>: View {
             }
         }
         .onDisappear { presentable = false }
-        .onAppear { presentable = true }
-        .task { await makeData() }
+        .task {
+            await makeData()
+            await RecallModel.wait(for: 0.3)
+            withAnimation { presentable = true }
+        }
     }
 }
 

@@ -21,3 +21,16 @@ extension Date {
         return Calendar.current.date(bySettingHour: roundedHours, minute: Int(roundedMinutes), second: 0, of: self) ?? self
     }
 }
+
+extension Double {
+    
+    func convertToString() -> String {
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 2
+        formatter.numberStyle = .decimal
+        
+        return formatter.string(for: self ) ?? "?"
+        
+    }
+    
+}

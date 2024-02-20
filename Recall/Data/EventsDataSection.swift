@@ -20,8 +20,6 @@ struct EventsDataSection: View {
     
     @State var timePeriod: RecallDataModel.TimePeriod = .allTime
     
-    @State var dataPrepared: Bool = true
-    
     private var daysInTimePeriod: Double {
         timePeriod == .recent ? 7 : RecallModel.getDaysSinceFirstEvent()
     }
@@ -42,15 +40,7 @@ struct EventsDataSection: View {
                 .foregroundStyle(.black)
                 .rectangularBackground(style: .accent)
         }
-        .onTapGesture { withAnimation {
-            self.dataPrepared = false
-            self.timePeriod = period
-            
-            Task {
-                await RecallModel.wait(for: 0.5)
-                withAnimation { self.dataPrepared = true }
-            }
-        } }
+        .onTapGesture { withAnimation { self.timePeriod = period } }
     }
     
     @ViewBuilder
@@ -75,26 +65,15 @@ struct EventsDataSection: View {
                 .padding(.bottom)
             
             Group {
-                LargeText(mainText: "\((Double(data.getTotalHours(from: timePeriod)) / daysInTimePeriod).round(to: 2))",
-                          subText: "HR/DY")
-                
                 AverageActivityByTag(recents: timePeriod == .recent,
                                      data: data.getCompressedHourlData(from: timePeriod),
                                      unit: "")
-                
                 EventsDataSummaries.DailyAverage(data: data.getCompressedHourlData(from: timePeriod), unit: "HR/DY")
-            }
-            
-            Divider(strokeWidth: 1)
-            
-            Group {
-                LargeText(mainText: "\(data.getTotalHours(from: timePeriod).round(to: 2) )", subText: "hours")
-                LargeText(mainText: "\(data.getHourlData(from: timePeriod).count)", subText: "events")
-            }
-            
-            Divider(strokeWidth: 1)
-            
-            Group {
+                
+                LargeText(mainText: "\((Double(data.getTotalHours(from: timePeriod)) / daysInTimePeriod).round(to: 2))",
+                          subText: "HR/DY")
+                .padding(.bottom, 7)
+                
                 ActivitiesPerDay("Daily Recalls",
                                  data: data.getHourlData(from: timePeriod),
                                  scrollable: timePeriod == .allTime,
@@ -103,6 +82,18 @@ struct EventsDataSection: View {
                 EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: timePeriod), unit: "HR")
                 EventsDataSummaries.ActivityPerTag(data:        data.getCompressedHourlData(from: timePeriod), unit: "HR")
 
+            }
+
+            Divider(strokeWidth: 1)
+            
+            Group {
+                LargeText(mainText: "\(data.getTotalHours(from: timePeriod).round(to: 2) )", subText: "hours")
+                    .frame(height: 60)
+                LargeText(mainText: "\(data.getHourlData(from: timePeriod).count)", subText: "events")
+                    .frame(height: 60)
+            }
+
+            Group {
                 ActivitiesPerDay("Daily Recalls, by tag",
                                  data: data.`getTagData`(from: timePeriod),
                                  scrollable: timePeriod == .allTime,

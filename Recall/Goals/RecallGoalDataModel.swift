@@ -32,9 +32,7 @@ class RecallGoalDataModel: ObservableObject {
 //    MARK: Convenience Functions
 //    indicates whether the data has loaded enough to a point where it can be shown in UI
 //    otherwise, show a loading view while the data processes
-    var dataLoaded: Bool {
-        !recentProgressOverTimeData.isEmpty && !progressOverTimeData.isEmpty
-    }
+    @Published var dataLoaded: Bool = false
     
     var roundedProgressData: Double { progressData.round(to: 2) }
     
@@ -50,7 +48,10 @@ class RecallGoalDataModel: ObservableObject {
     @MainActor
     func makeData(for goal: RecallGoal, with events: [RecallCalendarEvent]) async {
         
-        if RecallModel.shared.goalDataValidated { return }
+        if RecallModel.shared.goalDataValidated {
+            self.dataLoaded = true
+            return
+        }
         
 //        store the passed variables in for conveinient access throuhgout the class
         self.goal = goal
@@ -66,6 +67,7 @@ class RecallGoalDataModel: ObservableObject {
             self.progressData = progressData
             self.averageData =  averageData
             self.goalMetData =  goalMetData
+            self.dataLoaded = true
         }
         
         RecallModel.shared.setGoalDataValidation(to: true)

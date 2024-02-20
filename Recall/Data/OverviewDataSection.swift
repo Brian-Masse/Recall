@@ -33,16 +33,13 @@ struct OverviewDataSection: View {
             )
             EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: .allTime), unit: "HR")
             
-            AverageActivityByTag(recents: false,
-                                 data: data.getCompressedHourlData(from: .allTime),
-                                 unit: "")
-            
-            Divider(strokeWidth: 1)
-        
             GoalAverages(title: "Goal Completions", data: data.metData, unit: "")
             GoalCompletionOverTime(data: data.goalsMetOverTimeData, unit: "")
                 .frame(height: 250)
             
+            AverageActivityByTag(recents: false,
+                                 data: data.getCompressedHourlData(from: .allTime),
+                                 unit: "")
         }
     }
 }

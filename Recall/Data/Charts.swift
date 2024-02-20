@@ -100,7 +100,8 @@ struct AverageActivityByTag: View {
                 AxisMarks(position: .leading) { value in
                     if let count = value.as(Double.self) {
                         AxisValueLabel {
-                            UniversalText("\(count.round(to: 2)) " + unit, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                            Text(count.convertToString())
+                                .font(.caption2)
                         }
                         AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [1, 2] ) )
                     }
@@ -123,7 +124,7 @@ struct ActivitiesPerDay: View {
                 
                 BarMark(x: .value("X", datum.date, unit: .day ),
                         y: .value("Y", datum.count),
-                        width: 20)
+                        width: 12)
                 .foregroundStyle(by: .value("series", datum.category))
                 .cornerRadius(Constants.UIBarMarkCOrnerRadius)
             }
@@ -205,7 +206,7 @@ struct ActivitiesPerDay: View {
                     if scrollable {
                         ScrollView(.horizontal) {
                             makeChart()
-                                .frame(width: Double(daysSinceLastEvent()) * (Constants.UIScrollableBarWidthDouble + 10) )
+                                .frame(width: Double(daysSinceLastEvent()) * 16 )
                                 .padding(.trailing)
                                 .frame(height: 220)
                         }
@@ -230,7 +231,7 @@ struct GoalCompletionOverTime: View {
     
     @Environment(\.colorScheme) var colorScheme
     
-    static let initialLoadedDataCount: Int = 100
+    static let initialLoadedDataCount: Int = 50
     
     let data: [DataNode]
     let unit: String
@@ -291,18 +292,39 @@ struct GoalProgressOverTime: View {
     let data: [DataNode]
     let unit: String
     
+    
+//    this controls how much data will be rendered onAppear
+    static let initialLoadedDataCount: Int = 75
+    @State var loadedDataCount: Int = initialLoadedDataCount
+    
+    var maxIndex: Int { min( data.count - 1, loadedDataCount ) }
+    var daysSinceLastEvent: Int {
+        Int(Date.now.timeIntervalSince( data[maxIndex].date ) / Constants.DayTime)
+    }
+    
     var body: some View {
         
         VStack(alignment: .leading) {
-            
-            let days = RecallModel.getDaysSinceFirstEvent()
-            
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            
-            ScrollChart(Int(days)) {
+            HStack {
+                UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                 
+                Spacer()
+                
+                HStack {
+                    UniversalText( "load more", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                    Image(systemName: "arrow.down.to.line")
+                }
+                .padding(5)
+                .onTapGesture { withAnimation {
+                    loadedDataCount += GoalProgressOverTime.initialLoadedDataCount
+                } }
+            }
+            
+            ScrollView(.horizontal) {
                 Chart {
-                    ForEach(data) { datum in
+                    ForEach(0...loadedDataCount, id: \.self) { i in
+                        
+                        let datum = data[i]
                         
                         BarMark(x: .value("X", datum.date, unit: .day),
                                 y: .value("Y", datum.count),
@@ -311,10 +333,12 @@ struct GoalProgressOverTime: View {
                         .cornerRadius(Constants.UIBarMarkCOrnerRadius)
                     }
                 }
+                .frame(width: Double(daysSinceLastEvent) * 16 )
+                .chartYAxis(.hidden)
                 .reversedXAxis()
                 .colorChartByGoal()
                 .goalsOverTimeChart(unit: unit)
-            }
+            }.rectangularBackground(style: .transparent, stroke: true)
         }
     }
 }
@@ -402,7 +426,7 @@ struct GoalsMetPercentageChart: View {
     var body: some View {
         VStack(alignment: .leading) {
             
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
             
             Chart {
                 ForEach(data) { datum in
@@ -422,8 +446,9 @@ struct GoalsMetPercentageChart: View {
                     }
                 }
             }
-            .frame(height: 150)
+            .frame(height: 160)
             .colorChartByGoal()
+            .rectangularBackground(style: .transparent, stroke: true)
         }
     }
 }

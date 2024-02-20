@@ -49,8 +49,8 @@ struct DataPageView: View {
     private func makePageSelectors() -> some View {
         HStack {
             makePageSelector(page: .Overview, icon: "chart.dots.scatter")
-            makePageSelector(page: .Events, icon: "viewfinder.rectangular")
             makePageSelector(page: .Goals, icon: "flag.checkered")
+            makePageSelector(page: .Events, icon: "viewfinder.rectangular")
         }
     }
     
@@ -85,15 +85,18 @@ struct DataPageView: View {
                     .padding(7)
                     .ignoresSafeArea()
                 
+                GoalsDataSection(goals: arrGoals)
+                    .tag(DataPage.Goals)
+                    .environmentObject(dataModel )
+                    .padding(7)
+                    .ignoresSafeArea()
+                
                 EventsDataSection(page: $mainViewPage, currentDay: $currentDay)
                     .tag(DataPage.Events)
                     .environmentObject(dataModel )
                     .padding(7)
                     .ignoresSafeArea()
-//
-//                GoalsDataSection(goals: arrGoals)
-//                    .tag(DataPage.Goals)
-//                    .environmentObject(dataModel )
+                
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea()
