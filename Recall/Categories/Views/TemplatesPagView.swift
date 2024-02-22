@@ -89,7 +89,7 @@ struct TemplatePageView: View {
                                           font: Constants.mainFont)
                         }
                     } else {
-                        LoadingPageView(count: 3, height: 80)
+                        CollectionLoadingView(count: 3, height: 80)
                     }
                     Spacer()
                 }

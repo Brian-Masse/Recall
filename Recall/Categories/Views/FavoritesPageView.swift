@@ -198,7 +198,7 @@ struct FavoritesPageView: View {
                                 .padding(.bottom, 7)
                         }
                     } else {
-                        LoadingPageView(count: 5, height: 100)
+                        CollectionLoadingView(count: 5, height: 100)
                             .opacity(dataLoaded ? 0 : 1)
                         
                     }

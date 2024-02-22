@@ -48,37 +48,63 @@ extension AnyTransition {
 }
 
 
-struct LoadingRectangle: View {
+struct LoadingView: View {
     
     @Environment( \.colorScheme ) var colorScheme
     
-    static let width: CGFloat = 200
-    static let blur: CGFloat = 100
+    static let width: CGFloat = 450
+    static let blur: CGFloat = 35
     
     let height: CGFloat
     
-    @State var offset: CGFloat = -LoadingRectangle.width - (LoadingRectangle.blur * 2)
-    @State var shouldAnimate: Bool = true
+    @State var offset: CGFloat = LoadingView.startingOffset
     
+    //    MARK: Class Methods
     private func beginAnimation(_ width: CGFloat) {
-        self.offset = -LoadingRectangle.width
+        self.offset = LoadingView.startingOffset
         withAnimation { self.offset = width }
+    }
+    
+    private static var startingOffset: CGFloat {
+        -LoadingView.width - (LoadingView.blur * 2)
     }
     
     private var secondaryStyle: UniversalStyle {
         colorScheme == .dark ? .transparent : .primary
     }
     
+    private var highlightColor: Color {
+        colorScheme == .dark ? .white : .black
+    }
+    
+    //    MARK: ViewBuilders
+    @ViewBuilder
+    private func makeGradient(facingRight: Bool) -> some View {
+        LinearGradient(stops: [.init(color: highlightColor.opacity(0.2), location: 0.55),
+                               .init(color: .clear, location: 1)],
+                       startPoint: facingRight ? .leading : .trailing,
+                       endPoint: facingRight ? .trailing : .leading)
+    }
+    
+    @ViewBuilder
+    private func makeBlur() -> some View {
+        HStack(spacing: 0) {
+            makeGradient(facingRight: false)
+            makeGradient(facingRight: true)
+        }
+        .blur(radius: LoadingView.blur)
+        .scaleEffect(x: 0.9)
+    }
+    
+    //    MARK: Body
     var body: some View {
-        
         HStack(alignment: .top) {
-            
             UniversalText("Hello, this is a secret message",
                           size: Constants.UIDefaultTextSize, wrap: false)
             .foregroundStyle(.clear)
             .rectangularBackground(7, style: secondaryStyle, cornerRadius: 10)
             
-            UniversalText("so :)",
+            UniversalText("hi :)",
                           size: Constants.UIDefaultTextSize, wrap: false)
             .foregroundStyle(.clear)
             .rectangularBackground(7, style: secondaryStyle, cornerRadius: 10)
@@ -89,45 +115,38 @@ struct LoadingRectangle: View {
                 .foregroundStyle(.clear)
                 .frame(width: 10, height: height - 30)
             
-            UniversalText("so :)",
+            UniversalText("hello",
                           size: Constants.UIDefaultTextSize, wrap: false)
             .foregroundStyle(.clear)
             .rectangularBackground(7, style: secondaryStyle, cornerRadius: 10)
         }
+        .padding()
         .overlay { GeometryReader { geo in
-            Rectangle()
-                .universalTextStyle(reversed: false)
-                .frame(width: LoadingRectangle.width)
-                .blur(radius: LoadingRectangle.blur)
-                .opacity(0.4)
+            makeBlur()
+                .frame(width: LoadingView.width)
                 .offset(x: offset)
+                .opacity(0.5)
                 .animation(Animation
                     .easeInOut(duration: 2)
                     .delay(0.6)
                     .repeatForever(autoreverses: false),
                            value: offset)
-                .onAppear { beginAnimation(geo.size.width + LoadingRectangle.blur * 2) }
+                .onAppear { beginAnimation(geo.size.width + LoadingView.blur) }
         }}
-        .rectangularBackground(style: .secondary)
+        .rectangularBackground(0, style: .secondary)
     }
 }
 
-struct LoadingPageView: View {
-    
+//MARK: CollectionLoadingView
+struct CollectionLoadingView: View {
     let count: Int
     let height: CGFloat
     
     var body: some View {
-        
         VStack {
             ForEach( 0..<count, id: \.self ) { _ in
-                LoadingRectangle(height: height)
+                LoadingView(height: height)
             }
         }
     }
 }
-
-#Preview(body: {
-    LoadingPageView(count: 3, height: 100)
-})
-

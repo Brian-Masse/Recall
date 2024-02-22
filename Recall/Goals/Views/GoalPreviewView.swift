@@ -130,7 +130,7 @@ struct GoalPreviewView: View {
                     ContextMenuButton("delete", icon: "trash", role: .destructive) { showingDeletionAlert = true }
                 }
             } else {
-                LoadingRectangle(height: 220)
+                LoadingView(height: 220)
             }
         }
         .task { await dataModel.makeData(for: goal, with: events) }

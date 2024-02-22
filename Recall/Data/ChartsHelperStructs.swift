@@ -43,7 +43,7 @@ struct DataCollection<Content: View>: View {
                     }
                 }
             } else {
-                LoadingPageView(count: 2, height: 250)
+                CollectionLoadingView(count: 2, height: 250)
                 Spacer()
             }
         }
