@@ -180,10 +180,10 @@ struct ProfileCreationView: View {
     @ViewBuilder
     private func makeNameScene() -> some View {
         VStack {
-            TextFieldWithPrompt(title: "What is your first name?", binding: $firstName)
+            StyledTextField(title: "What is your first name?", binding: $firstName)
                 .padding(.bottom)
             
-            TextFieldWithPrompt(title: "What is your last name?", binding: $lastName)
+            StyledTextField(title: "What is your last name?", binding: $lastName)
                 .padding(.bottom)
         }
         .slideTransition()
@@ -214,10 +214,10 @@ struct ProfileCreationView: View {
         
         VStack {
             
-            TextFieldWithPrompt(title: "What is your email?", binding: $email)
+            StyledTextField(title: "What is your email?", binding: $email)
                 .padding(.bottom)
             
-            TextFieldWithPrompt( title: "What is your phone number?", binding: phoneBinding )
+            StyledTextField( title: "What is your phone number?", binding: phoneBinding )
                 .keyboardType(.numberPad)
             
             

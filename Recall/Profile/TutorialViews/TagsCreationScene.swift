@@ -57,7 +57,7 @@ extension TutorialViews {
 //        MARK: Basic Info
         @ViewBuilder
         private func makeNameView() -> some View {
-            TextFieldWithPrompt(title: "Whats the name of this tag?", binding: $name)
+            StyledTextField(title: "Whats the name of this tag?", binding: $name)
                 .onChange(of: name) { newValue in
                     if newValue.isEmpty { return }
                     nextButtonIsActive = true
@@ -67,7 +67,7 @@ extension TutorialViews {
         
         @ViewBuilder
         private func makeColorView() -> some View {
-            LabeledColorPicker(label: "What color is this tag?", color: $color)
+            StyledColorPicker(label: "What color is this tag?", color: $color)
                 .onAppear() { nextButtonIsActive = true }
                 .slideTransition()
         }

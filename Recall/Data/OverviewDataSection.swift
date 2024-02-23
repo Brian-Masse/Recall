@@ -36,10 +36,6 @@ struct OverviewDataSection: View {
             GoalAverages(title: "Goal Completions", data: data.metData, unit: "")
             GoalCompletionOverTime(data: data.goalsMetOverTimeData, unit: "")
                 .frame(height: 250)
-            
-            AverageActivityByTag(recents: false,
-                                 data: data.getCompressedHourlData(from: .allTime),
-                                 unit: "")
         }
     }
 }

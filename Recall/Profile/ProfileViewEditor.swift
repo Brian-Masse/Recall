@@ -97,7 +97,7 @@ struct ProfileEditorView: View {
     private func makeContactInformationSection() -> some View {
             
         VStack(alignment: .leading) {
-            TextFieldWithPrompt(title: "email", binding: $email)
+            StyledTextField(title: "email", binding: $email)
             
             UniversalText( "phone number", size: Constants.UIHeaderTextSize, font: Constants.titleFont  )
             TextField( "phoneNumber", text: makePhoneNumberBinding() )

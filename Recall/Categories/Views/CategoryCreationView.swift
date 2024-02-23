@@ -80,7 +80,7 @@ struct CategoryCreationView: View {
         makeTextField(title: "What would you like to call this tag?", binding: $label)
             .padding(.bottom)
         
-        LabeledColorPicker(label: "What Color is this tag?", color: $color)
+        StyledColorPicker(label: "What Color is this tag?", color: $color)
         .padding(.bottom)
     }
     
@@ -149,8 +149,10 @@ struct CategoryCreationView: View {
             .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
             .padding(5)
             .universalTextStyle()
-            .rectangularBackground(style: .primary)
+            .rectangularBackground(style: .primary, cornerRadius: 50)
+            .padding(.bottom, 7)
         }
+        .ignoresSafeArea()
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
         .universalStyledBackgrond(.accent)

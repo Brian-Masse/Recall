@@ -16,161 +16,51 @@ import UIUniversals
 
 //MARK: Color Picker
 struct ColorPickerOption: View {
-    
     let color: Color
     @Binding var selectedColor: Color
     
-    let size: CGFloat = 20
+    static let size: CGFloat = 20
     
     var body: some View {
-        
-        ZStack {
-            if color == selectedColor {
-                Circle()
-                    .foregroundColor(color)
-                    .frame(width: size, height: size)
-                    .padding(7)
-                    .rectangularBackground(style: .primary)
-            } else {
-                Circle()
-                    .foregroundColor(color)
-                    .frame(width: size, height: size)
-                    .padding(7)
+        Circle()
+            .foregroundColor(color)
+            .frame(width: ColorPickerOption.size, height: ColorPickerOption.size)
+            .padding(7)
+            .if(color == selectedColor) { view in
+                view.rectangularBackground(style: .secondary)
             }
-        }
-        .onTapGesture { selectedColor = color }
+            .onTapGesture { withAnimation { selectedColor = color } }
     }
 }
 
-struct UniqueColorPicker: View {
-    
-    @Binding var selectedColor: Color
+
+struct StyledColorPicker: View {
+    let label: String
+    @Binding var color: Color
     
     var body: some View {
+        
         VStack(alignment: .leading) {
-            UniversalText("Accent Color", size: Constants.UIDefaultTextSize)
+            UniversalText( label, 
+                           size: Constants.formQuestionTitleSize,
+                           font: Constants.titleFont )
+            
             ScrollView(.horizontal) {
                 HStack {
                     Spacer()
                     ForEach(Colors.colorOptions.indices, id: \.self) { i in
-                        ColorPickerOption(color: Colors.colorOptions[i], selectedColor: $selectedColor)
+                        ColorPickerOption(color: Colors.colorOptions[i], selectedColor: $color)
                     }
+                    ColorPicker("", selection: $color)
                     Spacer()
                 }
             }
-            ColorPicker(selection: $selectedColor, supportsOpacity: false) {
-                UniversalText("All Colors", size: Constants.UIDefaultTextSize)
-            }
         }
     }
 }
 
-
-//MARK: Pickers
-struct MultiPicker<ListType:Collection>: View where ListType:RangeReplaceableCollection,
-                                                        ListType.Element: (Hashable),
-                                                        ListType.Indices: RandomAccessCollection,
-                                                        ListType.Index: Hashable {
-    
-    let title: String
-    
-    @Binding var selectedSources: ListType
-    
-    let sources: ListType
-    let previewName: (ListType.Element) -> String?
-    let sourceName: (ListType.Element) -> String?
-    
-    private func toggleSource(_ id: ListType.Element) {
-        if let index = selectedSources.firstIndex(of: id) {
-            selectedSources.remove(at: index)
-        }
-        else { selectedSources.append(id) }
-    }
-    
-    private func retrieveSelectionPreview() -> String {
-        if selectedSources.isEmpty { return "None" }
-        if selectedSources.count == sources.count { return "All" }
-        return selectedSources.reduce("") { partialResult, str in
-            if partialResult == "" { return sourceName( str ) ?? "" }
-            return partialResult + ", \(sourceName(str) ?? "")"
-        }
-    }
-    
-    var body: some View {
-        HStack {
-            UniversalText(title, size: Constants.UIDefaultTextSize)
-            Spacer()
-            
-            let menu = Menu {
-                Text("No Selection").tag("No Selection")
-                ForEach(sources.indices, id: \.self) { i in
-                    Button {
-                        toggleSource(sources[i])
-                    } label: {
-                        let name = sourceName(sources[i])
-                        if selectedSources.contains(where: { id in id == sources[i] }) { Image(systemName: "checkmark") }
-                        Text( name ?? "?" ).tag(name)
-                    }
-                }
-            } label: {
-                Text( retrieveSelectionPreview())
-                ResizableIcon("chevron.up.chevron.down", size: Constants.UIDefaultTextSize)
-            }.universalStyledBackgrond(.accent, onForeground: true)
-                
-            if #available(iOS 16.4, *) {
-                menu.menuActionDismissBehavior(.disabled)
-            } else {
-                menu
-            }
-            
-        }.padding(.vertical, 3)
-    }
-}
-
-struct BasicPicker<ListType:RandomAccessCollection, Content: View>: View where ListType.Element: (Hashable & Identifiable)  {
-    
-    let title: String
-    let noSeletion: String
-    let sources: ListType
-    
-    @Binding var selection: ListType.Element
-    
-    @ViewBuilder var contentBuilder: (ListType.Element) -> Content
-
-    var body: some View {
-
-        HStack {
-            UniversalText(title, size: Constants.UIDefaultTextSize)
-            Spacer()
-            
-            Menu {
-                Text(noSeletion).tag(noSeletion)
-                ForEach( sources, id: \.id ) { source in
-                    Button { selection = source } label: {
-                        contentBuilder(source)
-                    }.tag(source)
-                }
-                
-            } label: {
-                HStack {
-                    if let str = selection as? String {
-                        if str == "" { Text(noSeletion) }
-                        else { contentBuilder( selection ) }
-                            
-                    } else {
-                        contentBuilder( selection )
-                    }
-                    Image(systemName: "chevron.up.chevron.down")
-                }
-                .universalStyledBackgrond(.accent, onForeground: true)
-            }
-        }
-    }
-}
-
-//MARK: TextFieldWithPrompt
-
-struct TextFieldWithPrompt: View {
+//MARK: StyledTextField
+struct StyledTextField: View {
     
     let title: String
     let binding: Binding<String>
@@ -188,9 +78,9 @@ struct TextFieldWithPrompt: View {
     var body: some View {
         
         VStack(alignment: .leading, spacing: 5) {
-            UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-            
-            UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            UniversalText(title,
+                          size: Constants.formQuestionTitleSize,
+                          font: Constants.titleFont)
             
             TextField("", text: binding)
                 .focused($focused)
@@ -246,7 +136,6 @@ struct StyledSlider: View {
                 .frame(width: textFieldWidth)
         }
     }
-    
 }
 
 //MARK: SlideWithPrompt
@@ -263,7 +152,7 @@ struct SliderWithPrompt: View {
     let textFieldWidth: CGFloat
     let size: Double
     
-    init(label: String, minValue: Float, maxValue: Float, binding: Binding<Float>, strBinding: Binding<String>, textFieldWidth: CGFloat, size: Double = Constants.UIHeaderTextSize) {
+    init(label: String, minValue: Float, maxValue: Float, binding: Binding<Float>, strBinding: Binding<String>, textFieldWidth: CGFloat, size: Double = Constants.formQuestionTitleSize) {
         
         self.label = label
         self.minValue = minValue
@@ -284,36 +173,7 @@ struct SliderWithPrompt: View {
     }
 }
 
-//MARK: Color Picker
-
-struct LabeledColorPicker: View {
-    
-    let label: String
-    @Binding var color: Color
-    
-    var body: some View {
-        
-        VStack(alignment: .leading) {
-            UniversalText( label, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
-            
-            ScrollView(.horizontal) {
-                HStack {
-                    Spacer()
-                    ForEach(Colors.colorOptions.indices, id: \.self) { i in
-                        ColorPickerOption(color: Colors.colorOptions[i], selectedColor: $color)
-                    }
-                    ColorPicker("", selection: $color)
-                    Spacer()
-                }
-            }
-        }
-    }
-}
-
-
-
 //MARK: Time Selector
-
 struct TimeSelector: View {
     
     let label: String
@@ -324,7 +184,7 @@ struct TimeSelector: View {
     
     static let fineSnappingInterval: Double = 5
     
-    init( label: String, time: Binding<Date>, size: Double = Constants.UIHeaderTextSize ) {
+    init( label: String, time: Binding<Date>, size: Double = Constants.formQuestionTitleSize ) {
         self.label = label
         self._time = time
         self.size = size
@@ -378,9 +238,9 @@ struct TimeSelector: View {
                 
                 Spacer()
                 
-                ConditionalLargeRoundedButton(title: "", icon: "camera.filters", wide: false, allowTapOnDisabled: true) { showingFineSelector } action: {
-                    withAnimation { showingFineSelector.toggle() }
-                }
+//                ConditionalLargeRoundedButton(title: "", icon: "camera.filters", wide: false, allowTapOnDisabled: true) { showingFineSelector } action: {
+//                    withAnimation { showingFineSelector.toggle() }
+//                }
             }
         
             if !showingFineSelector {
@@ -408,7 +268,6 @@ struct TimeSelector: View {
 }
 
 //MARK: Length Selector
-
 struct LengthSelector: View {
     
     let label: String
@@ -419,7 +278,7 @@ struct LengthSelector: View {
     @Binding var length: Double
     @State var showingFineSelector: Bool = RecallModel.index.defaultFineTimeSelector
     
-    init( _ label: String, length: Binding<Double>, fontSize: Double = Constants.UIHeaderTextSize, allowFineToggle: Bool = true, onSetLengthAction: @escaping (Double) -> Void = { _ in } ) {
+    init( _ label: String, length: Binding<Double>, fontSize: Double = Constants.formQuestionTitleSize, allowFineToggle: Bool = true, onSetLengthAction: @escaping (Double) -> Void = { _ in } ) {
         self.label = label
         self._length = length
         self.fontSize = fontSize
@@ -562,7 +421,7 @@ struct StyledDatePicker: View {
     let title: String
     let fontSize: CGFloat
     
-    init( _ date: Binding<Date>, title: String, fontSize: CGFloat = Constants.UIHeaderTextSize ) {
+    init( _ date: Binding<Date>, title: String, fontSize: CGFloat = Constants.formQuestionTitleSize ) {
         self._date = date
         self.title = title
         self.fontSize = fontSize

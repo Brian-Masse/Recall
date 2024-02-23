@@ -61,7 +61,7 @@ extension TutorialViews {
 //        MARK: Basic Info
         @ViewBuilder
         private func makeNameView() -> some View {
-            TextFieldWithPrompt(title: "What was the first thing you did today?", binding: $name)
+            StyledTextField(title: "What was the first thing you did today?", binding: $name)
                 .onChange(of: name) { newValue in
                     if newValue.isEmpty { return }
                     nextButtonIsActive = true
@@ -71,7 +71,7 @@ extension TutorialViews {
         
         @ViewBuilder
         private func makeNotesView() -> some View {
-            TextFieldWithPrompt(title: "Add additional notes about this event", binding: $notes)
+            StyledTextField(title: "Add additional notes about this event", binding: $notes)
                 .onChange(of: notes) { newValue in
                     if newValue.isEmpty { return }
                     nextButtonIsActive = true

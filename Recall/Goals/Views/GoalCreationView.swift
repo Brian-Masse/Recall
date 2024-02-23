@@ -142,8 +142,8 @@ struct GoalCreationView: View {
     @ViewBuilder
     private func makeOverviewSection() -> some View {
         VStack(alignment: .leading) {
-            TextFieldWithPrompt(title: "What's the name of this goal?", binding: $label)
-            TextFieldWithPrompt(title: "What's the purpose of this goal?", binding: $description)
+            StyledTextField(title: "What's the name of this goal?", binding: $label)
+            StyledTextField(title: "What's the purpose of this goal?", binding: $description)
                 .padding(.bottom)
         }
         
@@ -235,8 +235,10 @@ struct GoalCreationView: View {
             }
             .padding(5)
             .universalTextStyle()
-            .rectangularBackground(style: .primary)
+            .rectangularBackground(style: .primary, cornerRadius: 50)
+            .padding(.bottom, 7)
         }
+        .ignoresSafeArea()
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
         .universalStyledBackgrond(.accent)
