@@ -72,6 +72,7 @@ struct StyledTextField: View {
         self.clearable = clearable
     }
     
+    @Environment(\.colorScheme) var colorScheme
     @FocusState var focused: Bool
     @State var showingClearButton: Bool = false
     
@@ -82,12 +83,13 @@ struct StyledTextField: View {
                           size: Constants.formQuestionTitleSize,
                           font: Constants.titleFont)
             
-            TextField("", text: binding)
+            TextField("", text: binding, axis: .vertical)
                 .focused($focused)
                 .lineLimit(1...)
                 .frame(maxWidth: .infinity)
                 .padding( .trailing, 5 )
-                .universalTextField()
+                .tint(Colors.getAccent(from: colorScheme) )
+                .font(Font.custom(AndaleMono.shared.postScriptName, size: Constants.UIDefaultTextSize))
                 .rectangularBackground(style: .secondary)
                 .onChange(of: self.focused) { value in
                     withAnimation { self.showingClearButton = value }

@@ -81,3 +81,11 @@ extension Constants {
         static let templatesSplashPurpose: String = "Templates allow you save and quickly recall frequent events. To create a template, select an event and click 'make template'"
         static let favoritesSplashPurpose: String =  "Favorites help you remember the experiences and moments most special to you. To favorite an event, select it and click 'favorite'"
 }
+
+struct AndaleMono: UniversalFont {
+    var postScriptName: String = "AndaleMono"
+    
+    var fontExtension: String = "ttf"
+    
+    static var shared: UIUniversals.UniversalFont = AndaleMono()
+}
