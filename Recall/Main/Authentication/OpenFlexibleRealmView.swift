@@ -10,6 +10,28 @@ import SwiftUI
 import RealmSwift
 import UIUniversals
 
+struct OpenRealmView: View {
+    
+    @Binding var page: ContentView.EntryPage
+    
+    let realmManager = RecallModel.realmManager
+
+    var body: some View {
+        
+        if RealmManager.offline {
+            Text("loading Realm")
+                .task {
+                    await realmManager.openNonSyncedRealm()
+                    page = .app
+                }
+            
+        } else {
+            OpenFlexibleSyncRealmView(page: $page)
+                .environment(\.realmConfiguration, realmManager.configuration)
+        }
+    }
+}
+
 struct OpenFlexibleSyncRealmView: View {
     
     @State var showingAlert: Bool = false

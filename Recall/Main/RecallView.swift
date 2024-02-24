@@ -37,11 +37,11 @@ struct ContentView: View {
                 }
             }
             else if !realmManager.realmLoaded {
-                OpenFlexibleSyncRealmView(page: $entryPage)
+                OpenRealmView(page: $entryPage)
                     .environment(\.realmConfiguration, realmManager.configuration)
                     .slideTransition()
             }
-            else if ( entryPage == .app ) {
+            else if ( entryPage == .app) {
                 MainView(appPage: $entryPage)
                     .onAppear() { entryPage = .app }
                     .environment(\.realmConfiguration, realmManager.configuration)

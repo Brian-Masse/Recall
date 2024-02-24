@@ -14,6 +14,7 @@ import SwiftUI
 //this handles logging in, and opening the right realm with the right credentials
 class RealmManager: ObservableObject {
     
+    static let offline: Bool = false
     static let appID = "application-0-incki"
     
 //    This realm will be generated once the profile has authenticated themselves (handled in LoginModel)
@@ -37,14 +38,11 @@ class RealmManager: ObservableObject {
     
 //   if the user uses signInWithApple, this will be set to true once it successfully retrieves the credentials
 //   Then the app will bypass the setup portion that asks for your first and last name
-//    This shoudl probably be persisted, so that if a user closes the app between signing in and setting up their profile, it wotn show it
     static var usedSignInWithApple: Bool = false
     
     @Published var signedIn: Bool = false
     @Published var realmLoaded: Bool = false
     @Published var hasProfile: Bool = false
-    
-    @Published var content: [String] = []
     
     var profileLoaded: Bool {
         if hasProfile {
@@ -68,10 +66,6 @@ class RealmManager: ObservableObject {
     @MainActor
     init() {
         self.checkLogin()
-        
-        for i in 0...32 {
-            self.content.append( "element\(i)" )
-        }
     }
     
 //    MARK: Login Method Functions
@@ -174,10 +168,13 @@ class RealmManager: ObservableObject {
     }
     
     private func setConfiguration() {
-        self.configuration = user!.flexibleSyncConfiguration(clientResetMode: .discardUnsyncedChanges())
-//        self.configuration.schemaVersion = 1
-        
-        Realm.Configuration.defaultConfiguration = self.configuration
+        if !RealmManager.offline {
+            self.configuration = user!.flexibleSyncConfiguration(clientResetMode: .discardUnsyncedChanges())
+            
+            Realm.Configuration.defaultConfiguration = self.configuration
+        } else {
+            self.configuration = Realm.Configuration.defaultConfiguration
+        }
     }
     
     @MainActor
@@ -218,12 +215,7 @@ class RealmManager: ObservableObject {
     
     @MainActor
     func deleteProfile() async {
-        
-//        TODO: This should actually delete the user, but that is a whole process, and I dont want to do it
         self.logoutUser(onMain: true)
-        
-//        RealmManager.deleteObject(RecallModel.index) { index in index.ownerID == RecallModel.ownerID }
-        
     }
     
     @MainActor
@@ -262,6 +254,22 @@ class RealmManager: ObservableObject {
     }
 
 //    MARK: Realm-Loaded Functions
+    @MainActor
+//    this is for offline app
+    func openNonSyncedRealm() async {
+        do {
+            let realm = try await Realm()
+            self.realm = realm
+        } catch {
+            print("error opening local realm: \(error.localizedDescription)")
+        }
+        
+//        await self.addSubcriptions()
+        self.realmLoaded = true
+        await self.checkProfile()
+    }
+    
+    
 //    Called once the realm is loaded in OpenSyncedRealmView
     @MainActor
     func authRealm(realm: Realm) async {

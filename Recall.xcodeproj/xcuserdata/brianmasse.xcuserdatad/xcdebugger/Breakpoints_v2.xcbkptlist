@@ -67,5 +67,53 @@
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6DB6D990-8196-4A07-9AE2-9DCF51899015"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Main/Authentication/RealmManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "268"
+            endingLineNumber = "268"
+            landmarkName = "openNonSyncedRealm()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "6DB6D990-8196-4A07-9AE2-9DCF51899015 - 1e1d066565bd7913"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Recall.RealmManager.openNonSyncedRealm() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "271"
+                  endingLineNumber = "271"
+                  offsetFromSymbolStart = "168">
+               </Location>
+               <Location
+                  uuid = "6DB6D990-8196-4A07-9AE2-9DCF51899015 - f58548067c8d6b1e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(6) suspend resume partial function for Recall.RealmManager.openNonSyncedRealm() async -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "271"
+                  endingLineNumber = "271"
+                  offsetFromSymbolStart = "756">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
