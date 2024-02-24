@@ -112,6 +112,7 @@ struct HalfPageView<Content: View>: View {
                             HStack {
                                 Spacer()
                                 content
+                                    .onTapGesture { }
                                     .padding( .horizontal, 5 )
                                     .padding(. bottom)
                                 Spacer()

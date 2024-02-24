@@ -85,6 +85,7 @@ struct CalendarEventPreviewContentView: View {
     let width: CGFloat  //measured in pixels
     let height: CGFloat //measured in pixels
     let allowTapGesture: Bool
+    let forDisplay: Bool // describes whether it is an interactable event or a display
     
     @ObservedRealmObject var index = RecallModel.index
     
@@ -95,13 +96,14 @@ struct CalendarEventPreviewContentView: View {
     
     @State var showingEvent: Bool = false
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, allowTapGesture: Bool = false) {
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, allowTapGesture: Bool = false, forDisplay: Bool = false) {
         
         self.event = event
         self.events = events
         self.width = width
         self.height = height
         self.allowTapGesture = allowTapGesture
+        self.forDisplay = forDisplay
     }
     
     private func selected() -> Bool {
@@ -126,11 +128,13 @@ struct CalendarEventPreviewContentView: View {
             }
             .padding(.horizontal)
             
-            if containerModel.selecting && !selected() {
-                Rectangle()
-                    .foregroundStyle(colorScheme == .dark ? .black : .white)
-                    .opacity(0.7)
-                    .cornerRadius(Constants.UIDefaultCornerRadius)
+            if !forDisplay {
+                if containerModel.selecting && !selected() {
+                    Rectangle()
+                        .foregroundStyle(colorScheme == .dark ? .black : .white)
+                        .opacity(0.7)
+                        .cornerRadius(Constants.UIDefaultCornerRadius)
+                }
             }
         }
         .foregroundColor(.black)

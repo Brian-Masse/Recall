@@ -173,7 +173,6 @@ struct CalendarContainer: View {
     
 
 //    MARK: vars
-    static let sharedContainerModel = CalendarContainerModel()
     
     private let geo: GeometryProxy
     private let scale: CGFloat
@@ -190,7 +189,7 @@ struct CalendarContainer: View {
     
     @State var showingEventEditingView: Bool = false
     
-    @ObservedObject var containerModel: CalendarContainerModel = sharedContainerModel
+    @EnvironmentObject var containerModel: CalendarContainerModel
 
     init(with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, slideDirection: Binding<AnyTransition.SlideDirection> = Binding { .right } set: { _, _ in }) {
         self.events = events

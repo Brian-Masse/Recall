@@ -334,10 +334,9 @@ struct CalendarEventPreviewView: View {
                 }
             
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
-//                .halfPageScreen("Select Events", presenting: $selecting) {
-//                    EventSelectionEditorView(selecting: $selecting,
-//                                             selection: $selection)
-//                }
+                .halfPageScreen("Select Events", presenting: $containerModel.selecting) {
+                    EventSelectionEditorView().environmentObject(containerModel)
+                }
         }
         .zIndex( resizing || moving ? 5 : 0 )
         

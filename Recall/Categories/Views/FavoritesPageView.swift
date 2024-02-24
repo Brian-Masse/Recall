@@ -118,19 +118,11 @@ struct FavoritesPageView: View {
                                                         events: events,
                                                         width: geo.size.width - 50,
                                                         height: 100,
-                                                        allowTapGesture: true)
-                        
-//                        .sheet(isPresented: $showingEventEditingView) {
-//                            CalendarEventCreationView.makeEventCreationView(currentDay: .now,
-//                                                                            editing: true,
-//                                                                            event: event)
+                                                        allowTapGesture: true,
+                                                        forDisplay: true)
 //                        }
                         
                         .contextMenu {
-//                            ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
-//                                showingEventEditingView = true
-//                            }
-                            
                             ContextMenuButton("unfavorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
                                 event.toggleFavorite()
                             }

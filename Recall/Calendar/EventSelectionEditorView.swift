@@ -16,9 +16,11 @@ struct EventSelectionEditorView: View {
 //    this will likely not be used, its the var stored in the calendar container that says whether or not
 //    the user is selecting events
 //    it shouldnt be set here though, because thatll kinda fuck with the halfscreen presentation
-    @Binding var selecting: Bool
+//    @Binding var selecting: Bool
+//    
+//    @Binding var selection: [ RecallCalendarEvent ]
     
-    @Binding var selection: [ RecallCalendarEvent ]
+    @EnvironmentObject var containerModel: CalendarContainerModel
     
     @State var date: Date = Date.now
     
@@ -26,51 +28,46 @@ struct EventSelectionEditorView: View {
 
 //    MARK: Struct Methods
     private func onDismiss() {
-        if !selecting {
-            selection = []
+        if !containerModel.selecting {
+            containerModel.selection = []
         }
     }
     
     private func toggleEvent(_ event: RecallCalendarEvent) {
-        if let index = selection.firstIndex(of: event) {
-            selection.remove(at: index)
+        if let index = containerModel.selection.firstIndex(of: event) {
+            containerModel.selection.remove(at: index)
         }
     }
     
 //    this runs on the first appear of the selector
     private func setup() {
-        self.date = self.selection.first?.startTime ?? .now
+        self.date = containerModel.selection.first?.startTime ?? .now
     }
     
     @MainActor
     private func submit() {
-        
-        for event in selection {
-            event.updateDateComponent(to: date)
-        }
-        
-        withAnimation { selecting = false }
-        
+        for event in containerModel.selection { event.updateDateComponent(to: date) }
+        withAnimation { containerModel.selecting = false }
     }
     
     @MainActor
     private func template() {
-        for event in selection {
+        for event in containerModel.selection {
             if !event.isTemplate {
                 event.toggleTemplate()
             }
         }
         
-        withAnimation { selecting = false }
+        withAnimation { containerModel.selecting = false }
     }
     
     @MainActor
     private func delete() {
-        for event in selection {
+        for event in containerModel.selection {
             event.delete(preserveTemplate: false)
         }
         
-        withAnimation { selecting = false }
+        withAnimation { containerModel.selecting = false }
     }
     
 //    MARK: ViewBuilders
@@ -94,7 +91,7 @@ struct EventSelectionEditorView: View {
     }
     
     private func formatString() -> String {
-        selection.count == 1 ? "event" : "events"
+        containerModel.selection.count == 1 ? "event" : "events"
     }
     
     @MainActor
@@ -103,14 +100,14 @@ struct EventSelectionEditorView: View {
         VStack(alignment: .leading) {
             ScrollView(.horizontal) {
                 HStack {
-                    ForEach(selection) { event in
+                    ForEach(containerModel.selection) { event in
                         makeEventPreivew(event)
                     }
                 }
             }
             .rectangularBackground(5, style: .secondary)
             HStack {
-                UniversalText( "\( selection.count ) \(formatString()) selected", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                UniversalText( "\( containerModel.selection.count ) \(formatString()) selected", size: Constants.UISmallTextSize, font: Constants.mainFont )
                 Spacer()
             }
         }
@@ -161,7 +158,6 @@ struct EventSelectionEditorView: View {
             }
         }
         .ignoresSafeArea()
-        .onTapGesture {  }
         .onDisappear() { onDismiss() }
         .onAppear() { setup() }
         .alert("delete events?", isPresented: $showingDeletetionAlert, actions: {
