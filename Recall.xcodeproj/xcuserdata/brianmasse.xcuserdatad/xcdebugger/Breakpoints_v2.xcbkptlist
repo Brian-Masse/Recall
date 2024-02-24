@@ -70,47 +70,62 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6DB6D990-8196-4A07-9AE2-9DCF51899015"
+            uuid = "3DFF8733-0964-4B0E-B0F3-B6F2DD2044AB"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "268"
-            endingLineNumber = "268"
-            landmarkName = "openNonSyncedRealm()"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
+            landmarkName = "checkLogin()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "6DB6D990-8196-4A07-9AE2-9DCF51899015 - 1e1d066565bd7913"
+                  uuid = "3DFF8733-0964-4B0E-B0F3-B6F2DD2044AB - a4800d2f639d630c"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for Recall.RealmManager.openNonSyncedRealm() async -&gt; ()"
+                  symbolName = "Recall.RealmManager.checkLogin() -&gt; ()"
                   moduleName = "Recall"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "271"
-                  endingLineNumber = "271"
-                  offsetFromSymbolStart = "168">
+                  startingLineNumber = "210"
+                  endingLineNumber = "210"
+                  offsetFromSymbolStart = "88">
                </Location>
                <Location
-                  uuid = "6DB6D990-8196-4A07-9AE2-9DCF51899015 - f58548067c8d6b1e"
+                  uuid = "3DFF8733-0964-4B0E-B0F3-B6F2DD2044AB - a4800d2f639d630c"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(6) suspend resume partial function for Recall.RealmManager.openNonSyncedRealm() async -&gt; ()"
+                  symbolName = "Recall.RealmManager.checkLogin() -&gt; ()"
                   moduleName = "Recall"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "271"
-                  endingLineNumber = "271"
-                  offsetFromSymbolStart = "756">
+                  startingLineNumber = "210"
+                  endingLineNumber = "210"
+                  offsetFromSymbolStart = "288">
+               </Location>
+               <Location
+                  uuid = "3DFF8733-0964-4B0E-B0F3-B6F2DD2044AB - a4800d2f639d63d2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Recall.RealmManager.checkLogin() -&gt; ()"
+                  moduleName = "Recall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "208"
+                  endingLineNumber = "208"
+                  offsetFromSymbolStart = "300">
                </Location>
             </Locations>
          </BreakpointContent>

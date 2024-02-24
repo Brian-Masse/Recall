@@ -210,11 +210,15 @@ struct ProfileView: View {
                 appPage = .tutorial
             }
             
-            makeSubButton(title: "reindex Data", icon: "tray.2") {
+            makeSubButton(title: "Reindex data", icon: "tray.2") {
                 Task { await RecallModel.index.initializeIndex() }
             }
             
-            makeSubButton(title: "delete account", icon: "shippingbox.and.arrow.backward") {
+            makeSubButton(title: "Clear local data", icon: "macpro.gen3.server") {
+                RealmManager.clearUserDefaults()
+            }
+            
+            makeSubButton(title: "Delete account", icon: "shippingbox.and.arrow.backward") {
                 showingError = true
             }
         }

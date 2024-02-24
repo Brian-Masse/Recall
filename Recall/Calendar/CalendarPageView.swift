@@ -139,6 +139,19 @@ struct CalendarPageView: View {
                            size: Constants.UITitleTextSize,
                            font: Constants.titleFont,
                            wrap: false, scale: true )
+            .onTapGesture {
+                
+                print( RecallModel.ownerID )
+                print( RecallModel.realmManager.user )
+                print( RecallModel.realmManager.offlineUser )
+                
+                print( RealmManager.offlineUsers )
+                
+                for user in RealmManager.offlineUsers {
+                    print(user.id, user.email)
+                }
+                
+            }
             Spacer()
             
             
