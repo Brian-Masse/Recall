@@ -189,15 +189,9 @@ extension TutorialViews {
 //        MARK: CalendarView
         @ViewBuilder
         private func makeCalendarView() -> some View {
-            
-            let currentDayBinding: Binding<Date> = Binding {
-                .now
-            } set: { _, _ in }
-
             ZStack(alignment: .bottom) {
                 GeometryReader { geo in
-                    CalendarContainer(at: currentDayBinding,
-                                      with: Array(events),
+                    CalendarContainer(with: Array(events),
                                       from: 0, to: 24,
                                       geo: geo)
                 }

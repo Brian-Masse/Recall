@@ -143,10 +143,10 @@ struct CalendarEventView: View {
         
         let currentDay = Binding { event.startTime } set: { _, _ in }
         
-        GeometryReader { geo in
-            CalendarContainer(at: currentDay, with: [event], from: Int(startHour), to: Int(endHour), geo: geo, scale: 0.75,
-                              background: true, overrideHeight: 200)
-        }.frame(height: 200)
+//        GeometryReader { geo in
+//            CalendarContainer(at: currentDay, with: [event], from: Int(startHour), to: Int(endHour), geo: geo, scale: 0.75,
+//                              background: true, overrideHeight: 200)
+//        }.frame(height: 200)
     }
     
 //    MARK: Vars

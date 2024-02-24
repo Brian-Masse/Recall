@@ -296,7 +296,10 @@ struct CalendarEventCreationView: View {
         StyledTextField(title: "What is the name of this event?", binding: $title, clearable: true)
         StyledTextField(title: "Leave an optional note", binding: $notes, clearable: true)
             .padding(.bottom)
+    }
     
+    @ViewBuilder
+    private func makeTimeSelector() -> some View {
         makeRecallTypeSelector()
         if recallByLength {
             LengthSelector("How long is this event?", length: $eventLength) { length in
@@ -347,6 +350,8 @@ struct CalendarEventCreationView: View {
     private func makeGoalSelector() -> some View {
         VStack(alignment: .leading) {
             if category.label != "" {
+                Divider(strokeWidth: 1)
+                
                 UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                 
                 if category.goalRatings.count > 0 {
@@ -412,19 +417,33 @@ struct CalendarEventCreationView: View {
                         makeOverviewQuestions()
                             .padding(.bottom)
                         
-                        makeDateChanger()
-                            .padding(.bottom)
+                        if !editing {
+                            makeTimeSelector()
+                                .padding(.bottom)
+                            
+                            makeDateChanger()
+                                .padding(.bottom)
+                        }
                         
                         Divider(strokeWidth: 1)
                         
                         makeTagSelector()
                             .padding(.bottom)
                         
-                        Divider(strokeWidth: 1)
-                        
                         makeGoalSelector()
-                            .padding(.bottom, 100)
+                            .padding(.bottom)
+                        
+                        if editing {
+                            Divider(strokeWidth: 1)
+                            
+                            makeTimeSelector()
+                                .padding(.bottom)
+                            
+                            makeDateChanger()
+                                .padding(.bottom)
+                        }
                     }
+                    .padding(.bottom, Constants.UIBottomOfPagePadding)
                 }.padding(.top)
                 
                 LargeRoundedButton("done", icon: "arrow.down") { submit() }

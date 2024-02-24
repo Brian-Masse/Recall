@@ -78,6 +78,8 @@ struct CalendarEventPreviewContentView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
+    @EnvironmentObject var containerModel: CalendarContainerModel
+    
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
     let width: CGFloat  //measured in pixels
@@ -91,25 +93,19 @@ struct CalendarEventPreviewContentView: View {
     private let minHeight: CGFloat = 60
     private let minHeightForDescription: CGFloat = 68
     
-    @Binding var selecting: Bool
-    @Binding var selection: [RecallCalendarEvent]
-    
     @State var showingEvent: Bool = false
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, selecting: Binding<Bool>? = nil, selection: Binding<[RecallCalendarEvent]>? = nil, allowTapGesture: Bool = false) {
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, allowTapGesture: Bool = false) {
         
         self.event = event
         self.events = events
         self.width = width
         self.height = height
         self.allowTapGesture = allowTapGesture
-        
-        self._selecting = (selecting == nil) ? Binding(get: { false }, set: { _ in }) : selecting!
-        self._selection = (selection == nil) ? Binding(get: { [] }, set: { _ in }) : selection!
     }
     
     private func selected() -> Bool {
-        let index = selection.firstIndex(of: event)
+        let index = containerModel.selection.firstIndex(of: event)
         return index != nil
     }
     
@@ -130,7 +126,7 @@ struct CalendarEventPreviewContentView: View {
             }
             .padding(.horizontal)
             
-            if selecting && !selected() {
+            if containerModel.selecting && !selected() {
                 Rectangle()
                     .foregroundStyle(colorScheme == .dark ? .black : .white)
                     .opacity(0.7)

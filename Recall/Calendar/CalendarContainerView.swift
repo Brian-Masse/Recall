@@ -8,11 +8,32 @@
 import Foundation
 import SwiftUI
 import UIUniversals
+import RealmSwift
 
 class CalendarContainerModel: ObservableObject {
     
     
+    @Published private(set) var currentDay: Date = .now
     
+    @Published var creatingEvent: Bool = false
+    @Published var dragging: Bool = false
+    
+//    These two variables are designed to manually control the visual length of a singular event
+//    When creating an event, the container's drag gesture will control how long it is
+//    so it will set this editingLength and editingEvent, so the new event knows how to present itself
+//    then once the gesture is done, it will save the event
+//    this is to avoid updating the length of the in the DB every frame
+    var startingTime: Date = .now
+    @Published var editingEvent: RecallCalendarEvent? = nil
+    @Published var editingLength: Double = 0            //measured in hours
+    
+    @Published var selecting: Bool = false
+    @Published var selection: [ RecallCalendarEvent ] = []
+    
+    @MainActor
+    func setCurrentDay(to day: Date) {
+        self.currentDay = day
+    }
     
 }
 
@@ -70,11 +91,9 @@ struct CalendarContainer: View {
         let hour = (position / spacing).rounded(.down) + CGFloat(startHour)
         let minutes = ((position / spacing) - hour) * CGFloat(Constants.MinuteTime)
         
-        print(hour, minutes)
+        let date = Calendar.current.date(bySettingHour: Int(hour), minute: Int(minutes), second: 0, of: containerModel.currentDay) ?? .now
         
-        let date = Calendar.current.date(bySettingHour: Int(hour), minute: Int(minutes), second: 0, of: .now) ?? .now
-        
-        return date.round(to: .halfHour)
+        return date
     }
     
     private func getPosition(from time: Date) -> CGFloat {
@@ -82,8 +101,47 @@ struct CalendarContainer: View {
         
         return hours * spacing
     }
+    
+    private func filterEvents() -> [RecallCalendarEvent] {
+        events.filter { event in
+            event.startTime.matches(containerModel.currentDay, to: .day) &&
+            event.startTime.matches(containerModel.currentDay, to: .month) &&
+            event.startTime.matches(containerModel.currentDay, to: .year)
+        }
+    }
+    
+    private func createEvent() {
+        
+        let startTime = containerModel.startingTime
+        let endTime = startTime + ( RecallModel.index.defaultEventLength )
+        
+        let blankTag = RecallCategory()
+        
+        let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
+                                        title: "New Event",
+                                        notes: "",
+                                        startTime: startTime,
+                                        endTime: endTime,
+                                        categoryID: blankTag._id,
+                                        goalRatings: Dictionary())
+        
+        RealmManager.addObject(event)
+        
+        containerModel.creatingEvent = true
+        containerModel.editingEvent = event
+    }
+    
+//    when a user is done creating an event with the tap and hold gesture, this will fire
+//    both to clear related variables for the next event, and to prompt them to edit the current event
+    private func endedCreatingGesture() {
+        containerModel.dragging = false
+        containerModel.creatingEvent = false
+        containerModel.editingLength = 0
+        containerModel.dragging = false
+        containerModel.editingEvent = nil
+    }
 
-//    MARK: Gestures
+//    MARK: Swipe Gesture
     private var swipeGesture: some Gesture {
         DragGesture(minimumDistance: 100)
             .onEnded { dragValue in
@@ -92,128 +150,98 @@ struct CalendarContainer: View {
                 if dragValue.translation.width > 0 { slideDirection = .left }
                 
                 withAnimation(.easeInOut(duration: 0.25)) {
-                    if dragValue.translation.width < 0 { currentDay += Constants.DayTime }
-                    if dragValue.translation.width > 0 { currentDay -= Constants.DayTime }
+                    if dragValue.translation.width < 0 {
+                        containerModel.setCurrentDay(to: containerModel.currentDay + Constants.DayTime)
+                         }
+                    if dragValue.translation.width > 0 { 
+                        containerModel.setCurrentDay(to: containerModel.currentDay - Constants.DayTime) }
                 }
                 
             }
     }
     
+//    MARK: LongPressGesture
     private var longPressGesture: some Gesture {
         LongPressGesture(minimumDuration: 0.25)
-            .onEnded { value in dragging = true }
-    }
-    
-    @MainActor
-    private var creationGesture: some Gesture {
-        DragGesture(minimumDistance: 40)
+            .simultaneously(with: DragGesture(minimumDistance: 0))
             .onChanged { value in
-                if dragging {
-                        
+//                This will run as soon as the longPress completes
+//                This checks that its not already in a dragging state, and that the longPress did actually complete
+                if !containerModel.dragging && value.first != nil {
                     
-//                    This sets the start time to the first position of the drag gesture
-//                    and then doesnt update it until the gesture is over
-                    if !self.creatingEvent{
-                        
-                        let startTime = getTime(from: value.location.y)
-                        let endTime = startTime + ( RecallModel.index.defaultEventLength )
-                        
-                        let blankTag = RecallCategory()
-                        
-                        let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
-                                                        title: "New Event",
-                                                        notes: "",
-                                                        startTime: startTime,
-                                                        endTime: endTime,
-                                                        categoryID: blankTag._id,
-                                                        goalRatings: Dictionary())
-                        
-                        RealmManager.addObject(event)
-                        
-                        
-                        self.createdEvent = event
-                        self.creatingEvent = true
-                        
-                    } else {
-                        
-                        let minEndTime = createdEvent.startTime + RecallModel.index.defaultEventLength
-                        
-                        let endTime = min( getTime(from: value.location.y), minEndTime)
-                        
-                        createdEvent.updateDate(endDate: endTime)
-                        
+                    containerModel.dragging = true
+                    
+                    if let position = value.second?.location.y {
+                        containerModel.startingTime = getTime(from: position)
                     }
                     
-                    
-                    
-                    
-                    
-//                    self.endTime = getTime(from: value.location.y)
-                    
+                    createEvent()
                 }
+            }
+            .onEnded { _ in if containerModel.creatingEvent { showingEventEditingView = true } }
+    }
+    
+//    MARK: CreationGesture
+    @MainActor
+    private var creationGesture: some Gesture {
+        DragGesture(minimumDistance: 30)
+            .onChanged { value in
+                if containerModel.dragging {
+//                    the hold gesture will have already created the event and stored the start time
+                    let minEndTime = containerModel.startingTime + RecallModel.index.defaultEventLength
+                    
+                    let endTime = max(getTime(from: value.location.y),  minEndTime)
+
+                    let length = endTime.getHoursFromStartOfDay() - containerModel.startingTime.getHoursFromStartOfDay()
+                    
+                    containerModel.editingLength = Double(length)
+                }
+            }
+            .onEnded { value in if containerModel.creatingEvent {
+                let minEndTime = containerModel.startingTime + RecallModel.index.defaultEventLength
                 
-            }
-            .onEnded { value in
-                creatingEvent = false
-                dragging = false
-            }
+                let endTime = max(getTime(from: value.location.y),  minEndTime).round(to: .quarter)
+                let startTime = containerModel.startingTime.round(to: .quarter)
+                
+                containerModel.editingEvent?.updateDate(startDate: startTime, endDate: endTime)
+                
+                showingEventEditingView = true
+            } }
     }
     
-    private func tapGesture() {
-        if selecting { withAnimation { selecting = false }}
-        dragging = false
-    }
-    
-    private func filterEvents() -> [RecallCalendarEvent] {
-        events.filter { event in
-            event.startTime.matches(currentDay, to: .day) &&
-            event.startTime.matches(currentDay, to: .month) &&
-            event.startTime.matches(currentDay, to: .year)
-            
-        }
-    }
+//    MARK: TapGesture
+    private func tapGesture() { withAnimation {
+        if containerModel.selecting { containerModel.selecting = false }
+        containerModel.dragging = false
+    } }
     
 
 //    MARK: vars
-    let geo: GeometryProxy
-    let scale: CGFloat
-    let events: [RecallCalendarEvent]
+    static let sharedContainerModel = CalendarContainerModel()
     
-    let startHour: Int
-    let endHour: Int
-    let background: Bool
+    private let geo: GeometryProxy
+    private let scale: CGFloat
+    private let events: [RecallCalendarEvent]
     
-    var spacing: CGFloat { height / CGFloat( endHour - startHour ) }
+    private let startHour: Int
+    private let endHour: Int
     
-    @Binding var currentDay: Date
-    
+    private var spacing: CGFloat { height / CGFloat( endHour - startHour ) }
+    private var height: CGFloat { geo.size.height * scale }
+
     @State var scrollPosition: CGPoint = .zero
-    @State var creatingEvent: Bool = false
-    @State var dragging: Bool = false
-    
     @Binding var slideDirection: AnyTransition.SlideDirection
-
-//    used for selecting events
-    @State var selecting: Bool = false
-    @State var selection: [ RecallCalendarEvent ] = []
     
-    @State var createdEvent: RecallCalendarEvent!
+    @State var showingEventEditingView: Bool = false
     
-    private var height: CGFloat {
-        if overrideHeight == nil { return geo.size.height * scale }
-        else { return overrideHeight! }
-    }
-    let overrideHeight: CGFloat?
+    @ObservedObject var containerModel: CalendarContainerModel = sharedContainerModel
 
-    init( at currentDay: Binding<Date>, with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, slideDirection: Binding<AnyTransition.SlideDirection> = Binding { .right } set: { _, _ in }, background: Bool = false, overrideHeight: CGFloat? = nil ) {
+    init(with events: [RecallCalendarEvent], from startHour: Int, to endHour: Int, geo: GeometryProxy, scale: CGFloat = 2, slideDirection: Binding<AnyTransition.SlideDirection> = Binding { .right } set: { _, _ in }) {
         self.events = events
         self.startHour = startHour
         self.endHour = endHour
         self.geo = geo
         self.scale = scale
-        self.background = background
-        self.overrideHeight = overrideHeight
-        self._currentDay = currentDay
         self._slideDirection = slideDirection
     }
     
@@ -221,14 +249,11 @@ struct CalendarContainer: View {
 //    MARK: Body
     var body: some View {
         VStack {
-            
-            LongPressGestureView()
-            
             ScrollReader($scrollPosition, showingIndicator: false) {
                 
                 ZStack(alignment: .topLeading) {
 
-                    CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
+                    CalendarView(day: containerModel.currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
                     
                     Group {
                         let filtered = filterEvents()
@@ -238,10 +263,8 @@ struct CalendarContainer: View {
                                                      spacing: spacing,
                                                      geo: geo,
                                                      startHour: startHour,
-                                                     events: filtered,
-                                                     dragging: $dragging,
-                                                     selecting: $selecting,
-                                                     selection: $selection)
+                                                     events: filtered)
+                            .environmentObject(containerModel)
                             
                         }
                         .padding(.leading, 40)
@@ -251,71 +274,31 @@ struct CalendarContainer: View {
                     
                     Rectangle()
                         .foregroundColor(.white)
-                        .opacity( dragging ? 0.01 : 0 )
+                        .opacity( containerModel.dragging ? 0.01 : 0 )
                         .onTapGesture {
-                            dragging = false
-                            selecting = false
+                            containerModel.dragging = false
+                            containerModel.selecting = false
+                            containerModel.creatingEvent = false
                         }
                         .zIndex( 1 )
-                    
-                    //
-                    //
                 }
                 .frame(height: height)
                 .padding(.bottom, Constants.UIBottomOfPagePadding)
             }
-            .scrollDisabled(dragging || background)
-            .if(background) { view in
-                view.rectangularBackground(7, style: .primary, stroke: true)
-            }
+            .scrollDisabled(containerModel.dragging)
 
             .onTapGesture { tapGesture() }
             .gesture(longPressGesture)
-            
             .simultaneousGesture( creationGesture )
+            .simultaneousGesture(swipeGesture, including: containerModel.dragging ? .subviews : .all)
             
-            ////            .gesture(creationGesture)
-            //
-            //            .highPriorityGesture( creationGesture )
-            //
-            ////            .simultaneousGesture(swipeGesture, including: dragging ? .subviews : .all)
-            //            .simultaneousGesture(longPressGesture, including: dragging ? .subviews : .all)
-            ////            .gesture(creationGesture, including: dragging ? .subviews : .all)
-            //
-            //
-            ////            .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 5) {
-            ////                print("oh yeah")
-            ////                dragging = true
-            //            }
+            .sheet(isPresented: $showingEventEditingView,
+                   onDismiss: { endedCreatingGesture() }) {
+                CalendarEventCreationView
+                    .makeEventCreationView(currentDay: containerModel.currentDay,
+                                           editing: true,
+                                           event: containerModel.editingEvent)
+            }
         }
-    }
-}
-
-
-struct LongPressGestureView: View {
-    @GestureState private var isDetectingLongPress = false
-    @State private var completedLongPress = false
-
-
-    var longPress: some Gesture {
-        LongPressGesture(minimumDuration: 3)
-            .updating($isDetectingLongPress) { currentState, gestureState,
-                    transaction in
-                gestureState = currentState
-                transaction.animation = Animation.easeIn(duration: 2.0)
-            }
-            .onEnded { finished in
-                self.completedLongPress = finished
-            }
-    }
-
-
-    var body: some View {
-        Circle()
-            .fill(self.isDetectingLongPress ?
-                Color.red :
-                (self.completedLongPress ? Color.green : Color.blue))
-            .frame(width: 100, height: 100, alignment: .center)
-            .gesture(longPress)
     }
 }

@@ -170,7 +170,8 @@ struct CalendarPageView: View {
                 }
                 
                 GeometryReader { geo in
-                    CalendarContainer(at: $currentDay, with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
+                    CalendarContainer(with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
+                        .onAppear { CalendarContainer.sharedContainerModel.setCurrentDay(to: currentDay) }
                 }
             }
         }

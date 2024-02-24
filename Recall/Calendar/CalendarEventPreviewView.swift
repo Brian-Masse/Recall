@@ -39,8 +39,12 @@ struct CalendarEventPreviewView: View {
         case down = -1
     }
     
+//    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var containerModel: CalendarContainerModel
+    
     @ObservedRealmObject var event: RecallCalendarEvent
+    @ObservedRealmObject var index = RecallModel.index
     
     let spacing: CGFloat
     let geo: GeometryProxy
@@ -49,23 +53,17 @@ struct CalendarEventPreviewView: View {
     
     var overlapData: RecallCalendarEvent.OverlapData { event.getOverlapData(in: geo.size.width - 20, from: events) }
     
-    @ObservedRealmObject var index = RecallModel.index
-    
     @State var startDate: Date = .now
     @State var endDate: Date = .now
     @State var length: CGFloat = 0  //measured in hours
     @State var roundedStartDate: Date = .now
     
-    @Binding var dragging: Bool
-    @State var moving: Bool = false
+    @State var moving: Bool = false //local variables
     @State var resizing: Bool = false //used to block the movement gesture while resizing
     
     @State var showingEvent: Bool = false
     @State var showingEditingScreen: Bool = false
     @State var showingDeletionAlert: Bool = false
-    
-    @Binding var selecting: Bool
-    @Binding var selection: [RecallCalendarEvent]
     
 //    MARK: Convenience Functions
     
@@ -88,12 +86,12 @@ struct CalendarEventPreviewView: View {
     }
     
     private func beginMoving() {
-        dragging = true
+        containerModel.dragging = true
         moving = true
     }
     
     private func beginResizing() {
-        dragging = true
+        containerModel.dragging = true
         resizing = true
     }
     
@@ -101,8 +99,12 @@ struct CalendarEventPreviewView: View {
         max(overlapData.width, 1)
     }
     
+    private func getOverrideHeight() -> CGFloat {
+        containerModel.editingEvent?._id == event._id ? containerModel.editingLength : length
+    }
+    
     private func getHeight() -> CGFloat {
-        max(CGFloat(length) * spacing, 10)
+        max(CGFloat(getOverrideHeight()) * spacing, 10)
     }
     
     private func getVerticalOffset(from startDate: Date) -> CGFloat {
@@ -129,8 +131,8 @@ struct CalendarEventPreviewView: View {
                 roundedStartDate = getNearestTime(from: clampPosition(dragGesture.location.y), to: index.dateSnapping)
             }
             .onEnded { dragGesture in
-                if dragging && !resizing {
-                    dragging = false
+                if containerModel.dragging && !resizing {
+                    containerModel.dragging = false
                     moving = false
                     event.updateDate(startDate: roundedStartDate, endDate: roundedStartDate + ( length * Constants.HourTime ) )
                 }
@@ -141,7 +143,7 @@ struct CalendarEventPreviewView: View {
     private func resizeGesture(_ direction: ResizeDirection) -> some Gesture {
         DragGesture( coordinateSpace: .named(blockCoordinateSpaceKey) )
             .onChanged { dragGesture in
-                if !dragging || !resizing { return }
+                if !containerModel.dragging || !resizing { return }
                 if direction == .up {
                     startDate        = min(getTime(from: clampPosition(dragGesture.location.y)), endDate - Constants.HourTime)
                     roundedStartDate = min(getNearestTime(from: clampPosition(dragGesture.location.y), to: index.dateSnapping), endDate - Constants.HourTime)
@@ -155,7 +157,7 @@ struct CalendarEventPreviewView: View {
             }
             .onEnded { dragGesture in
                 resizing = false
-                dragging = false
+                containerModel.dragging = false
                 if direction == .up { event.updateDate(startDate: roundedStartDate)
                 } else { event.updateDate(endDate: roundedStartDate + length * Constants.HourTime ) }
             }
@@ -206,22 +208,20 @@ struct CalendarEventPreviewView: View {
 //    this function runs anyitme a user selects any option from the context menu
 //    its meant to disable any features that may be incmpatible with the currently performered action
     @MainActor
-    private func defaultContextMenuAction() {
-        selecting = false
-    }
+    private func defaultContextMenuAction() { containerModel.selecting = false }
     
     private func toggleSelection() {
-        if let index = selection.firstIndex(where: { selectedEvent in
+        if let index = containerModel.selection.firstIndex(where: { selectedEvent in
             selectedEvent == event
         }) {
-            selection.remove(at: index)
+            containerModel.selection.remove(at: index)
         } else {
-            selection.append( event )
+            containerModel.selection.append( event )
         }
     }
     
     private func onTap() {
-        if selecting { withAnimation { toggleSelection() }}
+        if containerModel.selecting { withAnimation { toggleSelection() }}
         else { showingEvent = true }
         
         
@@ -270,9 +270,8 @@ struct CalendarEventPreviewView: View {
             CalendarEventPreviewContentView(event: event,
                                             events: events,
                                             width: getWidth(),
-                                            height: getHeight(),
-                                            selecting: $selecting,
-                                            selection: $selection)
+                                            height: getHeight())
+                .environmentObject(containerModel)
                 .frame(width: getWidth(), height: getHeight())
                 .overlay(makeLengthHandles())
             
@@ -305,8 +304,8 @@ struct CalendarEventPreviewView: View {
                     
                     ContextMenuButton("select", icon: "selection.pin.in.out") {
                         defaultContextMenuAction()
-                        selecting = true
-                        selection.append(event)
+                        containerModel.selecting = true
+                        containerModel.selection.append(event)
                     }
                     
                     ContextMenuButton("delete", icon: "trash", role: .destructive) {
@@ -322,7 +321,7 @@ struct CalendarEventPreviewView: View {
                 .coordinateSpace(name: blockCoordinateSpaceKey)
             
                 .onAppear { setup() }
-                .onChange(of: dragging) { newValue in
+                .onChange(of: containerModel.dragging) { newValue in
                     prepareMovementSnapping()
                     if !newValue { resetEditingControls() } 
                 }
@@ -335,10 +334,10 @@ struct CalendarEventPreviewView: View {
                 }
             
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
-                .halfPageScreen("Select Events", presenting: $selecting) {
-                    EventSelectionEditorView(selecting: $selecting,
-                                             selection: $selection)
-                }
+//                .halfPageScreen("Select Events", presenting: $selecting) {
+//                    EventSelectionEditorView(selecting: $selecting,
+//                                             selection: $selection)
+//                }
         }
         .zIndex( resizing || moving ? 5 : 0 )
         
