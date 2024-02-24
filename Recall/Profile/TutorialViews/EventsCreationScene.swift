@@ -191,9 +191,11 @@ extension TutorialViews {
         private func makeCalendarView() -> some View {
             ZStack(alignment: .bottom) {
                 GeometryReader { geo in
-                    CalendarContainer(with: Array(events),
-                                      from: 0, to: 24,
-                                      geo: geo)
+                    StyledCalendarContainerView(at: .now,
+                                                with: Array(events),
+                                                from: 0, to: 24,
+                                                geo: geo,
+                                                scale: 2)
                 }
                 LargeRoundedButton("Recall", icon: "arrow.up", wide: true) { showingEventCretionView = true }
             }
