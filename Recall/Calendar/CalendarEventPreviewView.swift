@@ -248,10 +248,8 @@ struct CalendarEventPreviewView: View {
                 .frame(minHeight: 10, maxHeight: 20)
                 .overlay(
                     Image(systemName: direction == .up ? "chevron.up" : "chevron.down")
-                        .padding()
                         .padding(.horizontal)
-                        .foregroundColor(event.getColor())
-                        .rectangularBackground(style: .primary)
+                        .rectangularBackground(style: .secondary)
                         .offset(y: direction == .up ? 20 : -20)
                         .onTapGesture { }
                         .simultaneousGesture(resizeGesture( direction ))

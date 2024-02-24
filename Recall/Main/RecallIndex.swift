@@ -34,6 +34,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     //  Settings
     @Persisted var finishedTutorial: Bool = false
     
+    ///measured in miliseconds (able to directly be added to dates)
     @Persisted var defaultEventLength: Double = Constants.HourTime * 2
     @Persisted var showNotesOnPreview: Bool = true
     @Persisted var defaultFineTimeSelector: Bool = true
