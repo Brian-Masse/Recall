@@ -294,7 +294,9 @@ class RealmManager: ObservableObject {
         
         let results: Results<RecallIndex> = RealmManager.retrieveObject()
         
-        if let index = results.first {
+        if let index = results.first(where: { index in
+            index.ownerID == RecallModel.ownerID
+        }) {
             registerIndexLocally(index)
             index.toggleNotifcations(to: index.notificationsEnabled, time: index.notificationsTime)
         } else {

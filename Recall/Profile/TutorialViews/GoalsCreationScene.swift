@@ -15,7 +15,8 @@ extension TutorialViews {
     struct GoalCreationScene: View {
         
 //        MARK: Vars
-        @ObservedResults(RecallGoal.self) var goals
+        @ObservedResults(RecallGoal.self,
+                         where: { goal in goal.ownerID == RecallModel.ownerID }) var goals
         
         @State var showingGoalCreationView: Bool = false
         

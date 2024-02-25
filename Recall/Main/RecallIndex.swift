@@ -37,7 +37,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     ///measured in miliseconds (able to directly be added to dates)
     @Persisted var defaultEventLength: Double = Constants.HourTime * 2
     @Persisted var showNotesOnPreview: Bool = true
-    @Persisted var defaultFineTimeSelector: Bool = true
+    @Persisted var defaultFineTimeSelector: Bool = false
     @Persisted var defaultEventSnapping: Int = TimeRounding.quarter.rawValue
     @Persisted var recallEventsAtEndOfLastRecall: Bool = true
     @Persisted var recallEventsWithEventTime: Bool = true

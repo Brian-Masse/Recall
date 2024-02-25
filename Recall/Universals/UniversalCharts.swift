@@ -110,7 +110,6 @@ private struct ColorChartByGoal: ViewModifier {
 
 private struct ColorChartByList: ViewModifier {
     
-    @ObservedResults(RecallGoal.self) var goals
     @State var dictionary: Dictionary<String, Color>
     
     func body(content: Content) -> some View {

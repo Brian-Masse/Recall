@@ -95,9 +95,13 @@ struct CalendarEventCreationView: View {
 //    MARK: Vars
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedResults(RecallCalendarEvent.self) var events
-    @ObservedResults(RecallCategory.self) var categories
-    @ObservedResults(RecallGoal.self) var goals
+    @ObservedResults(RecallCalendarEvent.self,
+                     where: { event in event.ownerID == RecallModel.ownerID }) var events
+    @ObservedResults(RecallCategory.self,
+                     where: { tag in tag.ownerID == RecallModel.ownerID }) var categories
+    @ObservedResults(RecallGoal.self,
+                     where: { goal in goal.ownerID == RecallModel.ownerID }) var goals
+    
     @ObservedRealmObject var index = RecallModel.index
     
     @State var showingAlert: Bool = false

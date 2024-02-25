@@ -51,9 +51,11 @@ struct GoalView: View {
 //    MARK: vars
     
     @Environment(\.presentationMode) var presentationMode
-    @ObservedResults(RecallCategory.self) var tags
-    @ObservedRealmObject var goal: RecallGoal
     @EnvironmentObject var dataModel: RecallGoalDataModel
+    
+    @ObservedRealmObject var goal: RecallGoal
+    @ObservedResults(RecallCategory.self,
+                     where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
     
     let events: [RecallCalendarEvent]
     

@@ -22,7 +22,7 @@ struct OpenRealmView: View {
             Text("loading Realm")
                 .task {
                     await realmManager.openNonSyncedRealm()
-                    page = .app
+                    page = .profileCreation
                 }
             
         } else {
