@@ -39,7 +39,8 @@ struct AverageActivityByTag: View {
         
     }
     
-    @ObservedResults(RecallCategory.self) var tags
+    @ObservedResults(RecallCategory.self,
+                     where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
     
     let recents: Bool
     let data: [DataNode]
@@ -297,7 +298,7 @@ struct GoalProgressOverTime: View {
     static let initialLoadedDataCount: Int = 75
     @State var loadedDataCount: Int = initialLoadedDataCount
     
-    var maxIndex: Int { min( data.count - 1, loadedDataCount ) }
+    var maxIndex: Int { max(0, min( data.count - 1, loadedDataCount )) }
     var daysSinceLastEvent: Int {
         Int(Date.now.timeIntervalSince( data[maxIndex].date ) / Constants.DayTime)
     }
@@ -322,7 +323,7 @@ struct GoalProgressOverTime: View {
             
             ScrollView(.horizontal) {
                 Chart {
-                    ForEach(0...loadedDataCount, id: \.self) { i in
+                    ForEach(0...maxIndex, id: \.self) { i in
                         
                         let datum = data[i]
                         

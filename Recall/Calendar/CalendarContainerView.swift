@@ -73,6 +73,8 @@ struct CalendarContainer: View {
         
         let blankTag = RecallCategory()
         
+        containerModel.editingLength = RecallModel.index.defaultEventLength / Constants.HourTime
+        
         let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
                                         title: "New Event",
                                         notes: "",

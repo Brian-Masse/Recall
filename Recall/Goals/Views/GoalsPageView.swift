@@ -15,8 +15,7 @@ struct GoalsPageView: View {
 //    MARK: Vars
     let goals: [RecallGoal]
     let events: [RecallCalendarEvent]
-    
-    @ObservedResults(RecallCategory.self) var tags
+    let tags: [RecallCategory]
     
     @State var showingGoalCreationView: Bool = false
     

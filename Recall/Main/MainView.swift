@@ -92,9 +92,12 @@ struct MainView: View {
     //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     
-    @ObservedResults( RecallCalendarEvent.self, where: { event in event.startTime > RecallModel.getEarliestEventDate() } ) var events
-    @ObservedResults( RecallGoal.self ) var goals
-    @ObservedResults( RecallCategory.self ) var tags
+    @ObservedResults( RecallCalendarEvent.self,
+                      where: { event in event.startTime > RecallModel.getEarliestEventDate() && event.ownerID == RecallModel.ownerID } ) var events
+    @ObservedResults( RecallGoal.self,
+                      where: { goal in goal.ownerID == RecallModel.ownerID } ) var goals
+    @ObservedResults( RecallCategory.self,
+                      where: { tag in tag.ownerID == RecallModel.ownerID } ) var tags
     
     @State var currentPage: MainPage = .calendar
     @State var shouldRefreshData: Bool = false
@@ -122,10 +125,10 @@ struct MainView: View {
                             .halfPageScreenReceiver(showing: $showingHalfPage)
                             .tag( MainPage.calendar )
                         
-                        GoalsPageView(goals: arrGoals, events: arrEvents )
+                        GoalsPageView(goals: arrGoals, events: arrEvents, tags: arrTags )
                             .tag( MainPage.goals )
     
-                        CategoriesPageView(events: arrEvents )
+                        CategoriesPageView(events: arrEvents, categories: arrTags )
                             .tag( MainPage.categories )
                     
                         DataPageView(events: arrEvents,

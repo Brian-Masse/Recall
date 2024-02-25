@@ -15,9 +15,10 @@ extension TutorialViews {
     struct TagsCreationScene: View {
         
 //        MARK: Vars
-        @ObservedResults(RecallGoal.self) var goals
-        @ObservedResults(RecallCategory.self) var tags
-        @ObservedResults(RecallCalendarEvent.self) var events
+        @ObservedResults(RecallGoal.self,
+                         where: { goal in goal.ownerID == RecallModel.ownerID }) var goals
+        @ObservedResults(RecallCategory.self,
+                         where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
         
         @State var showingTagCreationView: Bool = false
         @State var sentTag: Bool = false
@@ -57,12 +58,23 @@ extension TutorialViews {
 //        MARK: Basic Info
         @ViewBuilder
         private func makeNameView() -> some View {
-            StyledTextField(title: "Whats the name of this tag?", binding: $name)
-                .onChange(of: name) { newValue in
-                    if newValue.isEmpty { return }
-                    nextButtonIsActive = true
+            VStack(alignment: .leading) {
+                StyledTextField(title: "Whats the name of this tag?", binding: $name)
+                    .onChange(of: name) { newValue in
+                        if newValue.isEmpty { return }
+                        nextButtonIsActive = true
+                    }
+                
+                Group {
+                    UniversalText("ie. went for a walk", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                        .padding(.bottom, 5)
+                    
+                    UniversalText("ie. Hung out with friends", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                 }
-                .slideTransition()
+                .opacity(0.65)
+                .padding(.leading)
+            }
+            .slideTransition()
         }
         
         @ViewBuilder
@@ -126,7 +138,7 @@ extension TutorialViews {
         private func makeTagsView() -> some View {
             
             VStack(alignment: .leading) {
-                TagPageView(tags: Array(tags), events: Array(events))
+                TagPageView(tags: Array(tags))
                 Spacer()
                 LargeRoundedButton("create another tag", icon: "arrow.up", wide: true) {
                     showingTagCreationView = true

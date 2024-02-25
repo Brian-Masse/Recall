@@ -77,7 +77,7 @@ struct CalendarPageView: View {
                 UniversalText(string, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true)
                 UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true )
             }
-                .foregroundColor(.black)
+            .universalTextStyle()
         } else {
             UniversalText(string, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true)
                 .overlay {

@@ -243,10 +243,10 @@ struct ProfileCreationView: View {
             
             StyledDatePicker($dateOfBirth, title: "When is your birthday?")
             
-            if !validateBirthday(dateOfBirth) {
-                UniversalText( "you must be 18 years or older.", size: Constants.UISmallTextSize, font: Constants.mainFont )
+//            if !validateBirthday(dateOfBirth) {
+                UniversalText( "tap and hold on the date to change", size: Constants.UISmallTextSize, font: Constants.mainFont )
                     .padding(.leading)
-            }
+//            }
         }
         .slideTransition()
         .onAppear() { showingContinueButton = validateBirthday( dateOfBirth ) }

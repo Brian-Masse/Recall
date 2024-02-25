@@ -31,7 +31,6 @@ struct CategoriesPageView: View {
     
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
-    @ObservedResults( RecallCategory.self ) var categories
     
     @State var showingCreateTagView: Bool = false
     @State var showingCreateEventView: Bool = false
@@ -41,6 +40,7 @@ struct CategoriesPageView: View {
     @State var activePage: TagPage = .tags
     
     let events: [RecallCalendarEvent]
+    let categories: [RecallCategory]
     
 //    MARK: Page Picker
     @ViewBuilder
@@ -97,7 +97,7 @@ struct CategoriesPageView: View {
                 makeHeader(geo)
                 
                 TabView( selection: $activePage ) {
-                    TagPageView(tags: Array(categories), events: events)
+                    TagPageView(tags: Array(categories))
                         .ignoresSafeArea()
                         .padding(.horizontal, 7)
                         .tag( TagPage.tags )
@@ -130,11 +130,4 @@ struct CategoriesPageView: View {
             CalendarEventCreationView.makeEventCreationView(currentDay: .now, favorite: true)
         }
     }
-}
-
-
-#Preview {
-    
-    CategoriesPageView(events: [])
-    
 }
