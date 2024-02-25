@@ -121,7 +121,8 @@ struct GoalCreationView: View {
     
 //    MARK: Vars
     @Environment(\.presentationMode) var presentationMode
-    @ObservedResults(RecallCategory.self) var tags
+    @ObservedResults(RecallCategory.self,
+                     where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
     
     let editing: Bool
     let goal: RecallGoal?

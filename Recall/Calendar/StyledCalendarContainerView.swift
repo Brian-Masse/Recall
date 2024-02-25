@@ -50,22 +50,24 @@ struct StyledCalendarContainerView: View {
     
 //    MARK: Body
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            
-            let filtered = filterEvents()
-            
-            CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
-            
-            ForEach( filtered, id: \.self ) { event in
-                CalendarEventPreviewView(event: event,
-                                         spacing: spacing,
-                                         geo: geo,
-                                         startHour: startHour,
-                                         events: filtered)
+        ScrollView(.vertical) {
+            ZStack(alignment: .topLeading) {
+                
+                let filtered = filterEvents()
+                
+                CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
+                
+                ForEach( filtered, id: \.self ) { event in
+                    CalendarEventPreviewView(event: event,
+                                             spacing: spacing,
+                                             geo: geo,
+                                             startHour: startHour,
+                                             events: filtered)
+                }
+                .padding(.leading, 40)
             }
-            .padding(.leading, 40)
+            .frame(height: height)
         }
-        .frame(height: height)
         .rectangularBackground(10, style: .transparent, stroke: true)
     }
 }

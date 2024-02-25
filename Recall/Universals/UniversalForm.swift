@@ -27,7 +27,7 @@ struct ColorPickerOption: View {
             .frame(width: ColorPickerOption.size, height: ColorPickerOption.size)
             .padding(7)
             .if(color == selectedColor) { view in
-                view.rectangularBackground(style: .secondary)
+                view.rectangularBackground(5, style: .secondary, cornerRadius: 100)
             }
             .onTapGesture { withAnimation { selectedColor = color } }
     }

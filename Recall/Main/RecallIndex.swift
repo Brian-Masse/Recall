@@ -35,9 +35,9 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var finishedTutorial: Bool = false
     
     ///measured in miliseconds (able to directly be added to dates)
-    @Persisted var defaultEventLength: Double = Constants.HourTime * 2
+    @Persisted var defaultEventLength: Double = Constants.HourTime * 0.75
     @Persisted var showNotesOnPreview: Bool = true
-    @Persisted var defaultFineTimeSelector: Bool = true
+    @Persisted var defaultFineTimeSelector: Bool = false
     @Persisted var defaultEventSnapping: Int = TimeRounding.quarter.rawValue
     @Persisted var recallEventsAtEndOfLastRecall: Bool = true
     @Persisted var recallEventsWithEventTime: Bool = true
@@ -126,7 +126,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
                 
                 RealmManager.updateObject(self) { thawed in
                     thawed.notificationsEnabled = results
-                    if results { setNotificationTime(to: time) }
+                    if results { self.setNotificationTime(to: time) }
                 }
             }
         }

@@ -46,3 +46,44 @@ extension AnyTransition {
         }
     }
 }
+
+
+struct LogoAnimation: View {
+    @State var imageName: String = ""
+    @State var inReverse: Bool = false
+
+    private func timer() {
+        var index = 1
+        let _ = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { (Timer) in
+            
+            imageName = "logoAnimation\( min(max(index, 1), 40) )"
+            
+            index += inReverse ? -1 : 1
+            
+            if (index > 50){
+                inReverse = true
+            }
+            if (index < -10) {
+                index = 1
+                inReverse = false
+            }
+        }
+    }
+    
+    var body: some View {
+        Image( imageName )
+            .resizable()
+            .renderingMode(.template)
+            .universalTextStyle()
+//            .universalStyledBackgrond(., onForeground: true)
+
+            .frame(width: 100, height: 100)
+            .onAppear { timer() }
+    }
+    
+}
+
+
+#Preview {
+    LogoAnimation()
+}

@@ -110,7 +110,6 @@ struct TagPageView: View {
     
 //    MARK: Vars
     let tags: [RecallCategory]
-    let events: [RecallCalendarEvent]
     
     @State var favoriteTags: [RecallCategory] = []
     @State var nonFavoriteTags: [RecallCategory] = []

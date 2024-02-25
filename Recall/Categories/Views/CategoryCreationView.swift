@@ -28,7 +28,8 @@ struct CategoryCreationView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedResults( RecallGoal.self ) var goals
+    @ObservedResults( RecallGoal.self,
+                      where: { goal in goal.ownerID == RecallModel.ownerID }) var goals
     
     let editing: Bool
     let tag: RecallCategory?

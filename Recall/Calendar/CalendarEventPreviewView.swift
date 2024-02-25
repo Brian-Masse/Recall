@@ -274,56 +274,62 @@ struct CalendarEventPreviewView: View {
                 .environmentObject(containerModel)
                 .frame(width: getWidth(), height: getHeight())
                 .overlay(makeLengthHandles())
-            
-                .contextMenu {
-                    
-                    ContextMenuButton("move", icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") {
-                        defaultContextMenuAction()
-                        beginMoving()
-                    }
-                    
-                    ContextMenuButton("resize", icon: "rectangle.expand.vertical") {
-                        defaultContextMenuAction()
-                        beginResizing()
-                    }
-                    
-                    ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
-                        defaultContextMenuAction()
-                        showingEditingScreen = true
-                    }
-                    
-                    ContextMenuButton("duplicate", icon: "rectangle.on.rectangle") {
-                        defaultContextMenuAction()
-                        duplicate()
-                    }
-                    
-                    ContextMenuButton("favorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
-                        defaultContextMenuAction()
-                        event.toggleFavorite()
-                    }
-                    
-                    ContextMenuButton("select", icon: "selection.pin.in.out") {
-                        defaultContextMenuAction()
-                        containerModel.selecting = true
-                        containerModel.selection.append(event)
-                    }
-                    
-                    ContextMenuButton("delete", icon: "trash", role: .destructive) {
-                        defaultContextMenuAction()
-                        if event.isTemplate { showingDeletionAlert = true }
-                        else { event.delete() }
-                    }
-                }
                 .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
                 
-                .onTapGesture { onTap() }
-                .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
-                .coordinateSpace(name: blockCoordinateSpaceKey)
-            
-                .onAppear { setup() }
-                .onChange(of: containerModel.dragging) { newValue in
-                    prepareMovementSnapping()
-                    if !newValue { resetEditingControls() } 
+                .overlay {
+                    Rectangle()
+                        .fill(.clear)
+                        .contentShape(Rectangle())
+                        .padding(.vertical, 10)
+                        .onTapGesture { onTap() }
+                        .contextMenu {
+                            
+                            ContextMenuButton("move", icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") {
+                                defaultContextMenuAction()
+                                beginMoving()
+                            }
+                            
+                            ContextMenuButton("resize", icon: "rectangle.expand.vertical") {
+                                defaultContextMenuAction()
+                                beginResizing()
+                            }
+                            
+                            ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
+                                defaultContextMenuAction()
+                                showingEditingScreen = true
+                            }
+                            
+                            ContextMenuButton("duplicate", icon: "rectangle.on.rectangle") {
+                                defaultContextMenuAction()
+                                duplicate()
+                            }
+                            
+                            ContextMenuButton("favorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
+                                defaultContextMenuAction()
+                                event.toggleFavorite()
+                            }
+                            
+                            ContextMenuButton("select", icon: "selection.pin.in.out") {
+                                defaultContextMenuAction()
+                                containerModel.selecting = true
+                                containerModel.selection.append(event)
+                            }
+                            
+                            ContextMenuButton("delete", icon: "trash", role: .destructive) {
+                                defaultContextMenuAction()
+                                if event.isTemplate { showingDeletionAlert = true }
+                                else { event.delete() }
+                            }
+                        }
+                        .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
+                        .coordinateSpace(name: blockCoordinateSpaceKey)
+        
+                        .onAppear { setup() }
+                        .onChange(of: containerModel.dragging) { newValue in
+                            prepareMovementSnapping()
+                            if !newValue { resetEditingControls() }
+                        }
+                    
                 }
                 .shadow(radius: (resizing || moving) ? 10 : 0)
                 .sheet(isPresented: $showingEditingScreen) {
@@ -332,7 +338,7 @@ struct CalendarEventPreviewView: View {
                 .sheet(isPresented: $showingEvent) {
                     CalendarEventView(event: event, events: events)
                 }
-            
+
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
                 .halfPageScreen("Select Events", presenting: $containerModel.selecting) {
                     EventSelectionEditorView().environmentObject(containerModel)

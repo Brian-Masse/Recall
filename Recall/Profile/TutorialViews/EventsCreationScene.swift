@@ -15,9 +15,12 @@ extension TutorialViews {
     struct EventsCreationScene: View {
         
 //        MARK: Vars
-        @ObservedResults(RecallGoal.self) var goals
-        @ObservedResults(RecallCategory.self) var tags
-        @ObservedResults(RecallCalendarEvent.self) var events
+        @ObservedResults(RecallGoal.self,
+                         where: { goal in goal.ownerID == RecallModel.ownerID }) var goals
+        @ObservedResults(RecallCategory.self,
+                         where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
+        @ObservedResults(RecallCalendarEvent.self,
+                         where: { event in event.ownerID == RecallModel.ownerID}) var events
         
         @State var showingTagCreationView: Bool = false
         @State var showingEventCretionView: Bool = false
@@ -189,13 +192,14 @@ extension TutorialViews {
 //        MARK: CalendarView
         @ViewBuilder
         private func makeCalendarView() -> some View {
-            ZStack(alignment: .bottom) {
+            VStack {
                 GeometryReader { geo in
                     StyledCalendarContainerView(at: .now,
                                                 with: Array(events),
                                                 from: 0, to: 24,
                                                 geo: geo,
                                                 scale: 2)
+                    .environmentObject( CalendarContainerModel() )
                 }
                 LargeRoundedButton("Recall", icon: "arrow.up", wide: true) { showingEventCretionView = true }
             }
