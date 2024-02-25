@@ -505,6 +505,7 @@ class RealmManager: ObservableObject {
         else { return getRealm(from: realm).objects(T.self).where(query!) }
     }
     
+    @MainActor
     static func retrieveObjects<T: Object>(realm: Realm? = nil, where query: ( (T) -> Bool )? = nil) -> [T] {
         if query == nil { return Array(getRealm(from: realm).objects(T.self)) }
         else { return Array(getRealm(from: realm).objects(T.self).filter(query!)  ) }

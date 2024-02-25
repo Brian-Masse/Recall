@@ -223,6 +223,7 @@ struct CalendarContainer: View {
                                                      startHour: startHour,
                                                      events: filtered)
                             .environmentObject(containerModel)
+                            .border(.blue)
                             .zIndex( 10 )
                             
                         }
