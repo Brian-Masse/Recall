@@ -54,6 +54,7 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
     }
     
 //    MARK: Class Methods:
+    @MainActor
     func toggleFavorite() {
         RealmManager.updateObject(self) { thawed in
             thawed.isFavorite = !self.isFavorite
@@ -130,6 +131,7 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
         Color(red: r, green: g, blue: b)
     }
     
+    @MainActor
     func delete() {
         RealmManager.deleteObject(self) { category in
             category._id == self._id

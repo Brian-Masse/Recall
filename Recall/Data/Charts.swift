@@ -298,7 +298,7 @@ struct GoalProgressOverTime: View {
     static let initialLoadedDataCount: Int = 75
     @State var loadedDataCount: Int = initialLoadedDataCount
     
-    var maxIndex: Int { min( data.count - 1, loadedDataCount ) }
+    var maxIndex: Int { max(0, min( data.count - 1, loadedDataCount )) }
     var daysSinceLastEvent: Int {
         Int(Date.now.timeIntervalSince( data[maxIndex].date ) / Constants.DayTime)
     }

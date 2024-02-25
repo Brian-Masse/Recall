@@ -126,7 +126,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
                 
                 RealmManager.updateObject(self) { thawed in
                     thawed.notificationsEnabled = results
-                    if results { setNotificationTime(to: time) }
+                    if results { self.setNotificationTime(to: time) }
                 }
             }
         }

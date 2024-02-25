@@ -119,9 +119,7 @@ class RealmManager: ObservableObject {
             if error != nil { return error }
             
             await authOfflineUser(fixedEmail, password: password)
-        }
-        
-        if !RealmManager.offline {
+        } else {
             let error =  await registerOnlineUser(fixedEmail, password)
             if error == nil {
                 let credentials = Credentials.emailPassword(email: fixedEmail, password: password)
@@ -336,7 +334,9 @@ class RealmManager: ObservableObject {
             print("error opening local realm: \(error.localizedDescription)")
         }
         
-//        await self.addSubcriptions()
+        self.configuration = realm.configuration
+        Realm.Configuration.defaultConfiguration = realm.configuration
+        
         self.realmLoaded = true
         await self.checkProfile()
     }
@@ -463,6 +463,7 @@ class RealmManager: ObservableObject {
     
 //    MARK: Realm Functions
     
+    @MainActor
     static func transferOwnership<T: Object>(of object: T, to newID: String) where T: OwnedRealmObject {
         updateObject(object) { thawed in
             thawed.ownerID = newID
@@ -473,7 +474,8 @@ class RealmManager: ObservableObject {
 //    if they want to write to a different realm.
 //    This is a convenience function either choose that realm, if it has a value, or the default realm
     static func getRealm(from realm: Realm?) -> Realm {
-        realm ?? RecallModel.realmManager.realm
+//        realm ?? RecallModel.realmManager.realm
+        try! Realm()
     }
     
     static func writeToRealm(_ realm: Realm? = nil, _ block: () -> Void ) {
@@ -485,17 +487,20 @@ class RealmManager: ObservableObject {
     }
     
     static func updateObject<T: Object>(realm: Realm? = nil, _ object: T, _ block: (T) -> Void, needsThawing: Bool = true) {
+
         RealmManager.writeToRealm(realm) {
             guard let thawed = object.thaw() else {
                 print("failed to thaw object: \(object)")
                 return
             }
+            
             block(thawed)
         }
     }
     
     static func addObject<T:Object>( _ object: T, realm: Realm? = nil ) {
-        self.writeToRealm(realm) { getRealm(from: realm).add(object) }
+        self.writeToRealm(realm) {
+            getRealm(from: realm).add(object) }
     }
     
     static func retrieveObject<T:Object>( realm: Realm? = nil, where query: ( (Query<T>) -> Query<Bool> )? = nil ) -> Results<T> {
@@ -503,14 +508,13 @@ class RealmManager: ObservableObject {
         else { return getRealm(from: realm).objects(T.self).where(query!) }
     }
     
-    @MainActor
     static func retrieveObjects<T: Object>(realm: Realm? = nil, where query: ( (T) -> Bool )? = nil) -> [T] {
         if query == nil { return Array(getRealm(from: realm).objects(T.self)) }
         else { return Array(getRealm(from: realm).objects(T.self).filter(query!)  ) }
         
         
     }
-    
+
     static func deleteObject<T: RealmSwiftObject>( _ object: T, where query: @escaping (T) -> Bool, realm: Realm? = nil ) where T: Identifiable {
         
         if let obj = getRealm(from: realm).objects(T.self).filter( query ).first {

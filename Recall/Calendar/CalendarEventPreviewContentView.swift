@@ -42,9 +42,7 @@ struct CalendarEventPreviewContentView: View {
                        font: Constants.titleFont,
                        scale: true,
                        minimumScaleFactor: 0.5)
-        
-        Text( event.ownerID )
-        
+
         if height > minHeightForDescription && index.showNotesOnPreview && !event.notes.isEmpty {
             UniversalText( event.notes,
                            size: Constants.UISmallTextSize,
