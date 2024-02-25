@@ -17,7 +17,7 @@ class RealmManager: ObservableObject {
 //    if the app is being used offline, then the 'user' will be stored in defaults
     static let defaults = UserDefaults.standard
     
-    static let offline: Bool = true
+    static let offline: Bool = false
     static let appID = "application-0-incki"
     
 //    This realm will be generated once the profile has authenticated themselves (handled in LoginModel)
@@ -351,8 +351,6 @@ class RealmManager: ObservableObject {
         
         self.realmLoaded = true
         await self.checkProfile()
-        
-        print(Realm.Configuration.defaultConfiguration.fileURL!)
     }
     
     private func addSubcriptions() async {
@@ -474,8 +472,7 @@ class RealmManager: ObservableObject {
 //    if they want to write to a different realm.
 //    This is a convenience function either choose that realm, if it has a value, or the default realm
     static func getRealm(from realm: Realm?) -> Realm {
-//        realm ?? RecallModel.realmManager.realm
-        try! Realm()
+        RealmManager.offline ? try! Realm() : (realm ?? RecallModel.realmManager.realm)
     }
     
     static func writeToRealm(_ realm: Realm? = nil, _ block: () -> Void ) {
@@ -511,8 +508,6 @@ class RealmManager: ObservableObject {
     static func retrieveObjects<T: Object>(realm: Realm? = nil, where query: ( (T) -> Bool )? = nil) -> [T] {
         if query == nil { return Array(getRealm(from: realm).objects(T.self)) }
         else { return Array(getRealm(from: realm).objects(T.self).filter(query!)  ) }
-        
-        
     }
 
     static func deleteObject<T: RealmSwiftObject>( _ object: T, where query: @escaping (T) -> Bool, realm: Realm? = nil ) where T: Identifiable {
