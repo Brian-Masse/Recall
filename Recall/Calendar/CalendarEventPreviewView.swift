@@ -272,7 +272,6 @@ struct CalendarEventPreviewView: View {
                                             width: getWidth(),
                                             height: getHeight())
                 .environmentObject(containerModel)
-                .border(.green)
                 .frame(width: getWidth(), height: getHeight())
                 .overlay(makeLengthHandles())
                 .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
@@ -281,7 +280,6 @@ struct CalendarEventPreviewView: View {
                     Rectangle()
                         .fill(.clear)
                         .contentShape(Rectangle())
-                        .border(.red)
                         .padding(.vertical, 10)
                         .onTapGesture { onTap() }
                         .contextMenu {
