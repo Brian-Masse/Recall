@@ -17,6 +17,8 @@ extension Colors {
 
 
 //MARK: Constants
+//These are the constants used across the app
+//most are already provided by UIUniversals
 extension Constants {
 //    forms
     static let formQuestionTitleSize: CGFloat = Constants.UIHeaderTextSize
@@ -32,6 +34,7 @@ extension Constants {
     
 //    exta
     static let UILargeCornerRadius: CGFloat = 30
+    static let subPadding: CGFloat = 7
     
 //    if there are any variables that need to be computed at the start, run their setup code here
     @MainActor
@@ -43,8 +46,6 @@ extension Constants {
 //    This is put in constants to avoid being computed every time a colored graph is displayed on screen
     static var tagColorsDic: Dictionary<String, Color> = Dictionary()
     static var goalColorsDic: Dictionary<String, Color> = Dictionary()
-    
-    
     
     @MainActor
     static private func setTagColorsDic() {
@@ -82,6 +83,7 @@ extension Constants {
         static let favoritesSplashPurpose: String =  "Favorites help you remember the experiences and moments most special to you. To favorite an event, select it and click 'favorite'"
 }
 
+//MARK: Custom Fonts
 struct AndaleMono: UniversalFont {
     var postScriptName: String = "AndaleMono"
     

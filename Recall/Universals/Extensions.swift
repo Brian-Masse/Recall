@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+//Most extensions used in this app are already provided by UIUniversals (https://github.com/Brian-Masse/UIUniversals)
+
 //MARK: Date
 extension Date {
     func round(to rounding: TimeRounding) -> Date {
@@ -22,8 +24,8 @@ extension Date {
     }
 }
 
+//MARK: Double
 extension Double {
-    
     func convertToString() -> String {
         let formatter = NumberFormatter()
         formatter.maximumFractionDigits = 2

@@ -9,12 +9,14 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+
+//This file contains form components and styles used across the app to make the more consistent and easier to acess
 //MARK: Basic
 
 
-//MARK: Icon Picker
 
 //MARK: Color Picker
+//a way to select colors, with a default pallette provided by the app
 struct ColorPickerOption: View {
     let color: Color
     @Binding var selectedColor: Color
@@ -176,6 +178,7 @@ struct SliderWithPrompt: View {
 }
 
 //MARK: Time Selector
+//Time selectors can either be a single slider, or, if the fineTimeSelection preference is selected, then it will use 2 sliders to make precise time slection easier
 struct TimeSelector: View {
     
     let label: String
@@ -239,10 +242,6 @@ struct TimeSelector: View {
                     .padding(.trailing, 5)
                 
                 Spacer()
-                
-//                ConditionalLargeRoundedButton(title: "", icon: "camera.filters", wide: false, allowTapOnDisabled: true) { showingFineSelector } action: {
-//                    withAnimation { showingFineSelector.toggle() }
-//                }
             }
         
             if !showingFineSelector {
@@ -270,6 +269,7 @@ struct TimeSelector: View {
 }
 
 //MARK: Length Selector
+//like a TimeSelector, LengthSelectors can either be a single slider, or, if the fineTimeSelection preference is selected, then it will use 2 sliders to make precise time slection easier
 struct LengthSelector: View {
     
     let label: String
@@ -414,7 +414,7 @@ struct StyledToggle<C: View>: View {
 }
 
 //MARK: StyledDatePicker
-
+//In the future, this will be entirley custom built. For now it is relying on Apple's default DatePicker
 struct StyledDatePicker: View {
     
     @Environment(\.colorScheme) var colorScheme
@@ -437,42 +437,6 @@ struct StyledDatePicker: View {
             }
             .tint(Colors.getAccent(from: colorScheme))
             .rectangularBackground(style: .secondary)
-        }
-    }
-}
-
-
-//MARK: CircularProgressBar
-struct CircularProgressView: View {
-    
-    @Environment(\.colorScheme) var colorScheme
-    
-    let currentValue: Double
-    let totalValue: Double
-    
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(
-                    colorScheme == .dark ? .black : Colors.baseLight,
-                    lineWidth: Constants.UICircularProgressWidth
-                )
-            Circle()
-                .trim(from: 0, to: CGFloat(currentValue / totalValue) )
-                .stroke(
-                    Colors.getAccent(from: colorScheme),
-                    style: StrokeStyle(
-                        lineWidth: Constants.UICircularProgressWidth,
-                        lineCap: .round
-                    )
-                )
-                .rotationEffect(.degrees(-90))
-            
-            VStack {
-                UniversalText("\(Int(currentValue)) / \(Int(totalValue))", size: Constants.UIHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
-                    .padding(.bottom, 5)
-                UniversalText("\(((currentValue / totalValue) * 100).round(to: 2)  )%", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            }.padding()
         }
     }
 }

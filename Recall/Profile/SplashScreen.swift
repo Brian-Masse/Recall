@@ -10,14 +10,13 @@ import RealmSwift
 import SwiftUI
 import UIUniversals
 
+//This presents when the app launches for the first time, or when a user logs out
 struct SplashScreen: View {
-    
-    @Environment(\.colorScheme) var colorScheme
-    
-    @Binding var page: ContentView.EntryPage
+    @Binding var page: RecallView.RecallPage
     
     @ObservedObject var realmManager = RecallModel.realmManager
     
+//    MARK: Body
     var body: some View {
         
         GeometryReader { geo in

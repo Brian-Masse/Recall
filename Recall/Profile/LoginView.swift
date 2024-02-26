@@ -11,11 +11,8 @@ import RealmSwift
 import AuthenticationServices
 import UIUniversals
 
-//BundleID: Masse-Brian.Recall
-//KeyID: 22NTNRT72G
-
+//This displays after the splash screen and prompts users to sign in / login
 struct LoginView: View {
-    
     @Environment(\.colorScheme) var colorScheme
     
     @State var email: String = ""
@@ -119,7 +116,8 @@ struct LoginView: View {
         
         .transition(.push(from: .trailing))
         
-        .alert(alertTitle, isPresented: $showingAlert) { Button( "dismiss", role: .cancel ) {}
+        .alert(alertTitle, isPresented: $showingAlert) {
+            Button( "dismiss", role: .cancel ) {}
         } message: {
             Text( alertMessage )
         }

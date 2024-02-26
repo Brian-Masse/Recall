@@ -10,7 +10,6 @@ import SwiftUI
 import UIUniversals
 
 //MARK: Animtable Modifiers
-
 struct SlideState: AnimatableModifier {
     
     var offset: CGFloat
@@ -27,7 +26,6 @@ struct SlideState: AnimatableModifier {
 }
 
 extension AnyTransition {
-    
     enum SlideDirection {
         case left
         case right
@@ -44,6 +42,22 @@ extension AnyTransition {
         case .left: return AnyTransition.asymmetric(insertion: fromRight, removal: toRight)
         default: return .identity
         }
+    }
+}
+
+//MARK: SlideTransition
+//This adds a slide to the page it is applied to. It is used in all non-app navigation
+//ie. entering the app, or leaving the splash screen
+private struct SlideTransition: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .transition(.push(from: .trailing))
+    }
+}
+
+extension View {
+    func slideTransition() -> some View {
+        modifier( SlideTransition() )
     }
 }
 
@@ -81,9 +95,4 @@ struct LogoAnimation: View {
             .onAppear { timer() }
     }
     
-}
-
-
-#Preview {
-    LogoAnimation()
 }

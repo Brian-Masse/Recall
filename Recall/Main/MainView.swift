@@ -13,6 +13,7 @@ import UIUniversals
 //MARK: MainView
 struct MainView: View {
     
+//    These are the pages in the main part of the app
     enum MainPage: Int, Identifiable {
         case calendar
         case goals
@@ -26,7 +27,6 @@ struct MainView: View {
     
     //    MARK: Tabbar
     struct TabBar: View {
-        
         struct TabBarIcon: View {
             
             @Binding var selection: MainView.MainPage
@@ -101,7 +101,7 @@ struct MainView: View {
     
     @State var currentPage: MainPage = .calendar
     @State var shouldRefreshData: Bool = false
-    @Binding var appPage: ContentView.EntryPage
+    @Binding var appPage: RecallView.RecallPage
     @State var currentDay: Date = .now
     
     @State private var showingHalfPage: Bool = false

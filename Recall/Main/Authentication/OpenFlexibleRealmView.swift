@@ -10,20 +10,28 @@ import SwiftUI
 import RealmSwift
 import UIUniversals
 
+//MARK: OpenRealmView
+//This presents the user with the progess of the realm as it opens
+//That process is very different for offline and Online
+//When the realm is opened this must move the signInProcess to .profileCreation
 struct OpenRealmView: View {
     
-    @Binding var page: ContentView.EntryPage
+    @Binding var page: RecallView.RecallPage
     
     let realmManager = RecallModel.realmManager
 
     var body: some View {
         
         if RealmManager.offline {
-            Text("loading Realm")
-                .task {
-                    await realmManager.openNonSyncedRealm()
-                    page = .profileCreation
-                }
+            VStack {
+                Spacer()
+                LogoAnimation()
+                Spacer()
+            }
+            .task {
+                await realmManager.openNonSyncedRealm()
+                page = .profileCreation
+            }
             
         } else {
             OpenFlexibleSyncRealmView(page: $page)
@@ -32,43 +40,46 @@ struct OpenRealmView: View {
     }
 }
 
+//MARK: FlexibleSyncRealmView
 struct OpenFlexibleSyncRealmView: View {
     
     @State var showingAlert: Bool = false
     @State var title: String = ""
     @State var alertMessage: String = ""
 
-    @Binding var page: ContentView.EntryPage
+    @Binding var page: RecallView.RecallPage
     
     @AsyncOpen(appId: "application-0-incki", timeout: .min) var asyncOpen
     
+//    MARK: LoadingCase
+//    This
     struct loadingCase: View {
         let icon: String
         let title: String
         
         var body: some View {
-            VStack {
-                Spacer()
-                
-                HStack {
-                    ResizableIcon(icon, size: Constants.UIDefaultTextSize)
-                    UniversalText(title, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: true)
-                }
-                .opacity(0.7)
-            }.padding(.bottom)
+            HStack {
+                ResizableIcon(icon, size: Constants.UIDefaultTextSize)
+                UniversalText(title, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: true)
+            }
+            .opacity(0.7)
+            .padding(.bottom)
         }
     }
     
+//    if the user cancels the opening of realm, the app should go back to the begining of
+//    the sign in process
     private func dismissScreen() {
         RecallModel.realmManager.realmLoaded = false
         RecallModel.realmManager.signedIn = false
         RecallModel.realmManager.hasProfile = false
     }
 
+//    MARK: Body
     var body: some View {
         
         GeometryReader { geo in
-            ZStack(alignment: .center) {
+            ZStack(alignment: .bottom) {
                 
                 switch asyncOpen {
                 case .connecting:
@@ -93,7 +104,7 @@ struct OpenFlexibleSyncRealmView: View {
                             }
                     }
                     
-                case .progress(let progress):
+                case .progress:
                     loadingCase(icon: "server.rack", title: "Downloading Realm from Server")
                     
                 case .error(let error):
@@ -106,16 +117,7 @@ struct OpenFlexibleSyncRealmView: View {
                 }
                 VStack {
                     Spacer()
-                    
                     LogoAnimation()
-                    HStack {
-                        Spacer()
-                        Image(systemName: "arrow.backward")
-                        UniversalText( "cancel", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                        Spacer()
-                    }
-                    .onTapGesture { dismissScreen() }
-                    
                     Spacer()
                 }
             }

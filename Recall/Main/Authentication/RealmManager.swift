@@ -11,7 +11,9 @@ import Realm
 import AuthenticationServices
 import SwiftUI
 
-//this handles logging in, and opening the right realm with the right credentials
+//RealmManager is responsible for signing/logging in users, opening a realm, and any other
+//high level function.
+//it functions both online and offline, but does not yet switch between them automatically
 class RealmManager: ObservableObject {
         
 //    if the app is being used offline, then the 'user' will be stored in defaults
@@ -20,8 +22,7 @@ class RealmManager: ObservableObject {
     static let offline: Bool = false
     static let appID = "application-0-incki"
     
-//    This realm will be generated once the profile has authenticated themselves (handled in LoginModel)
-//    and the AsyncOpen call in LoginView has completed
+//    This realm will be generated once the profile has authenticated themselves
     var realm: Realm!
     var app = RealmSwift.App(id: RealmManager.appID)
     var configuration: Realm.Configuration!
@@ -73,9 +74,14 @@ class RealmManager: ObservableObject {
         self.checkLogin()
     }
     
-//    MARK: Login Method Functions
-//    I need to handle the case where you dont get an email, but im not sure that literally ever happens
-//    so I think Im all set
+    static func stripEmail(_ email: String) -> String {
+        email.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    
+//    MARK: SignInWithAppple
+//    most of the authenitcation / registration is handled by Apple
+//    All I need to do is check that nothing went wrong, and then move the signIn process along
     func signInWithApple(_ authorization: ASAuthorization) {
         
         switch authorization.credential {
@@ -102,10 +108,7 @@ class RealmManager: ObservableObject {
         }
     }
     
-    static func stripEmail(_ email: String) -> String {
-        email.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-    
+//    MARK: SignInWithPassword
 //    the basic flow, for offline and online, is to
 //    1. check the email + password are valid (reigsterUser)
 //    2. authenticate the user (save their information into defaults or Realm)
@@ -196,8 +199,9 @@ class RealmManager: ObservableObject {
     }
     
     
-//    MARK: Authentication Functions
+//    MARK: Login / Authentication Functions
 //    If there is a user already signed in, skip the user authentication system
+//    the method for checking if a user is signedIn is different whether you're online or offline
     @MainActor
     func checkLogin() {
         if RealmManager.offline {
@@ -218,16 +222,6 @@ class RealmManager: ObservableObject {
         self.setConfiguration()
         withAnimation {
             self.signedIn = true
-        }
-    }
-    
-    private func setConfiguration() {
-        if !RealmManager.offline {
-            self.configuration = user!.flexibleSyncConfiguration(clientResetMode: .discardUnsyncedChanges())
-            
-            Realm.Configuration.defaultConfiguration = self.configuration
-        } else {
-            self.configuration = Realm.Configuration.defaultConfiguration
         }
     }
     
@@ -279,17 +273,28 @@ class RealmManager: ObservableObject {
         self.offlineUser = nil
     }
     
-//    MARK: Profile Functions
+//    MARK: SetConfiguration
+    private func setConfiguration() {
+        if !RealmManager.offline {
+            self.configuration = user!.flexibleSyncConfiguration(clientResetMode: .discardUnsyncedChanges())
+            
+            Realm.Configuration.defaultConfiguration = self.configuration
+        } else {
+            self.configuration = Realm.Configuration.defaultConfiguration
+        }
+    }
     
+    
+//    MARK: Profile Functions
     @MainActor
     func deleteProfile() async {
         self.logoutUser(onMain: true)
     }
     
+//    This checks the user has created a profile with Recall already
+//    if not it will trigger the ProfileCreationScene
     @MainActor
     func checkProfile() async {
-//        RealmManager already has a query subscription to access the index
-        
         let results: Results<RecallIndex> = RealmManager.retrieveObject()
         
         if let index = results.first(where: { index in
@@ -300,8 +305,6 @@ class RealmManager: ObservableObject {
         } else {
             createIndex()
         }
-
-        
     }
     
 //    If the user does not have an index, create one and add it to the database
@@ -323,13 +326,16 @@ class RealmManager: ObservableObject {
         self.index = index
     }
 
-//    MARK: Realm-Loaded Functions
+//    MARK: Realm Loading Functions
     @MainActor
 //    this is for offline app
+//    the online Realm is handled by a View who's job is to present the profess of realm
+//    to the user
     func openNonSyncedRealm() async {
         do {
             let realm = try await Realm()
             self.realm = realm
+            await RecallModel.wait(for: 2)
         } catch {
             print("error opening local realm: \(error.localizedDescription)")
         }
@@ -353,13 +359,10 @@ class RealmManager: ObservableObject {
         await self.checkProfile()
     }
     
+//    MARK: Subscription Functions
+//    Subscriptions are only used when the app is online
+//    otherwise you are able to retrieve all the data from the Realm by default
     private func addSubcriptions() async {
-//            This is a clunky way of doing this
-//            Effectivley, the order is login -> authenticate user (setup dud realm configuration) -> create synced realm (with responsive UI)
-//             ->add the subscriptions (which downloads the data from the cloud) -> enter into the app with proper config and realm
-//            Instead, when creating the configuration, use initalSubscriptions to provide the subs before creating the relam
-//            This wasn't working before, but possibly if there is an instance of Realm in existence it might work?
-        
         await self.removeAllNonBaseSubscriptions()
         
         let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarEventQuery.baseQuery )

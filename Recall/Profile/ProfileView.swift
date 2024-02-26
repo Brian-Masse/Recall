@@ -14,14 +14,13 @@ import UIUniversals
 struct ProfileView: View {
     
 //    MARK: Vars
-    
     @Namespace var profileNamespace
     
     @State var showingDataTransfer: Bool = false
     @State var showingEditingView: Bool = false
     @State var ownerID: String = ""
     
-    @Binding var appPage: ContentView.EntryPage
+    @Binding var appPage: RecallView.RecallPage
     
 //    When changing items in settings, set these to true to display a save button. This makes edditing settings more seamless.
     @State var madeNotificationChanges: Bool = false

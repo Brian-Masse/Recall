@@ -12,7 +12,9 @@ import UIUniversals
 
 //Each user will have one of these objects stored under their profile in the database
 //It is used for storing universal constants, such as the earliest event
-//Later I plan to use it to store abreiviated data marks, so Im not forced into downloading every event on every boot
+//as well as preferences
+//it is also used to index data, so as to improve the read speed of data and improve the
+//overall performance of the app
 class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
 //    MARK: Vars

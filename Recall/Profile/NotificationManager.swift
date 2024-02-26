@@ -8,6 +8,7 @@
 import Foundation
 import UserNotifications
 
+//This manages all the local notifications sent out by the app
 class NotificationManager {
     
 //    MARK: Vars

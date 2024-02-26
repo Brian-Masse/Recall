@@ -49,7 +49,7 @@ struct ProfileCreationView: View {
     @State var showingError: Bool = false
     
     @State private var activeScene: ProfileCreationScene = .splash
-    @Binding var page: ContentView.EntryPage
+    @Binding var page: RecallView.RecallPage
     
     @State var firstName: String    = ""
     @State var lastName: String     = ""
@@ -353,9 +353,7 @@ struct ProfileCreationView: View {
     @MainActor
     @ViewBuilder
     private func makeCompletionScreen() -> some View {
-        
         ZStack {
-            
             Rectangle()
                 .fill(.clear)
                 .contentShape(Rectangle())
@@ -412,7 +410,6 @@ struct ProfileCreationView: View {
     
 //    MARK: Body
     var body: some View {
-        
         VStack(alignment: .leading) {
             makeHeader()
                 .padding(.bottom, 20)

@@ -32,7 +32,7 @@ struct CalendarPageView: View {
     @State var showingCreateEventView: Bool = false
     @State var showingProfileView: Bool = false
     @State var showingDonationView: Bool = false
-    @Binding var appPage: ContentView.EntryPage
+    @Binding var appPage: RecallView.RecallPage
     
     @State var slideDirection: AnyTransition.SlideDirection = .right
     

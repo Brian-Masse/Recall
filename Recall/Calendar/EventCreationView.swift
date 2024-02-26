@@ -269,6 +269,7 @@ struct CalendarEventCreationView: View {
         }
     }
     
+//    MARK: RecallTypeSelector
     @ViewBuilder
     private func makeRecallTypeSelectorOption( _ label: String, icon: String, option: Bool ) -> some View {
         
@@ -295,6 +296,7 @@ struct CalendarEventCreationView: View {
         }
     }
     
+//    MARK: OverviewQuestions
     @ViewBuilder
     private func makeOverviewQuestions() -> some View {
         StyledTextField(title: "What is the name of this event?", binding: $title, clearable: true)
@@ -317,6 +319,7 @@ struct CalendarEventCreationView: View {
         makeRecallTypeSelector()
     }
     
+//    MARK: TagSelector
     @ViewBuilder
     private func makeTagSelector() -> some View {
         UniversalText("Select a tag", size: Constants.UIHeaderTextSize, font: Constants.titleFont)

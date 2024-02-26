@@ -9,10 +9,14 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+
+//The dataModel is responsible for computing the data used in the graphs and tables
+//throuhgout the app
+//It does all of this work asyncrounously to not bottleneck UX performance
 class RecallDataModel: ObservableObject {
     
-    //    MARK: Event Data Aggregators
-    
+//    MARK: Event Data Aggregators
+//    These are the functions that actually compute / aggregate the data
     private func makeData(dataAggregator: (RecallCalendarEvent) -> Double) async -> [DataNode] {
         events.compactMap { event in
             DataNode(date: event.startTime, count: dataAggregator(event), category: event.getTagLabel(), goal: "")
@@ -110,9 +114,9 @@ class RecallDataModel: ObservableObject {
     
     
     //    MARK: Event Data
-    //        These are typically used for the charts
+//        These are typically used for the charts
     @Published private var hourlyData: [DataNode] = []
-    //        in general the compressed data is used for data sumarries, that dont need every individaul node
+//        in general the compressed data is used for data sumarries, that dont need every individaul node
     @Published private var compressedHourlyData: [DataNode] = []
     @Published private var recentHourlyData: [DataNode] = []
     @Published private var recentCompressedHourlyData: [DataNode] = []
@@ -144,7 +148,6 @@ class RecallDataModel: ObservableObject {
     //    to quickly access, as opposed to recomputing it every time its needed
     private var goalMetCountIndex: Dictionary<String, (Int, Int)> = Dictionary()
     
-    //    MARK: Body
     private(set) var events: [RecallCalendarEvent] = []
     private(set) var goals: [RecallGoal] = []
     
@@ -165,7 +168,11 @@ class RecallDataModel: ObservableObject {
         Task { await self.indexGoalMetCount() }
     }
     
-    //    MARK: Make Data
+//    MARK: Make Data
+//    Not every screen in the DataPage needs access to all this data. So where it can be
+//    spared, I wait to compute a certain series of data until it is needed
+//    This makes the charts feel more responsive
+//    Each of these makeData functions computes all the necccessary data for their given page
     @MainActor
     func makeOverviewData() async {
         
