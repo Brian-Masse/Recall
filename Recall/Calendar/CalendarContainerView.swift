@@ -68,7 +68,7 @@ struct CalendarContainer: View {
     
     private func createEvent() {
         
-        let startTime = containerModel.startingTime
+        let startTime = containerModel.startingTime.round(to: .quarter)
         let endTime = startTime + ( RecallModel.index.defaultEventLength )
         
         let blankTag = RecallCategory()

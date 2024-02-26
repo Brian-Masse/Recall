@@ -49,7 +49,7 @@ extension AnyTransition {
 
 
 struct LogoAnimation: View {
-    @State var imageName: String = ""
+    @State var imageName: String = "logoAnimation1"
     @State var inReverse: Bool = false
 
     private func timer() {
