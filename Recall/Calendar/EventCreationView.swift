@@ -304,7 +304,6 @@ struct CalendarEventCreationView: View {
     
     @ViewBuilder
     private func makeTimeSelector() -> some View {
-        makeRecallTypeSelector()
         if recallByLength {
             LengthSelector("How long is this event?", length: $eventLength) { length in
                 let maxEndTime = endTime.resetToStartOfDay() + Constants.DayTime
@@ -314,6 +313,8 @@ struct CalendarEventCreationView: View {
             TimeSelector(label: "When did this event start?", time: $startTime)
             TimeSelector(label: "When did this event end?", time: $endTime)
         }
+        
+        makeRecallTypeSelector()
     }
     
     @ViewBuilder
@@ -406,10 +407,11 @@ struct CalendarEventCreationView: View {
 
 //    MARK: Body
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 7) {
             
             UniversalText(editing ? "Edit Event" : "Create Event", size: Constants.UITitleTextSize, font: Constants.titleFont)
                 .foregroundColor(.black)
+                .padding(.top, 7)
             
             ZStack(alignment: .bottom) {
                 ScrollView(.vertical) {
@@ -422,6 +424,8 @@ struct CalendarEventCreationView: View {
                             .padding(.bottom)
                         
                         if !editing {
+                            Divider(strokeWidth: 1)
+                            
                             makeTimeSelector()
                                 .padding(.bottom)
                             

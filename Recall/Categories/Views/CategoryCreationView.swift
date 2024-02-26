@@ -121,11 +121,11 @@ struct CategoryCreationView: View {
 //    MARK: Body
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 7) {
             
             UniversalText(editing ? "Edit Tag" : "Create Tag", size: Constants.UITitleTextSize, font: Constants.titleFont)
                 .foregroundColor(.black)
-                .padding(.bottom)
+                .padding(.top, 7)
             
             ZStack(alignment: .bottom) {
                 ScrollView(.vertical) {

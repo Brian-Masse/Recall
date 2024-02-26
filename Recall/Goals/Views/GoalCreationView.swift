@@ -209,17 +209,14 @@ struct GoalCreationView: View {
 //    MARK: Body
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 7) {
             UniversalText(editing ? "Edit Goal" : "Create Goal", size: Constants.UITitleTextSize, font: Constants.titleFont)
-                .padding(.bottom)
                 .foregroundColor(.black)
+                .padding(.top, 7)
 
             ZStack(alignment: .bottom) {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading) {
-                        
-//                        DatePicker("temp", selection: $creationDate)
-//                            .developer()
                         
                         makeOverviewSection()
                         
