@@ -127,6 +127,52 @@ CHANGES:
 
 BUG FIXES:
 
+### **Version 2.1.0**
+
+New Features
+
+- Added a logo animation when starting the app
+- New app icon
+- Added a swipe gesture to move between different days
+- Added a tap and hold gesture to create events straight from the calendar
+
+Changes
+
+- Added a loading animation when viewing Goals, Templates, Favorites, or Data
+- Added a multi-line textbox for all text inputs across the app
+- redesigned the templates page
+- redesigned the charts page
+
+Bug fixes
+
+- fixed an issue that prevented the SelectionView from working
+- Other various bugs
+
+backend
+
+- adopted UIUniversals
+- increased loading time performance
+
+### **Version 2.0.0**
+
+New Settings
+
+- added a toggle to view notes on event previews
+- added the ability to set the default length of events
+- added a toggle to turn on universal fine time selection
+- added a toggle to change default event snapping
+- added a toggle toa automatically start Recalls at the end of the most recent event
+- added a toggle to set the default Recall style
+
+Features
+
+- added a button to quickly clear the title or description of an event
+- added a way to select and move events to different days
+- added a way to favorite and view favorited events
+- added a way to change the date of a single event
+- added a way to recall events by length
+- added a splash screen to show new features in an update
+
 - expanded the height of certain charts in the data page when viewing this week.
 - fixed the longstanding bug that caused the app to sometimes crash when switch off of the calendar page
 
