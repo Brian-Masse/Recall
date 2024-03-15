@@ -20,7 +20,6 @@ struct RecallModel {
     static let dataModel: RecallDataModel = RecallDataModel()
     static let updateManager: UpdateManager = UpdateManager()
     
-    @MainActor
     static let realmManager: RealmManager = RealmManager()
     static var index: RecallIndex { RecallModel.realmManager.index  }
 

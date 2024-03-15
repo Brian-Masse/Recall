@@ -63,7 +63,7 @@ struct LoginView: View {
             .universalTextField()
             .padding(.bottom)
     }
-    
+    @MainActor
     @ViewBuilder
     private func makeSignInWithAppleSection() -> some View {
         if !RealmManager.offline {

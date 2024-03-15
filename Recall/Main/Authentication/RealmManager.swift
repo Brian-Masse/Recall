@@ -68,10 +68,9 @@ class RealmManager: ObservableObject {
     @MainActor lazy var dicQuery: (QueryPermission<DictionaryNode>)                = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     
     
-    @MainActor
     init() {
         RealmManager.getOfflineUsers()
-        self.checkLogin()
+        Task { await self.checkLogin() }
     }
     
     static func stripEmail(_ email: String) -> String {

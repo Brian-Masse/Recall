@@ -31,8 +31,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "25"
-                  endingLineNumber = "25"
-                  offsetFromSymbolStart = "124">
+                  endingLineNumber = "25">
                </Location>
                <Location
                   uuid = "05D06200-1B47-4878-B471-F9472C579FC3 - fe913c37dfe7febd"
@@ -46,8 +45,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "25"
-                  endingLineNumber = "25"
-                  offsetFromSymbolStart = "788">
+                  endingLineNumber = "25">
                </Location>
                <Location
                   uuid = "05D06200-1B47-4878-B471-F9472C579FC3 - cd45dd575b57a5e3"
@@ -61,8 +59,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "25"
-                  endingLineNumber = "25"
-                  offsetFromSymbolStart = "108">
+                  endingLineNumber = "25">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -77,8 +74,8 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "209"
-            endingLineNumber = "209"
+            startingLineNumber = "208"
+            endingLineNumber = "208"
             landmarkName = "checkLogin()"
             landmarkType = "7">
             <Locations>
@@ -94,8 +91,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "210"
-                  endingLineNumber = "210"
-                  offsetFromSymbolStart = "88">
+                  endingLineNumber = "210">
                </Location>
                <Location
                   uuid = "3DFF8733-0964-4B0E-B0F3-B6F2DD2044AB - a4800d2f639d630c"
@@ -109,8 +105,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "210"
-                  endingLineNumber = "210"
-                  offsetFromSymbolStart = "288">
+                  endingLineNumber = "210">
                </Location>
                <Location
                   uuid = "3DFF8733-0964-4B0E-B0F3-B6F2DD2044AB - a4800d2f639d63d2"
@@ -124,8 +119,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "208"
-                  endingLineNumber = "208"
-                  offsetFromSymbolStart = "300">
+                  endingLineNumber = "208">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -140,8 +134,8 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
             landmarkName = "signInWithApple(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -172,8 +166,8 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
+            startingLineNumber = "117"
+            endingLineNumber = "117"
             landmarkName = "signInWithPassword(email:password:)"
             landmarkType = "7">
             <Locations>
@@ -189,8 +183,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "115"
-                  endingLineNumber = "115"
-                  offsetFromSymbolStart = "112">
+                  endingLineNumber = "115">
                </Location>
                <Location
                   uuid = "85D326E8-DD6E-4D55-9D75-E93A25743875 - ac169376b84c730"
@@ -204,8 +197,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "115"
-                  endingLineNumber = "115"
-                  offsetFromSymbolStart = "92">
+                  endingLineNumber = "115">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -220,8 +212,8 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "signInWithPassword(email:password:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -236,8 +228,8 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
             landmarkName = "signInWithPassword(email:password:)"
             landmarkType = "7">
             <Locations>
@@ -253,8 +245,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "488">
+                  endingLineNumber = "128">
                </Location>
                <Location
                   uuid = "11B3DF58-2CDA-453E-BF66-308CE53B03E7 - 853e65a17a18fc99"
@@ -268,8 +259,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "684">
+                  endingLineNumber = "128">
                </Location>
                <Location
                   uuid = "11B3DF58-2CDA-453E-BF66-308CE53B03E7 - bfe9432d0953c8dd"
@@ -283,8 +273,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "44">
+                  endingLineNumber = "128">
                </Location>
                <Location
                   uuid = "11B3DF58-2CDA-453E-BF66-308CE53B03E7 - 3c1b7e0b48ec2b63"
@@ -298,8 +287,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "180">
+                  endingLineNumber = "128">
                </Location>
             </Locations>
          </BreakpointContent>
