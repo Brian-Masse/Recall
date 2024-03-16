@@ -47,6 +47,7 @@ struct StyledCalendarContainerView: View {
         
     }
     
+    @StateObject var containerModel: CalendarContainerModel = CalendarContainerModel()
     
 //    MARK: Body
     var body: some View {
@@ -63,6 +64,7 @@ struct StyledCalendarContainerView: View {
                                              geo: geo,
                                              startHour: startHour,
                                              events: filtered)
+                    .environmentObject(containerModel)
                 }
                 .padding(.leading, 40)
             }

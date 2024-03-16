@@ -18,50 +18,6 @@
             endingLineNumber = "36"
             landmarkName = "setCurrentDay(to:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "05D06200-1B47-4878-B471-F9472C579FC3 - cd45dd575b57a5e3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Recall.CalendarContainerModel.setCurrentDay(to: Foundation.Date) -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Calendar/CalendarContainerView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25">
-               </Location>
-               <Location
-                  uuid = "05D06200-1B47-4878-B471-F9472C579FC3 - fe913c37dfe7febd"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(UIUniversals.UniversalText, &lt;&lt;opaque return type of SwiftUI.View.foregroundColor(Swift.Optional&lt;SwiftUI.Color&gt;) -&gt; some&gt;&gt;.0)&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.offset(x: CoreGraphics.CGFloat, y: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, SwiftUI.Spacer)&gt; in Recall.CalendarContainer.CalendarView.makeTimeMarker(hour: CoreGraphics.CGFloat, label: Swift.String, color: SwiftUI.Color) -&gt; some"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Calendar/CalendarContainerView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25">
-               </Location>
-               <Location
-                  uuid = "05D06200-1B47-4878-B471-F9472C579FC3 - cd45dd575b57a5e3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Recall.CalendarContainerModel.setCurrentDay(to: Foundation.Date) -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Calendar/CalendarContainerView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -78,50 +34,6 @@
             endingLineNumber = "208"
             landmarkName = "checkLogin()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "3DFF8733-0964-4B0E-B0F3-B6F2DD2044AB - a4800d2f639d630c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Recall.RealmManager.checkLogin() -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "210"
-                  endingLineNumber = "210">
-               </Location>
-               <Location
-                  uuid = "3DFF8733-0964-4B0E-B0F3-B6F2DD2044AB - a4800d2f639d630c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Recall.RealmManager.checkLogin() -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "210"
-                  endingLineNumber = "210">
-               </Location>
-               <Location
-                  uuid = "3DFF8733-0964-4B0E-B0F3-B6F2DD2044AB - a4800d2f639d63d2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Recall.RealmManager.checkLogin() -&gt; ()"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "208"
-                  endingLineNumber = "208">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -170,36 +82,6 @@
             endingLineNumber = "117"
             landmarkName = "signInWithPassword(email:password:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "85D326E8-DD6E-4D55-9D75-E93A25743875 - ac169376b84c730"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for Recall.RealmManager.signInWithPassword(email: Swift.String, password: Swift.String) async -&gt; Swift.Optional&lt;Swift.String&gt;"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "115"
-                  endingLineNumber = "115">
-               </Location>
-               <Location
-                  uuid = "85D326E8-DD6E-4D55-9D75-E93A25743875 - ac169376b84c730"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for Recall.RealmManager.signInWithPassword(email: Swift.String, password: Swift.String) async -&gt; Swift.Optional&lt;Swift.String&gt;"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "115"
-                  endingLineNumber = "115">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -232,64 +114,6 @@
             endingLineNumber = "129"
             landmarkName = "signInWithPassword(email:password:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "11B3DF58-2CDA-453E-BF66-308CE53B03E7 - 853e65a17a18fc99"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for Recall.RealmManager.signInWithPassword(email: Swift.String, password: Swift.String) async -&gt; Swift.Optional&lt;Swift.String&gt;"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128">
-               </Location>
-               <Location
-                  uuid = "11B3DF58-2CDA-453E-BF66-308CE53B03E7 - 853e65a17a18fc99"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for Recall.RealmManager.signInWithPassword(email: Swift.String, password: Swift.String) async -&gt; Swift.Optional&lt;Swift.String&gt;"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128">
-               </Location>
-               <Location
-                  uuid = "11B3DF58-2CDA-453E-BF66-308CE53B03E7 - bfe9432d0953c8dd"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) await resume partial function for Recall.RealmManager.signInWithPassword(email: Swift.String, password: Swift.String) async -&gt; Swift.Optional&lt;Swift.String&gt;"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128">
-               </Location>
-               <Location
-                  uuid = "11B3DF58-2CDA-453E-BF66-308CE53B03E7 - 3c1b7e0b48ec2b63"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(5) suspend resume partial function for Recall.RealmManager.signInWithPassword(email: Swift.String, password: Swift.String) async -&gt; Swift.Optional&lt;Swift.String&gt;"
-                  moduleName = "Recall"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Main/Authentication/RealmManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -318,8 +142,8 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
             landmarkName = "drag"
             landmarkType = "24">
          </BreakpointContent>
@@ -334,8 +158,8 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
             landmarkName = "drag"
             landmarkType = "24">
          </BreakpointContent>

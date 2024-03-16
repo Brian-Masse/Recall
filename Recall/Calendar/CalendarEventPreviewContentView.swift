@@ -140,7 +140,7 @@ struct CalendarEventPreviewContentView: View {
         .foregroundColor(.black)
         .padding(.vertical, 2)
         .if(allowTapGesture) { view in view.onTapGesture { showingEvent = true } }
-        .frame(maxHeight: height)
+        .frame(height: height)
         .sheet(isPresented: $showingEvent) {
             CalendarEventView(event: event, events: events)
         }

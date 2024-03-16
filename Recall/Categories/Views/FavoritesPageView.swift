@@ -120,8 +120,6 @@ struct FavoritesPageView: View {
                                                         height: 100,
                                                         allowTapGesture: true,
                                                         forDisplay: true)
-//                        }
-                        
                         .contextMenu {
                             ContextMenuButton("unfavorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
                                 event.toggleFavorite()

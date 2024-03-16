@@ -92,7 +92,7 @@ struct CalendarEventView: View {
         let times = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
         
         HStack {
-            UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont ).padding(.bottom, 3)
+            UniversalText( event.title, size: Constants.UIMainHeaderTextSize, font: Constants.titleFont ).padding(.bottom, 3)
             Spacer()
             LargeRoundedButton("", icon: "arrow.down", color: event.getColor()) { presentationMode.wrappedValue.dismiss() }
         }
@@ -142,13 +142,12 @@ struct CalendarEventView: View {
         let endHour = min(startHour + event.getLengthInHours() + 2, 24)
         
         GeometryReader { geo in
-            
             StyledCalendarContainerView(at: event.startTime,
                                         with: [event],
                                         from: Int(startHour),
                                         to: Int(endHour),
                                         geo: geo,
-                                        scale: 0.75)
+                                        scale: 1)
         }.frame(height: 200)
     }
     
