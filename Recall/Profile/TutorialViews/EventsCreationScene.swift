@@ -15,9 +15,12 @@ extension TutorialViews {
     struct EventsCreationScene: View {
         
 //        MARK: Vars
-        @ObservedResults(RecallGoal.self) var goals
-        @ObservedResults(RecallCategory.self) var tags
-        @ObservedResults(RecallCalendarEvent.self) var events
+        @ObservedResults(RecallGoal.self,
+                         where: { goal in goal.ownerID == RecallModel.ownerID }) var goals
+        @ObservedResults(RecallCategory.self,
+                         where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
+        @ObservedResults(RecallCalendarEvent.self,
+                         where: { event in event.ownerID == RecallModel.ownerID}) var events
         
         @State var showingTagCreationView: Bool = false
         @State var showingEventCretionView: Bool = false
@@ -61,7 +64,7 @@ extension TutorialViews {
 //        MARK: Basic Info
         @ViewBuilder
         private func makeNameView() -> some View {
-            TextFieldWithPrompt(title: "What was the first thing you did today?", binding: $name)
+            StyledTextField(title: "What was the first thing you did today?", binding: $name)
                 .onChange(of: name) { newValue in
                     if newValue.isEmpty { return }
                     nextButtonIsActive = true
@@ -71,7 +74,7 @@ extension TutorialViews {
         
         @ViewBuilder
         private func makeNotesView() -> some View {
-            TextFieldWithPrompt(title: "Add additional notes about this event", binding: $notes)
+            StyledTextField(title: "Add additional notes about this event", binding: $notes)
                 .onChange(of: notes) { newValue in
                     if newValue.isEmpty { return }
                     nextButtonIsActive = true
@@ -133,8 +136,7 @@ extension TutorialViews {
                 CategoryCreationView(editing: false,
                                      tag: nil,
                                      label: "",
-                                     goalRatings: Dictionary(),
-                                     color: RecallModel.shared.activeColor)
+                                     goalRatings: Dictionary())
             }
             .onChange(of: tag) { newValue in
                 if newValue.label != "" && !newValue.label.isEmpty {
@@ -190,17 +192,14 @@ extension TutorialViews {
 //        MARK: CalendarView
         @ViewBuilder
         private func makeCalendarView() -> some View {
-            
-            let currentDayBinding: Binding<Date> = Binding {
-                .now
-            } set: { _, _ in }
-
-            ZStack(alignment: .bottom) {
+            VStack {
                 GeometryReader { geo in
-                    CalendarContainer(at: currentDayBinding,
-                                      with: Array(events),
-                                      from: 0, to: 24,
-                                      geo: geo)
+                    StyledCalendarContainerView(at: .now,
+                                                with: Array(events),
+                                                from: 0, to: 24,
+                                                geo: geo,
+                                                scale: 2)
+                    .environmentObject( CalendarContainerModel() )
                 }
                 LargeRoundedButton("Recall", icon: "arrow.up", wide: true) { showingEventCretionView = true }
             }

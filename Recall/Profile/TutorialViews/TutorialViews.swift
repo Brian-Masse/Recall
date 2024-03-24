@@ -9,33 +9,15 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
-//MARK: ViewModifiers
-
-private struct ConstrainedBroadScene: ViewModifier {
-    
-    let broadScene: TutorialViews.TutorialScene.BroadScene
-    
-    @Binding var activeScene: TutorialViews.TutorialScene
-    
-    func body(content: Content) -> some View {
-        content
-            .onAppear {
-                
-                let bounds = activeScene.getValidSceneBounds(for: broadScene)
-                if activeScene.rawValue < bounds.0 { activeScene = activeScene.setScene(to: bounds.0) }
-                if activeScene.rawValue > bounds.1 { activeScene = activeScene.setScene(to: bounds.1) }
-            }
-    }
-}
-
 extension View {
-    
     func constrainBroadScene( to broadScene: TutorialViews.TutorialScene.BroadScene, activeScene: Binding<TutorialViews.TutorialScene> ) -> some View  {
         modifier( ConstrainedBroadScene(broadScene: broadScene, activeScene: activeScene) )
     }
-    
 }
 
+//This walks new users through the process of creating their first goals, tags, and events
+//It contains explicit instructions on what each does, how to create them, and
+//how they fit together
 struct TutorialViews: View {
     
 //    MARK: Scenes
@@ -126,7 +108,7 @@ struct TutorialViews: View {
 
 //    MARK: Vars
     
-    @Binding var page: ContentView.EntryPage
+    @Binding var page: RecallView.RecallPage
     
     @State private var scene: TutorialViews.TutorialScene = .goalCreation
     @State private var broadScene: TutorialViews.TutorialScene.BroadScene = .goal
@@ -255,7 +237,6 @@ struct TutorialViews: View {
         }
     }
 
-    
 //    MARK: Body
     var body: some View {
         VStack {
@@ -276,5 +257,27 @@ struct TutorialViews: View {
             }
 
         }
+    }
+}
+
+
+//MARK: ConstrainedBroadScene
+//ConstrainedBroadScene is the larger scene a user is in (ie. creating their frist goal)
+//There may be smaller scenes within the broader scene (ie. naming their first goal)
+//when someone trys to skip a scene, this will help put them not at the immediete next scene, but at the next broader scene
+private struct ConstrainedBroadScene: ViewModifier {
+    
+    let broadScene: TutorialViews.TutorialScene.BroadScene
+    
+    @Binding var activeScene: TutorialViews.TutorialScene
+    
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                
+                let bounds = activeScene.getValidSceneBounds(for: broadScene)
+                if activeScene.rawValue < bounds.0 { activeScene = activeScene.setScene(to: bounds.0) }
+                if activeScene.rawValue > bounds.1 { activeScene = activeScene.setScene(to: bounds.1) }
+            }
     }
 }

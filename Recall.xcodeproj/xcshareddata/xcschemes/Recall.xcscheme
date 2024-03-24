@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1500"
+   LastUpgradeVersion = "1520"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -78,6 +78,11 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "CG_CONTEXT_SHOW_BACKTRACE"
+            value = "YES"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CG_NUMERICS_SHOW_BACKTRACE"
             value = "YES"
             isEnabled = "YES">
          </EnvironmentVariable>

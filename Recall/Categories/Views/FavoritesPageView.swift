@@ -17,39 +17,58 @@ struct FavoritesPageView: View {
 //    MARK: Vars
     var events: [RecallCalendarEvent]
     
-    @State var filteredEvents: [RecallCalendarEvent] = []
-    
-    @State var groupedEvents: Dictionary<Date, [RecallCalendarEvent]> = Dictionary()
-    
     @State var dates: [Date] = []
     @State var grouping: Calendar.Component = .month
+    @State var groupedEvents: Dictionary<Date, [RecallCalendarEvent]> = Dictionary()
+    
+    @State var dataLoaded: Bool = false
+    
+//    For the BlurScroll View
+    @State var scrollPosition: CGPoint = .zero
     
 //    MARK: Class Methods
-    private func setup() {
-        filteredEvents = filterEvents()
-        groupEvents()
-    }   
+//    Group events goes throughs the events and collects them into data categories based on the filter selected;
+//    ie. collecting al favorite events that happened in the same month
+//    this should always be done asyncrounously
+    private func updateGrouping() async {
+        self.dataLoaded = false
+        
+        let filteredAndSortedEvents = await filterEvents()
+        
+        let groupedEvents = await groupEvents(filteredAndSortedEvents: filteredAndSortedEvents)
+        
+        self.dates = await getDates(from: groupedEvents)
+        self.groupedEvents = groupedEvents
+
+        await RecallModel.wait(for: 0.2)
+        
+        withAnimation { self.dataLoaded = true }
+    }
     
-    private func filterEvents() -> [RecallCalendarEvent] {
+    
+    private func filterEvents() async -> [RecallCalendarEvent] {
         events.filter { event in event.isFavorite }.sorted { event1, event2 in
             event1.startTime > event2.startTime
         }
     }
     
-    private func groupEvents()  {
-        groupedEvents = Dictionary()
-        for event in filteredEvents {
+    private func groupEvents(filteredAndSortedEvents: [RecallCalendarEvent]) async -> Dictionary<Date, [RecallCalendarEvent]> {
+        var tempDic: Dictionary<Date, [RecallCalendarEvent]> = Dictionary()
+        
+        for event in filteredAndSortedEvents {
             let dateKey = event.startTime.prioritizeComponent(grouping)
             
-            if let _ = groupedEvents[dateKey] {
-                groupedEvents[dateKey]!.append(event)
+            if let _ = tempDic[dateKey] {
+                tempDic[dateKey]!.append(event)
             } else {
-                groupedEvents[dateKey] = [ event ]
+                tempDic[dateKey] = [ event ]
             }
         }
+        
+        return tempDic
     }
     
-    private func getDates() -> [Date] {
+    private func getDates(from groupedEvents: Dictionary<Date, [RecallCalendarEvent]>) async -> [Date] {
         return groupedEvents.map { key, value in key}.sorted { date1, date2 in
             date1 > date2
         }
@@ -63,7 +82,7 @@ struct FavoritesPageView: View {
         let events: [RecallCalendarEvent]
         let geo: GeometryProxy
         
-        @Binding var grouping: Calendar.Component
+        let grouping: Calendar.Component
         @State var showingFullSection: Bool = true
         
         @State var showingEventEditingView: Bool = false
@@ -85,13 +104,12 @@ struct FavoritesPageView: View {
                     UniversalText( makeDateLabel(date: date), size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
                     Spacer()
                     
-                    Image(systemName: showingFullSection ? "arrow.up" : "arrow.down")
-                        .padding(5)
-                        .padding(.horizontal)
-                        .rectangularBackground(0, style: .secondary)
-                        .onTapGesture {
-                            withAnimation { showingFullSection.toggle() }
-                        }
+                    LargeRoundedButton("", to: "",
+                                       icon: "arrow.up", to: "arrow.down",
+                                       small: true,
+                                       foregroundColor: nil,
+                                       style: .secondary)
+                    { showingFullSection } action: { showingFullSection.toggle() }
                 }
                 
                 if showingFullSection {
@@ -100,19 +118,9 @@ struct FavoritesPageView: View {
                                                         events: events,
                                                         width: geo.size.width - 50,
                                                         height: 100,
-                                                        allowTapGesture: true)
-                        
-                        .sheet(isPresented: $showingEventEditingView) {
-                            CalendarEventCreationView.makeEventCreationView(currentDay: .now,
-                                                                            editing: true,
-                                                                            event: event)
-                        }
-                        
+                                                        allowTapGesture: true,
+                                                        forDisplay: true)
                         .contextMenu {
-//                            ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
-//                                showingEventEditingView = true
-//                            }
-                            
                             ContextMenuButton("unfavorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
                                 event.toggleFavorite()
                             }
@@ -131,15 +139,6 @@ struct FavoritesPageView: View {
                 }
             }
         }
-        
-    }
-    
-    @ViewBuilder
-    private func makeSeperator() -> some View {
-        Rectangle()
-            .frame(height: 1)
-            .foregroundStyle(.gray)
-            .opacity(0.5)
     }
     
     @ViewBuilder
@@ -152,7 +151,7 @@ struct FavoritesPageView: View {
         }
         .if( grouping == selection ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
         .if( grouping != selection ) { view in view.rectangularBackground(style: .secondary) }
-        .onTapGesture { withAnimation { grouping = selection }}
+        .onTapGesture { if dataLoaded { withAnimation { grouping = selection }}}
     }
     
     @ViewBuilder
@@ -171,36 +170,35 @@ struct FavoritesPageView: View {
     var body: some View {
         
         GeometryReader { geo in
-            VStack(alignment: .leading) {
-                ScrollView {
-                    VStack(alignment: .leading) {
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(alignment: .leading) {
+                    makeGroupingSelector()
+                        .padding(.bottom, 7)
                         
-                        makeGroupingSelector()
-                            .padding(.bottom, 7)
-                        
-                        let dates = getDates()
-                        
+                    if dataLoaded {
                         ForEach( dates, id: \.self ) { date in
                             
                             DateCategory(date: date,
                                          groupedEvents: groupedEvents[date]!,
                                          events: events,
                                          geo: geo,
-                                         grouping: $grouping)
+                                         grouping: grouping)
                             
-                            
-                            makeSeperator()
+                            Divider()
                                 .padding(.bottom, 7)
                         }
+                    } else {
+                        CollectionLoadingView(count: 5, height: 100)
+                            .opacity(dataLoaded ? 0 : 1)
+                        
                     }
-                    .padding(.bottom, Constants.UIBottomOfPagePadding)
                 }
+                .padding(.bottom, Constants.UIBottomOfPagePadding)
             }
         }
-        .onChange(of: grouping) { _ in groupEvents() }
-        .onChange(of: events) {
-            
-            _ in groupEvents() }
-        .onAppear { setup() }
+        .onChange(of: grouping) { _ in Task { await updateGrouping() } }
+        .onChange(of: events)   { _ in Task { await updateGrouping() } }
+        .task { await updateGrouping() }
+        .onDisappear { dataLoaded = false }
     }
 }

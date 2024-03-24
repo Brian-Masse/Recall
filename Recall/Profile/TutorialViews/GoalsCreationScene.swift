@@ -15,7 +15,8 @@ extension TutorialViews {
     struct GoalCreationScene: View {
         
 //        MARK: Vars
-        @ObservedResults(RecallGoal.self) var goals
+        @ObservedResults(RecallGoal.self,
+                         where: { goal in goal.ownerID == RecallModel.ownerID }) var goals
         
         @State var showingGoalCreationView: Bool = false
         
@@ -83,7 +84,7 @@ extension TutorialViews {
         @ViewBuilder
         private func makeNameView() -> some View {
             VStack(alignment: .leading) {
-                TextFieldWithPrompt(title: "What is the name of your goal?", binding: $name)
+                StyledTextField(title: "What is the name of your goal?", binding: $name)
                     .onChange(of: name) { newValue in
                         if newValue.isEmpty { return }
                         nextButtonIsActive = true
@@ -105,7 +106,7 @@ extension TutorialViews {
         
         @ViewBuilder
         private func makeDescriptionView() -> some View {
-            TextFieldWithPrompt(title: "What is the purpose of this goal?", binding: $description)
+            StyledTextField(title: "What is the purpose of this goal?", binding: $description)
                 .onChange(of: description) { newValue in
                     if newValue.isEmpty { return }
                     nextButtonIsActive = true
@@ -204,7 +205,7 @@ extension TutorialViews {
             }
         }
         
-        
+//        MARK: Body
         var body: some View {
             
             VStack(alignment: .leading) {

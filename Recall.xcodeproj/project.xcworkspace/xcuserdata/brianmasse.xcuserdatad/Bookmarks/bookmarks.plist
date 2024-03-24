@@ -34,15 +34,15 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            UniversalText("\(dataModel.</string>
+				<string></string>
 				<key>leading</key>
-				<string>                                  font: Constants.mainFont)
-                    Spacer()
-        </string>
+				<string>                          font: Constants.mainFont)
+        }
+    }</string>
 				<key>trailing</key>
-				<string>roundedProgressData) / \(goal.targetHours)",
-                                  size: Constants.UISmallTextSize,
-                                  font: Constants.mainFont)
+				<string>
+    
+//    MARK: Body
 </string>
 			</dict>
 			<key>type</key>

@@ -13,6 +13,7 @@ import UIUniversals
 @MainActor
 struct ProfileEditorView: View {
     
+//    These are the error messages that can show up when editting the profile
     private enum Incompletion: String {
         case age = "you must be 18 years or older to register"
         case incomplete = "please provide your name, email, phone number, and birthday to continue"
@@ -22,7 +23,6 @@ struct ProfileEditorView: View {
     
 //    MARK: Methods
     private func submit() {
-        
         let completion = checkCompletion()
         if completion != .none {
             errorMessage = completion.rawValue
@@ -49,6 +49,8 @@ struct ProfileEditorView: View {
     
 //    MARK: Vars
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
+    
     let index = RecallModel.index
     
     @State var email: String
@@ -95,7 +97,7 @@ struct ProfileEditorView: View {
     private func makeContactInformationSection() -> some View {
             
         VStack(alignment: .leading) {
-            TextFieldWithPrompt(title: "email", binding: $email)
+            StyledTextField(title: "email", binding: $email)
             
             UniversalText( "phone number", size: Constants.UIHeaderTextSize, font: Constants.titleFont  )
             TextField( "phoneNumber", text: makePhoneNumberBinding() )
@@ -112,7 +114,7 @@ struct ProfileEditorView: View {
             DatePicker(selection: $dateOfBirth, displayedComponents: .date) {
                 UniversalText( "select", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
-            .tint(RecallModel.shared.activeColor)
+            .tint(Colors.getAccent(from: colorScheme))
             .rectangularBackground(style: .secondary)
         }
         
@@ -121,11 +123,11 @@ struct ProfileEditorView: View {
 //    MARK: Body
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 7) {
                 
             UniversalText("Edit Profile", size: Constants.UITitleTextSize, font: Constants.titleFont)
                 .foregroundColor(.black)
-                .padding(.bottom, 5)
+                .padding(.top, 7)
             
             ZStack (alignment: .bottom) {
                 
@@ -143,12 +145,15 @@ struct ProfileEditorView: View {
                         
                     }
                 }
-                .rectangularBackground(style: .primary)
+                .padding(.top)
+                .rectangularBackground(style: .primary, cornerRadius: 50)
+                .padding( .bottom, 7 )
                 
                 LargeRoundedButton("done", icon: "arrow.down") { submit() }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 30)
             }
         }
+        .ignoresSafeArea()
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
         .universalStyledBackgrond(.accent)

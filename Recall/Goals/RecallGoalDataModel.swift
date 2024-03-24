@@ -9,7 +9,13 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+//This is all the displayed data associated with RecallGoals
+//When the preview appears, it will begin computing / aggregating the data into these variables which will automatically update the cooresponding UI.
 class RecallGoalDataModel: ObservableObject {
+    
+//    MARK: Vars
+//    This variable controls how many entities to handle when creating previews of the data
+    private static var loadLimit = 50
     
     @Published var progressData: Double = 0
     @Published var progressOverTimeData: [DataNode] = []
@@ -18,19 +24,17 @@ class RecallGoalDataModel: ObservableObject {
     @Published var averageData: Double = 0
     @Published var goalMetData: (Int, Int) = (0, 0)
     
-    
 //    These two variables just hold copies of the variabels passed into the make data call
 //    This class will eventually be initialized for each goal on the preview page, and then get passed into the full size page if the user taps on it
     private var goal: RecallGoal!
     private var events: [RecallCalendarEvent] = []
     
-//    This variable controls how many
-    private static var loadLimit = 50
-    
 //    MARK: Convenience Functions
-    var roundedProgressData: Double {
-        progressData.round(to: 2)
-    }
+//    indicates whether the data has loaded enough to a point where it can be shown in UI
+//    otherwise, show a loading view while the data processes
+    @Published var dataLoaded: Bool = false
+    
+    var roundedProgressData: Double { progressData.round(to: 2) }
     
 //    This might be arbitrary, but im not exactly sure how Realm provides access with @ObservedResults
 //    so this ensures that everything is sorted
@@ -44,17 +48,29 @@ class RecallGoalDataModel: ObservableObject {
     @MainActor
     func makeData(for goal: RecallGoal, with events: [RecallCalendarEvent]) async {
         
+        if RecallModel.shared.goalDataValidated {
+            self.dataLoaded = true
+            return
+        }
+        
 //        store the passed variables in for conveinient access throuhgout the class
         self.goal = goal
         self.events = await sortEvents(from: events)
         
         await quickLoadData()
         
+        let progressData = await goal.getProgressTowardsGoal(from: events)
+        let averageData = await goal.getAverage(from: events)
+        let goalMetData = await goal.countGoalMet(from: events)
         
-        progressData =          await goal.getProgressTowardsGoal(from: events)
+        withAnimation {
+            self.progressData = progressData
+            self.averageData =  averageData
+            self.goalMetData =  goalMetData
+            self.dataLoaded = true
+        }
         
-        averageData = await goal.getAverage(from: events)
-        goalMetData = await goal.countGoalMet(from: events)
+        RecallModel.shared.setGoalDataValidation(to: true)
     }
     
 //    This loads previews of data
@@ -62,15 +78,21 @@ class RecallGoalDataModel: ObservableObject {
 //    while the slow load continues in the background
     @MainActor
     private func quickLoadData() async {
+        let recentProgressOverTimeData  = await makeProgressOverTimeData(recentData: true)
+        let progressOverTimeData        = await makeProgressOverTimeData(recentData: false)
         
-        recentProgressOverTimeData  = await makeProgressOverTimeData(recentData: true)
-        progressOverTimeData        = await makeProgressOverTimeData(fastLoad: false, recentData: false)
-        
+        withAnimation {
+            self.recentProgressOverTimeData =   recentProgressOverTimeData
+            self.progressOverTimeData =         progressOverTimeData
+        }
     }
     
     
 //    MARK: Data Aggregators
-    
+//    This creates a list representing the progress towards the current goal on a certain date. Each event will create a new node with I) the progress towards the goal, II) the goal, and III) the date of that progress.
+//    Individual graphs must collect progress nodes on the same date into one point.
+//    fastLoad limits the number of entries included in a list to give an output faster
+//    recentData only includes events from the past week
     private func makeProgressOverTimeData(fastLoad: Bool = true, recentData: Bool) async -> [DataNode] {
 
         var fastLoadCount: Int = 0
@@ -81,11 +103,12 @@ class RecallGoalDataModel: ObservableObject {
         for event in events {
             if fastLoad && fastLoadCount > RecallGoalDataModel.loadLimit { return nodes }
             if recentData && event.startTime < weekStart { return nodes }
-            
-//            DispatchQueue.main.sync {
-                let count = await event.getGoalPrgress(goal)
-                nodes.append(.init(date: event.startTime, count: count, category: "", goal: goal.label))
-//            }
+        
+            let count = await event.getGoalPrgress(goal)
+            nodes.append(.init(date: event.startTime,
+                               count: count,
+                               category: "",
+                               goal: goal.label))
             
             fastLoadCount += 1
             

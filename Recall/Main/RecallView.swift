@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    
-    enum EntryPage: String {
+struct RecallView: View {
+
+//    These are all the main pages of Recall
+    enum RecallPage: String {
         case splashScreen
         case login
         case profileCreation
@@ -21,52 +22,52 @@ struct ContentView: View {
     
     @ObservedObject var realmManager = RecallModel.realmManager
     
-    @State var entryPage: EntryPage = .splashScreen
+    @State var recallPage: RecallPage = .splashScreen
     
+    
+//    MARK: Body
     var body: some View {
 
         Group {
-//            the logic flow of these screens is top down last to first.
-//            This is so if any views additional conditions get 'cauhgt', as long as the scene progresses, the new screen will present
-//            This is mainly to avoid getting caught on the profile creation scene
             if !realmManager.signedIn {
-                switch entryPage {
-                case .splashScreen: SplashScreen(page: $entryPage).slideTransition()
+                switch recallPage {
+                case .splashScreen: SplashScreen(page: $recallPage).slideTransition()
                 case .login: LoginView().slideTransition()
-                default: Text("hi").onAppear() { entryPage = .splashScreen }
+                default: Text("hi").onAppear() { recallPage = .splashScreen }
                 }
             }
             else if !realmManager.realmLoaded {
-                OpenFlexibleSyncRealmView(page: $entryPage)
+                OpenRealmView(page: $recallPage)
                     .environment(\.realmConfiguration, realmManager.configuration)
                     .slideTransition()
             }
-            else if ( entryPage == .app ) {
-                MainView(appPage: $entryPage)
-                    .onAppear() { entryPage = .app }
+            else if ( recallPage == .app) {
+                MainView(appPage: $recallPage)
+                    .onAppear() { recallPage = .app }
                     .environment(\.realmConfiguration, realmManager.configuration)
                     .slideTransition()
             }
-            else if ( entryPage == .tutorial && !RecallModel.index.finishedTutorial ) {
-                TutorialViews(page: $entryPage)
+            else if ( recallPage == .tutorial && !RecallModel.index.finishedTutorial ) {
+                TutorialViews(page: $recallPage)
                     .slideTransition()
                     .environment(\.realmConfiguration, realmManager.configuration)
             }
-            else if ( entryPage == .profileCreation && !RecallModel.realmManager.profileLoaded )  {
-                ProfileCreationView(page: $entryPage)
+            else if ( recallPage == .profileCreation && !RecallModel.realmManager.profileLoaded )  {
+                ProfileCreationView(page: $recallPage)
                     .slideTransition()
                     .environment(\.realmConfiguration, realmManager.configuration)
             }
         }
-        .onAppear()                 { RecallModel.shared.setActiveColor(from: colorScheme) }
-        .onChange(of: colorScheme) { newValue in RecallModel.shared.setActiveColor(from: newValue) }
-        .onChange(of: entryPage)    { newValue in
-            switch newValue {
-            case .profileCreation:  if RecallModel.realmManager.profileLoaded { withAnimation { entryPage = .tutorial } }
-            case .tutorial:         if RecallModel.index.finishedTutorial { withAnimation { entryPage = .app } }
-                    
-            default: break
+        .onChange(of: recallPage)    { newValue in
+            var newPage = newValue
+            if newPage == .profileCreation {
+                if RecallModel.realmManager.profileLoaded { newPage = .tutorial }
             }
+            if newPage == .tutorial {
+                if RecallModel.index.finishedTutorial { newPage = .app }
+            }
+            
+            withAnimation { recallPage = newPage }
         }
     }
 }

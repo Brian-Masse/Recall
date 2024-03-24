@@ -12,7 +12,9 @@ import UIUniversals
 
 //Each user will have one of these objects stored under their profile in the database
 //It is used for storing universal constants, such as the earliest event
-//Later I plan to use it to store abreiviated data marks, so Im not forced into downloading every event on every boot
+//as well as preferences
+//it is also used to index data, so as to improve the read speed of data and improve the
+//overall performance of the app
 class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
 //    MARK: Vars
@@ -34,9 +36,10 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     //  Settings
     @Persisted var finishedTutorial: Bool = false
     
-    @Persisted var defaultEventLength: Double = Constants.HourTime * 2
+    ///measured in miliseconds (able to directly be added to dates)
+    @Persisted var defaultEventLength: Double = Constants.HourTime * 0.75
     @Persisted var showNotesOnPreview: Bool = true
-    @Persisted var defaultFineTimeSelector: Bool = true
+    @Persisted var defaultFineTimeSelector: Bool = false
     @Persisted var defaultEventSnapping: Int = TimeRounding.quarter.rawValue
     @Persisted var recallEventsAtEndOfLastRecall: Bool = true
     @Persisted var recallEventsWithEventTime: Bool = true
@@ -125,7 +128,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
                 
                 RealmManager.updateObject(self) { thawed in
                     thawed.notificationsEnabled = results
-                    if results { setNotificationTime(to: time) }
+                    if results { self.setNotificationTime(to: time) }
                 }
             }
         }

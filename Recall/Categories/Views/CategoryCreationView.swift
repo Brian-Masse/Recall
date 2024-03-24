@@ -28,19 +28,19 @@ struct CategoryCreationView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedResults( RecallGoal.self ) var goals
+    @ObservedResults( RecallGoal.self,
+                      where: { goal in goal.ownerID == RecallModel.ownerID }) var goals
     
     let editing: Bool
     let tag: RecallCategory?
     
     @State var label: String
     @State var goalRatings: Dictionary<String, String>
-    @State var color: Color
+    @State var color: Color = Colors.lightAccent
     
     @State var showingAlert: Bool = false
     
 //    MARK: Submit
-//    @MainActor
     private func submit() {
         
         if !checkCompletion() {
@@ -81,7 +81,7 @@ struct CategoryCreationView: View {
         makeTextField(title: "What would you like to call this tag?", binding: $label)
             .padding(.bottom)
         
-        LabeledColorPicker(label: "What Color is this tag?", color: $color)
+        StyledColorPicker(label: "What Color is this tag?", color: $color)
         .padding(.bottom)
     }
     
@@ -121,11 +121,11 @@ struct CategoryCreationView: View {
 //    MARK: Body
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 7) {
             
             UniversalText(editing ? "Edit Tag" : "Create Tag", size: Constants.UITitleTextSize, font: Constants.titleFont)
                 .foregroundColor(.black)
-                .padding(.bottom)
+                .padding(.top, 7)
             
             ZStack(alignment: .bottom) {
                 ScrollView(.vertical) {
@@ -150,12 +150,13 @@ struct CategoryCreationView: View {
             .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
             .padding(5)
             .universalTextStyle()
-            .rectangularBackground(style: .primary)
+            .rectangularBackground(style: .primary, cornerRadius: 50)
+            .padding(.bottom, 7)
         }
+        .ignoresSafeArea()
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .background(RecallModel.shared.activeColor)
-        
+        .universalStyledBackgrond(.accent)
         .defaultAlert($showingAlert,
                       title: "Incomplete Form",
                       description: "Please provide a label before creating the tag")

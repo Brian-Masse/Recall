@@ -44,7 +44,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         
         checkUpdateEarliestEvent()
         
-        updateIndex()
+        RecallModel.shared.updateEvent(self)
         updateRecentRecallEventEndTime(to: endTime)
     }
 
@@ -71,7 +71,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             if let retrievedTag = RecallCategory.getCategoryObject(from: tagID) { thawed.category = retrievedTag }
             thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
             
-            updateIndex()
+            RecallModel.shared.updateEvent(thawed)
             updateRecentRecallEventEndTime(to: endDate)
         }
         
@@ -83,7 +83,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.startTime = startDate ?? thawed.startTime
             thawed.endTime = endDate ?? thawed.endTime
             
-            updateIndex()
+            RecallModel.shared.updateEvent(thawed)
             updateRecentRecallEventEndTime(to: thawed.endTime)
         
         }
@@ -101,7 +101,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.startTime = newStart
             thawed.endTime = newEnd
             
-            updateIndex()
+            RecallModel.shared.updateEvent(thawed)
             
         }
         
@@ -113,7 +113,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         RealmManager.updateObject(self) { thawed in
             thawed.category = tag
             
-            updateIndex()
+            RecallModel.shared.updateEvent(thawed)
         }
     }
     
@@ -124,7 +124,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             
             thawed.goalRatings = list
             
-            updateIndex()
+            RecallModel.shared.updateEvent(thawed)
         }
     }
     
@@ -156,7 +156,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     @MainActor
     func getColor() -> Color {
-        category?.getColor() ?? RecallModel.shared.activeColor
+        category?.getColor() ?? Colors.lightAccent
     }
     
     func getTagLabel() -> String {
@@ -191,12 +191,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     }
     
 //    MARK: Class Methods
-    
-//    When an event changes in any way (is created, updated, or deleted), it needs to quickly reindex the goalWasMet data...
-    private func updateIndex() {
-        Task { await RecallModel.index.updateEvent(self) }
-    }
-    
+
     private func updateRecentRecallEventEndTime(to time: Date) {
         RecallModel.index.setMostRecentRecallEvent(to: time)
     }
@@ -223,10 +218,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             let endDate   = Calendar.current.date(bySettingHour: endComponents.hour!, minute: endComponents.minute!, second: 0, of: newDate!)
             
             updateDate(startDate: startDate, endDate: endDate)
-//            toggleTemplate()
         }
         
-        updateIndex()
+        RecallModel.shared.updateEvent(self)
 
     }
     

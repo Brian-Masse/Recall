@@ -12,15 +12,7 @@ import UIUniversals
 
 struct GoalPreviewView: View {
     
-    @ViewBuilder
-    func makeSeperator() -> some View {
-        Rectangle()
-            .universalTextStyle()
-            .frame(width: 1)
-            .padding(.vertical)
-    }
-    
-    @Environment(\.colorScheme) var colorScheme
+//    MARK: Vars
     @ObservedRealmObject var goal: RecallGoal
     @StateObject var dataModel: RecallGoalDataModel = RecallGoalDataModel()
     
@@ -28,106 +20,125 @@ struct GoalPreviewView: View {
     @State var showingEditingView: Bool = false
     @State var showingDeletionAlert: Bool = false
     
+    
+    
     let events: [RecallCalendarEvent]
     
+//    MARK: ViewModifiers
+    
+    
+        
+//    MARK: Header
+    @ViewBuilder
+    private func makeHeader() -> some View {
+        HStack(alignment: .center) {
+            UniversalText( goal.label,
+                           size: Constants.UIHeaderTextSize,
+                           font: Constants.titleFont)
+            Spacer()
+            UniversalText( RecallGoal.GoalFrequence.getType(from: goal.frequency),
+                           size: Constants.UISmallTextSize,
+                           font: Constants.mainFont )
+        }
+    }
+    
+//    MARK: MetaData
+    @ViewBuilder
+    private func makeMetaData() -> some View {
+        VStack {
+            HStack {
+                UniversalText(goal.goalDescription,
+                              size: Constants.UISmallTextSize,
+                              font: Constants.mainFont)
+                    .frame(maxWidth: 80)
+                    .padding(.vertical, 5)
+
+                Divider(vertical: true)
+
+                VStack(alignment: .trailing) {
+                    UniversalText("completed",
+                                  size: Constants.UISmallTextSize,
+                                  font: Constants.mainFont)
+                    UniversalText("\(dataModel.goalMetData.0)",
+                                  size: Constants.UIHeaderTextSize,
+                                  font: Constants.mainFont)
+
+                    UniversalText("missed",
+                                  size: Constants.UISmallTextSize,
+                                  font: Constants.mainFont)
+                    UniversalText("\(dataModel.goalMetData.1)",
+                                  size: Constants.UIHeaderTextSize,
+                                  font: Constants.mainFont)
+                }
+
+                Divider(vertical: true)
+
+                ActivityPerDay(recentData: true, title: "", goal: goal, data: dataModel.recentProgressOverTimeData)
+            }
+        }
+        .frame(height: 80)
+    }
+    
+//    MARK: ProgressBar
+    @ViewBuilder
+    private func makeProgressBar() -> some View {
+        ZStack(alignment: .leading) {
+            GeometryReader { geo in
+
+                Rectangle()
+                    .universalStyledBackgrond(.secondary, onForeground: true)
+                    .cornerRadius(Constants.UIDefaultCornerRadius)
+                
+                Rectangle()
+                    .universalStyledBackgrond(.accent, onForeground: true)
+                    .frame(width: max(min(dataModel.roundedProgressData / Double(goal.targetHours) * geo.size.width, geo.size.width),0) )
+                    .cornerRadius(Constants.UIDefaultCornerRadius)
+            }
+        }.frame(height: 20)
+        
+        HStack {
+            UniversalText("current progress",
+                          size: Constants.UISmallTextSize,
+                          font: Constants.mainFont)
+            Spacer()
+            UniversalText("\(dataModel.roundedProgressData) / \(goal.targetHours)",
+                          size: Constants.UISmallTextSize,
+                          font: Constants.mainFont)
+        }
+    }
+    
+//    MARK: Body
     @MainActor
     var body: some View {
-        
         VStack {
-            HStack(alignment: .center) {
-                UniversalText( goal.label,
-                               size: Constants.UIHeaderTextSize,
-                               font: Constants.titleFont)
-                Spacer()
-                UniversalText( RecallGoal.GoalFrequence.getType(from: goal.frequency),
-                               size: Constants.UISmallTextSize,
-                               font: Constants.mainFont )
-            }
-            .padding(.horizontal)
-            .padding(.top)
-            .padding(.bottom, 5)
-            .universalTextStyle()
-            
-            VStack {
-                HStack {
-                    UniversalText(goal.goalDescription, 
-                                  size: Constants.UISmallTextSize,
-                                  font: Constants.mainFont)
-                        .frame(maxWidth: 80)
-                        .padding(.vertical)
-
-                    makeSeperator()
-
-                    VStack(alignment: .trailing) {
-                        UniversalText("completed",
-                                      size: Constants.UISmallTextSize,
-                                      font: Constants.mainFont)
-                        UniversalText("\(dataModel.goalMetData.0)",
-                                      size: Constants.UIHeaderTextSize,
-                                      font: Constants.mainFont)
-
-                        UniversalText("missed",
-                                      size: Constants.UISmallTextSize,
-                                      font: Constants.mainFont)
-                        UniversalText("\(dataModel.goalMetData.1)",
-                                      size: Constants.UIHeaderTextSize,
-                                      font: Constants.mainFont)
-                    }
-
-                    makeSeperator()
-
-                    ActivityPerDay(recentData: true, title: "", goal: goal, data: dataModel.recentProgressOverTimeData)
+            if dataModel.dataLoaded {
+                VStack(alignment: .leading) {
+                    makeHeader()
+                        .padding(.bottom, 7)
                     
-//                    ActivityPerDay(recentData: true, title: "", goal: goal, events: events)
-//                        .frame(height: 100)
-                }
-            }
-            .padding(.horizontal)
-            .frame(height: 70)
-
-//            MARK: Progress Bar
-            VStack {
-                ZStack(alignment: .leading) {
-                    GeometryReader { geo in
-
-                        Rectangle()
-                            .cornerRadius(Constants.UIDefaultCornerRadius)
-                            .foregroundColor( colorScheme == .dark ? Colors.secondaryDark : Colors.secondaryLight )
-
-                        Rectangle()
-                            .universalStyledBackgrond(.accent, onForeground: true)
-                            .frame(width: max(min(dataModel.roundedProgressData / Double(goal.targetHours) * geo.size.width, geo.size.width),0) )
-                            .cornerRadius(Constants.UIDefaultCornerRadius)
-                    }
-                }
-                HStack {
-                    UniversalText("current progress",
-                                  size: Constants.UISmallTextSize,
-                                  font: Constants.mainFont)
+                    makeMetaData()
+                        .padding(.bottom, 7)
+                    
+                    makeProgressBar()
+                    
                     Spacer()
-                    UniversalText("\(dataModel.roundedProgressData) / \(goal.targetHours)",
-                                  size: Constants.UISmallTextSize,
-                                  font: Constants.mainFont)
                 }
+                .rectangularBackground(style: .primary, stroke: true)
+                .onTapGesture { showingGoalView = true }
+                .contextMenu {
+                    ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") { showingEditingView = true }
+                    ContextMenuButton("delete", icon: "trash", role: .destructive) { showingDeletionAlert = true }
+                }
+            } else {
+                LoadingView(height: 220)
             }
-            .frame(height: 40)
-            .padding(.horizontal)
-            .padding(.bottom)
-
-            Spacer()
         }
-        .rectangularBackground(0, style: .primary, stroke: true)
-        .onTapGesture { showingGoalView = true }
-        .contextMenu {
-            Button { showingEditingView = true }  label:          { Label("edit", systemImage: "slider.horizontal.below.rectangle") }
-            Button(role: .destructive) { showingDeletionAlert = true } label:    { Label("delete", systemImage: "trash") }
-        }
+        .task { await dataModel.makeData(for: goal, with: events) }
         .fullScreenCover(isPresented: $showingGoalView) {
             GoalView(goal: goal, events: events)
                 .environmentObject(dataModel)
         }
         .sheet(isPresented: $showingEditingView) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
-        .task { await dataModel.makeData(for: goal, with: events) }
         .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
             Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
         }

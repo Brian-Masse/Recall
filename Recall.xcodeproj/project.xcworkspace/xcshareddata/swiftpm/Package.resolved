@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "c569bec4d04da84030d94f376437bc4efda3686b",
-        "version" : "13.23.1"
+        "revision" : "a5e87a39cffdcc591f3203c11cfca68100d0b9a6",
+        "version" : "13.26.0"
       }
     },
     {
@@ -24,7 +24,7 @@
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
         "branch" : "master",
-        "revision" : "95cb711d60801e82542b866d16d75608c40d7b2e"
+        "revision" : "aea16af78a0bbfb2c964801becaecb9cade9335f"
       }
     },
     {
@@ -42,7 +42,7 @@
       "location" : "https://github.com/Brian-Masse/UIUniversals",
       "state" : {
         "branch" : "main",
-        "revision" : "b551beebb120ece9fb44301b77d1e054cbd25a22"
+        "revision" : "5ddb8ce1f6080bbd60bb34bad855e1090584d80d"
       }
     },
     {
@@ -51,7 +51,7 @@
       "location" : "https://github.com/Brian-Masse/UniversalDonationPackage",
       "state" : {
         "branch" : "main",
-        "revision" : "52e6f5830999c55aa094dc1d5580b6d31cddb665"
+        "revision" : "3f3fa8768534092652a1115c7f1cbaf383d7e504"
       }
     }
   ],

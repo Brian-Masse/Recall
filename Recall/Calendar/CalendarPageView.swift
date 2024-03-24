@@ -16,24 +16,25 @@ struct CalendarPageView: View {
 //    MARK: Convenience Functions
     
     private func setCurrentDay(with date: Date) {
-        if date > currentDay { slideDirection = .right }
+        if date > containerModel.currentDay { slideDirection = .right }
         else { slideDirection = .left }
         
-        withAnimation { currentDay = date }
+        withAnimation { containerModel.setCurrentDay(to: date) }
     }
     
 //   MARK: vars
-
+    static let sharedContainerModel = CalendarContainerModel()
+    
     let events: [RecallCalendarEvent]
     
+    @ObservedObject var containerModel: CalendarContainerModel = sharedContainerModel
+    
     @State var showingCreateEventView: Bool = false
-    @Binding var currentDay: Date
-    @State var slideDirection: AnyTransition.SlideDirection = .right
-//    @State var transition: AnyTransition = .identity
-
     @State var showingProfileView: Bool = false
     @State var showingDonationView: Bool = false
-    @Binding var appPage: ContentView.EntryPage
+    @Binding var appPage: RecallView.RecallPage
+    
+    @State var slideDirection: AnyTransition.SlideDirection = .right
     
     @Namespace private var calendarPageView
     
@@ -48,10 +49,10 @@ struct CalendarPageView: View {
     
     @ViewBuilder
     private func makeDateLabel() -> some View {
-        let matches = currentDay.matches(.now, to: .day)
+        let matches = containerModel.currentDay.matches(.now, to: .day)
         
         HStack {
-            let currentLabel    = formatDate(currentDay)
+            let currentLabel    = formatDate(containerModel.currentDay)
             let nowLabel        = formatDate(.now)
             
             if !matches {
@@ -69,18 +70,18 @@ struct CalendarPageView: View {
 //    MARK: DateSelector
     @ViewBuilder
     private func makeDateSelectorContent(from date: Date, string: String, month: String) -> some View {
-        let activeDay = date.matches(currentDay, to: .day)
+        let activeDay = date.matches(containerModel.currentDay, to: .day)
         
         if activeDay {
-            HStack {
-                UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true)
-                UniversalText( month, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, wrap: false, scale: true )
+            VStack {
+                UniversalText(string, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true)
+                UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true )
             }
-                .foregroundColor(.black)
+            .universalTextStyle()
         } else {
-            UniversalText(string, size: Constants.UISubHeaderTextSize, font: Constants.mainFont, wrap: false, scale: true)
+            UniversalText(string, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true)
                 .overlay {
-                    if date.isFirstOfMonth() && !currentDay.matches(date, to: .day) {
+                    if date.isFirstOfMonth() && !containerModel.currentDay.matches(date, to: .day) {
                         UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true )
                             .offset(y: -60)
                     }
@@ -96,10 +97,10 @@ struct CalendarPageView: View {
         let month = date.formatted(.dateTime.month(.abbreviated)).lowercased()
     
         makeDateSelectorContent(from: date, string: string, month: month)
-            .if(currentDay.matches(date, to: .day)) { view in
+            .if(containerModel.currentDay.matches(date, to: .day)) { view in
                 view
                     .padding()
-                    .rectangularBackground(0, style: .accent, foregroundColor: .black)
+                    .rectangularBackground(0, style: .secondary, foregroundColor: .black)
             }
             .onTapGesture { setCurrentDay(with: date) }
     }
@@ -118,7 +119,7 @@ struct CalendarPageView: View {
                 }
                 .onAppear() {
                     reader.scrollTo(4, anchor: .trailing)
-                }.onChange(of: currentDay) { newValue in
+                }.onChange(of: containerModel.currentDay) { newValue in
                     if newValue.matches(Date.now, to: .day) {
                         withAnimation { reader.scrollTo(4, anchor: .trailing) }
                     }
@@ -159,24 +160,25 @@ struct CalendarPageView: View {
     
     var body: some View {
         
-        ZStack {
-            VStack(alignment: .leading) {
-                makeHeader()
+        VStack(alignment: .leading) {
+            makeHeader()
+                .padding(.bottom, -7)
+            
+            HStack {
+                makeDateSelectors()
                 
-                HStack {
-                    makeDateSelectors()
-                    
-                    LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
-                }
-                
-                GeometryReader { geo in
-                    CalendarContainer(at: $currentDay, with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
-                }
+                LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
+            }
+            
+            GeometryReader { geo in
+                CalendarContainer(with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
+                    .environmentObject(containerModel)
+                    .onAppear { containerModel.setCurrentDay(to: containerModel.currentDay) }
             }
         }
         .padding()
         .sheet(isPresented: $showingCreateEventView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: currentDay)
+            CalendarEventCreationView.makeEventCreationView(currentDay: containerModel.currentDay)
         }
         .sheet(isPresented: $showingProfileView) {
             ProfileView(appPage: $appPage)
@@ -187,7 +189,6 @@ struct CalendarPageView: View {
         .universalBackground()
         
     }
-    
 }
 
 

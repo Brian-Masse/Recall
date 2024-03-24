@@ -9,6 +9,9 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+//When selecting an event, a 'halfPageView' pops up on the screen
+//this file handles how it is popped up, how it is dismissed, all its gesture / interaction
+//behavior, and the content presented
 struct HalfPageView<Content: View>: View {
     
     enum PageExpansion: Double {
@@ -105,13 +108,14 @@ struct HalfPageView<Content: View>: View {
                 
                 VStack(alignment: .leading) {
                     pageHeader()
-                        .padding()
+                        .padding    ()
                     if pageExpansion != .hide {
                         VStack {
                             Spacer()
                             HStack {
                                 Spacer()
                                 content
+                                    .onTapGesture { }
                                     .padding( .horizontal, 5 )
                                     .padding(. bottom)
                                 Spacer()

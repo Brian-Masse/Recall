@@ -49,7 +49,7 @@ struct ProfileCreationView: View {
     @State var showingError: Bool = false
     
     @State private var activeScene: ProfileCreationScene = .splash
-    @Binding var page: ContentView.EntryPage
+    @Binding var page: RecallView.RecallPage
     
     @State var firstName: String    = ""
     @State var lastName: String     = ""
@@ -180,10 +180,10 @@ struct ProfileCreationView: View {
     @ViewBuilder
     private func makeNameScene() -> some View {
         VStack {
-            TextFieldWithPrompt(title: "What is your first name?", binding: $firstName)
+            StyledTextField(title: "What is your first name?", binding: $firstName)
                 .padding(.bottom)
             
-            TextFieldWithPrompt(title: "What is your last name?", binding: $lastName)
+            StyledTextField(title: "What is your last name?", binding: $lastName)
                 .padding(.bottom)
         }
         .slideTransition()
@@ -214,10 +214,10 @@ struct ProfileCreationView: View {
         
         VStack {
             
-            TextFieldWithPrompt(title: "What is your email?", binding: $email)
+            StyledTextField(title: "What is your email?", binding: $email)
                 .padding(.bottom)
             
-            TextFieldWithPrompt( title: "What is your phone number?", binding: phoneBinding )
+            StyledTextField( title: "What is your phone number?", binding: phoneBinding )
                 .keyboardType(.numberPad)
             
             
@@ -243,10 +243,10 @@ struct ProfileCreationView: View {
             
             StyledDatePicker($dateOfBirth, title: "When is your birthday?")
             
-            if !validateBirthday(dateOfBirth) {
-                UniversalText( "you must be 18 years or older.", size: Constants.UISmallTextSize, font: Constants.mainFont )
+//            if !validateBirthday(dateOfBirth) {
+                UniversalText( "tap and hold on the date to change", size: Constants.UISmallTextSize, font: Constants.mainFont )
                     .padding(.leading)
-            }
+//            }
         }
         .slideTransition()
         .onAppear() { showingContinueButton = validateBirthday( dateOfBirth ) }
@@ -353,9 +353,7 @@ struct ProfileCreationView: View {
     @MainActor
     @ViewBuilder
     private func makeCompletionScreen() -> some View {
-        
         ZStack {
-            
             Rectangle()
                 .fill(.clear)
                 .contentShape(Rectangle())
@@ -412,7 +410,6 @@ struct ProfileCreationView: View {
     
 //    MARK: Body
     var body: some View {
-        
         VStack(alignment: .leading) {
             makeHeader()
                 .padding(.bottom, 20)

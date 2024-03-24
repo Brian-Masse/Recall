@@ -92,7 +92,7 @@ struct CalendarEventView: View {
         let times = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
         
         HStack {
-            UniversalText( event.title, size: Constants.UITitleTextSize, font: Constants.titleFont ).padding(.bottom, 3)
+            UniversalText( event.title, size: Constants.UIMainHeaderTextSize, font: Constants.titleFont ).padding(.bottom, 3)
             Spacer()
             LargeRoundedButton("", icon: "arrow.down", color: event.getColor()) { presentationMode.wrappedValue.dismiss() }
         }
@@ -114,7 +114,8 @@ struct CalendarEventView: View {
             
             if event.goalRatings.count != 0 {
                 UniversalText("Goal Progress", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                GoalTags(goalRatings: Array(event.goalRatings), events: events)
+//                TODO: This may be the same view as is present on the Tags, so you can possibly recycle that code
+//                GoalTags(goalRatings: Array(event.goalRatings), events: events)
             }
         }.rectangularBackground(7, style: .primary, stroke: true)
     }
@@ -140,11 +141,13 @@ struct CalendarEventView: View {
         let startHour = event.startTime.getHoursFromStartOfDay()
         let endHour = min(startHour + event.getLengthInHours() + 2, 24)
         
-        let currentDay = Binding { event.startTime } set: { _, _ in }
-        
         GeometryReader { geo in
-            CalendarContainer(at: currentDay, with: [event], from: Int(startHour), to: Int(endHour), geo: geo, scale: 0.75,
-                              background: true, overrideHeight: 200)
+            StyledCalendarContainerView(at: event.startTime,
+                                        with: [event],
+                                        from: Int(startHour),
+                                        to: Int(endHour),
+                                        geo: geo,
+                                        scale: 1)
         }.frame(height: 200)
     }
     

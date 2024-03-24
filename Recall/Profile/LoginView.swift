@@ -11,11 +11,8 @@ import RealmSwift
 import AuthenticationServices
 import UIUniversals
 
-//BundleID: Masse-Brian.Recall
-//KeyID: 22NTNRT72G
-
+//This displays after the splash screen and prompts users to sign in / login
 struct LoginView: View {
-    
     @Environment(\.colorScheme) var colorScheme
     
     @State var email: String = ""
@@ -33,7 +30,6 @@ struct LoginView: View {
     
 //    MARK: Methods
     private func submit() async {
-        
         loggingIn = true
         
         if checkCompletion() {
@@ -54,78 +50,73 @@ struct LoginView: View {
         !email.isEmpty && !password.isEmpty
     }
     
+//    MARK: ViewBuilders
+    @ViewBuilder
+    private func makeEmailPasswordAuthSection() -> some View {
+        UniversalText( "Email + password", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+        
+        TextField("email", text: $email)
+            .rectangularBackground(style: .secondary)
+            .universalTextField()
+        SecureField("password", text: $password)
+            .rectangularBackground(style: .secondary)
+            .universalTextField()
+            .padding(.bottom)
+    }
+    @MainActor
+    @ViewBuilder
+    private func makeSignInWithAppleSection() -> some View {
+        if !RealmManager.offline {
+            UniversalText( "or sign in with Apple", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                .padding(.vertical, 5)
+            
+            SignInWithAppleButton(.signIn) { request in
+                request.requestedScopes = [.fullName, .email]
+            } onCompletion: { result in
+                switch result {
+                case .success(let authResults):
+                    print("Authorisation with Apple successful")
+                    RecallModel.realmManager.signInWithApple(authResults)
+                    
+                case .failure(let error):
+                    print("Authorisation failed: \(error.localizedDescription)")
+                    alertMessage = error.localizedDescription
+                    showingAlert = true
+                }
+            }
+            .signInWithAppleButtonStyle(colorScheme == .light ? .black : .white)
+            .cornerRadius(Constants.UIDefaultCornerRadius)
+            .frame(height: 50)
+        }
+    }
+    
     
 //    MARK: Body
     var body: some View {
-        
-        VStack {
-            
-            VStack(alignment: .leading) {
-                UniversalText("Create a Recall account", size: Constants.UITitleTextSize, font: Constants.titleFont)
-                    .padding(.bottom)
 
-                ZStack(alignment: .bottom) {
-                    ScrollView(.vertical) {
-                        VStack(alignment: .leading) {
-                            
-//                            MARK: Email Password
-                            UniversalText( "Email + password", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
-                            
-                            TextField("email", text: $email)
-                                .rectangularBackground(style: .secondary)
-                                .universalTextField()
-                            SecureField("password", text: $password)
-                                .rectangularBackground(style: .secondary)
-                                .universalTextField()
-                                .padding(.bottom)
-                            
-//                           MARK: Sign in with Apple
-                            UniversalText( "or sign in with Apple", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
-                                .padding(.vertical, 5)
-                            
-                            SignInWithAppleButton(.signIn) { request in
-                                request.requestedScopes = [.fullName, .email]
-                            } onCompletion: { result in
-                                switch result {
-                                case .success(let authResults):
-                                    print("Authorisation with Apple successful")
-                                    RecallModel.realmManager.signInWithApple(authResults)
-                                    
-                                case .failure(let error):
-                                    print("Authorisation failed: \(error.localizedDescription)")
-                                    alertMessage = error.localizedDescription
-                                    showingAlert = true
-                                }
-                            }
-                            .signInWithAppleButtonStyle(colorScheme == .light ? .black : .white)
-                            .cornerRadius(Constants.UIDefaultCornerRadius)
-                            
-                            Spacer()
-                        }
-                        .padding(.bottom, Constants.UIBottomOfPagePadding)
-                    }
-                    
-                    
-                    ZStack {
-                        ConditionalLargeRoundedButton(title: "create / login",
-                                                      icon: "arrow.forward",
-                                                      condition: checkCompletion) { Task { await submit() }  }
-                        
-                        if loggingIn { ProgressView() }
-                    }.onAppear() { loggingIn = false }
-                    
-                }
-                .universalTextStyle()
-            }
+        VStack(alignment: .leading) {
+            UniversalText("Create a Recall account", size: Constants.UITitleTextSize, font: Constants.titleFont)
+                .padding(.bottom)
+
+            makeEmailPasswordAuthSection()
+            
+            makeSignInWithAppleSection()
+            
+            Spacer()
+                
+            ConditionalLargeRoundedButton(title: "create / login",
+                                              icon: "arrow.forward",
+                                              condition: checkCompletion) { Task { await submit() }  }
+            .onAppear() { loggingIn = false }
         }
-        .padding(.top, 60)
-        .padding(.bottom, 30)
+        .universalTextStyle()
+        .padding(.bottom, 40)
         .padding(7)
-        .ignoresSafeArea()
         .universalBackground()
+        
         .transition(.push(from: .trailing))
-        .alert(alertTitle,
-               isPresented: $showingAlert) {
+        
+        .alert(alertTitle, isPresented: $showingAlert) {
             Button( "dismiss", role: .cancel ) {}
         } message: {
             Text( alertMessage )

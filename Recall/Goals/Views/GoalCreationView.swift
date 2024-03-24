@@ -121,7 +121,8 @@ struct GoalCreationView: View {
     
 //    MARK: Vars
     @Environment(\.presentationMode) var presentationMode
-    @ObservedResults(RecallCategory.self) var tags
+    @ObservedResults(RecallCategory.self,
+                     where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
     
     let editing: Bool
     let goal: RecallGoal?
@@ -142,8 +143,8 @@ struct GoalCreationView: View {
     @ViewBuilder
     private func makeOverviewSection() -> some View {
         VStack(alignment: .leading) {
-            TextFieldWithPrompt(title: "What's the name of this goal?", binding: $label)
-            TextFieldWithPrompt(title: "What's the purpose of this goal?", binding: $description)
+            StyledTextField(title: "What's the name of this goal?", binding: $label)
+            StyledTextField(title: "What's the purpose of this goal?", binding: $description)
                 .padding(.bottom)
         }
         
@@ -208,17 +209,14 @@ struct GoalCreationView: View {
 //    MARK: Body
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 7) {
             UniversalText(editing ? "Edit Goal" : "Create Goal", size: Constants.UITitleTextSize, font: Constants.titleFont)
-                .padding(.bottom)
                 .foregroundColor(.black)
+                .padding(.top, 7)
 
             ZStack(alignment: .bottom) {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading) {
-                        
-//                        DatePicker("temp", selection: $creationDate)
-//                            .developer()
                         
                         makeOverviewSection()
                         
@@ -235,8 +233,10 @@ struct GoalCreationView: View {
             }
             .padding(5)
             .universalTextStyle()
-            .rectangularBackground(style: .primary)
+            .rectangularBackground(style: .primary, cornerRadius: 50)
+            .padding(.bottom, 7)
         }
+        .ignoresSafeArea()
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .padding([.top, .horizontal], Constants.UIFormPagePadding)
         .universalStyledBackgrond(.accent)

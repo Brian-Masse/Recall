@@ -11,33 +11,38 @@ import Realm
 import AuthenticationServices
 import SwiftUI
 
-//this handles logging in, and opening the right realm with the right credentials
+//RealmManager is responsible for signing/logging in users, opening a realm, and any other
+//high level function.
+//it functions both online and offline, but does not yet switch between them automatically
 class RealmManager: ObservableObject {
+        
+//    if the app is being used offline, then the 'user' will be stored in defaults
+    static let defaults = UserDefaults.standard
     
+    static let offline: Bool = false
     static let appID = "application-0-incki"
     
-//    This realm will be generated once the profile has authenticated themselves (handled in LoginModel)
-//    and the AsyncOpen call in LoginView has completed
+//    This realm will be generated once the profile has authenticated themselves
     var realm: Realm!
     var app = RealmSwift.App(id: RealmManager.appID)
     var configuration: Realm.Configuration!
     
     var index: RecallIndex!
-    
-//    var localRealm: Realm!
 
 //    This is the realm profile that signed into the app
+//    when offline, there will be no user (user is a construct used for device sync)
+//    instead a key, email, and password will be saved into defaults, and that will be used as a 'user'
+//    the most important is the key, which will coorespond to the user id and access data
     var user: User?
+    var offlineUser: OfflineUser?
     
 //    These variables are just temporary storage until the realm is initialized, and can be put in the database
-//    they are not stored locally
     var firstName: String = ""
     var lastName: String = ""
     var email: String = ""
     
 //   if the user uses signInWithApple, this will be set to true once it successfully retrieves the credentials
 //   Then the app will bypass the setup portion that asks for your first and last name
-//    This shoudl probably be persisted, so that if a user closes the app between signing in and setting up their profile, it wotn show it
     static var usedSignInWithApple: Bool = false
     
     @Published var signedIn: Bool = false
@@ -63,14 +68,19 @@ class RealmManager: ObservableObject {
     @MainActor lazy var dicQuery: (QueryPermission<DictionaryNode>)                = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     
     
-    @MainActor
     init() {
-        self.checkLogin()
+        RealmManager.getOfflineUsers()
+        Task { await self.checkLogin() }
     }
     
-//    MARK: Login Method Functions
-//    I need to handle the case where you dont get an email, but im not sure that literally ever happens
-//    so I think Im all set
+    static func stripEmail(_ email: String) -> String {
+        email.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    
+//    MARK: SignInWithAppple
+//    most of the authenitcation / registration is handled by Apple
+//    All I need to do is check that nothing went wrong, and then move the signIn process along
     func signInWithApple(_ authorization: ASAuthorization) {
         
         switch authorization.credential {
@@ -85,7 +95,7 @@ class RealmManager: ObservableObject {
                 let realmCredentials = Credentials.apple(idToken: idTokenString!)
                 
                 RealmManager.usedSignInWithApple = true
-                Task { await RecallModel.realmManager.authUser(credentials: realmCredentials ) }
+                Task { await RecallModel.realmManager.authOnineUser(credentials: realmCredentials ) }
                 
             } else {
                 print("unable to retrieve idenitty token")
@@ -97,33 +107,40 @@ class RealmManager: ObservableObject {
         }
     }
     
+//    MARK: SignInWithPassword
+//    the basic flow, for offline and online, is to
+//    1. check the email + password are valid (reigsterUser)
+//    2. authenticate the user (save their information into defaults or Realm)
+//    3. postAuthenticatinInit (move onto opening the realm)
     func signInWithPassword(email: String, password: String) async -> String? {
         
         let fixedEmail = RealmManager.stripEmail(email)
-        let error =  await registerUser(fixedEmail, password)
-        if error == nil {
-            let credentials = Credentials.emailPassword(email: fixedEmail, password: password)
-            self.email = fixedEmail
-            let secondaryError = await authUser(credentials: credentials)
-            
-            if secondaryError != nil {
-                print("error authenticating registered user")
-                return secondaryError!.localizedDescription
-            }
-
-        }
         
-        return error?.localizedDescription ?? nil
-    }
-    
-    static func stripEmail(_ email: String) -> String {
-        email
-            .lowercased()
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if RealmManager.offline {
+            let error = await registerOfflineUser(fixedEmail, password)
+            if error != nil { return error }
+            
+            await authOfflineUser(fixedEmail, password: password)
+        } else {
+            let error =  await registerOnlineUser(fixedEmail, password)
+            if error == nil {
+                let credentials = Credentials.emailPassword(email: fixedEmail, password: password)
+                self.email = fixedEmail
+                let secondaryError = await authOnineUser(credentials: credentials)
+                
+                if secondaryError != nil {
+                    print("error authenticating registered user")
+                    return secondaryError!.localizedDescription
+                }
+            }
+            return error?.localizedDescription ?? nil
+        }
+        return ""
     }
     
 //    only needs to run for email + password signup
-    private func registerUser(_ email: String, _ password: String) async -> Error? {
+//    checks whether the provided email + password is valid
+    private func registerOnlineUser(_ email: String, _ password: String) async -> Error? {
         
         let client = app.emailPasswordAuth
         do {
@@ -136,27 +153,67 @@ class RealmManager: ObservableObject {
         }
     }
     
-    
-    
-//    MARK: Authentication Functions
-//    If there is a user already signed in, skip the user authentication system
     @MainActor
-    func checkLogin() {
-        if let user = app.currentUser {
-            self.user = user
-            self.postAuthenticationInit()
+    private func registerOfflineUser(_ email: String, _ password: String) -> String? {
+        if let user = RealmManager.offlineUsers.first(where: { user in
+            user.email == email
+        }) {
+//            nil if you're logging into an existing account - no error
+//            error if the email exists but the passwords dont match
+            if user.password == password { return nil }
+            else { return "failed to register user: inocrrect password" }
         }
+        
+        return nil
     }
     
-//    Called by the LoginModel once credentials are provided
-    func authUser(credentials: Credentials) async -> Error? {
 //        this simply logs the profile in and returns any status errors
-//        Once the user is signed in, the LoginView loads the realm using the config generated in self.post-authentication()
+//        Once done, it moves the app onto the loadingRealm phase
+    func authOnineUser(credentials: Credentials) async -> Error? {
         do {
             self.user = try await app.login(credentials: credentials)
             await self.postAuthenticationInit()
             return nil
         } catch { print("error logging in: \(error.localizedDescription)"); return error }
+    }
+    
+    @MainActor
+    func authOfflineUser( _ email: String, password: String ) {
+        var id: String = UUID().uuidString
+        
+        if let user = RealmManager.offlineUsers.first(where: { user in
+            user.email == email
+        }) {
+            id = user.id
+        }
+        
+        let user = OfflineUser(email: email, password: password, id: id)
+        user.signedIn = true
+        
+        self.offlineUser = user
+        
+        RealmManager.writeToDefaults(user, at: id)
+        
+        postAuthenticationInit()
+    }
+    
+    
+//    MARK: Login / Authentication Functions
+//    If there is a user already signed in, skip the user authentication system
+//    the method for checking if a user is signedIn is different whether you're online or offline
+    @MainActor
+    func checkLogin() {
+        if RealmManager.offline {
+            if let user = RealmManager.offlineUsers.first(where: { user in user.signedIn }) {
+                self.offlineUser = user
+                self.postAuthenticationInit()
+            }
+        } else {
+            if let user = app.currentUser {
+                self.user = user
+                self.postAuthenticationInit()
+            }
+        }
     }
     
     @MainActor
@@ -167,73 +224,86 @@ class RealmManager: ObservableObject {
         }
     }
     
-    private func setConfiguration() {
-        self.configuration = user!.flexibleSyncConfiguration(clientResetMode: .discardUnsyncedChanges())
-//        self.configuration.schemaVersion = 1
-        
-        Realm.Configuration.defaultConfiguration = self.configuration
-    }
-    
+//    MARK: Logout
     @MainActor
     func logoutUser(onMain: Bool = false) {
-        if let user = self.user {
-            user.logOut { error in
-                if let error = error { print("error logging out: \(error.localizedDescription)") }
+        if RealmManager.offline {
+            if let offlineUser = self.offlineUser {
                 
+                let newUser = offlineUser
+                newUser.signedIn = false
+                
+                RealmManager.writeToDefaults(newUser, at: newUser.id)
                 NotificationManager.shared.clearNotifications()
                 
-                if !onMain {
-                    DispatchQueue.main.sync {
+                self.signedIn = false
+                self.hasProfile = false
+                self.realmLoaded = false
+            }
+            
+        } else {
+            if let user = self.user {
+                user.logOut { error in
+                    if let error = error { print("error logging out: \(error.localizedDescription)") }
+                    
+                    NotificationManager.shared.clearNotifications()
+                    
+                    if !onMain {
+                        DispatchQueue.main.sync {
+                            self.signedIn = false
+                            self.hasProfile = false
+                            self.realmLoaded = false
+                        }
+                    } else {
                         self.signedIn = false
                         self.hasProfile = false
                         self.realmLoaded = false
                     }
-                } else {
-                    self.signedIn = false
-                    self.hasProfile = false
-                    self.realmLoaded = false
+                }
+            }
+            Task {
+                do { try await self.clearAllSubscriptions() } catch {
+                    print("error clearing subscriptions: \(error.localizedDescription)")
                 }
             }
         }
         
         self.user = nil
-        
-        Task {
-            do {
-                try await self.clearAllSubscriptions()
-            } catch {
-                print("error clearing subscriptions: \(error.localizedDescription)")
-            }
-        }
-    
+        self.offlineUser = nil
     }
+    
+//    MARK: SetConfiguration
+    private func setConfiguration() {
+        if !RealmManager.offline {
+            self.configuration = user!.flexibleSyncConfiguration(clientResetMode: .discardUnsyncedChanges())
+            
+            Realm.Configuration.defaultConfiguration = self.configuration
+        } else {
+            self.configuration = Realm.Configuration.defaultConfiguration
+        }
+    }
+    
     
 //    MARK: Profile Functions
-    
     @MainActor
     func deleteProfile() async {
-        
-//        TODO: This should actually delete the user, but that is a whole process, and I dont want to do it
         self.logoutUser(onMain: true)
-        
-//        RealmManager.deleteObject(RecallModel.index) { index in index.ownerID == RecallModel.ownerID }
-        
     }
     
+//    This checks the user has created a profile with Recall already
+//    if not it will trigger the ProfileCreationScene
     @MainActor
     func checkProfile() async {
-//        RealmManager already has a query subscription to access the index
-        
         let results: Results<RecallIndex> = RealmManager.retrieveObject()
         
-        if let index = results.first {
+        if let index = results.first(where: { index in
+            index.ownerID == RecallModel.ownerID
+        }) {
             registerIndexLocally(index)
             index.toggleNotifcations(to: index.notificationsEnabled, time: index.notificationsTime)
         } else {
             createIndex()
         }
-
-        
     }
     
 //    If the user does not have an index, create one and add it to the database
@@ -255,7 +325,28 @@ class RealmManager: ObservableObject {
         self.index = index
     }
 
-//    MARK: Realm-Loaded Functions
+//    MARK: Realm Loading Functions
+    @MainActor
+//    this is for offline app
+//    the online Realm is handled by a View who's job is to present the profess of realm
+//    to the user
+    func openNonSyncedRealm() async {
+        do {
+            let realm = try await Realm()
+            self.realm = realm
+            await RecallModel.wait(for: 2)
+        } catch {
+            print("error opening local realm: \(error.localizedDescription)")
+        }
+        
+        self.configuration = realm.configuration
+        Realm.Configuration.defaultConfiguration = realm.configuration
+        
+        self.realmLoaded = true
+        await self.checkProfile()
+    }
+    
+    
 //    Called once the realm is loaded in OpenSyncedRealmView
     @MainActor
     func authRealm(realm: Realm) async {
@@ -265,17 +356,12 @@ class RealmManager: ObservableObject {
         
         self.realmLoaded = true
         await self.checkProfile()
-        
-        print(Realm.Configuration.defaultConfiguration.fileURL!)
     }
     
+//    MARK: Subscription Functions
+//    Subscriptions are only used when the app is online
+//    otherwise you are able to retrieve all the data from the Realm by default
     private func addSubcriptions() async {
-//            This is a clunky way of doing this
-//            Effectivley, the order is login -> authenticate user (setup dud realm configuration) -> create synced realm (with responsive UI)
-//             ->add the subscriptions (which downloads the data from the cloud) -> enter into the app with proper config and realm
-//            Instead, when creating the configuration, use initalSubscriptions to provide the subs before creating the relam
-//            This wasn't working before, but possibly if there is an instance of Realm in existence it might work?
-        
         await self.removeAllNonBaseSubscriptions()
         
         let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarEventQuery.baseQuery )
@@ -377,6 +463,7 @@ class RealmManager: ObservableObject {
     
 //    MARK: Realm Functions
     
+    @MainActor
     static func transferOwnership<T: Object>(of object: T, to newID: String) where T: OwnedRealmObject {
         updateObject(object) { thawed in
             thawed.ownerID = newID
@@ -387,7 +474,7 @@ class RealmManager: ObservableObject {
 //    if they want to write to a different realm.
 //    This is a convenience function either choose that realm, if it has a value, or the default realm
     static func getRealm(from realm: Realm?) -> Realm {
-        realm ?? RecallModel.realmManager.realm
+        RealmManager.offline ? try! Realm() : (realm ?? RecallModel.realmManager.realm)
     }
     
     static func writeToRealm(_ realm: Realm? = nil, _ block: () -> Void ) {
@@ -399,17 +486,20 @@ class RealmManager: ObservableObject {
     }
     
     static func updateObject<T: Object>(realm: Realm? = nil, _ object: T, _ block: (T) -> Void, needsThawing: Bool = true) {
+
         RealmManager.writeToRealm(realm) {
             guard let thawed = object.thaw() else {
                 print("failed to thaw object: \(object)")
                 return
             }
+            
             block(thawed)
         }
     }
     
     static func addObject<T:Object>( _ object: T, realm: Realm? = nil ) {
-        self.writeToRealm(realm) { getRealm(from: realm).add(object) }
+        self.writeToRealm(realm) {
+            getRealm(from: realm).add(object) }
     }
     
     static func retrieveObject<T:Object>( realm: Realm? = nil, where query: ( (Query<T>) -> Query<Bool> )? = nil ) -> Results<T> {
@@ -421,10 +511,8 @@ class RealmManager: ObservableObject {
     static func retrieveObjects<T: Object>(realm: Realm? = nil, where query: ( (T) -> Bool )? = nil) -> [T] {
         if query == nil { return Array(getRealm(from: realm).objects(T.self)) }
         else { return Array(getRealm(from: realm).objects(T.self).filter(query!)  ) }
-        
-        
     }
-    
+
     static func deleteObject<T: RealmSwiftObject>( _ object: T, where query: @escaping (T) -> Bool, realm: Realm? = nil ) where T: Identifiable {
         
         if let obj = getRealm(from: realm).objects(T.self).filter( query ).first {
@@ -433,86 +521,63 @@ class RealmManager: ObservableObject {
             }
         }
     }
+    
+//    MARK: Defaults Functions
+    
+    class OfflineUser: Codable {
+        let email: String
+        let password: String
+        let id: String
+        var signedIn: Bool = false
+     
+        init(email: String, password: String, id: String) {
+            self.email = email
+            self.password = password
+            self.id = id
+        }
+    }
+    
+//    this is a temporary 'database' that stores all the users who have signed in offline on a device
+//    OfflineUsers are encoded into UserDefaults, whcich might be expensive to retrieve many times,
+//    so when RealmManager initializes, it decodes all of them and stores them in this list to access
+    static var offlineUsers: [OfflineUser] = []
+    
+    static func getOfflineUsers() {
+        let users = RealmManager.defaults.dictionaryRepresentation().compactMap { node in
+            if let user = RealmManager.readFromDefaults(at: node.key) {
+                return user
+            }
+            return nil
+        }
+        RealmManager.offlineUsers = users
+    }
+    
+    static func clearUserDefaults() {
+        for user in RealmManager.offlineUsers {
+            if user.id != RecallModel.ownerID {
+                RealmManager.defaults.removeObject(forKey: user.id)
+            }
+        }
+        RealmManager.getOfflineUsers()
+    }
+    
+    static func writeToDefaults( _ user: OfflineUser, at key: String ) {
+        if let encoded = try? JSONEncoder().encode(user) {
+            RealmManager.defaults.set(encoded, forKey: key)
+        }
+        RealmManager.getOfflineUsers()
+    }
+    
+    static func readFromDefaults( at key: String ) -> OfflineUser? {
+        if let data = RealmManager.defaults.object(forKey: key) as? Data {
+            if let user = try? JSONDecoder().decode(OfflineUser.self, from: data){
+                return user
+            }
+        }
+        return nil
+    }
 }
 
 protocol OwnedRealmObject: Object {
     var ownerID: String { get set }
 }
-
-
-//MARK: Merger Code
-
-
-
-
-//MARK: Insertion Functions
-//these functions are responsible for reading a local realm database (which should be read-only), and manually copying their items into the synced realm
-//They should never again be used
-//this was awful, sincerely me at 1:57AM
-
-//        let goals = localRealm.objects(RecallGoal.self)
-//        for goal in goals {
-//
-//            let priority = RecallGoal.Priority.getRawType(from: goal.priority)
-//            let type = RecallGoal.GoalType.getRawType(from: goal.type)
-//
-//            var newGoal = RecallGoal(ownerID: goal.ownerID, label: goal.label, description: goal.goalDescription, frequency: goal.frequency, targetHours: goal.targetHours, priority: priority, type: type, targetTag: nil)
-//            newGoal.creationDate = goal.creationDate
-//
-//            RealmManager.addObject(newGoal)
-//        }
-
-//        let goalNodes = localRealm.objects(GoalNode.self)
-//        for node in goalNodes {
-//            let newNode = GoalNode(ownerID: node.ownerID, key: node.key, data: node.data)
-//            RealmManager.addObject(newNode)
-//        }
-
-//        let tags = localRealm.objects(RecallCategory.self)
-//        for tag in tags {
-//            let ratings = RecallCalendarEvent.translateGoalRatingList(tag.goalRatings)
-    
-//            print(tag.goalRatings.first?.key ?? "")
-//            var newTag = RecallCategory(ownerID: tag.ownerID, label: tag.label, goalRatings: ratings, color: tag.getColor())
-//            newTag.isFavorite = tag.isFavorite
-    
-//            RealmManager.addObject(newTag)
-//        }
-
-
-//        let events = localRealm.objects(RecallCalendarEvent.self)
-//        for event in events {
-//
-//
-//            let tag: Results<RecallCategory> = RealmManager.retrieveObject { tag in
-//                tag.label == event.getTagLabel()
-//            }
-//
-//            let id = tag.first?._id ?? ObjectId()
-//
-//            let ratings = RecallCalendarEvent.translateGoalRatingList(event.goalRatings)
-//
-//            let newEvent = RecallCalendarEvent(ownerID: event.ownerID, title: event.title, notes: event.notes, startTime: event.startTime, endTime: event.endTime, categoryID: id, goalRatings: ratings)
-//
-//            RealmManager.addObject(newEvent)
-//
-//        }
-
-//MARK: Local Realm
-//This code creates a local realm.
-//the configuration that it uses is very important
-//change out the file URL with the correct location of the realm file
-//make backups, any mistake in the configuration will cause the realm file to be erased
-
-
-//if let url = URL(string: "/Users/brianmasse/Desktop/flx_sync_default.realm") {
-//
-//    var config = Realm.Configuration()
-//    config.fileURL = url
-//    config.readOnly = true
-//    config.schemaVersion = 1
-//
-//    self.localRealm = await  try! Realm(configuration: config)
-//    print("success overiding realm")
-//
-//}
