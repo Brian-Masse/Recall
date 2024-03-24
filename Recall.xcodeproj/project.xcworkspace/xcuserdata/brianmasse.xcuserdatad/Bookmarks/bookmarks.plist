@@ -10,15 +10,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>0</string>
+					<string>47</string>
 					<key>EndingLineNumber</key>
-					<string>125</string>
+					<string>107</string>
 					<key>StartingColumnNumber</key>
-					<string>0</string>
+					<string>8</string>
 					<key>StartingLineNumber</key>
-					<string>124</string>
+					<string>107</string>
 					<key>Timestamp</key>
-					<string>727741757.334343</string>
+					<string>717529239.5026391</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,84 +34,15 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>        .fullScreenCover(isPresented: $showingGoalView) {
-</string>
+				<string>            UniversalText("\(dataModel.</string>
 				<key>leading</key>
-				<string>            Button(role: .destructive) { showingDeletionAlert = true } label:    { Label("delete", systemImage: "trash") }
-        }
-</string>
+				<string>                                  font: Constants.mainFont)
+                    Spacer()
+        </string>
 				<key>trailing</key>
-				<string>            GoalView(goal: goal, events: events)
-                .environmentObject(dataModel)
-        }
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-<<<<<<< HEAD
-					<string>31</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>30</string>
-					<key>Timestamp</key>
-					<string>727733216.680053</string>
-=======
-					<string>24</string>
-					<key>StartingColumnNumber</key>
-					<string>145</string>
-					<key>StartingLineNumber</key>
-					<string>23</string>
-					<key>Timestamp</key>
-					<string>728615403.395269</string>
->>>>>>> main
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>Recall/Categories/Views/TagPreviewView.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-<<<<<<< HEAD
-				<string>    var body: some View {
-</string>
-				<key>leading</key>
-				<string>    let events: [RecallCalendarEvent]
-    
-</string>
-				<key>trailing</key>
-				<string>        WrappedHStack(collection: goalRatings) { node in
-            VStack {
-                if Int(node.data) ?? 0 != 0 {
-=======
-				<string>
-</string>
-				<key>leading</key>
-				<string>        
-        var body: some View {
-            UniversalText( goal.label + (multiplier &lt;= 1 ? "" : " x\(multiplier)"), size: Constants.UIDefaultTextSize, font: Constants.mainFont )</string>
-				<key>trailing</key>
-				<string>        }
-    }
-    
->>>>>>> main
+				<string>roundedProgressData) / \(goal.targetHours)",
+                                  size: Constants.UISmallTextSize,
+                                  font: Constants.mainFont)
 </string>
 			</dict>
 			<key>type</key>
