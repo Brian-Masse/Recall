@@ -9,6 +9,13 @@
 
 Recall is a calendar based app designed around recording daily events to be able to view trends in productivity, goal completion, and time management over time. It is built natively in swift and swiftUI on the front end, and uses MongoDB and Realm DeviceSync on the backend.
 
+## **Upcoming Features**
+
+- Tap & Hold to create Calendar Events
+- Dynamically scaling calendar
+- Locations + links for events
+- general improvements / bug fixes to the main calendar
+
 ## **Package Dependencies**
 
 [**UIUniversals**](https://github.com/Brian-Masse/UIUniversals)
