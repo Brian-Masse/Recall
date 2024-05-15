@@ -13,7 +13,6 @@ import UIUniversals
 //MARK: GoalMultiplierSelector
 struct GoalMultiplierSelector: View {
     
-    
     private func makeGoalRatingMultiplier(forKey key: String) -> Binding<Float> {
         Binding { Float(goalRatings[ key ] ?? "0") ?? 0 }
         set: { newValue, _ in goalRatings[key] = "\(Int(newValue))" }
@@ -60,6 +59,10 @@ struct GoalMultiplierSelector: View {
 
 //MARK: Creation View
 struct CalendarEventCreationView: View {
+    
+    struct LocalConstants {
+        static let questionTextSize: CGFloat = Constants.UISubHeaderTextSize
+    }
     
     @ViewBuilder
     static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, template: Bool = false, favorite: Bool = false) -> some View {
@@ -322,7 +325,7 @@ struct CalendarEventCreationView: View {
 //    MARK: TagSelector
     @ViewBuilder
     private func makeTagSelector() -> some View {
-        UniversalText("Select a tag", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+        UniversalText("Select a tag", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
         
         let favorites = Array( categories.filter({ tag in tag.isFavorite }) )
         let allTags = Array( categories.filter({ tag in !tag.isFavorite }) )
@@ -412,22 +415,23 @@ struct CalendarEventCreationView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
             
-            UniversalText(editing ? "Edit Event" : "Create Event", size: Constants.UITitleTextSize, font: Constants.titleFont)
+            UniversalText(editing ? "Edit Event" : "Create Event", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                 .foregroundColor(.black)
                 .padding(.top, 7)
             
             ZStack(alignment: .bottom) {
-                ScrollView(.vertical) {
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading) {
                         
-                        makeTemplateSelector()
-                            .padding(.bottom)
+//                        makeTemplateSelector()
+//                            .padding(.bottom)
 
                         makeOverviewQuestions()
                             .padding(.bottom)
                         
                         if !editing {
-                            Divider(strokeWidth: 1)
+                            Divider(strokeWidth: 1).opacity(0.3)
+                                .padding(.bottom)
                             
                             makeTimeSelector()
                                 .padding(.bottom)
@@ -436,7 +440,8 @@ struct CalendarEventCreationView: View {
                                 .padding(.bottom)
                         }
                         
-                        Divider(strokeWidth: 1)
+                        Divider(strokeWidth: 1).opacity(0.3)
+                            .padding(.bottom)
                         
                         makeTagSelector()
                             .padding(.bottom)
@@ -445,7 +450,7 @@ struct CalendarEventCreationView: View {
                             .padding(.bottom)
                         
                         if editing {
-                            Divider(strokeWidth: 1)
+                            Divider(strokeWidth: 1).opacity(0.3)
                             
                             makeTimeSelector()
                                 .padding(.bottom)

@@ -78,7 +78,7 @@ struct CategoryCreationView: View {
     
     @ViewBuilder
     private func makeOverviewSection() -> some View {
-        makeTextField(title: "What would you like to call this tag?", binding: $label)
+        StyledTextField(title: "What would you like to call this tag?", binding: $label)
             .padding(.bottom)
         
         StyledColorPicker(label: "What Color is this tag?", color: $color)
@@ -88,7 +88,7 @@ struct CategoryCreationView: View {
     @ViewBuilder
     private func makeGoalSelection() -> some View {
         VStack(alignment: .leading) {
-            UniversalText( "What goals should this tag contribute to?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+            UniversalText( "What goals should this tag contribute to?", size: Constants.formQuestionTitleSize, font: Constants.titleFont )
             WrappedHStack(collection: Array(goals)) { goal in
                 let key = goal.getEncryptionKey()
                 
@@ -106,7 +106,7 @@ struct CategoryCreationView: View {
             
             if goalRatings.count != 0 {
                 VStack(alignment: .leading) {
-                    UniversalText( "How much should this tag contribute to those goals?", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+                    UniversalText( "How much should this tag contribute to those goals?", size: Constants.formQuestionTitleSize, font: Constants.titleFont )
                     ForEach(goals, id: \.key) { goal in
                         if Int(goalRatings[goal.key] ?? "0") ?? 0 != 0 {
                             GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: false)
@@ -123,7 +123,7 @@ struct CategoryCreationView: View {
         
         VStack(alignment: .leading, spacing: 7) {
             
-            UniversalText(editing ? "Edit Tag" : "Create Tag", size: Constants.UITitleTextSize, font: Constants.titleFont)
+            UniversalText(editing ? "Edit Tag" : "Create Tag", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                 .foregroundColor(.black)
                 .padding(.top, 7)
             

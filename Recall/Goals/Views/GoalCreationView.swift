@@ -147,19 +147,19 @@ struct GoalCreationView: View {
             StyledTextField(title: "What's the purpose of this goal?", binding: $description)
                 .padding(.bottom)
         }
-        
-        UniversalText("How frequently do you want to meet this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+    }
+    
+    @ViewBuilder
+    private func makeTagSelection() -> some View {
+        UniversalText("How frequently do you want to meet this goal?", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
         HStack {
             Spacer()
             makePickerOptions(label: "Daily", selection: .daily)
             makePickerOptions(label: "Weekly", selection: .weekly)
             Spacer()
         } .padding(.bottom)
-    }
-    
-    @ViewBuilder
-    private func makeTagSelection() -> some View {
-        UniversalText("What type of goal is this?", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+        
+        UniversalText("What type of goal is this?", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
         HStack {
             Spacer()
             makeTypePickerOption(label: "hourly", selection: .hourly)
@@ -169,7 +169,7 @@ struct GoalCreationView: View {
         
         if type == .byTag {
             Group {
-                UniversalText("Which tag would you like to track?", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+                UniversalText("Which tag would you like to track?", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
                 WrappedHStack(collection: Array(tags)) { tag in
                     HStack {
                         Image(systemName: "tag")
@@ -196,7 +196,7 @@ struct GoalCreationView: View {
     
     @ViewBuilder
     private func makePrioritySelector() -> some View {
-        UniversalText("How would you like to prioritize this goal?", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+        UniversalText("How would you like to prioritize this goal?", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
         HStack {
             Spacer()
             makePriorityPickerOptions(label: "High", selection: .high)
@@ -210,7 +210,7 @@ struct GoalCreationView: View {
     var body: some View {
         
         VStack(alignment: .leading, spacing: 7) {
-            UniversalText(editing ? "Edit Goal" : "Create Goal", size: Constants.UITitleTextSize, font: Constants.titleFont)
+            UniversalText(editing ? "Edit Goal" : "Create Goal", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                 .foregroundColor(.black)
                 .padding(.top, 7)
 
@@ -220,7 +220,13 @@ struct GoalCreationView: View {
                         
                         makeOverviewSection()
                         
+                        Divider(strokeWidth: 1).opacity(0.3)
+                            .padding(.bottom)
+                        
                         makeTagSelection()
+                        
+                        Divider(strokeWidth: 1).opacity(0.3)
+                            .padding(.bottom)
                         
                         makeTargetSelector()
                         

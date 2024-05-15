@@ -84,6 +84,7 @@ struct StyledTextField: View {
             UniversalText(title,
                           size: Constants.formQuestionTitleSize,
                           font: Constants.titleFont)
+            .padding(.trailing)
             
             TextField("", text: binding, axis: .vertical)
                 .focused($focused)

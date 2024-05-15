@@ -21,7 +21,7 @@ struct TemplatePageView: View {
         
         var body: some View {
             GeometryReader { geo in
-                CalendarEventPreviewContentView(event: template, events: events, width: geo.size.width, height: 120, forDisplay: true)
+                CalendarEventPreviewContentView(event: template, events: events, width: geo.size.width, height: 100, forDisplay: true)
                     .contextMenu {
                         ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
                             showingEditingScreen = true
@@ -40,7 +40,7 @@ struct TemplatePageView: View {
                         CalendarEventCreationView.makeEventCreationView(currentDay: template.startTime, editing: true, event: template)
                     }
             }
-            .frame(height: 80)
+            .frame(height: 100)
             .alert("Delete Associated Calendar Event?", isPresented: $showingDeletionAlert) {
                 Button(role: .cancel) { showingDeletionAlert = false } label:    { Text("cancel") }
                 Button(role: .destructive) { template.toggleTemplate() } label:    { Text("only delete template") }

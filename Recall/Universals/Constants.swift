@@ -21,7 +21,7 @@ extension Colors {
 //most are already provided by UIUniversals
 extension Constants {
 //    forms
-    static let formQuestionTitleSize: CGFloat = Constants.UIHeaderTextSize
+    static let formQuestionTitleSize: CGFloat = Constants.UISubHeaderTextSize
     static let UIFormSpacing      : CGFloat = 10
     static let UIFormPagePadding: CGFloat = 5
     static let UIFormSliderTextFieldWidth: CGFloat = 60

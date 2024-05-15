@@ -165,7 +165,7 @@ struct ActivitiesPerDay: View {
     }
     
 //    this controls how much data will be rendered onAppear
-    static let initialLoadedDataCount: Int = 75
+    static let initialLoadedDataCount: Int = 150
     
     let title: String
     let data: [DataNode]
@@ -209,7 +209,7 @@ struct ActivitiesPerDay: View {
                             makeChart()
                                 .frame(width: Double(daysSinceLastEvent()) * 16 )
                                 .padding(.trailing)
-                                .frame(height: 220)
+                                .frame(height: 250)
                         }
                     }else {
                         makeChart()
