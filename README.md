@@ -16,7 +16,7 @@ Recall is a calendar based app designed around recording daily events to be able
 - Locations + links for events
 - general improvements / bug fixes to the main calendar
 
-## **Dependencies**
+## **Package Dependencies**
 
 [**UIUniversals**](https://github.com/Brian-Masse/UIUniversals)
 
