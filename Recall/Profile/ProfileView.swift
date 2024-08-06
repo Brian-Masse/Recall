@@ -213,10 +213,6 @@ struct ProfileView: View {
                 Task { await RecallModel.index.initializeIndex() }
             }
             
-            makeSubButton(title: "Clear local data", icon: "macpro.gen3.server") {
-                RealmManager.clearUserDefaults()
-            }
-            
             makeSubButton(title: "Delete account", icon: "shippingbox.and.arrow.backward") {
                 showingError = true
             }

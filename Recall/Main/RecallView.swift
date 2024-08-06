@@ -37,7 +37,7 @@ struct RecallView: View {
                 }
             }
             else if !realmManager.realmLoaded {
-                OpenRealmView(page: $recallPage)
+                OpenFlexibleSyncRealmView(page: $recallPage)
                     .environment(\.realmConfiguration, realmManager.configuration)
                     .slideTransition()
             }

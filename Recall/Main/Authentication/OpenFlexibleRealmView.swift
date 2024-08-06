@@ -10,36 +10,6 @@ import SwiftUI
 import RealmSwift
 import UIUniversals
 
-//MARK: OpenRealmView
-//This presents the user with the progess of the realm as it opens
-//That process is very different for offline and Online
-//When the realm is opened this must move the signInProcess to .profileCreation
-struct OpenRealmView: View {
-    
-    @Binding var page: RecallView.RecallPage
-    
-    let realmManager = RecallModel.realmManager
-
-    var body: some View {
-        
-        if RealmManager.offline {
-            VStack {
-                Spacer()
-                LogoAnimation()
-                Spacer()
-            }
-            .task {
-                await realmManager.openNonSyncedRealm()
-                page = .profileCreation
-            }
-            
-        } else {
-            OpenFlexibleSyncRealmView(page: $page)
-                .environment(\.realmConfiguration, realmManager.configuration)
-        }
-    }
-}
-
 //MARK: FlexibleSyncRealmView
 struct OpenFlexibleSyncRealmView: View {
     
@@ -49,7 +19,7 @@ struct OpenFlexibleSyncRealmView: View {
 
     @Binding var page: RecallView.RecallPage
     
-    @AsyncOpen(appId: "application-0-incki", timeout: .min) var asyncOpen
+    @AsyncOpen(appId: "application-0-incki", timeout: 10) var asyncOpen
     
 //    MARK: LoadingCase
 //    This

@@ -14,10 +14,8 @@ import SwiftUI
 //RealmManager is responsible for signing/logging in users, opening a realm, and any other
 //high level function.
 //it functions both online and offline, but does not yet switch between them automatically
+//MARK: RealmManager
 class RealmManager: ObservableObject {
-        
-//    if the app is being used offline, then the 'user' will be stored in defaults
-    static let defaults = UserDefaults.standard
     
     static let offline: Bool = false
     static let appID = "application-0-incki"
@@ -30,11 +28,7 @@ class RealmManager: ObservableObject {
     var index: RecallIndex!
 
 //    This is the realm profile that signed into the app
-//    when offline, there will be no user (user is a construct used for device sync)
-//    instead a key, email, and password will be saved into defaults, and that will be used as a 'user'
-//    the most important is the key, which will coorespond to the user id and access data
     var user: User?
-    var offlineUser: OfflineUser?
     
 //    These variables are just temporary storage until the realm is initialized, and can be put in the database
     var firstName: String = ""
@@ -57,19 +51,34 @@ class RealmManager: ObservableObject {
         }
     }
     
+//    MARK: Subscriptions
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
-    lazy var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) = QueryPermission { query in query.ownerID == RecallModel.ownerID
-        
+    var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) {
+        .init(named: QuerySubKey.calendarComponent.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
-    @MainActor lazy var categoryQuery: (QueryPermission<RecallCategory>)           = QueryPermission { query in query.ownerID == RecallModel.ownerID }
-    @MainActor lazy var goalsQuery: (QueryPermission<RecallGoal>)                  = QueryPermission { query in query.ownerID == RecallModel.ownerID }
-    @MainActor lazy var goalsNodeQuery: (QueryPermission<GoalNode>)                = QueryPermission { query in query.ownerID == RecallModel.ownerID }
-    @MainActor lazy var indexQuery: (QueryPermission<RecallIndex>)                 = QueryPermission { query in query.ownerID == RecallModel.ownerID }
-    @MainActor lazy var dicQuery: (QueryPermission<DictionaryNode>)                = QueryPermission { query in query.ownerID == RecallModel.ownerID }
     
+    var categoryQuery: (QueryPermission<RecallCategory>) {
+        .init(named: QuerySubKey.category.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
     
+    var goalsQuery: (QueryPermission<RecallGoal>) {
+        .init(named: QuerySubKey.goal.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
+    
+    var goalsNodeQuery: (QueryPermission<GoalNode>) {
+        .init(named: QuerySubKey.goalNode.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
+    
+    var indexQuery: (QueryPermission<RecallIndex>) {
+        .init(named: QuerySubKey.index.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
+    
+    var dicQuery: (QueryPermission<DictionaryNode>) {
+        .init(named: QuerySubKey.dictionary.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
+    
+//    MARK: Initialization
     init() {
-        RealmManager.getOfflineUsers()
         Task { await self.checkLogin() }
     }
     
@@ -116,26 +125,18 @@ class RealmManager: ObservableObject {
         
         let fixedEmail = RealmManager.stripEmail(email)
         
-        if RealmManager.offline {
-            let error = await registerOfflineUser(fixedEmail, password)
-            if error != nil { return error }
+        let error =  await registerOnlineUser(fixedEmail, password)
+        if error == nil {
+            let credentials = Credentials.emailPassword(email: fixedEmail, password: password)
+            self.email = fixedEmail
+            let secondaryError = await authOnineUser(credentials: credentials)
             
-            await authOfflineUser(fixedEmail, password: password)
-        } else {
-            let error =  await registerOnlineUser(fixedEmail, password)
-            if error == nil {
-                let credentials = Credentials.emailPassword(email: fixedEmail, password: password)
-                self.email = fixedEmail
-                let secondaryError = await authOnineUser(credentials: credentials)
-                
-                if secondaryError != nil {
-                    print("error authenticating registered user")
-                    return secondaryError!.localizedDescription
-                }
+            if secondaryError != nil {
+                print("error authenticating registered user")
+                return secondaryError!.localizedDescription
             }
-            return error?.localizedDescription ?? nil
         }
-        return ""
+        return error?.localizedDescription ?? nil
     }
     
 //    only needs to run for email + password signup
@@ -153,20 +154,6 @@ class RealmManager: ObservableObject {
         }
     }
     
-    @MainActor
-    private func registerOfflineUser(_ email: String, _ password: String) -> String? {
-        if let user = RealmManager.offlineUsers.first(where: { user in
-            user.email == email
-        }) {
-//            nil if you're logging into an existing account - no error
-//            error if the email exists but the passwords dont match
-            if user.password == password { return nil }
-            else { return "failed to register user: inocrrect password" }
-        }
-        
-        return nil
-    }
-    
 //        this simply logs the profile in and returns any status errors
 //        Once done, it moves the app onto the loadingRealm phase
     func authOnineUser(credentials: Credentials) async -> Error? {
@@ -177,42 +164,14 @@ class RealmManager: ObservableObject {
         } catch { print("error logging in: \(error.localizedDescription)"); return error }
     }
     
-    @MainActor
-    func authOfflineUser( _ email: String, password: String ) {
-        var id: String = UUID().uuidString
-        
-        if let user = RealmManager.offlineUsers.first(where: { user in
-            user.email == email
-        }) {
-            id = user.id
-        }
-        
-        let user = OfflineUser(email: email, password: password, id: id)
-        user.signedIn = true
-        
-        self.offlineUser = user
-        
-        RealmManager.writeToDefaults(user, at: id)
-        
-        postAuthenticationInit()
-    }
-    
-    
 //    MARK: Login / Authentication Functions
 //    If there is a user already signed in, skip the user authentication system
 //    the method for checking if a user is signedIn is different whether you're online or offline
     @MainActor
     func checkLogin() {
-        if RealmManager.offline {
-            if let user = RealmManager.offlineUsers.first(where: { user in user.signedIn }) {
-                self.offlineUser = user
-                self.postAuthenticationInit()
-            }
-        } else {
-            if let user = app.currentUser {
-                self.user = user
-                self.postAuthenticationInit()
-            }
+        if let user = app.currentUser {
+            self.user = user
+            self.postAuthenticationInit()
         }
     }
     
@@ -226,69 +185,57 @@ class RealmManager: ObservableObject {
     
 //    MARK: Logout
     @MainActor
-    func logoutUser(onMain: Bool = false) {
-        if RealmManager.offline {
-            if let offlineUser = self.offlineUser {
+    func logoutUser() {
+        if let user = self.user {
+            user.logOut { error in
+                if let err = error { print("error logging out: \(err.localizedDescription)") }
                 
-                let newUser = offlineUser
-                newUser.signedIn = false
-                
-                RealmManager.writeToDefaults(newUser, at: newUser.id)
-                NotificationManager.shared.clearNotifications()
-                
-                self.signedIn = false
-                self.hasProfile = false
-                self.realmLoaded = false
-            }
-            
-        } else {
-            if let user = self.user {
-                user.logOut { error in
-                    if let error = error { print("error logging out: \(error.localizedDescription)") }
-                    
+                DispatchQueue.main.async {
                     NotificationManager.shared.clearNotifications()
-                    
-                    if !onMain {
-                        DispatchQueue.main.sync {
-                            self.signedIn = false
-                            self.hasProfile = false
-                            self.realmLoaded = false
-                        }
-                    } else {
-                        self.signedIn = false
-                        self.hasProfile = false
-                        self.realmLoaded = false
-                    }
-                }
-            }
-            Task {
-                do { try await self.clearAllSubscriptions() } catch {
-                    print("error clearing subscriptions: \(error.localizedDescription)")
+//                    self.setState(.authenticating)
                 }
             }
         }
+        Task { await self.removeAllNonBaseSubscriptions() }
         
         self.user = nil
-        self.offlineUser = nil
     }
     
 //    MARK: SetConfiguration
-    private func setConfiguration() {
-        if !RealmManager.offline {
-            self.configuration = user!.flexibleSyncConfiguration(clientResetMode: .discardUnsyncedChanges())
-            
-            Realm.Configuration.defaultConfiguration = self.configuration
-        } else {
-            self.configuration = Realm.Configuration.defaultConfiguration
+    private func addInitialSubscription<T: Object>(_ query: QueryPermission<T>, to subs: SyncSubscriptionSet ) {
+        let subscription = query.getSubscription()
+        
+        if subs.first(named: query.name) == nil {
+            subs.append(subscription)
         }
+    }
+    
+    @MainActor
+    private func setConfiguration() {
+        self.configuration = user!.flexibleSyncConfiguration(initialSubscriptions: { subs in
+            
+            self.addInitialSubscription(self.calendarEventQuery, to: subs)
+            self.addInitialSubscription(self.categoryQuery, to: subs)
+            self.addInitialSubscription(self.goalsQuery, to: subs)
+            self.addInitialSubscription(self.indexQuery, to: subs)
+            self.addInitialSubscription(self.goalsNodeQuery, to: subs)
+            self.addInitialSubscription(self.dicQuery, to: subs)
+            
+        })
+        
+        self.configuration.objectTypes = [ RecallCalendarEvent.self,
+                                           RecallCategory.self,
+                                           RecallGoal.self,
+                                           RecallIndex.self,
+                                           GoalNode.self,
+                                           DictionaryNode.self
+        ]
     }
     
     
 //    MARK: Profile Functions
     @MainActor
-    func deleteProfile() async {
-        self.logoutUser(onMain: true)
-    }
+    func deleteProfile() async { self.logoutUser() }
     
 //    This checks the user has created a profile with Recall already
 //    if not it will trigger the ProfileCreationScene
@@ -326,32 +273,12 @@ class RealmManager: ObservableObject {
     }
 
 //    MARK: Realm Loading Functions
-    @MainActor
-//    this is for offline app
-//    the online Realm is handled by a View who's job is to present the profess of realm
-//    to the user
-    func openNonSyncedRealm() async {
-        do {
-            let realm = try await Realm()
-            self.realm = realm
-            await RecallModel.wait(for: 2)
-        } catch {
-            print("error opening local realm: \(error.localizedDescription)")
-        }
-        
-        self.configuration = realm.configuration
-        Realm.Configuration.defaultConfiguration = realm.configuration
-        
-        self.realmLoaded = true
-        await self.checkProfile()
-    }
-    
-    
 //    Called once the realm is loaded in OpenSyncedRealmView
     @MainActor
     func authRealm(realm: Realm) async {
         self.realm = realm
-        await self.addSubcriptions()
+        
+//        await self.addSub criptions()
         await RecallModel.updateManager.initialize()
         
         self.realmLoaded = true
@@ -364,12 +291,12 @@ class RealmManager: ObservableObject {
     private func addSubcriptions() async {
         await self.removeAllNonBaseSubscriptions()
         
-        let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarEventQuery.baseQuery )
-        let _:RecallCategory?       = await self.addGenericSubcriptions(name: QuerySubKey.category.rawValue, query: categoryQuery.baseQuery )
-        let _:RecallGoal?           = await self.addGenericSubcriptions(name: QuerySubKey.goal.rawValue, query: goalsQuery.baseQuery )
-        let _:GoalNode?             = await self.addGenericSubcriptions(name: QuerySubKey.goalNode.rawValue, query: goalsNodeQuery.baseQuery )
-        let _:RecallIndex?          = await self.addGenericSubcriptions(name: QuerySubKey.index.rawValue, query: indexQuery.baseQuery )
-        let _:DictionaryNode?       = await self.addGenericSubcriptions(name: QuerySubKey.dictionary.rawValue, query: dicQuery.baseQuery )
+        let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarEventQuery.query )
+        let _:RecallCategory?       = await self.addGenericSubcriptions(name: QuerySubKey.category.rawValue, query: categoryQuery.query )
+        let _:RecallGoal?           = await self.addGenericSubcriptions(name: QuerySubKey.goal.rawValue, query: goalsQuery.query )
+        let _:GoalNode?             = await self.addGenericSubcriptions(name: QuerySubKey.goalNode.rawValue, query: goalsNodeQuery.query )
+        let _:RecallIndex?          = await self.addGenericSubcriptions(name: QuerySubKey.index.rawValue, query: indexQuery.query )
+        let _:DictionaryNode?       = await self.addGenericSubcriptions(name: QuerySubKey.dictionary.rawValue, query: dicQuery.query )
 
     }
     
@@ -396,7 +323,6 @@ class RealmManager: ObservableObject {
     }
     
     func removeSubscription(name: String) async {
-            
         let subscriptions = self.realm.subscriptions
         let foundSubscriptions = subscriptions.first(named: name)
         if foundSubscriptions == nil {return}
@@ -520,61 +446,6 @@ class RealmManager: ObservableObject {
                 getRealm(from: realm).delete(obj)
             }
         }
-    }
-    
-//    MARK: Defaults Functions
-    
-    class OfflineUser: Codable {
-        let email: String
-        let password: String
-        let id: String
-        var signedIn: Bool = false
-     
-        init(email: String, password: String, id: String) {
-            self.email = email
-            self.password = password
-            self.id = id
-        }
-    }
-    
-//    this is a temporary 'database' that stores all the users who have signed in offline on a device
-//    OfflineUsers are encoded into UserDefaults, whcich might be expensive to retrieve many times,
-//    so when RealmManager initializes, it decodes all of them and stores them in this list to access
-    static var offlineUsers: [OfflineUser] = []
-    
-    static func getOfflineUsers() {
-        let users = RealmManager.defaults.dictionaryRepresentation().compactMap { node in
-            if let user = RealmManager.readFromDefaults(at: node.key) {
-                return user
-            }
-            return nil
-        }
-        RealmManager.offlineUsers = users
-    }
-    
-    static func clearUserDefaults() {
-        for user in RealmManager.offlineUsers {
-            if user.id != RecallModel.ownerID {
-                RealmManager.defaults.removeObject(forKey: user.id)
-            }
-        }
-        RealmManager.getOfflineUsers()
-    }
-    
-    static func writeToDefaults( _ user: OfflineUser, at key: String ) {
-        if let encoded = try? JSONEncoder().encode(user) {
-            RealmManager.defaults.set(encoded, forKey: key)
-        }
-        RealmManager.getOfflineUsers()
-    }
-    
-    static func readFromDefaults( at key: String ) -> OfflineUser? {
-        if let data = RealmManager.defaults.object(forKey: key) as? Data {
-            if let user = try? JSONDecoder().decode(OfflineUser.self, from: data){
-                return user
-            }
-        }
-        return nil
     }
 }
 

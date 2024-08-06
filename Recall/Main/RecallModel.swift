@@ -15,7 +15,7 @@ let inDev = true
 struct RecallModel {
 //    MARK: Vars
     static var shared: RecallModel = RecallModel()
-    static var ownerID: String { RecallModel.realmManager.user?.id ?? (RecallModel.realmManager.offlineUser?.id ?? "") }
+    static var ownerID: String { RecallModel.realmManager.user?.id ?? "" }
     
     static let dataModel: RecallDataModel = RecallDataModel()
     static let updateManager: UpdateManager = UpdateManager()

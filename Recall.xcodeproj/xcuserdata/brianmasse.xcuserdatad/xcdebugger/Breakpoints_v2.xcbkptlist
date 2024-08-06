@@ -398,8 +398,8 @@
             filePath = "Recall/Main/Authentication/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "303"
-            endingLineNumber = "303"
+            startingLineNumber = "250"
+            endingLineNumber = "250"
             landmarkName = "checkProfile()"
             landmarkType = "7">
          </BreakpointContent>
@@ -526,8 +526,8 @@
             filePath = "Recall/Main/Authentication/OpenFlexibleRealmView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
             landmarkName = "dismissScreen()"
             landmarkType = "7">
          </BreakpointContent>

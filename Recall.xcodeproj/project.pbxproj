@@ -66,10 +66,9 @@
 		C98F2F302A9D3F3300E92B30 /* TagsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */; };
 		C98F2F322A9DC49300E92B30 /* EventsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F312A9DC49300E92B30 /* EventsCreationScene.swift */; };
 		C9AEEB622B604BB900D48FD8 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9AEEB612B604BB900D48FD8 /* UIUniversals */; };
-		C9B8F0F52ACCE4E000D4B9F2 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C9B8F0F42ACCE4E000D4B9F2 /* Realm */; };
-		C9B8F0F72ACCE4E000D4B9F2 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C9B8F0F62ACCE4E000D4B9F2 /* RealmSwift */; };
 		C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */; };
 		C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */; };
+		C9D24AA72C62C65800A7F279 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C9D24AA62C62C65800A7F279 /* RealmSwift */; };
 		C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */; };
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
 		C9E0B17D2B03E5F000318508 /* RecallUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E0B17C2B03E5F000318508 /* RecallUpdate.swift */; };
@@ -177,9 +176,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9B8F0F72ACCE4E000D4B9F2 /* RealmSwift in Frameworks */,
+				C9D24AA72C62C65800A7F279 /* RealmSwift in Frameworks */,
 				C9EE9EB82B608FA50090DB16 /* UniversalDonationPackage in Frameworks */,
-				C9B8F0F52ACCE4E000D4B9F2 /* Realm in Frameworks */,
 				C9AEEB622B604BB900D48FD8 /* UIUniversals in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -488,10 +486,9 @@
 			);
 			name = Recall;
 			packageProductDependencies = (
-				C9B8F0F42ACCE4E000D4B9F2 /* Realm */,
-				C9B8F0F62ACCE4E000D4B9F2 /* RealmSwift */,
 				C9AEEB612B604BB900D48FD8 /* UIUniversals */,
 				C9EE9EB72B608FA50090DB16 /* UniversalDonationPackage */,
+				C9D24AA62C62C65800A7F279 /* RealmSwift */,
 			);
 			productName = Recall;
 			productReference = C91BCEEE2A618435003C6DD6 /* Recall.app */;
@@ -566,11 +563,11 @@
 			);
 			mainGroup = C91BCEE52A618434003C6DD6;
 			packageReferences = (
-				C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
 				C954AACD2A76B60000897BCE /* XCRemoteSwiftPackageReference "FlowGrid" */,
 				C9AEEB602B604BB900D48FD8 /* XCRemoteSwiftPackageReference "UIUniversals" */,
 				C9EE9EB62B608FA40090DB16 /* XCRemoteSwiftPackageReference "UniversalDonationPackage" */,
+				C9D24AA52C62C65800A7F279 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = C91BCEEF2A618435003C6DD6 /* Products */;
 			projectDirPath = "";
@@ -1049,14 +1046,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-swift";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/xnth97/SymbolPicker.git";
@@ -1081,6 +1070,14 @@
 				kind = branch;
 			};
 		};
+		C9D24AA52C62C65800A7F279 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		C9EE9EB62B608FA40090DB16 /* XCRemoteSwiftPackageReference "UniversalDonationPackage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Brian-Masse/UniversalDonationPackage";
@@ -1097,14 +1094,9 @@
 			package = C9AEEB602B604BB900D48FD8 /* XCRemoteSwiftPackageReference "UIUniversals" */;
 			productName = UIUniversals;
 		};
-		C9B8F0F42ACCE4E000D4B9F2 /* Realm */ = {
+		C9D24AA62C62C65800A7F279 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = Realm;
-		};
-		C9B8F0F62ACCE4E000D4B9F2 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C91BCF1C2A618601003C6DD6 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			package = C9D24AA52C62C65800A7F279 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
 		};
 		C9EE9EB72B608FA50090DB16 /* UniversalDonationPackage */ = {
