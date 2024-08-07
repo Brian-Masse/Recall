@@ -16,8 +16,6 @@ struct OpenFlexibleSyncRealmView: View {
     @State var showingAlert: Bool = false
     @State var title: String = ""
     @State var alertMessage: String = ""
-
-    @Binding var page: RecallView.RecallPage
     
     @AsyncOpen(appId: "application-0-incki", timeout: 10) var asyncOpen
     
@@ -40,9 +38,7 @@ struct OpenFlexibleSyncRealmView: View {
 //    if the user cancels the opening of realm, the app should go back to the begining of
 //    the sign in process
     private func dismissScreen() {
-        RecallModel.realmManager.realmLoaded = false
-        RecallModel.realmManager.signedIn = false
-        RecallModel.realmManager.hasProfile = false
+        RecallModel.realmManager.setState(.authenticating)
     }
 
 //    MARK: Body
@@ -67,11 +63,7 @@ struct OpenFlexibleSyncRealmView: View {
                 case .open(let realm):
                     VStack {
                         loadingCase(icon: "shippingbox", title: "Loading Assests")
-                            .task {
-                                await RecallModel.realmManager.authRealm(realm: realm)
-                            
-                                withAnimation { page = .profileCreation }
-                            }
+                            .task { await RecallModel.realmManager.authRealm(realm: realm) }
                     }
                     
                 case .progress:

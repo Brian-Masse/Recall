@@ -101,7 +101,6 @@ struct MainView: View {
     
     @State var currentPage: MainPage = .calendar
     @State var shouldRefreshData: Bool = false
-    @Binding var appPage: RecallView.RecallPage
     @State var currentDay: Date = .now
     
     @State private var showingHalfPage: Bool = false
@@ -121,7 +120,7 @@ struct MainView: View {
             ZStack(alignment: .bottom) {
                 NavigationView {
                     TabView(selection: $currentPage) {
-                        CalendarPageView(events: arrEvents, appPage: $appPage)
+                        CalendarPageView(events: arrEvents)
                             .halfPageScreenReceiver(showing: $showingHalfPage)
                             .tag( MainPage.calendar )
                         

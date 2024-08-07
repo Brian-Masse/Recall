@@ -194,8 +194,6 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @MainActor
     func postProfileCreationInit() {
         
-        RecallModel.realmManager.hasProfile = true
-        
         self.toggleNotifcations(to: true, time: notificationsTime )
         NotificationManager.shared.makeNotificationRequest(from: notificationsTime)
         NotificationManager.shared.makeBirthdayNotificationRequest(from:  dateOfBirth )

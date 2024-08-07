@@ -49,7 +49,6 @@ struct ProfileCreationView: View {
     @State var showingError: Bool = false
     
     @State private var activeScene: ProfileCreationScene = .splash
-    @Binding var page: RecallView.RecallPage
     
     @State var firstName: String    = ""
     @State var lastName: String     = ""
@@ -93,9 +92,9 @@ struct ProfileCreationView: View {
             
             if skipTutorial {
                 RecallModel.index.finishTutorial()
-                page = .app
+                RecallModel.realmManager.setState(.complete)
             }
-            if !skipTutorial { page = .tutorial }
+            if !skipTutorial { RecallModel.realmManager.setState(.tutorial) }
         }
     }
     
@@ -117,7 +116,7 @@ struct ProfileCreationView: View {
             .onTapGesture { withAnimation {
                 if activeScene.rawValue == 0 {
                     RecallModel.realmManager.logoutUser()
-                    page = .splashScreen
+                    RecallModel.realmManager.setState(.splashScreen)
                 }
                 activeScene = activeScene.returnScene()
             } }

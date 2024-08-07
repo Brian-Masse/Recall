@@ -108,14 +108,13 @@ struct TutorialViews: View {
 
 //    MARK: Vars
     
-    @Binding var page: RecallView.RecallPage
-    
     @State private var scene: TutorialViews.TutorialScene = .goalCreation
     @State private var broadScene: TutorialViews.TutorialScene.BroadScene = .goal
     
     @State var nextButtonIsActive: Bool = false
     @State var showSkipTutorialWarning: Bool = false
     
+    @MainActor
     private func progressScene(to passedScene: TutorialScene? = nil) {
         if passedScene == nil { scene = scene.advanceScene() }
         else { scene = passedScene! }
@@ -125,12 +124,12 @@ struct TutorialViews: View {
             switch broadScene {
             case .goal: broadScene = .tag
             case .tag: broadScene = .event
-            case .event: page = .app
+            case .event: RecallModel.realmManager.setState(.complete)
             }
             
             if scene == .complete {
                 RecallModel.index.finishTutorial()
-                page = .app
+                RecallModel.realmManager.setState(.complete)
             }
         }
                     
@@ -166,6 +165,7 @@ struct TutorialViews: View {
         }
     }
     
+    @MainActor
     @ViewBuilder
     private func makeBody() -> some View {
         

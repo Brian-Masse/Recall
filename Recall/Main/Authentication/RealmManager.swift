@@ -17,18 +17,25 @@ import SwiftUI
 //MARK: RealmManager
 class RealmManager: ObservableObject {
     
-    static let offline: Bool = false
+    public enum AuthenticationState: String {
+        case splashScreen
+        case authenticating
+        case openingRealm
+        case creatingProfile
+        case tutorial
+        case error
+        case complete
+    }
+    
     static let appID = "application-0-incki"
     
 //    This realm will be generated once the profile has authenticated themselves
     var realm: Realm!
     var app = RealmSwift.App(id: RealmManager.appID)
+    var user: User?
     var configuration: Realm.Configuration!
     
     var index: RecallIndex!
-
-//    This is the realm profile that signed into the app
-    var user: User?
     
 //    These variables are just temporary storage until the realm is initialized, and can be put in the database
     var firstName: String = ""
@@ -39,17 +46,7 @@ class RealmManager: ObservableObject {
 //   Then the app will bypass the setup portion that asks for your first and last name
     static var usedSignInWithApple: Bool = false
     
-    @Published var signedIn: Bool = false
-    @Published var realmLoaded: Bool = false
-    @Published var hasProfile: Bool = false
-    
-    var profileLoaded: Bool {
-        if hasProfile {
-            return self.index.checkCompletion()
-        } else {
-            return false
-        }
-    }
+    @Published var authenticationState: AuthenticationState = .splashScreen
     
 //    MARK: Subscriptions
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
@@ -80,6 +77,12 @@ class RealmManager: ObservableObject {
 //    MARK: Initialization
     init() {
         Task { await self.checkLogin() }
+    }
+    
+    @MainActor
+    func setState( _ newState: AuthenticationState ) {
+        let newState: AuthenticationState = newState == .tutorial && self.index.finishedTutorial ? .complete : newState
+        withAnimation { self.authenticationState = newState }
     }
     
     static func stripEmail(_ email: String) -> String {
@@ -178,9 +181,7 @@ class RealmManager: ObservableObject {
     @MainActor
     private func postAuthenticationInit() {
         self.setConfiguration()
-        withAnimation {
-            self.signedIn = true
-        }
+        self.setState(.openingRealm)
     }
     
 //    MARK: Logout
@@ -192,7 +193,7 @@ class RealmManager: ObservableObject {
                 
                 DispatchQueue.main.async {
                     NotificationManager.shared.clearNotifications()
-//                    self.setState(.authenticating)
+                    self.setState(.authenticating)
                 }
             }
         }
@@ -243,17 +244,18 @@ class RealmManager: ObservableObject {
     func checkProfile() async {
         let results: Results<RecallIndex> = RealmManager.retrieveObject()
         
-        if let index = results.first(where: { index in
-            index.ownerID == RecallModel.ownerID
-        }) {
-            registerIndexLocally(index)
-            index.toggleNotifcations(to: index.notificationsEnabled, time: index.notificationsTime)
+        if let index = results.first(where: { index in index.ownerID == RecallModel.ownerID }) {
+            self.index = index
+            self.index.toggleNotifcations(to: index.notificationsEnabled, time: index.notificationsTime)
+            self.setState(.tutorial)
+            
         } else {
             createIndex()
         }
     }
     
 //    If the user does not have an index, create one and add it to the database
+    @MainActor
     private func createIndex() {
         let index = RecallIndex()
         index.ownerID = RecallModel.ownerID
@@ -262,14 +264,8 @@ class RealmManager: ObservableObject {
         
         RealmManager.addObject(index)
         
-        registerIndexLocally(index)
-    }
-    
-//    whether you're loading the profile from the databae or creating at startup, it should go throught this function to
-//    let the model know that the profile now has a profile and send that profile object to the model
-    private func registerIndexLocally( _ index: RecallIndex ) {
-        hasProfile = true
         self.index = index
+        self.setState(.creatingProfile)
     }
 
 //    MARK: Realm Loading Functions
@@ -277,11 +273,7 @@ class RealmManager: ObservableObject {
     @MainActor
     func authRealm(realm: Realm) async {
         self.realm = realm
-        
-//        await self.addSub criptions()
         await RecallModel.updateManager.initialize()
-        
-        self.realmLoaded = true
         await self.checkProfile()
     }
     
@@ -400,7 +392,7 @@ class RealmManager: ObservableObject {
 //    if they want to write to a different realm.
 //    This is a convenience function either choose that realm, if it has a value, or the default realm
     static func getRealm(from realm: Realm?) -> Realm {
-        RealmManager.offline ? try! Realm() : (realm ?? RecallModel.realmManager.realm)
+        realm ?? RecallModel.realmManager.realm
     }
     
     static func writeToRealm(_ realm: Realm? = nil, _ block: () -> Void ) {

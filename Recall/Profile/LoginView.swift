@@ -66,28 +66,26 @@ struct LoginView: View {
     @MainActor
     @ViewBuilder
     private func makeSignInWithAppleSection() -> some View {
-        if !RealmManager.offline {
-            UniversalText( "or sign in with Apple", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
-                .padding(.vertical, 5)
-            
-            SignInWithAppleButton(.signIn) { request in
-                request.requestedScopes = [.fullName, .email]
-            } onCompletion: { result in
-                switch result {
-                case .success(let authResults):
-                    print("Authorisation with Apple successful")
-                    RecallModel.realmManager.signInWithApple(authResults)
-                    
-                case .failure(let error):
-                    print("Authorisation failed: \(error.localizedDescription)")
-                    alertMessage = error.localizedDescription
-                    showingAlert = true
-                }
+        UniversalText( "or sign in with Apple", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            .padding(.vertical, 5)
+        
+        SignInWithAppleButton(.signIn) { request in
+            request.requestedScopes = [.fullName, .email]
+        } onCompletion: { result in
+            switch result {
+            case .success(let authResults):
+                print("Authorisation with Apple successful")
+                RecallModel.realmManager.signInWithApple(authResults)
+                
+            case .failure(let error):
+                print("Authorisation failed: \(error.localizedDescription)")
+                alertMessage = error.localizedDescription
+                showingAlert = true
             }
-            .signInWithAppleButtonStyle(colorScheme == .light ? .black : .white)
-            .cornerRadius(Constants.UIDefaultCornerRadius)
-            .frame(height: 50)
         }
+        .signInWithAppleButtonStyle(colorScheme == .light ? .black : .white)
+        .cornerRadius(Constants.UIDefaultCornerRadius)
+        .frame(height: 50)
     }
     
     

@@ -20,8 +20,6 @@ struct ProfileView: View {
     @State var showingEditingView: Bool = false
     @State var ownerID: String = ""
     
-    @Binding var appPage: RecallView.RecallPage
-    
 //    When changing items in settings, set these to true to display a save button. This makes edditing settings more seamless.
     @State var madeNotificationChanges: Bool = false
     @State var madeDefaultEventLengthChanges: Bool = false
@@ -206,7 +204,7 @@ struct ProfileView: View {
             
             makeSubButton(title: "Replay Tutorial", icon: "arrow.clockwise") {
                 index.replayTutorial()
-                appPage = .tutorial
+                RecallModel.realmManager.setState(.tutorial)
             }
             
             makeSubButton(title: "Reindex data", icon: "tray.2") {
@@ -459,7 +457,7 @@ struct ProfileView: View {
                 LargeRoundedButton( "Edit", icon: "arrow.right", wide: true ) { showingEditingView = true }
                 LargeRoundedButton("Signout", icon: "arrow.down", wide: true) {
                     RecallModel.realmManager.logoutUser()
-                    appPage = .splashScreen
+                    RecallModel.realmManager.setState(.splashScreen)
                 }
             }
             .padding(.bottom)

@@ -32,7 +32,6 @@ struct CalendarPageView: View {
     @State var showingCreateEventView: Bool = false
     @State var showingProfileView: Bool = false
     @State var showingDonationView: Bool = false
-    @Binding var appPage: RecallView.RecallPage
     
     @State var slideDirection: AnyTransition.SlideDirection = .right
     
@@ -181,7 +180,7 @@ struct CalendarPageView: View {
             CalendarEventCreationView.makeEventCreationView(currentDay: containerModel.currentDay)
         }
         .sheet(isPresented: $showingProfileView) {
-            ProfileView(appPage: $appPage)
+            ProfileView()
         }
         .sheet(isPresented: $showingDonationView) {
             DonationView()

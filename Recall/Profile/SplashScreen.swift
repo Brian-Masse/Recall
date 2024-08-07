@@ -12,8 +12,6 @@ import UIUniversals
 
 //This presents when the app launches for the first time, or when a user logs out
 struct SplashScreen: View {
-    @Binding var page: RecallView.RecallPage
-    
     @ObservedObject var realmManager = RecallModel.realmManager
     
 //    MARK: Body
@@ -37,7 +35,7 @@ struct SplashScreen: View {
                     
                     HStack {
                         LargeRoundedButton("Create an account or login", icon: "arrow.forward") {
-                            withAnimation { page = .login }
+                            realmManager.setState(.authenticating)
                         }
                         Spacer()
                     }
