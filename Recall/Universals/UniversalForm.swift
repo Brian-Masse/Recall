@@ -403,7 +403,6 @@ struct StyledToggle<C: View>: View {
     var body: some View {
         
         HStack {
-     
             title
             
             if wide { Spacer() }

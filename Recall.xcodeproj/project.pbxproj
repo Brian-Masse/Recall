@@ -66,6 +66,7 @@
 		C98F2F302A9D3F3300E92B30 /* TagsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */; };
 		C98F2F322A9DC49300E92B30 /* EventsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F312A9DC49300E92B30 /* EventsCreationScene.swift */; };
 		C9AEEB622B604BB900D48FD8 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9AEEB612B604BB900D48FD8 /* UIUniversals */; };
+		C9B8DF5F2C63344500B11A38 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C9D24AA62C62C65800A7F279 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */; };
 		C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */; };
 		C9D24AA72C62C65800A7F279 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C9D24AA62C62C65800A7F279 /* RealmSwift */; };
@@ -96,6 +97,20 @@
 			remoteInfo = Recall;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C9B8DF602C63344500B11A38 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C9B8DF5F2C63344500B11A38 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalCharts.swift; sourceTree = "<group>"; };
@@ -482,6 +497,7 @@
 				C91BCEEA2A618434003C6DD6 /* Sources */,
 				C91BCEEB2A618434003C6DD6 /* Frameworks */,
 				C91BCEEC2A618434003C6DD6 /* Resources */,
+				C9B8DF602C63344500B11A38 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

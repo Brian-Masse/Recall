@@ -46,3 +46,45 @@ struct ConditionalLargeRoundedButton: View {
             }}
     }
 }
+
+//MARK: IconButton
+struct IconButton: View {
+    
+    let title: String
+    let icon: String
+    
+    let full: Bool
+    let action: () -> Void
+    
+    init( _ icon: String, label: String = "", fullWidth: Bool = false, action: @escaping () -> Void ) {
+        self.icon = icon
+        self.title = label
+        self.full = fullWidth
+        self.action = action
+    }
+    
+    var body: some View {
+        UniversalButton {
+            HStack {
+                if full { Spacer() }
+                
+                if !title.isEmpty {
+                    UniversalText( title, size: Constants.UIDefaultTextSize + 2, font: AndaleMono.shared )
+                        .padding(.trailing, 5)
+                }
+                
+                Image(systemName: icon)
+                
+                if full { Spacer() }
+            }
+            .rectangularBackground(style: .secondary)
+            
+        } action: { action() }
+    }
+}
+
+#Preview {
+    IconButton("plus", label: "Hello") {
+        print("hi")
+    }
+}
