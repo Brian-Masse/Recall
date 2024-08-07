@@ -262,7 +262,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
 //    MARK: GetProgressTowardsGoal
     
     @MainActor
-    private func checkProgressIndex(on date: Date) -> Double? {
+    func checkProgressIndex(on date: Date) -> Double? {
         if let progress = retrieveProgressIndex(on: date) {
             if let numericPrgress = Double( progress.data ) {
                 return numericPrgress

@@ -14,7 +14,7 @@ import RealmSwift
 class CalendarContainerModel: ObservableObject {
     
     
-    @Published private(set) var currentDay: Date = .now
+    @Published var currentDay: Date = .now
     
     @Published var creatingEvent: Bool = false
     @Published var dragging: Bool = false

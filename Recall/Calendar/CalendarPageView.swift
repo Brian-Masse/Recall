@@ -26,12 +26,14 @@ struct CalendarPageView: View {
     static let sharedContainerModel = CalendarContainerModel()
     
     let events: [RecallCalendarEvent]
+    let goals: [RecallGoal]
     
     @ObservedObject var containerModel: CalendarContainerModel = sharedContainerModel
     
     @State var showingCreateEventView: Bool = false
     @State var showingProfileView: Bool = false
     @State var showingDonationView: Bool = false
+    @State var showingCalendarView: Bool = false
     
     @State var slideDirection: AnyTransition.SlideDirection = .right
     
@@ -141,10 +143,10 @@ struct CalendarPageView: View {
             Spacer()
             
             
-            ResizableIcon("bag", size: Constants.UIDefaultTextSize)
+            ResizableIcon("calendar", size: Constants.UIDefaultTextSize)
                 .rectangularBackground(style: .secondary)
                 .padding(.leading)
-                .onTapGesture { showingDonationView = true }
+                .onTapGesture { showingCalendarView = true }
             
             ResizableIcon("person", size: Constants.UIDefaultTextSize)
                 .rectangularBackground(style: .secondary)
@@ -182,8 +184,8 @@ struct CalendarPageView: View {
         .sheet(isPresented: $showingProfileView) {
             ProfileView()
         }
-        .sheet(isPresented: $showingDonationView) {
-            DonationView()
+        .sheet(isPresented: $showingCalendarView) {
+            CalendarPage(currentDay: $containerModel.currentDay, goals: goals )
         }
         .universalBackground()
         
