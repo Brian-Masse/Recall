@@ -72,7 +72,7 @@ struct DataPageView: View {
         
         VStack(alignment: .leading) {
             
-            UniversalText("Data", size: Constants.UITitleTextSize, font: Constants.titleFont)
+            UniversalText("Data", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                 .padding([.top, .horizontal], 7)
 
             makePageSelectors()

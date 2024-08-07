@@ -50,8 +50,7 @@ struct ProfileView: View {
 //        events
         static var showNotesOnPreviewLabel = "Show event notes on preview"
         
-        static var universalFineSelectionLabel = "Universal fine time selection"
-        static var universalFineSelectionDescription = "All time sliders will default to fine selection when enabled."
+        static var universalFineSelectionLabel = "Universal precise time selection"
         
         static var defaultTimeSnappingLabel = "Default event snapping"
         
@@ -303,7 +302,6 @@ struct ProfileView: View {
             StyledToggle(fineTimeSelectorIsDefault) {
                 UniversalText(SettingsConstants.universalFineSelectionLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
-            makeSettingsDescription(SettingsConstants.universalFineSelectionDescription)
             
             StyledToggle(recallAtTheEndOfLastEventBinding) {
                 UniversalText( SettingsConstants.recallAtEndOfLastEvent, size: Constants.UIDefaultTextSize, font: Constants.titleFont)

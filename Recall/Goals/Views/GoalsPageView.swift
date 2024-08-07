@@ -43,9 +43,10 @@ struct GoalsPageView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                UniversalText( "Goals", size: Constants.UITitleTextSize, font: Constants.titleFont)
+                UniversalText( "Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                 Spacer()
-                LargeRoundedButton("Add Goal", icon: "arrow.up") { showingGoalCreationView = true }
+                
+                IconButton("plus", label: "Add Goal") { showingGoalCreationView = true }
             }
             
             TabView {

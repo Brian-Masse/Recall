@@ -75,10 +75,10 @@ struct CategoriesPageView: View {
     private func makeHeader(_ geo: GeometryProxy) -> some View {
         Group {
             HStack {
-                UniversalText( activePage.rawValue, size: Constants.UITitleTextSize, font: Constants.titleFont, scale: true )
+                UniversalText( activePage.rawValue, size: Constants.UIHeaderTextSize, font: Constants.titleFont, scale: true )
                 Spacer()
                 
-                LargeRoundedButton(activePage.getAddButtonName(), icon: "arrow.up") {
+                IconButton("plus", label: activePage.getAddButtonName()) {
                     if activePage == .tags { showingCreateTagView = true }
                     if activePage == .templates { showingCreateEventView = true }
                     if activePage == .favorites { showingCreateFavoriteEventView = true }

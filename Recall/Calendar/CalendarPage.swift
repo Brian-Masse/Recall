@@ -61,7 +61,7 @@ struct CalendarPage: View {
     private struct LocalConstants {
         static let gridSpacing: Double = 5
         static let daysPerRow: Double = 7
-        static let strokePadding: Double = 0
+        static let strokePadding: Double = 10
     }
     
 //    MARK: Vars
@@ -122,34 +122,45 @@ struct CalendarPage: View {
         
         VStack(alignment: .leading, spacing: 0) {
             
-            Divider()
-                .padding(.vertical)
-            
             UniversalText( getMonthName(for: date),
                            size: Constants.UISubHeaderTextSize,
                            font: Constants.titleFont)
+            .padding(.vertical, 10)
+            .padding(.top)
             
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: width, maximum: width),
-                                         spacing: LocalConstants.gridSpacing,
-                                         alignment: .bottom)],
-                      alignment: .leading,
-                      spacing: LocalConstants.gridSpacing) {
-                
-                ForEach(-startOfMonthOffset..<Int(dayCount), id: \.self) { i in
-                    let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth) ?? .now
+            ZStack {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: width, maximum: width),
+                                             spacing: LocalConstants.gridSpacing,
+                                             alignment: .bottom)],
+                          alignment: .leading,
+                          spacing: LocalConstants.gridSpacing) {
                     
-                    VStack {
-                        if i >= 0 {
-                            makeDay(for: day)
-                        } else {
-                            Rectangle().foregroundStyle(.clear)
+                    ForEach(-startOfMonthOffset..<Int(dayCount), id: \.self) { i in
+                        let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth) ?? .now
+                        
+                        VStack {
+                            if i >= 0 {
+                                makeDay(for: day)
+                            } else {
+                                Rectangle().foregroundStyle(.clear)
+                            }
                         }
+                        .frame(height: width * 1.25)
                     }
-                    .frame(height: width * 1.25)
+                }
+                
+                VStack {
+                    let dividerCount = ceil(Double( dayCount + startOfMonthOffset  ) / 7)
+                    
+                    ForEach( 0..<Int(dividerCount), id: \.self ) { i in
+                        Spacer()
+                        Divider()
+                            .opacity(i == Int(dividerCount - 1) ? 0 : 1)
+                    }
                 }
                 
             }
-            
+            .rectangularBackground(LocalConstants.strokePadding, style: .secondary)
         }
     }
     
@@ -174,15 +185,14 @@ struct CalendarPage: View {
             }
             
             UniversalText("\(Int(dayNumber))",
-                          size: Constants.UIDefaultTextSize,
-                          font: Constants.mainFont)
+                          size: Constants.UISubHeaderTextSize,
+                          font: Constants.titleFont)
             .padding(.top, 7)
             
             Spacer()
         }
         .opacity( day > .now || !recallWasCompleted ? 0.15 : 1 )
-        .if(isCurrentDay) { view in view.foregroundStyle(.black) }
-        .rectangularBackground(0, style: isCurrentDay ? .accent : .secondary)
+        .if(isCurrentDay) { view in view.universalStyledBackgrond(.accent, onForeground: true) }
         .onTapGesture {
             currentDay = day
             dismiss()
@@ -205,7 +215,6 @@ struct CalendarPage: View {
                             
                             makeMonth(date, in: geo)
                                 .id(i)
-                                .rotationEffect(Angle(degrees: 180)).scaleEffect(x: -1.0, y: 1.0, anchor: .center)
                                 .onAppear {
                                     
                                     viewModel.renderMonth(date)
@@ -219,8 +228,8 @@ struct CalendarPage: View {
                         }
                     }
                 }
-                .rotationEffect(Angle(degrees: 180)).scaleEffect(x: -1.0, y: 1.0, anchor: .center)
                 .onAppear { proxy.scrollTo(0, anchor: .top) }
+                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
             }
         }
     }
@@ -275,8 +284,23 @@ struct CalendarPage: View {
                 .padding(.bottom, 5)
             
             makeCalendar()
+                .padding(.bottom, 30)
         }
-        .padding(7)
+        .padding()
         .universalBackground()
     }
 }
+
+struct TestView: View {
+    
+    @State private var day: Date = .now
+    
+    var body: some View {
+        CalendarPage(currentDay: $day, goals: [])
+    }
+    
+}
+
+#Preview(body: {
+    TestView()
+})
