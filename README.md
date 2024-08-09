@@ -97,6 +97,17 @@ I independently developed this project, from problem identification, project bra
 
 ## **Version History**
 
+### **Version 2.1.0**
+ 
+ CHANGES
+ - Improved the loading time for on a cold launch
+ - Redesigned the Profile Page
+ - Redesigned all page headers throughout the app
+ - Removed About Me Section
+ 
+ NEW FEATURES
+ - Added a month calendar view to quickly skip to previous days
+
 ### **Version 2.0.1**
 
 CHANGES:
