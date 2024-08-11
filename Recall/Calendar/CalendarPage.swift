@@ -209,6 +209,7 @@ struct CalendarPage: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     
                     LazyVStack {
+
                         
                         ForEach( 0..<upperBound, id: \.self ) { i in
                             let date = Calendar.current.date(byAdding: .month, value: -i, to: currentMonth)!
@@ -217,7 +218,7 @@ struct CalendarPage: View {
                                 .id(i)
                                 .onAppear {
                                     
-                                    viewModel.renderMonth(date)
+//                                    viewModel.renderMonth(date)
                                     
                                     if i > upperBound - 5 {
                                         upperBound += 10
@@ -228,7 +229,7 @@ struct CalendarPage: View {
                         }
                     }
                 }
-                .onAppear { proxy.scrollTo(0, anchor: .top) }
+//                .onAppear { proxy.scrollTo(0, anchor: .top) }
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
             }
         }
