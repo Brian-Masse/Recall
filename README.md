@@ -1,5 +1,5 @@
 # Recall
-v2.1.0
+v2.2.0
 
 <picture>
     <!-- <source srcset="./icon_512x512@2x@2x.png" media="(prefers-color-scheme: dark)" alt="Recall by Brian Masse"> -->
