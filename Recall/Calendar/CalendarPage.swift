@@ -218,7 +218,7 @@ struct CalendarPage: View {
                                 .id(i)
                                 .onAppear {
                                     
-//                                    viewModel.renderMonth(date)
+                                    viewModel.renderMonth(date)
                                     
                                     if i > upperBound - 5 {
                                         upperBound += 10
