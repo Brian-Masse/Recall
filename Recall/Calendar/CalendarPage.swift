@@ -138,9 +138,12 @@ struct CalendarPage: View {
                     ForEach(-startOfMonthOffset..<Int(dayCount), id: \.self) { i in
                         let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth) ?? .now
                         
+                        let roundLeftEdge = shouldRoundLeftEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset)
+                        let roundRightEdge = shouldRoundRightEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset, monthCount: dayCount)
+                        
                         VStack {
                             if i >= 0 {
-                                makeDay(for: day)
+                                makeDay(for: day, roundLeftEdge: roundLeftEdge, roundRightEdge: roundRightEdge)
                             } else {
                                 Rectangle().foregroundStyle(.clear)
                             }
@@ -165,13 +168,38 @@ struct CalendarPage: View {
     }
     
 //    MARK: DayView
+    private func shouldRoundLeftEdgeOfDay(_ day: Date, startOfMonthOffset: Int) -> Bool {
+        let dayCount = getDay(of: day)
+        let previousDay = Calendar.current.date(byAdding: .day, value: -1, to: day)!
+        
+        if dayCount == 1 { return true }
+        if !checkRecallCompletion(on: previousDay ) { return true }
+        
+        return (dayCount + startOfMonthOffset - 1) % 7 == 0
+    }
+    
+    private func shouldRoundRightEdgeOfDay(_ day: Date, startOfMonthOffset: Int, monthCount: Int) -> Bool {
+        let dayCount = getDay(of: day)
+        let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: day)!
+        
+        if dayCount == monthCount { return true }
+        if !checkRecallCompletion(on: nextDay ) { return true }
+        
+        return (dayCount + startOfMonthOffset) % 7 == 0
+    }
+    
+    private func checkRecallCompletion(on day: Date) -> Bool {
+        viewModel.recallLog[ day.formatted(date: .numeric, time: .omitted) ] ?? false
+    }
+    
     @MainActor
     @ViewBuilder
-    private func makeDay(for day: Date) -> some View {
+    private func makeDay(for day: Date, roundLeftEdge: Bool, roundRightEdge: Bool) -> some View {
         let isCurrentDay = day.matches(.now, to: .day)
         let dayNumber: Int = getDay(of: day)
         
-        let recallWasCompleted: Bool = viewModel.recallLog[ day.formatted(date: .numeric, time: .omitted) ] ?? false
+        let recallWasCompleted: Bool = checkRecallCompletion(on: day)
+//        Int.random(in: 0...1) == 1
         
         VStack(spacing: 0 ) {
             HStack { Spacer() }
@@ -193,6 +221,16 @@ struct CalendarPage: View {
         }
         .opacity( day > .now || !recallWasCompleted ? 0.15 : 1 )
         .if(isCurrentDay) { view in view.universalStyledBackgrond(.accent, onForeground: true) }
+        .background {
+            
+            if recallWasCompleted {
+                Rectangle()
+                    .foregroundStyle(.red)
+                    .cornerRadius(roundLeftEdge ? 100 : 0, corners: [.topLeft, .bottomLeft] )
+                    .cornerRadius(roundRightEdge ? 100 : 0, corners: [.topRight, .bottomRight] )
+            }
+            
+        }
         .onTapGesture {
             currentDay = day
             dismiss()
