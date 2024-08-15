@@ -66,6 +66,7 @@ struct CalendarPage: View {
     
 //    MARK: Vars
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) var colorScheme
     
     @ObservedObject var viewModel = CalendarPageViewModel.shared
     
@@ -206,28 +207,23 @@ struct CalendarPage: View {
             
             Spacer()
             
-            if recallWasCompleted {
-                Circle()
-                    .universalStyledBackgrond(.accent, onForeground: true)
-                    .frame(width: 7, height: 7)
-            }
-            
             UniversalText("\(Int(dayNumber))",
                           size: Constants.UISubHeaderTextSize,
                           font: Constants.titleFont)
-            .padding(.top, 7)
             
             Spacer()
         }
         .opacity( day > .now || !recallWasCompleted ? 0.15 : 1 )
-        .if(isCurrentDay) { view in view.universalStyledBackgrond(.accent, onForeground: true) }
+        .if(recallWasCompleted) { view in view.foregroundStyle(.black) }
         .background {
             
             if recallWasCompleted {
                 Rectangle()
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Colors.getAccent(from: colorScheme))
                     .cornerRadius(roundLeftEdge ? 100 : 0, corners: [.topLeft, .bottomLeft] )
                     .cornerRadius(roundRightEdge ? 100 : 0, corners: [.topRight, .bottomRight] )
+                    .padding(.vertical, 5)
+                    .padding(.horizontal, -5)
             }
             
         }
