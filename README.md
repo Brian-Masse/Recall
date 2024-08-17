@@ -98,6 +98,11 @@ I independently developed this project, from problem identification, project bra
 
 ## **Version History**
 
+### **Version 2.1.1**
+
+CHANGES
+- Improved the Design of the Calendar Page
+
 ### **Version 2.1.0**
  
  CHANGES
