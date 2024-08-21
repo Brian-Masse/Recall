@@ -9,10 +9,8 @@ import Foundation
 import SwiftUI
 
 struct TestEvent {
-    
     let startTime: Date
     let endTime: Date
-    
 }
 
 
@@ -20,61 +18,72 @@ struct TestCalendarView: View {
     
     let events: [TestEvent]
     
-    let scale: Double = 200
-    
+//    MARK: CollisionRecord
+//    forward collisions stores the indicies of a group of events that all collide along a shared y-level
+//    ie. a horizontal line can be drawn through them
+//    backwardCollisions stores the number of backwards collisions (lowerbound), and the difference in the index of the first backwards collision
+//    to the node checking backwardsCollisions
     private struct CollisionRecord {
         let forwardCollisions: ClosedRange<Int>
         let backwardCollisions: ClosedRange<Int>
     }
+    
     
     private func checkCollisions(between startTime1: Date, endTime1: Date,
                                  and startTime2: Date) -> Bool {
         return startTime2 >= startTime1 && startTime2 <= endTime1
     }
     
+//    MARK: Map Events
+//    map events takes the events and creates a series of collisions records
     private func mapEvents() -> [ CollisionRecord ] {
         
         var records: [CollisionRecord] = []
         
+//        a manual iterator is used such that certaine vents can be 'skipped over',
+//        this happens when they belong to a forwards collision group
         var i = 0
-        
         while i < events.count {
             
-            var event = events[i]
+            let currentEvent = events[i]
             
-//            get backward collision record
+//            get backwardCollisionRecord
+//            go backward and anytime there is a collision with the currentEvent, record it
             var f = i
             
             var collisionCount = 0
             var previousLowerBound = f
-            var previousUpperBound = f
-            
-//            if f != 0 {
-            
-                while ( f != 0 ) {
-                 
-                    if i == 3 {  }
+            let previousUpperBound = f
+
+            while ( f != 0 ) {
+                let previousEvent = events[f - 1]
+                
+                let nextEndTime = max( previousEvent.endTime, events[min(f, i - 1)].endTime )
+                
+                if checkCollisions(between: previousEvent.startTime,
+                                   endTime1: nextEndTime,
+                                   and: currentEvent.startTime ) {
                     
-                    
-                    if checkCollisions(between: events[f - 1].startTime, endTime1: events[f - 1].endTime, and: event.startTime ) {
-                        previousLowerBound = f - 1
-                        collisionCount += 1
-                    }
-                    
-                    f -= 1
+                    previousLowerBound = f - 1
+                    collisionCount += 1
                 }
-//            }
+                
+                f -= 1
+            }
             
-            //get forward collision record
+            let backwardsCollisionRecord = collisionCount...(previousUpperBound - previousLowerBound)
+            
+            
+//            get forwardCollisionRecord
+//            see how many (if any) events the current event shares a common collision with
+//            ie. determine how many events a horizontal line can be drawn through to include the currentEvent
+            
             let lowerBound = i
             var upperBound = i
             
-            if i == events.count - 1 { break }
-            
-            
-            var colliding: Bool = checkCollisions(between: event.startTime,
-                                                  endTime1: event.endTime,
-                                                  and: events[i + 1].startTime)
+            var colliding: Bool = i < events.count - 1 && checkCollisions(between: currentEvent.startTime,
+                                                                           endTime1: currentEvent.endTime,
+                                                                           and: events[i + 1].startTime)
             
             while colliding {
                 
@@ -84,17 +93,19 @@ struct TestCalendarView: View {
                 
                 if i == events.count - 1 { break }
                 
-                var newStartTime = events[i].startTime
-                var newEndTime = min( event.endTime, events[i].endTime )
+//                take the smallest intersection between the two colliding events
+                let newStartTime = events[i].startTime
+                let newEndTime = min( currentEvent.endTime, events[i].endTime )
                 
                 colliding = checkCollisions(between: newStartTime,
                                             endTime1: newEndTime,
                                             and: events[i + 1].startTime)
-                
             }
 
+            
             let collisionRecord = CollisionRecord(forwardCollisions: lowerBound...upperBound,
-                                                  backwardCollisions: collisionCount...previousUpperBound - previousLowerBound)
+                                                  backwardCollisions: backwardsCollisionRecord)
+            
             records.append(collisionRecord)
             
             i += 1
@@ -104,6 +115,8 @@ struct TestCalendarView: View {
     }
     
     
+//    MARK: Sizing Functions
+//    takes the length of an event and returns a length in pixels
     private func getLength(of event: TestEvent) -> Double {
         
         let difference =  event.endTime.timeIntervalSince(event.startTime)
@@ -111,6 +124,7 @@ struct TestCalendarView: View {
         
     }
     
+//    take the distance between two events and return a length in pixels
     private func getVerticalOffset(of event: TestEvent, relativeTo startTime: Date) -> Double {
         
         let difference = event.startTime.timeIntervalSince(startTime)
@@ -119,6 +133,7 @@ struct TestCalendarView: View {
     }
     
     
+//    MARK: Event Builder
     @ViewBuilder
     private func makeEvent( _ event: TestEvent ) -> some View {
         HStack {
@@ -131,92 +146,85 @@ struct TestCalendarView: View {
         }
         .frame(height: getLength(of: event))
         .background(.red)
-        .padding()
+        .padding(.horizontal, 2.5)
     }
     
+//    MARK: EventCollection
     @ViewBuilder
-    private func makeEvents(from range: ClosedRange<Int>, backwardCollisions: ClosedRange<Int>, in geo: GeometryProxy) -> some View {
+    private func makeEventCollection(from collisionRecord: CollisionRecord, in geo: GeometryProxy) -> some View {
         
-        HStack(alignment: .top) {
+        HStack(alignment: .top, spacing: 0) {
         
-            if backwardCollisions.upperBound - backwardCollisions.lowerBound != 0 {
-             
-//                ForEach( backwardCollisions.lowerBound..<backwardCollisions.upperBound, id: \.self ) { i in
-//                    
-//                    HStack {
-//                        Spacer()
-//                    }
-//
-//                    .frame(height: 100)
-//                    .background(.blue)
-//                    .opacity(0.5)
-//                    
-//                }
+//            if the current event has collided with previous events, push it forward by the correct amount
+            if collisionRecord.backwardCollisions.count != 1{
+                let ratio = Double(collisionRecord.backwardCollisions.lowerBound) / Double(collisionRecord.backwardCollisions.upperBound)
                 
-                let forwardCollisionCount = range.count
-                let ratio = Double(backwardCollisions.lowerBound) / Double(backwardCollisions.upperBound)
-                
-                Spacer(minLength: geo.size.width * ratio )
-                
+                Rectangle()
+                    .frame(width: geo.size.width * ratio,
+                            height: 50)
+                    .foregroundStyle(.clear)
             }
-            
-            ForEach( range, id: \.self ) { i in
+                
+//            render the events
+            ForEach( collisionRecord.forwardCollisions, id: \.self ) { i in
              
                 makeEvent(events[i])
                     .alignmentGuide(VerticalAlignment.top) { _ in
-                        
-                        -CGFloat(getVerticalOffset(of: events[i], relativeTo: events[range.lowerBound].startTime))
-                        
+                        -CGFloat(getVerticalOffset(of: events[i],
+                                                   relativeTo: events[collisionRecord.forwardCollisions.lowerBound].startTime))
                     }
-                
             }
         }
     }
     
+    @State private var scale: Double = 50
     
+//    MARK: Body
     var body: some View {
         
         let records = mapEvents()
         let startOfDay = Date.now.resetToStartOfDay()
         
-        GeometryReader { geo in
-         
-            ZStack {
-                    
-                ForEach( 0..<records.count, id: \.self ) { i in
-                    Text( "\(records[i].backwardCollisions )" )
-                    makeEvents(from: records[i].forwardCollisions, backwardCollisions: records[i].backwardCollisions, in: geo)
-                    
-                        .offset(y:  getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
-                                                      relativeTo: startOfDay) )
-                    
-                }
-                
+        VStack {
             
-                
-                Text("hi!")
+            Slider( value: $scale, in: 50...200 )
+            
+            GeometryReader { geo in
+                ScrollView(.vertical) {
+                    ZStack {
+                        ForEach( 0..<records.count, id: \.self ) { i in
+                            makeEventCollection(from: records[i], in: geo)
+                                .alignmentGuide(VerticalAlignment.center) { _ in
+                                    let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
+                                                                   relativeTo: startOfDay)
+                                    return -offset
+                                }
+                            
+                        }
+                    }
+                    .border(.blue)
+//                    .scaleEffect(0.5)
+                }
             }
         }
     }
-    
 }
+
 
 #Preview {
     
     let hour: Double = 60 * 60
-    
-//    let day =
-    
+
     let events: [TestEvent] = [
-        .init(startTime: .now, endTime: .now + hour * 4),
-        .init(startTime: .now + hour * 1, endTime: .now + hour * 2),
+        .init(startTime: .now, endTime: .now + hour * 2),
+        .init(startTime: .now + hour * 1, endTime: .now + hour * 4),
         .init(startTime: .now + hour * 1.5, endTime: .now + hour * 2),
         
         
         .init(startTime: .now + hour * 2.5, endTime: .now + hour * 7),
         .init(startTime: .now + hour * 5, endTime: .now + hour * 7),
         
-        .init(startTime: .now + hour * 9, endTime: .now + hour * 10)
+            .init(startTime: .now + hour * 7.5, endTime: .now + hour * 10)
     ]
     
     return TestCalendarView(events: events)
