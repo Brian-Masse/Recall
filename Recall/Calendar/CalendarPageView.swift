@@ -16,10 +16,10 @@ struct CalendarPageView: View {
 //    MARK: Convenience Functions
     
     private func setCurrentDay(with date: Date) {
-        if date > containerModel.currentDay { slideDirection = .right }
+        if date > viewModel.currentDay { slideDirection = .right }
         else { slideDirection = .left }
         
-        withAnimation { containerModel.setCurrentDay(to: date) }
+        withAnimation { viewModel.setCurrentDay(to: date) }
     }
     
 //   MARK: vars
@@ -29,6 +29,7 @@ struct CalendarPageView: View {
     let goals: [RecallGoal]
     
     @ObservedObject var containerModel: CalendarContainerModel = sharedContainerModel
+    @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     @State var showingCreateEventView: Bool = false
     @State var showingProfileView: Bool = false
@@ -50,10 +51,10 @@ struct CalendarPageView: View {
     
     @ViewBuilder
     private func makeDateLabel() -> some View {
-        let matches = containerModel.currentDay.matches(.now, to: .day)
+        let matches = viewModel.currentDay.matches(.now, to: .day)
         
         HStack {
-            let currentLabel    = formatDate(containerModel.currentDay)
+            let currentLabel    = formatDate(viewModel.currentDay)
             let nowLabel        = formatDate(.now)
             
             if !matches {
@@ -71,7 +72,7 @@ struct CalendarPageView: View {
 //    MARK: DateSelector
     @ViewBuilder
     private func makeDateSelectorContent(from date: Date, string: String, month: String) -> some View {
-        let activeDay = date.matches(containerModel.currentDay, to: .day)
+        let activeDay = date.matches(viewModel.currentDay, to: .day)
         
         if activeDay {
             VStack {
@@ -82,7 +83,7 @@ struct CalendarPageView: View {
         } else {
             UniversalText(string, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true)
                 .overlay {
-                    if date.isFirstOfMonth() && !containerModel.currentDay.matches(date, to: .day) {
+                    if date.isFirstOfMonth() && !viewModel.currentDay.matches(date, to: .day) {
                         UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true )
                             .offset(y: -60)
                     }
@@ -98,7 +99,7 @@ struct CalendarPageView: View {
         let month = date.formatted(.dateTime.month(.abbreviated)).lowercased()
     
         makeDateSelectorContent(from: date, string: string, month: month)
-            .if(containerModel.currentDay.matches(date, to: .day)) { view in
+            .if(viewModel.currentDay.matches(date, to: .day)) { view in
                 view
                     .padding()
                     .rectangularBackground(0, style: .secondary, foregroundColor: .black)
@@ -120,7 +121,7 @@ struct CalendarPageView: View {
                 }
                 .onAppear() {
                     reader.scrollTo(4, anchor: .trailing)
-                }.onChange(of: containerModel.currentDay) { newValue in
+                }.onChange(of: viewModel.currentDay) { newValue in
                     if newValue.matches(Date.now, to: .day) {
                         withAnimation { reader.scrollTo(4, anchor: .trailing) }
                     }
@@ -171,15 +172,17 @@ struct CalendarPageView: View {
                 LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
             }
             
-            GeometryReader { geo in
-                CalendarContainer(with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
-                    .environmentObject(containerModel)
-                    .onAppear { containerModel.setCurrentDay(to: containerModel.currentDay) }
-            }
+//            GeometryReader { geo in
+//                CalendarContainer(with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
+//                    .environmentObject(containerModel)
+//                    .onAppear { containerModel.setCurrentDay(to: viewModel.currentDay) }
+//            }
+            
+            TestingCalendarContainer(events: Array(events))
         }
         .padding()
         .sheet(isPresented: $showingCreateEventView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: containerModel.currentDay)
+            CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay)
         }
         .sheet(isPresented: $showingProfileView) {
             ProfileView()

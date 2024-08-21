@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIUniversals
 
 struct TestEvent {
     let startTime: Date
@@ -15,8 +16,6 @@ struct TestEvent {
 
 
 struct TestCalendarView: View {
-    
-    let events: [TestEvent]
     
 //    MARK: CollisionRecord
 //    forward collisions stores the indicies of a group of events that all collide along a shared y-level
@@ -31,7 +30,7 @@ struct TestCalendarView: View {
     
     private func checkCollisions(between startTime1: Date, endTime1: Date,
                                  and startTime2: Date) -> Bool {
-        return startTime2 >= startTime1 && startTime2 <= endTime1
+        return startTime2 > startTime1 && startTime2 < endTime1
     }
     
 //    MARK: Map Events
@@ -117,7 +116,7 @@ struct TestCalendarView: View {
     
 //    MARK: Sizing Functions
 //    takes the length of an event and returns a length in pixels
-    private func getLength(of event: TestEvent) -> Double {
+    private func getLength(of event: RecallCalendarEvent) -> Double {
         
         let difference =  event.endTime.timeIntervalSince(event.startTime)
         return difference / scale
@@ -125,7 +124,7 @@ struct TestCalendarView: View {
     }
     
 //    take the distance between two events and return a length in pixels
-    private func getVerticalOffset(of event: TestEvent, relativeTo startTime: Date) -> Double {
+    private func getVerticalOffset(of event: RecallCalendarEvent, relativeTo startTime: Date) -> Double {
         
         let difference = event.startTime.timeIntervalSince(startTime)
         return difference / scale
@@ -135,7 +134,7 @@ struct TestCalendarView: View {
     
 //    MARK: Event Builder
     @ViewBuilder
-    private func makeEvent( _ event: TestEvent ) -> some View {
+    private func makeEvent( _ event: RecallCalendarEvent ) -> some View {
         HStack {
             VStack {
                 Text("\(event.startTime.formatted())")
@@ -147,6 +146,7 @@ struct TestCalendarView: View {
         .frame(height: getLength(of: event))
         .background(.red)
         .padding(.horizontal, 2.5)
+        .border(.blue)
     }
     
 //    MARK: EventCollection
@@ -177,56 +177,62 @@ struct TestCalendarView: View {
         }
     }
     
-    @State private var scale: Double = 50
+//    MARK: Initialization
+    private let events: [RecallCalendarEvent]
+    private let day: Date
+    
+    @State private var scale: Double = 100
+    
+    init(events: [RecallCalendarEvent], on day: Date ) {
+        self.day = day
+        self.events = events
+    }
     
 //    MARK: Body
     var body: some View {
         
         let records = mapEvents()
-        let startOfDay = Date.now.resetToStartOfDay()
+        let startOfDay = day.resetToStartOfDay()
         
-        VStack {
-            
-            Slider( value: $scale, in: 50...200 )
-            
-            GeometryReader { geo in
-                ScrollView(.vertical) {
-                    ZStack {
-                        ForEach( 0..<records.count, id: \.self ) { i in
-                            makeEventCollection(from: records[i], in: geo)
-                                .alignmentGuide(VerticalAlignment.center) { _ in
-                                    let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
-                                                                   relativeTo: startOfDay)
-                                    return -offset
-                                }
-                            
+        GeometryReader { geo in
+            ZStack(alignment: .top) {
+                
+                ForEach( 0..<records.count, id: \.self ) { i in
+                    makeEventCollection(from: records[i], in: geo)
+                        .alignmentGuide(VerticalAlignment.top) { _ in
+                            let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
+                                                           relativeTo: startOfDay)
+                            return -offset
                         }
-                    }
-                    .border(.blue)
-//                    .scaleEffect(0.5)
+                    
                 }
+                .padding(.horizontal, 10)
+                
+                Rectangle()
+                    .foregroundStyle(.clear)
             }
+            .border(.purple)
         }
     }
 }
 
 
-#Preview {
-    
-    let hour: Double = 60 * 60
-
-    let events: [TestEvent] = [
-        .init(startTime: .now, endTime: .now + hour * 2),
-        .init(startTime: .now + hour * 1, endTime: .now + hour * 4),
-        .init(startTime: .now + hour * 1.5, endTime: .now + hour * 2),
-        
-        
-        .init(startTime: .now + hour * 2.5, endTime: .now + hour * 7),
-        .init(startTime: .now + hour * 5, endTime: .now + hour * 7),
-        
-            .init(startTime: .now + hour * 7.5, endTime: .now + hour * 10)
-    ]
-    
-    return TestCalendarView(events: events)
-    
-}
+//#Preview {
+//    
+//    let hour: Double = 60 * 60
+//
+//    let events: [TestEvent] = [
+//        .init(startTime: .now, endTime: .now + hour * 2),
+//        .init(startTime: .now + hour * 1, endTime: .now + hour * 4),
+//        .init(startTime: .now + hour * 1.5, endTime: .now + hour * 2),
+//        
+//        
+//        .init(startTime: .now + hour * 2.5, endTime: .now + hour * 7),
+//        .init(startTime: .now + hour * 5, endTime: .now + hour * 7),
+//        
+//            .init(startTime: .now + hour * 7.5, endTime: .now + hour * 10)
+//    ]
+//    
+//    return TestCalendarView(events: events)
+//    
+//}
