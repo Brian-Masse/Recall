@@ -326,16 +326,16 @@ struct CalendarPage: View {
     }
 }
 
-struct TestView: View {
-    
-    @State private var day: Date = .now
-    
-    var body: some View {
-        CalendarPage(currentDay: $day, goals: [])
-    }
-    
-}
+//struct TestView: View {
+//    
+//    @State private var day: Date = .now
+//    
+//    var body: some View {
+//        CalendarPage(currentDay: $day, goals: [])
+//    }
+//    
+//}
 
-#Preview(body: {
-    TestView()
-})
+//#Preview(body: {
+//    TestView()
+//})

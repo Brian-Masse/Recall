@@ -79,6 +79,7 @@
 		C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA0EE62A6B556300E36EF1 /* CategoryCreationView.swift */; };
 		C9EE07E52C63114C00BE4ED3 /* CalendarPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EE07E42C63114C00BE4ED3 /* CalendarPage.swift */; };
 		C9EE9EB82B608FA50090DB16 /* UniversalDonationPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9EE9EB72B608FA50090DB16 /* UniversalDonationPackage */; };
+		C9FDDCB52C764C25008C28D6 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FDDCB42C764C25008C28D6 /* Test.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -186,6 +187,7 @@
 		C9EA0EE42A6B48F200E36EF1 /* CategoriesPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesPageView.swift; sourceTree = "<group>"; };
 		C9EA0EE62A6B556300E36EF1 /* CategoryCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCreationView.swift; sourceTree = "<group>"; };
 		C9EE07E42C63114C00BE4ED3 /* CalendarPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPage.swift; sourceTree = "<group>"; };
+		C9FDDCB42C764C25008C28D6 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -313,6 +315,7 @@
 				C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */,
 				C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */,
 				C98198DB2AE9ECC90039AF9C /* HalfPageView.swift */,
+				C9FDDCB42C764C25008C28D6 /* Test.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -676,6 +679,7 @@
 				C98573482B8A7A58001D9895 /* StyledCalendarContainerView.swift in Sources */,
 				C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */,
 				C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */,
+				C9FDDCB52C764C25008C28D6 /* Test.swift in Sources */,
 				C98F2F2B2A9D216700E92B30 /* TutorialViews.swift in Sources */,
 				C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */,
 				C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */,
