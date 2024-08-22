@@ -31,7 +31,7 @@ struct TestingCalendarContainer: View {
     
     @ViewBuilder
     private func makeCalendarMark(hour: Int, minute: Int = 0, includeLabel: Bool = true) -> some View {
-        HStack {
+        HStack(alignment: .top) {
             
             if includeLabel {
                 Text(getCalendarMarkLabel(hour: hour))
@@ -44,7 +44,7 @@ struct TestingCalendarContainer: View {
         }
         .alignmentGuide(VerticalAlignment.top) { _ in
             let timeInterval = Double(hour) *  Constants.HourTime + Double(minute) * Constants.MinuteTime
-            return CGFloat(-(timeInterval) / scale)
+            return CGFloat(-(timeInterval) / viewModel.scale)
         }
     }
     
@@ -67,7 +67,6 @@ struct TestingCalendarContainer: View {
     
     private let events: [RecallCalendarEvent]
     
-    private let scale: Double = 100
     private let calendarLabelWidth: Double = 50
     private let scrollDetectionPadding: Double = 20
     
@@ -94,7 +93,7 @@ struct TestingCalendarContainer: View {
     @ViewBuilder
     private func makeCalendarCarousel(in geo: GeometryProxy) -> some View {
         ScrollViewReader { proxy in
-            ScrollView(.horizontal) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 0) {
                     
                     ForEach(0...10, id: \.self) { i in
@@ -104,7 +103,8 @@ struct TestingCalendarContainer: View {
                         //                                    Rectangle()
                         TestCalendarView(events: viewModel.getEvents(on: day),
                                          on: day)
-                        //                                        .foregroundStyle(.red)
+                        //       
+//                        .foregroundStyle(.red)
                         .padding(.horizontal, 10)
                         .frame(width: geo.size.width - calendarLabelWidth)
                         .id(i)
@@ -120,6 +120,9 @@ struct TestingCalendarContainer: View {
                 })
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo) }
                 .onChange(of: viewModel.shouldScrollCalendar) { _ in scrollToCurrentDay(proxy: proxy) }
+                .onChange(of: events) { oldValue, newValue in
+                    viewModel.invalidateEvents(newEvents: newValue)
+                }
             }
             .scrollTargetBehavior(.paging)
         }.padding(.leading, calendarLabelWidth)
@@ -139,6 +142,7 @@ struct TestingCalendarContainer: View {
                     }
                     .padding(.bottom, 250)
                 }
+                .scrollDisabled(viewModel.gestureInProgress)
             }
         }
     }

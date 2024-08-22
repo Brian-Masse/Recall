@@ -13,11 +13,14 @@ class RecallCalendarViewModel: ObservableObject {
     
     static let shared = RecallCalendarViewModel()
     
-    @Published var filteredEvents: [String:[RecallCalendarEvent]] = [:]
-    @Published private(set) var currentDay: Date = .now
-    
+    var filteredEvents: [String:[RecallCalendarEvent]] = [:]
+    @Published private(set) var currentDay: Date = Date.now
 //    this will be toggled whenever the view should scroll to the currentDay
     @Published private(set) var shouldScrollCalendar: Bool = false
+    
+    
+    @Published var scale: Double = 100
+    @Published var gestureInProgress: Bool = false
     
     func setCurrentDay(to day: Date, scrollToDay: Bool = true) {
     
@@ -42,8 +45,10 @@ class RecallCalendarViewModel: ObservableObject {
         }
         
         DispatchQueue.main.sync {
-            self.filteredEvents[key] = filteredEvents
-            self.objectWillChange.send()
+            withAnimation {
+                self.filteredEvents[key] = filteredEvents
+                self.objectWillChange.send()
+            }
         }
     }
     
@@ -58,8 +63,13 @@ class RecallCalendarViewModel: ObservableObject {
     
     
 //    called when the events refresh remotely from the server
-    func invalidateEvents() {
+    func invalidateEvents(newEvents: [RecallCalendarEvent]) {
+        self.filteredEvents = [:]
         
+        Task {
+
+            await loadEvents(for: currentDay, in: newEvents )
+        }
     }
     
 }

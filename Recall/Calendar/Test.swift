@@ -54,36 +54,35 @@ struct TestCalendarView: View {
             var collisions: [Int] = []
             var previousLowerBound = f
             
-            var colliding: Bool = f != 0 && checkCollisions(between: events[f - 1].startTime,
-                                                            endTime1: events[f - 1].endTime,
-                                                            and: currentEvent.startTime,
-                                                            endTime2: currentEvent.endTime)
-            
+            var nextEndTime = events[ max(0, f - 1) ].endTime
             while f != 0 {
                 let previousEvent = events[f - 1]
-                let nextEndTime = max( previousEvent.endTime, events[f - 1].endTime )
+                nextEndTime = max( previousEvent.endTime, nextEndTime )
                 
-                if checkCollisions(between: previousEvent.startTime, endTime1: nextEndTime, and: currentEvent.startTime, endTime2: currentEvent.endTime ) {
-                    previousLowerBound = f - 1
-                }
+
                 
-                if checkCollisions(between: previousEvent.startTime, endTime1: previousEvent.endTime, and: currentEvent.startTime, endTime2: currentEvent.startTime) {
-                    collisions.append(f - 1)
-                }
+                if checkCollisions(between: previousEvent.startTime,
+                                   endTime1: previousEvent.endTime,
+                                   and: events[f].startTime,
+                                   endTime2: events[f].endTime ) { previousLowerBound = f - 1 }
+                
+                if checkCollisions(between: previousEvent.startTime,
+                                   endTime1: previousEvent.endTime,
+                                   and: currentEvent.startTime,
+                                   endTime2: currentEvent.startTime) { collisions.append(f - 1) }
                 
                 f -= 1
             }
             
             let backwardsCollisionRecord = previousLowerBound...max(previousLowerBound,i - 1)
-            
-            
+           
 //            get forwardCollisionRecord
 //            see how many (if any) events the current event shares a common collision with
 //            ie. determine how many events a horizontal line can be drawn through to include the currentEvent
             let lowerBound = i
             var upperBound = i
             
-            colliding = i < events.count - 1 && checkCollisions(between: currentEvent.startTime,
+            var colliding: Bool = i < events.count - 1 && checkCollisions(between: currentEvent.startTime,
                                                                 endTime1: currentEvent.endTime,
                                                                 and: events[i + 1].startTime,
                                                                 endTime2: events[i + 1].endTime)
@@ -123,7 +122,7 @@ struct TestCalendarView: View {
     private func getLength(of event: RecallCalendarEvent) -> Double {
         
         let difference =  event.endTime.timeIntervalSince(event.startTime)
-        return difference / scale
+        return difference / viewModel.scale
         
     }
     
@@ -131,7 +130,7 @@ struct TestCalendarView: View {
     private func getVerticalOffset(of event: RecallCalendarEvent, relativeTo startTime: Date) -> Double {
         
         let difference = event.startTime.timeIntervalSince(startTime)
-        return difference / scale
+        return difference / viewModel.scale
         
     }
     
@@ -161,23 +160,33 @@ struct TestCalendarView: View {
             
             let ratio: Double       = 1 / Double(collisionRecord.backwardCollisions.count)
             let lastCollisionIndex  = collisionRecord.backwardsCollisionIndicies.last ?? 0
-            let indexToRender       = (collisionRecord.backwardCollisions.count - 1 - lastCollisionIndex) % collisionRecord.backwardCollisions.count
+            let indexToRender       = (collisionRecord.backwardCollisions.count - 1 - lastCollisionIndex + collisionRecord.backwardCollisions.lowerBound) % collisionRecord.backwardCollisions.count
             
             ForEach( 0..<collisionRecord.backwardCollisions.count, id: \.self ) { i in
-                if i == indexToRender || collisionRecord.backwardsCollisionIndicies.count == 0 {
+                if i == abs(indexToRender) || collisionRecord.backwardsCollisionIndicies.count == 0 {
                     ForEach( collisionRecord.forwardCollisions, id: \.self ) { i in
                         
                         CalendarEventPreviewView(event: events[i], events: events)
                             .border(.white)
                             .frame(height: getLength(of: events[i]))
-                            .padding(.vertical)
+//                            .padding(.vertical)
                             .alignmentGuide(VerticalAlignment.top) { _ in
                                 -CGFloat(getVerticalOffset(of: events[i],
                                                            relativeTo: events[collisionRecord.forwardCollisions.lowerBound].startTime))
                             }
+//                            .overlay {
+//                                VStack {
+//                                    
+//                                    Text("\(indexToRender)")
+//                                    Text("\(ratio)")
+//                                    Text("\(collisionRecord.backwardsCollisionIndicies)")
+//                                    Text("\(collisionRecord.backwardCollisions)")
+//                                    
+//                                }
+//                            }
                     }
                     
-                } else {
+                } else if collisionRecord.backwardsCollisionIndicies.contains(i + collisionRecord.backwardCollisions.lowerBound) {
                     Rectangle()
                         .frame(width: geo.size.width * ratio, height: 50)
                         .foregroundStyle(.clear)
@@ -187,10 +196,10 @@ struct TestCalendarView: View {
     }
     
 //    MARK: Initialization
+    @ObservedObject private var viewModel = RecallCalendarViewModel.shared
+    
     private let events: [RecallCalendarEvent]
     private let day: Date
-    
-    @State private var scale: Double = 100
     
     init(events: [RecallCalendarEvent], on day: Date ) {
         self.day = day

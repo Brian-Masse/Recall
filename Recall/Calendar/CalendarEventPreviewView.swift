@@ -31,7 +31,7 @@ enum TimeRounding: Int, CaseIterable, Identifiable {
 //Should only be placed ontop of a caldndar container
 struct CalendarEventPreviewView: View {
     
-    private let blockCoordinateSpaceKey: String = "blockCOordinateSpace"
+    private let coordinateSpaceName = "CalendarContainerCoordinateSpace"
     private let holdDuration: Double = 0.1
 
     private enum ResizeDirection: Int {
@@ -42,19 +42,21 @@ struct CalendarEventPreviewView: View {
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var containerModel: CalendarContainerModel
+    @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     @ObservedRealmObject var event: RecallCalendarEvent
     @ObservedRealmObject var index = RecallModel.index
     
-//    let spacing: CGFloat
-//    let geo: GeometryProxy
-//    let startHour: Int
     let events: [RecallCalendarEvent]
 
     init( event: RecallCalendarEvent, events: [RecallCalendarEvent]) {
         self.event = event
         self.events = events
+        
+        
     }
+    
+    @State private var moveOffset: Double = 0
     
     @State var startDate: Date = .now
     @State var endDate: Date = .now
@@ -92,42 +94,42 @@ struct CalendarEventPreviewView: View {
     }
     
     private func beginMoving() {
-        containerModel.dragging = true
+        viewModel.gestureInProgress = true
         moving = true
     }
     
     private func beginResizing() {
-        containerModel.dragging = true
+//        viewModel.gestureInProgress = true
         resizing = true
     }
     
     private func resetEditingControls() {
+        viewModel.gestureInProgress = false
         resizing = false
         moving = false
     }
     
 //    MARK: Drag
     private var drag: some Gesture {
-        DragGesture(coordinateSpace: .named(blockCoordinateSpaceKey))
+        DragGesture(coordinateSpace: .named(coordinateSpaceName))
             .onChanged { dragGesture in
                 if !moving || resizing { return }
-//                startDate = getTime(from: clampPosition(dragGesture.location.y))
-                endDate   = startDate + (length * Constants.HourTime)
-                
-//                roundedStartDate = getNearestTime(from: clampPosition(dragGesture.location.y), to: index.dateSnapping)
+                withAnimation { moveOffset = roundPosition(dragGesture.location.y, to: index.dateSnapping) }
             }
             .onEnded { dragGesture in
-                if containerModel.dragging && !resizing {
-                    containerModel.dragging = false
-                    moving = false
-                    event.updateDate(startDate: roundedStartDate, endDate: roundedStartDate + ( length * Constants.HourTime ) )
+                if moving && !resizing {
+                    let roundedStartTime = getTime(from: self.moveOffset, on: event.startTime)
+                    let roundedEndTime = roundedStartTime + event.getLengthInHours() * Constants.HourTime
+                    
+                    event.updateDate(startDate: roundedStartTime, endDate: roundedEndTime )
                 }
+                self.resetEditingControls()
             }
     }
     
 //    MARK: Resize
     private func resizeGesture(_ direction: ResizeDirection) -> some Gesture {
-        DragGesture( coordinateSpace: .named(blockCoordinateSpaceKey) )
+        DragGesture( coordinateSpace: .named(coordinateSpaceName) )
             .onChanged { dragGesture in
                 if !containerModel.dragging || !resizing { return }
                 if direction == .up {
@@ -157,28 +159,20 @@ struct CalendarEventPreviewView: View {
 //    MARK: Struct Methods
 //    this translates a position into a date
 //    it is involved in placing events on the timeline correctly
-//    private func getTime(from position: CGFloat) -> Date {
-//        let pos = position + ( CGFloat(startHour) * spacing )
-//        let hour = (pos / spacing).rounded(.down) + CGFloat(startHour)
-//        let minutes = ((pos / spacing) - hour) * CGFloat(Constants.MinuteTime)
-//        
-//        return Calendar.current.date(bySettingHour: Int(hour), minute: Int(minutes), second: 0, of: startDate) ?? .now
-//    }
-//    
-////    this snaps the time to a set position based on the users preferences
-//    private func getNearestTime(from position: CGFloat, to timeRounding: TimeRounding, roundingRule: FloatingPointRoundingRule = .down ) -> Date {
-//        let pos = position + ( CGFloat(startHour) * spacing )
-//        var hour = (pos / spacing).rounded(.down)
-//        let minutes = ((pos / spacing) - hour)
-//        var roundedMinutes = ((minutes * CGFloat(timeRounding.rawValue)).rounded(roundingRule) / CGFloat(timeRounding.rawValue)) * CGFloat(Constants.MinuteTime)
-//        
-//        if roundedMinutes == 60 {
-//            roundedMinutes = 0
-//            hour += 1
-//        }
-//        
-//        return Calendar.current.date(bySettingHour: Int(hour), minute: Int(roundedMinutes), second: 0, of: startDate) ?? .now
-//    }
+    private func getTime(from position: CGFloat, on date: Date) -> Date {
+        let timeInterval = position * viewModel.scale
+        let hour = (timeInterval / Constants.HourTime).rounded(.down)
+        let minutes = ((timeInterval / Constants.HourTime) - hour) * CGFloat(Constants.MinuteTime)
+        
+        return Calendar.current.date(bySettingHour: Int(hour), minute: Int(minutes), second: 0, of: startDate) ?? .now
+    }
+    
+    private func roundPosition(_ position: Double, to timeRounding: TimeRounding) -> Double {
+        let hoursInPosition = (position * viewModel.scale) / Constants.HourTime
+        let roundedHours = (hoursInPosition * Double(timeRounding.rawValue)).rounded(.down) / Double(timeRounding.rawValue)
+        return (roundedHours * Constants.HourTime) / viewModel.scale
+        
+    }
 
     private func setup() {
         startDate = event.startTime
@@ -194,7 +188,7 @@ struct CalendarEventPreviewView: View {
 //    this function runs anyitme a user selects any option from the context menu
 //    its meant to disable any features that may be incmpatible with the currently performered action
     @MainActor
-    private func defaultContextMenuAction() { containerModel.selecting = false }
+    private func defaultContextMenuAction() { }
     
     private func toggleSelection() {
         if let index = containerModel.selection.firstIndex(where: { selectedEvent in
@@ -247,11 +241,12 @@ struct CalendarEventPreviewView: View {
     var body: some View {
         ZStack {
             if moving || resizing {
-                Rectangle()
-                    .foregroundColor(.red.opacity(0.5))
-                    .cornerRadius(Constants.UIDefaultCornerRadius)
-//                    .frame(width: getWidth(), height: getHeight())
-//                    .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: roundedStartDate))
+                GeometryReader { geo in
+                    RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                        .stroke(style: .init(lineWidth: 5, lineCap: .round, dash: [5, 10], dashPhase: 15))
+    //                    .frame(width: getWidth(), height: getHeight())
+                        .offset(y: moveOffset - geo.frame(in: .named(coordinateSpaceName)).minY )
+                }
             }
         
             CalendarEventPreviewContentView(event: event,
@@ -267,7 +262,7 @@ struct CalendarEventPreviewView: View {
                     .contentShape(Rectangle())
                     .padding(.vertical, 20)
                     .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
-                    .coordinateSpace(name: blockCoordinateSpaceKey)
+//                    .coordinateSpace(name: blockCoordinateSpaceKey)
                 )
                 .contextMenu {
                     
@@ -311,7 +306,7 @@ struct CalendarEventPreviewView: View {
 //                .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
                 .onTapGesture { onTap() }
                 
-                .coordinateSpace(name: blockCoordinateSpaceKey)
+//                .coordinateSpace(name: blockCoordinateSpaceKey)
             
                 .onAppear { setup() }
 //                .onChange(of: containerModel.dragging) { newValue in
