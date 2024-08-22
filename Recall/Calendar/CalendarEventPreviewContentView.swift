@@ -116,11 +116,7 @@ struct CalendarEventPreviewContentView: View {
         
         ZStack {
             RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                .foregroundStyle(colorScheme == .dark ? .black : .white)
-            
-            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                 .foregroundColor(event.getColor())
-                .opacity(colorScheme == .dark ? 0.6 : 0.9)
             
             VStack(alignment: .leading) {
                 HStack {Spacer()}

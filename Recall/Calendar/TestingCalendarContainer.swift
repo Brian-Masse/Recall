@@ -111,7 +111,7 @@ struct TestingCalendarContainer: View {
                                          on: day)
                         //       
 //                        .foregroundStyle(.red)
-//                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 5)
                         .frame(width: geo.size.width - calendarLabelWidth)
                         .id(i)
                         .task { await viewModel.loadEvents(for: day, in: events) }
@@ -131,24 +131,35 @@ struct TestingCalendarContainer: View {
                 }
             }
             .scrollTargetBehavior(.paging)
-        }.padding(.leading, calendarLabelWidth)
+            
+        }
+        .padding(.leading, calendarLabelWidth)
     }
     
 //    MARK: Body
     var body: some View {
         VStack {
             GeometryReader { geo in
-                ScrollView(.vertical, showsIndicators: false) {
-                    ZStack(alignment: .top) {
+                ScrollViewReader { proxy in
+                    ScrollView(.vertical, showsIndicators: false) {
                         
-                        makeCalendar()
+                        Rectangle()
+                            .frame(height: 175)
+                            .foregroundStyle(.clear)
                         
-                        makeCalendarCarousel(in: geo)
-                        
+                        ZStack(alignment: .top) {
+                            
+                            makeCalendar()
+                            
+                            makeCalendarCarousel(in: geo)
+                            
+                        }
+                        .id(1)
+                        .padding(.bottom, 150)
                     }
-                    .padding(.bottom, 150)
+                    .onAppear { proxy.scrollTo(1, anchor: .top) }
+                    .scrollDisabled(viewModel.gestureInProgress)
                 }
-                .scrollDisabled(viewModel.gestureInProgress)
             }
         }
     }

@@ -147,7 +147,11 @@ struct CalendarEventPreviewView: View {
         let hour = (timeInterval / Constants.HourTime).rounded(.down)
         let minutes = ((timeInterval / Constants.HourTime) - hour) * CGFloat(Constants.MinuteTime)
         
-        return Calendar.current.date(bySettingHour: Int(hour), minute: Int(minutes), second: 0, of: date) ?? .now
+        var comps = DateComponents()
+        comps.hour = Int(hour)
+        comps.minute = Int(minutes)
+        
+        return Calendar.current.date(byAdding: comps, to: date.resetToStartOfDay()) ?? .now
     }
     
     private func roundPosition(_ position: Double, to timeRounding: TimeRounding) -> Double {
@@ -233,8 +237,6 @@ struct CalendarEventPreviewView: View {
         GeometryReader { geo in
             
             CalendarEventPreviewContentView(event: event, events: events, width: geo.size.width, height: geo.size.height)
-                .opacity(resizing || moving ? 0.5 : 1)
-                .padding(2)
             
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
@@ -292,10 +294,12 @@ struct CalendarEventPreviewView: View {
                     }
                 }
                 .onTapGesture { onTap() }
+            
+                .opacity(resizing || moving ? 0.5 : 1)
+                .padding(2)
 
                 .gesture(drag)
             
-                .shadow(radius: (resizing || moving) ? 10 : 0)
                 .sheet(isPresented: $showingEditingScreen) {
                     CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
                 }

@@ -238,8 +238,8 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "289"
-            endingLineNumber = "289"
+            startingLineNumber = "291"
+            endingLineNumber = "291"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -542,8 +542,8 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "167"
-            endingLineNumber = "167"
+            startingLineNumber = "171"
+            endingLineNumber = "171"
             landmarkName = "toggleSelection()"
             landmarkType = "7">
          </BreakpointContent>
@@ -574,8 +574,8 @@
             filePath = "Recall/Calendar/Test.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -590,8 +590,8 @@
             filePath = "Recall/Calendar/Test.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "166"
-            endingLineNumber = "166"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
             landmarkName = "makeEventCollection(from:in:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -622,8 +622,8 @@
             filePath = "Recall/Calendar/Test.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
             landmarkName = "mapEvents()"
             landmarkType = "7">
          </BreakpointContent>
@@ -673,6 +673,22 @@
             startingLineNumber = "85"
             endingLineNumber = "85"
             landmarkName = "setCurrentPostIndex(from:in:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DC86EB68-088D-48A7-B289-EAADE4BBF397"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
+            landmarkName = "getTime(from:on:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

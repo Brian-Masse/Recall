@@ -32,7 +32,8 @@ struct TestCalendarView: View {
     private func checkCollisions(between startTime1: Date, endTime1: Date,
                                  and startTime2: Date, endTime2: Date) -> Bool {
         (startTime2 > startTime1 && startTime2 < endTime1) ||
-        (endTime2 > startTime1 && endTime2 < endTime1)
+        (endTime2 > startTime1 && endTime2 < endTime1) ||
+        (startTime1 == startTime2 && endTime1 == endTime2)
     }
     
 //    MARK: Map Events
@@ -229,7 +230,6 @@ struct TestCalendarView: View {
                     .foregroundStyle(.clear)
             }
         }
-        .padding(.leading, 10)
     }
 }
 
