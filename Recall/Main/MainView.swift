@@ -25,69 +25,6 @@ struct MainView: View {
         }
     }
     
-    //    MARK: Tabbar
-    struct TabBar: View {
-        struct TabBarIcon: View {
-            
-            @Binding var selection: MainView.MainPage
-            
-            let namespace: Namespace.ID
-            
-            let page: MainView.MainPage
-            let title: String
-            let icon: String
-            
-            @ViewBuilder private func makeIcon() -> some View {
-                Image(systemName: icon)
-            }
-            
-            var body: some View {
-                Group {
-                    if selection == page {
-                        makeIcon()
-                            .foregroundColor(.black)
-                            .padding(.horizontal, 37)
-                            .background {
-                                Rectangle()
-                                    .universalStyledBackgrond(.accent, onForeground: true)
-                                    .cornerRadius(70)
-                                    .frame(width: 90, height: 90)
-                                    .matchedGeometryEffect(id: "highlight", in: namespace)
-                            }
-                        
-                    } else {
-                        makeIcon()
-                            .padding(.horizontal, 7)
-                    }
-                }
-                .onTapGesture { withAnimation { selection = page }}
-            }
-        }
-        
-        @Namespace private var tabBarNamespace
-        @Binding var pageSelection: MainView.MainPage
-        
-        var body: some View {
-            HStack(spacing: 10) {
-                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .calendar, title: "Recall", icon: "calendar")
-                    .padding(.leading, pageSelection == .calendar ? 0 : 10 )
-                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .goals, title: "Goals", icon: "flag.checkered")
-                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .categories, title: "Tags", icon: "tag")
-                TabBarIcon(selection: $pageSelection, namespace: tabBarNamespace, page: .data, title: "Data", icon: "chart.bar")
-                    .padding(.trailing, pageSelection == .data ? 0 : 10 )
-            }
-            .padding(7)
-            .frame(height: 104)
-            .ignoresSafeArea()
-            .universalTextStyle()
-            .background(.thinMaterial)
-            .foregroundStyle(.ultraThickMaterial)
-            .cornerRadius(55)
-            .shadow(radius: 5)
-            .padding(.bottom, 43)
-        }
-    }
-    
     
     //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
@@ -137,7 +74,10 @@ struct MainView: View {
                         .tag( MainPage.data )
                 }
                 
-                if !showingHalfPage { TabBar(pageSelection: $currentPage) }
+                if !showingHalfPage {
+                    TabBar(pageSelection: $currentPage)
+                        .padding(.bottom, 55)
+                }
                 
                 UpdateView()
             }
