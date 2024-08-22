@@ -96,7 +96,7 @@ struct CalendarEventPreviewContentView: View {
     
     @State var showingEvent: Bool = false
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat = 10, height: CGFloat = 10, allowTapGesture: Bool = false, forDisplay: Bool = false) {
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, allowTapGesture: Bool = false, forDisplay: Bool = false) {
         
         self.event = event
         self.events = events
@@ -115,9 +115,12 @@ struct CalendarEventPreviewContentView: View {
     var body: some View {
         
         ZStack {
-            Rectangle()
+            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                .foregroundStyle(colorScheme == .dark ? .black : .white)
+            
+            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                 .foregroundColor(event.getColor())
-                .cornerRadius(Constants.UIDefaultCornerRadius)
+                .opacity(colorScheme == .dark ? 0.6 : 0.9)
             
             VStack(alignment: .leading) {
                 HStack {Spacer()}

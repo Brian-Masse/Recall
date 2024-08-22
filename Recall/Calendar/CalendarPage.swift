@@ -69,13 +69,10 @@ struct CalendarPage: View {
     @Environment(\.colorScheme) var colorScheme
     
     @ObservedObject var viewModel = CalendarPageViewModel.shared
+    @ObservedObject var calendarViewModel = RecallCalendarViewModel.shared
     
     @State private var currentMonth: Date = .now
     @State private var upperBound: Int = 10
-    
-    @Binding var currentDay: Date
-    
-    let goals: [RecallGoal]
     
 //    MARK: Convenience Functions
     @MainActor
@@ -228,7 +225,7 @@ struct CalendarPage: View {
             
         }
         .onTapGesture {
-            currentDay = day
+            calendarViewModel.setCurrentDay(to: day)
             dismiss()
         }
     }

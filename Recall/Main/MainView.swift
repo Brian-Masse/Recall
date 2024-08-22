@@ -118,25 +118,23 @@ struct MainView: View {
     
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                NavigationView {
-                    TabView(selection: $currentPage) {
-                        CalendarPageView(events: arrEvents, goals: arrGoals)
-                            .halfPageScreenReceiver(showing: $showingHalfPage)
-                            .tag( MainPage.calendar )
-                        
-                        GoalsPageView(goals: arrGoals, events: arrEvents, tags: arrTags )
-                            .tag( MainPage.goals )
-    
-                        CategoriesPageView(events: arrEvents, categories: arrTags )
-                            .tag( MainPage.categories )
+                TabView(selection: $currentPage) {
+                    CalendarPageView(events: arrEvents, goals: arrGoals)
+                        .halfPageScreenReceiver(showing: $showingHalfPage)
+                        .tag( MainPage.calendar )
                     
-                        DataPageView(events: arrEvents,
-                                     goals: arrGoals,
-                                     tags: arrTags,
-                                     mainViewPage: $currentPage,
-                                     currentDay: $currentDay)
-                            .tag( MainPage.data )
-                    }
+                    GoalsPageView(goals: arrGoals, events: arrEvents, tags: arrTags )
+                        .tag( MainPage.goals )
+
+                    CategoriesPageView(events: arrEvents, categories: arrTags )
+                        .tag( MainPage.categories )
+                
+                    DataPageView(events: arrEvents,
+                                 goals: arrGoals,
+                                 tags: arrTags,
+                                 mainViewPage: $currentPage,
+                                 currentDay: $currentDay)
+                        .tag( MainPage.data )
                 }
                 
                 if !showingHalfPage { TabBar(pageSelection: $currentPage) }

@@ -164,7 +164,7 @@ struct CalendarPageView: View {
         
         VStack(alignment: .leading) {
             makeHeader()
-                .padding(.bottom, -7)
+                .padding(.bottom, -10)
             
             HStack {
                 makeDateSelectors()
@@ -172,15 +172,11 @@ struct CalendarPageView: View {
                 LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
             }
             
-//            GeometryReader { geo in
-//                CalendarContainer(with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
-//                    .environmentObject(containerModel)
-//                    .onAppear { containerModel.setCurrentDay(to: viewModel.currentDay) }
-//            }
+            Spacer()
             
             TestingCalendarContainer(events: Array(events))
         }
-        .padding()
+        .padding(7)
         .sheet(isPresented: $showingCreateEventView) {
             CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay)
         }
@@ -188,7 +184,7 @@ struct CalendarPageView: View {
             ProfileView()
         }
         .sheet(isPresented: $showingCalendarView) {
-            CalendarPage(currentDay: $containerModel.currentDay, goals: goals )
+            CalendarPage()
         }
         .universalBackground()
         

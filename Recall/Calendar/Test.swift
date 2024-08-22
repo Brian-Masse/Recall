@@ -50,21 +50,24 @@ struct TestCalendarView: View {
             
 //            get backwardCollisionRecord
 //            go backward and anytime there is a collision with the currentEvent, record it
-            var f = i
+            var f = max(0, i - 1)
             var collisions: [Int] = []
-            var previousLowerBound = f
+            var previousLowerBound = i
             
-            var nextEndTime = events[ max(0, f - 1) ].endTime
-            while f != 0 {
+            var colliding: Bool = checkCollisions(between: events[f].startTime,
+                                                  endTime1: events[f].endTime,
+                                                  and: events[i].startTime,
+                                                  endTime2: events[i].endTime )
+            
+            while f != 0 && colliding {
                 let previousEvent = events[f - 1]
-                nextEndTime = max( previousEvent.endTime, nextEndTime )
                 
-
-                
-                if checkCollisions(between: previousEvent.startTime,
+                colliding = checkCollisions(between: previousEvent.startTime,
                                    endTime1: previousEvent.endTime,
                                    and: events[f].startTime,
-                                   endTime2: events[f].endTime ) { previousLowerBound = f - 1 }
+                                   endTime2: events[f].endTime )
+                
+                if colliding { previousLowerBound = f - 1 }
                 
                 if checkCollisions(between: previousEvent.startTime,
                                    endTime1: previousEvent.endTime,
@@ -82,7 +85,7 @@ struct TestCalendarView: View {
             let lowerBound = i
             var upperBound = i
             
-            var colliding: Bool = i < events.count - 1 && checkCollisions(between: currentEvent.startTime,
+            colliding = i < events.count - 1 && checkCollisions(between: currentEvent.startTime,
                                                                 endTime1: currentEvent.endTime,
                                                                 and: events[i + 1].startTime,
                                                                 endTime2: events[i + 1].endTime)
@@ -167,9 +170,7 @@ struct TestCalendarView: View {
                     ForEach( collisionRecord.forwardCollisions, id: \.self ) { i in
                         
                         CalendarEventPreviewView(event: events[i], events: events)
-                            .border(.white)
                             .frame(height: getLength(of: events[i]))
-//                            .padding(.vertical)
                             .alignmentGuide(VerticalAlignment.top) { _ in
                                 -CGFloat(getVerticalOffset(of: events[i],
                                                            relativeTo: events[collisionRecord.forwardCollisions.lowerBound].startTime))
@@ -227,8 +228,8 @@ struct TestCalendarView: View {
                 Rectangle()
                     .foregroundStyle(.clear)
             }
-            .border(.purple)
-        }.padding(.horizontal, 10)
+        }
+        .padding(.leading, 10)
     }
 }
 

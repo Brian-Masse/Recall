@@ -138,7 +138,7 @@ struct ProfileView: View {
                 makeContactLabel(title: "email", content: index.email)
                 makeContactLabel(title: "phone number", content: "\(index.phoneNumber.formatIntoPhoneNumber())")
             }
-            .rectangularBackground(7, style: .secondary)
+            .rectangularBackground(7, style: .secondary, stroke: true, strokeWidth: 1)
         }
     }
     
@@ -171,19 +171,19 @@ struct ProfileView: View {
             UniversalText( "Event Settings", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             
             makeEventSettings()
-                .rectangularBackground(style: .secondary)
+                .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
             UniversalText( "Reminders", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             
             makeReminderSettings()
-                .rectangularBackground(style: .secondary)
+                .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
             UniversalText( "Icon", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             
             makeIconSettings()
-                .rectangularBackground(style: .secondary)
+                .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
             UniversalText( "Account Settings", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )

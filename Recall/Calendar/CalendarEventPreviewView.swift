@@ -232,12 +232,12 @@ struct CalendarEventPreviewView: View {
     var body: some View {
         GeometryReader { geo in
             
-        
-            CalendarEventPreviewContentView(event: event, events: events)
-                .opacity(viewModel.gestureInProgress ? 0.5 : 1)
+            CalendarEventPreviewContentView(event: event, events: events, width: geo.size.width, height: geo.size.height)
+                .opacity(resizing || moving ? 0.5 : 1)
+                .padding(2)
             
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
-                    if viewModel.gestureInProgress {
+                    if resizing || moving {
                         ZStack {
                             RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                                 .stroke(style: .init(lineWidth: 3, lineCap: .round, dash: [5, 10], dashPhase: 15))

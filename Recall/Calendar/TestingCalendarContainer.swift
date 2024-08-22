@@ -24,7 +24,7 @@ struct TestingCalendarContainer: View {
         components.hour = hour
         let date = Calendar.current.date(from: components) ?? .now
         
-        let includeFormat = hour == 12 || hour == 0
+        let includeFormat = hour % 12 == 0
         let format = Date.FormatStyle().hour(.defaultDigits(amPM: includeFormat ? .wide : .omitted))
         return date.formatted(format)
     }
@@ -34,13 +34,16 @@ struct TestingCalendarContainer: View {
         HStack(alignment: .top) {
             
             if includeLabel {
-                Text(getCalendarMarkLabel(hour: hour))
+                UniversalText( getCalendarMarkLabel(hour: hour),
+                               size: Constants.UISmallTextSize,
+                               font: Constants.mainFont  )
                     .lineLimit(1)
                     .frame(width: calendarLabelWidth, alignment: .trailing)
             }
             
             Rectangle()
-                .frame(height: 1)
+                .frame(height: 0.5)
+                .opacity(0.4)
         }
         .alignmentGuide(VerticalAlignment.top) { _ in
             let timeInterval = Double(hour) *  Constants.HourTime + Double(minute) * Constants.MinuteTime
@@ -51,7 +54,7 @@ struct TestingCalendarContainer: View {
     @ViewBuilder
     private func makeCalendar() -> some View {
         ZStack(alignment: .top) {
-            ForEach( 0..<24, id: \.self ) { i in
+            ForEach( 0...30, id: \.self ) { i in
                 makeCalendarMark(hour: i)
             }
             
@@ -67,7 +70,7 @@ struct TestingCalendarContainer: View {
     
     private let events: [RecallCalendarEvent]
     
-    private let calendarLabelWidth: Double = 50
+    private let calendarLabelWidth: Double = 20
     private let scrollDetectionPadding: Double = 20
     
     private let coordinateSpaceName = "CalendarContainerCoordinateSpace"
@@ -78,6 +81,7 @@ struct TestingCalendarContainer: View {
     
 //    MARK: Struct Methods
     private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy) {
+        if scrollPosition.x > 0 { return }
         let proposedIndex = Int(floor(abs(scrollPosition.x - calendarLabelWidth - scrollDetectionPadding) / abs(geo.size.width - calendarLabelWidth)))
         let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
         self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
@@ -85,6 +89,8 @@ struct TestingCalendarContainer: View {
     
     private func scrollToCurrentDay(proxy: ScrollViewProxy) {
         let index = floor(Date.now.timeIntervalSince(viewModel.currentDay) / Constants.DayTime)
+        
+        print(viewModel.currentDay)
         
         withAnimation { proxy.scrollTo(Int(index)) }
     }
@@ -96,7 +102,7 @@ struct TestingCalendarContainer: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 0) {
                     
-                    ForEach(0...10, id: \.self) { i in
+                    ForEach(0...100, id: \.self) { i in
                         
                         let day = .now - (Double(i) * Constants.DayTime)
                         
@@ -105,12 +111,11 @@ struct TestingCalendarContainer: View {
                                          on: day)
                         //       
 //                        .foregroundStyle(.red)
-                        .padding(.horizontal, 10)
+//                        .padding(.horizontal, 10)
                         .frame(width: geo.size.width - calendarLabelWidth)
                         .id(i)
                         .task { await viewModel.loadEvents(for: day, in: events) }
                         .coordinateSpace(name: coordinateSpaceName)
-                        
                     }
                     .scrollTargetLayout()
                 }
@@ -119,6 +124,7 @@ struct TestingCalendarContainer: View {
                         .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named(coordinateSpaceName)).origin)
                 })
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo) }
+                .onAppear { scrollToCurrentDay(proxy: proxy) }
                 .onChange(of: viewModel.shouldScrollCalendar) { _ in scrollToCurrentDay(proxy: proxy) }
                 .onChange(of: events) { oldValue, newValue in
                     viewModel.invalidateEvents(newEvents: newValue)
@@ -140,7 +146,7 @@ struct TestingCalendarContainer: View {
                         makeCalendarCarousel(in: geo)
                         
                     }
-                    .padding(.bottom, 250)
+                    .padding(.bottom, 150)
                 }
                 .scrollDisabled(viewModel.gestureInProgress)
             }
