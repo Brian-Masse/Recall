@@ -218,9 +218,9 @@ struct CalendarContainer: View {
                         
                         ForEach( filtered, id: \.self ) { event in
                             CalendarEventPreviewView(event: event,
-                                                     spacing: spacing,
-                                                     geo: geo,
-                                                     startHour: startHour,
+//                                                     spacing: spacing,
+//                                                     geo: geo,
+//                                                     startHour: startHour,
                                                      events: filtered)
                             .environmentObject(containerModel)
                             .zIndex( 10 )

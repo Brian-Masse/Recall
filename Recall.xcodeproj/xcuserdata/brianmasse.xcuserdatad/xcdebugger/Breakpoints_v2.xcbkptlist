@@ -126,8 +126,8 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "165"
-            endingLineNumber = "165"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
             landmarkName = "resizeGesture(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -254,8 +254,8 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "328"
-            endingLineNumber = "328"
+            startingLineNumber = "306"
+            endingLineNumber = "306"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -558,8 +558,8 @@
             filePath = "Recall/Calendar/CalendarEventPreviewView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "224"
-            endingLineNumber = "224"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
             landmarkName = "toggleSelection()"
             landmarkType = "7">
          </BreakpointContent>
@@ -590,10 +590,26 @@
             filePath = "Recall/Calendar/Test.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
+            startingLineNumber = "212"
+            endingLineNumber = "212"
             landmarkName = "body"
             landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "98E20541-2AC1-41C6-AC3B-3227F8BE0E41"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Calendar/Test.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "164"
+            endingLineNumber = "164"
+            landmarkName = "makeEventCollection(from:in:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

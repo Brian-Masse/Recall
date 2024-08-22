@@ -96,7 +96,7 @@ struct CalendarEventPreviewContentView: View {
     
     @State var showingEvent: Bool = false
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, allowTapGesture: Bool = false, forDisplay: Bool = false) {
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat = 10, height: CGFloat = 10, allowTapGesture: Bool = false, forDisplay: Bool = false) {
         
         self.event = event
         self.events = events
@@ -128,19 +128,19 @@ struct CalendarEventPreviewContentView: View {
             }
             .padding(.horizontal)
             
-            if !forDisplay {
-                if containerModel.selecting && !selected() {
-                    Rectangle()
-                        .foregroundStyle(colorScheme == .dark ? .black : .white)
-                        .opacity(0.7)
-                        .cornerRadius(Constants.UIDefaultCornerRadius)
-                }
-            }
+//            if !forDisplay {
+//                if containerModel.selecting && !selected() {
+//                    Rectangle()
+//                        .foregroundStyle(colorScheme == .dark ? .black : .white)
+//                        .opacity(0.7)
+//                        .cornerRadius(Constants.UIDefaultCornerRadius)
+//                }
+//            }
         }
         .foregroundColor(.black)
-        .padding(.vertical, 2)
+//        .padding(.vertical, 2)
         .if(allowTapGesture) { view in view.onTapGesture { showingEvent = true } }
-        .frame(height: height)
+//        .frame(height: height)
         .sheet(isPresented: $showingEvent) {
             CalendarEventView(event: event, events: events)
         }
