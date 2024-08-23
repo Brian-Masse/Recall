@@ -102,6 +102,9 @@ I independently developed this project, from problem identification, project bra
 
 CHANGES
 - Improved the Design of the Calendar Page
+- Reworked Calendar Interactions
+- Improved performance of Calendar Layoutting
+- Redesigned the Tab bar
 
 ### **Version 2.1.0**
  
