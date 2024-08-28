@@ -102,6 +102,7 @@ I independently developed this project, from problem identification, project bra
 
 CHANGES
 - Improved the Design of the Calendar Page
+- Fixed layouting bugs in the calendar
 - Reworked Calendar Interactions
 - Improved performance of Calendar Layoutting
 - Redesigned the Tab bar
