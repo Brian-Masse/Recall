@@ -50,11 +50,11 @@ struct TabBar: View {
                 
                 if let timer = self.timer { timer.invalidate() }
                 
-                self.timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false, block: { timer in
-                    withAnimation { compact = true }
-                    timer.invalidate()
-                    self.timer = nil
-                })
+//                self.timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false, block: { timer in
+//                    withAnimation { compact = true }
+//                    timer.invalidate()
+//                    self.timer = nil
+//                })
             }}
         
     }
