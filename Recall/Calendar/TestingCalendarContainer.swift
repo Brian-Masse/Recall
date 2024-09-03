@@ -95,6 +95,25 @@ struct TestingCalendarContainer: View {
         withAnimation { proxy.scrollTo(Int(index)) }
     }
     
+//    MARK: ScaleGesture
+    @State private var lastScale: Double = 100
+    
+    private var scaleGesture: some Gesture {
+        MagnifyGesture()
+            .onChanged { value in
+                print( value.magnification )
+                
+                let proposedScale = lastScale * (1 / value.magnification)
+                let difference = proposedScale - lastScale
+                let scale = lastScale + (difference)
+                
+                self.viewModel.setScale(to: scale)
+            }
+            .onEnded { value in
+                self.lastScale = viewModel.scale
+            }
+    }
+    
 //    MARK: CalendarCarousel
     @ViewBuilder
     private func makeCalendarCarousel(in geo: GeometryProxy) -> some View {
@@ -141,11 +160,14 @@ struct TestingCalendarContainer: View {
         VStack {
             GeometryReader { geo in
                 ScrollViewReader { proxy in
+                    
                     ScrollView(.vertical, showsIndicators: false) {
                         
                         Rectangle()
                             .frame(height: 175)
                             .foregroundStyle(.clear)
+                        
+                        Text( "\(viewModel.scale)" )
                         
                         ZStack(alignment: .top) {
                             
@@ -158,6 +180,7 @@ struct TestingCalendarContainer: View {
                         .padding(.bottom, 150)
                     }
                     .onAppear { proxy.scrollTo(1, anchor: .top) }
+                    .highPriorityGesture(scaleGesture)
                     .scrollDisabled(viewModel.gestureInProgress)
                 }
             }

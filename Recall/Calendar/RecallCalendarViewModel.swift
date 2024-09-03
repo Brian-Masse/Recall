@@ -29,6 +29,11 @@ class RecallCalendarViewModel: ObservableObject {
         if scrollToDay { shouldScrollCalendar.toggle() }
     }
     
+    func setScale(to scale: Double) {
+        let scale = min( 200, max( 40, scale ) )
+        self.scale = scale
+    }
+    
 //    MARK: Event Filtering
     static func dateKey(from date: Date) -> String { date.formatted(date: .complete, time: .omitted) }
     
