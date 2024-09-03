@@ -31,8 +31,12 @@ struct TestCalendarView: View {
     
     private func checkCollisions(between startTime1: Date, endTime1: Date,
                                  and startTime2: Date, endTime2: Date) -> Bool {
-        (startTime2 > startTime1 && startTime2 < endTime1) ||
         (startTime1 > startTime2 && startTime1 < endTime2) ||
+        (endTime1 > startTime2 && endTime1 < endTime2) ||
+        
+        (startTime2 > startTime1 && startTime2 < endTime1) ||
+        (endTime2 > startTime1 && endTime2 < endTime1) ||
+        
         (startTime1 == startTime2 && endTime1 == endTime2)
     }
     
@@ -59,6 +63,8 @@ struct TestCalendarView: View {
                                                   endTime1: events[f].endTime,
                                                   and: events[i].startTime,
                                                   endTime2: events[i].endTime )
+            
+            if colliding { collisions.append(f) }
             
             while f != 0 && colliding {
                 let previousEvent = events[f - 1]
@@ -164,7 +170,7 @@ struct TestCalendarView: View {
             
             let ratio: Double       = 1 / Double(collisionRecord.backwardCollisions.count)
             let lastCollisionIndex  = collisionRecord.backwardsCollisionIndicies.last ?? 0
-            let indexToRender       = (collisionRecord.backwardCollisions.count - 1 - lastCollisionIndex + collisionRecord.backwardCollisions.lowerBound) % collisionRecord.backwardCollisions.count
+            let indexToRender       = (lastCollisionIndex - 1 + collisionRecord.backwardCollisions.count - collisionRecord.forwardCollisions.lowerBound) % collisionRecord.backwardCollisions.count
             
             ForEach( 0..<collisionRecord.backwardCollisions.count, id: \.self ) { i in
                 if i == abs(indexToRender) || collisionRecord.backwardsCollisionIndicies.count == 0 {
@@ -191,6 +197,7 @@ struct TestCalendarView: View {
                 } else if collisionRecord.backwardsCollisionIndicies.contains(i + collisionRecord.backwardCollisions.lowerBound) {
                     Rectangle()
                         .frame(width: geo.size.width * ratio, height: 50)
+//                        .border(.red)
                         .foregroundStyle(.clear)
                 }
             }
