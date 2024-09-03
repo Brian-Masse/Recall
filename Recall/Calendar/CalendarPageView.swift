@@ -161,14 +161,15 @@ struct CalendarPageView: View {
                     LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
                 }
             }
-            .padding([.bottom, .horizontal])
-            .background {
-                RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius)
-                    .ignoresSafeArea()
-                    .foregroundStyle(.thinMaterial)
-            }
+            .padding(.bottom )
+//            .padding([.bottom, .horizontal])
+            .background()
+//                RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius)
+//                    .ignoresSafeArea()
+//                    .foregroundStyle(.thinMaterial)
+//            }
         }
-//        .padding(7)
+        .padding(7)
         .sheet(isPresented: $showingCreateEventView) {
             CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay)
         }

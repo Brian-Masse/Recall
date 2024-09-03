@@ -71,7 +71,7 @@ struct TestingCalendarContainer: View {
     private let events: [RecallCalendarEvent]
     
     private let calendarLabelWidth: Double = 20
-    private let scrollDetectionPadding: Double = 20
+    private let scrollDetectionPadding: Double = 200
     
     private let coordinateSpaceName = "CalendarContainerCoordinateSpace"
     
@@ -84,14 +84,14 @@ struct TestingCalendarContainer: View {
         if scrollPosition.x > 0 { return }
         let proposedIndex = Int(floor(abs(scrollPosition.x - calendarLabelWidth - scrollDetectionPadding) / abs(geo.size.width - calendarLabelWidth)))
         let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
-        self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
+        
+        if !self.viewModel.currentDay.matches(proposedDate, to: .day) {
+            self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
+        }
     }
     
     private func scrollToCurrentDay(proxy: ScrollViewProxy) {
         let index = floor(Date.now.timeIntervalSince(viewModel.currentDay) / Constants.DayTime)
-        
-        print(viewModel.currentDay)
-        
         withAnimation { proxy.scrollTo(Int(index)) }
     }
     

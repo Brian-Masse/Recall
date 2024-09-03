@@ -37,13 +37,12 @@ class RecallCalendarViewModel: ObservableObject {
         if filteredEvents[key] != nil { return }
         
         let filteredEvents = events.filter { event in
-            event.startTime.matches(day, to: .day) &&
-            event.startTime.matches(day, to: .month) &&
-            event.startTime.matches(day, to: .year)
+            let testKey = RecallCalendarViewModel.dateKey(from: event.startTime)
+            return key == testKey
         }.sorted { event1, event2 in
             event1.startTime < event2.startTime
         }
-        
+
         DispatchQueue.main.sync {
             withAnimation {
                 self.filteredEvents[key] = filteredEvents
@@ -67,8 +66,8 @@ class RecallCalendarViewModel: ObservableObject {
         self.filteredEvents = [:]
         
         Task {
-
             await loadEvents(for: currentDay, in: newEvents )
+            await loadEvents(for: currentDay - Constants.DayTime, in: newEvents )
         }
     }
     
