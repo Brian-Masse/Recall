@@ -21,9 +21,6 @@ class RecallCalendarViewModel: ObservableObject {
     @Published var scale: Double = 100
     @Published var gestureInProgress: Bool = false
     
-    @Published var storingNewEvent: Bool = false
-    private(set) var newEvent: RecallCalendarEvent? = nil
-    
     func setCurrentDay(to day: Date, scrollToDay: Bool = true) {
     
         withAnimation { self.currentDay = day }
@@ -34,34 +31,6 @@ class RecallCalendarViewModel: ObservableObject {
     func setScale(to scale: Double) {
         let scale = min( 200, max( 40, scale ) )
         self.scale = scale
-    }
-    
-//    MARK: Create Event
-//    create an empty event and store it
-//    it is not added to the realm (displayed) until the long press gesture that created it completes
-    @MainActor
-    func createEvent(from position: CGFloat) {
-        if storingNewEvent { return }
-        
-        let roundedPosition = CalendarEventPreviewView.roundPosition(position, to: RecallModel.index.dateSnapping)
-        let startTime = CalendarEventPreviewView.getTime(from: roundedPosition, on: currentDay)
-        let blankTag = RecallCategory()
-        
-        self.newEvent = RecallCalendarEvent(ownerID: RecallModel.ownerID,
-                                        title: "New Event",
-                                        notes: "",
-                                        startTime: startTime,
-                                        endTime: startTime + Constants.HourTime,
-                                        categoryID: blankTag._id,
-                                        goalRatings: [:])
-        
-        self.storingNewEvent = true
-    }
-    
-    func sendEvent() {
-        if let newEvent {
-            RealmManager.addObject(newEvent)
-        }
     }
     
 //    MARK: Event Filtering

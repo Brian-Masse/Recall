@@ -76,8 +76,9 @@ struct CalendarPageView: View {
         VStack {
             UniversalText(dayString,
                           size: Constants.UIDefaultTextSize,
-                          font: isCurrentDay ? Constants.titleFont : Constants.mainFont,
+                          font: Constants.titleFont,
                           wrap: false, scale: true)
+            .opacity(isCurrentDay ? 1 : 0.75)
             
             if isCurrentDay {
                 UniversalText(monthString,
@@ -149,11 +150,10 @@ struct CalendarPageView: View {
     
     var body: some View {
         
-        ZStack(alignment: .top) {
-            TestingCalendarContainer(events: Array(events))
-            
+        VStack() {
             VStack(alignment: .leading, spacing: 5) {
                 makeHeader()
+                    .padding(.horizontal, 7)
                 
                 HStack {
                     makeDateSelectors()
@@ -162,12 +162,8 @@ struct CalendarPageView: View {
                 }
             }
             .padding(.bottom )
-//            .padding([.bottom, .horizontal])
-            .background()
-//                RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius)
-//                    .ignoresSafeArea()
-//                    .foregroundStyle(.thinMaterial)
-//            }
+            
+            TestingCalendarContainer(events: Array(events))
         }
         .padding(7)
         .sheet(isPresented: $showingCreateEventView) {

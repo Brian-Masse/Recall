@@ -113,45 +113,87 @@ struct TestingCalendarContainer: View {
     }
     
 //    MARK: EventCreationGesture
+    @State private var newEvent: RecallCalendarEvent? = nil
     @State private var creatingEvent: Bool = false
+    @State private var showingEventCreationView: Bool = false
+    
+    @State private var newEventoffset: Double = 0
+    @State private var newEventResizeOffset: Double = 0
+    
+    private func createEvent() {
+        let startTime = CalendarEventPreviewView.getTime(from: newEventoffset, on: viewModel.currentDay)
+        let endTime = startTime + ( newEventResizeOffset * viewModel.scale )
+        
+        let blankTag = RecallCategory()
+        
+        let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
+                                        title: "",
+                                        notes: "",
+                                        startTime: startTime,
+                                        endTime: endTime,
+                                        categoryID: blankTag._id,
+                                        goalRatings: [:])
+        
+        self.newEvent = event
+        
+        RealmManager.addObject(event)
+    }
     
     private var createEventHoldGesture: some Gesture {
         LongPressGesture(minimumDuration: 1)
-            .onEnded { value in
-                print("other ending")
-                viewModel.sendEvent()
+            .onEnded { value in withAnimation {
+                
+                print("creating")
+                self.creatingEvent = true
                 viewModel.gestureInProgress = true
-            }
+            } }
             .simultaneously(with: DragGesture(minimumDistance: 0, coordinateSpace: .named(coordinateSpaceName)) )
             .onChanged { value in
                 if !viewModel.gestureInProgress && value.first != nil {
-                    viewModel.createEvent(from: value.second?.location.y ?? 0)
+                    print("initial sizing")
+                    
+                    let position: Double = Double(value.second?.location.y ?? 0)
+                    self.newEventoffset = CalendarEventPreviewView.roundPosition(position,
+                                                                                      to: RecallModel.index.dateSnapping)
+                    self.newEventResizeOffset = Constants.HourTime / viewModel.scale
+                    
                 } else if viewModel.gestureInProgress {
                     
+                    let height = value.second?.translation.height ?? 0
+                    let proposedResizeOffset = CalendarEventPreviewView.roundPosition(height,
+                                                                                      to: RecallModel.index.dateSnapping)
                     
-                    
+                    withAnimation { self.newEventResizeOffset =  max(0, proposedResizeOffset) }
                 }
             }
-            .onEnded { _ in
-                viewModel.storingNewEvent = false
+            .onEnded { _ in withAnimation {
+                print("done ")
+                
+                creatingEvent = false
                 viewModel.gestureInProgress = false
-            }
-//            .onChanged { value in
-//                print("running")
-////                if value.first != nil {
-////                    self.creatingEvent = true
-//////                    self.createEvent(at: value.second!.location.y)
-////                }
-//            }
-            
+                
+                if self.newEventResizeOffset != 0 {
+                    self.createEvent()
+                    self.showingEventCreationView = true
+                }
+            } }
     }
     
-    private var createEventResizeGesture: some Gesture {
-        DragGesture(minimumDistance: 0)
-            .onChanged { value in
-                
-//                self.createEvent(at: value.location.y)
+//    MARK: EventCreationPreview
+    @ViewBuilder
+    private func makeEventCreationPreview() -> some View {
+        if self.creatingEvent {
+            ZStack {
+                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                    .stroke(style: .init(lineWidth: 3, lineCap: .round, dash: [5, 10], dashPhase: 15))
+                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                    .opacity(0.3)
             }
+            .opacity(0.3)
+            .allowsHitTesting(false)
+            .offset(y: newEventoffset)
+            .frame(height: newEventResizeOffset)
+        }
     }
     
 //    MARK: CalendarCarousel
@@ -165,8 +207,12 @@ struct TestingCalendarContainer: View {
                         
                         let day = .now - (Double(i) * Constants.DayTime)
                         
-                        TestCalendarView(events: viewModel.getEvents(on: day),
-                                         on: day)
+                        ZStack(alignment: .top) {
+                            TestCalendarView(events: viewModel.getEvents(on: day),
+                                             on: day)
+                            
+                            makeEventCreationPreview()
+                        }
 
                         .padding(.horizontal, 5)
                         .frame(width: geo.size.width - calendarLabelWidth)
@@ -200,18 +246,11 @@ struct TestingCalendarContainer: View {
                     
                     ScrollView(.vertical, showsIndicators: false) {
                         
-                        Rectangle()
-                            .frame(height: 175)
-                            .foregroundStyle(.clear)
-                        
                         ZStack(alignment: .top) {
-                            
                             makeCalendar()
                             
                             makeCalendarCarousel(in: geo)
-                            
                         }
-                        .id(1)
                         .padding(.bottom, 150)
                         
                         .onTapGesture { }
@@ -219,10 +258,14 @@ struct TestingCalendarContainer: View {
                         
                         .coordinateSpace(name: coordinateSpaceName)
                     }
-                    .onAppear { proxy.scrollTo(1, anchor: .top) }
 //                    .highPriorityGesture(scaleGesture)
                     .scrollDisabled(viewModel.gestureInProgress)
                 }
+            }
+            .sheet(isPresented: $showingEventCreationView) {
+                CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay,
+                                                                editing: true,
+                                                                event: newEvent)
             }
         }
     }
