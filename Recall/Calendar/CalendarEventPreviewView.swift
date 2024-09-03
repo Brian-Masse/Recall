@@ -106,11 +106,11 @@ struct CalendarEventPreviewView: View {
         DragGesture(coordinateSpace: .named(coordinateSpaceName))
             .onChanged { dragGesture in
                 if !moving || resizing { return }
-                withAnimation { moveOffset = roundPosition(dragGesture.location.y, to: index.dateSnapping) }
+                withAnimation { moveOffset = CalendarEventPreviewView.roundPosition(dragGesture.location.y, to: index.dateSnapping) }
             }
             .onEnded { dragGesture in
                 if moving && !resizing {
-                    let roundedStartTime = getTime(from: self.moveOffset, on: event.startTime)
+                    let roundedStartTime = CalendarEventPreviewView.getTime(from: self.moveOffset, on: event.startTime)
                     let roundedEndTime = roundedStartTime + event.getLengthInHours() * Constants.HourTime
                     
                     event.updateDate(startDate: roundedStartTime, endDate: roundedEndTime )
@@ -126,11 +126,11 @@ struct CalendarEventPreviewView: View {
                 if moving || !resizing { return }
                 self.resizeDirection = direction
                 
-                withAnimation { self.resizeOffset = roundPosition(dragGesture.location.y, to: index.dateSnapping) }
+                withAnimation { self.resizeOffset = CalendarEventPreviewView.roundPosition(dragGesture.location.y, to: index.dateSnapping) }
             }
             .onEnded { dragGesture in
                 
-                let roundedTime = getTime(from: self.resizeOffset, on: event.startTime)
+                let roundedTime = CalendarEventPreviewView.getTime(from: self.resizeOffset, on: event.startTime)
                 
                 if direction == .up { event.updateDate(startDate: roundedTime) }
                 if direction == .down { event.updateDate(endDate: roundedTime) }
@@ -142,8 +142,8 @@ struct CalendarEventPreviewView: View {
 //    MARK: Struct Methods
 //    this translates a position into a date
 //    it is involved in placing events on the timeline correctly
-    private func getTime(from position: CGFloat, on date: Date) -> Date {
-        let timeInterval = position * viewModel.scale
+    static func getTime(from position: CGFloat, on date: Date) -> Date {
+        let timeInterval = position * RecallCalendarViewModel.shared.scale
         let hour = (timeInterval / Constants.HourTime).rounded(.down)
         let minutes = ((timeInterval / Constants.HourTime) - hour) * CGFloat(Constants.MinuteTime)
         
@@ -154,10 +154,10 @@ struct CalendarEventPreviewView: View {
         return Calendar.current.date(byAdding: comps, to: date.resetToStartOfDay()) ?? .now
     }
     
-    private func roundPosition(_ position: Double, to timeRounding: TimeRounding) -> Double {
-        let hoursInPosition = (position * viewModel.scale) / Constants.HourTime
+    static func roundPosition(_ position: Double, to timeRounding: TimeRounding) -> Double {
+        let hoursInPosition = (position * RecallCalendarViewModel.shared.scale) / Constants.HourTime
         let roundedHours = (hoursInPosition * Double(timeRounding.rawValue)).rounded(.down) / Double(timeRounding.rawValue)
-        return (roundedHours * Constants.HourTime) / viewModel.scale
+        return (roundedHours * Constants.HourTime) / RecallCalendarViewModel.shared.scale
         
     }
     
@@ -237,6 +237,7 @@ struct CalendarEventPreviewView: View {
         GeometryReader { geo in
             
             CalendarEventPreviewContentView(event: event, events: events, width: geo.size.width, height: geo.size.height)
+//                .id(event.id)
             
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {

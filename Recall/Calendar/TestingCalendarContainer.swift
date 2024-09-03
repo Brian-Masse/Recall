@@ -101,16 +101,56 @@ struct TestingCalendarContainer: View {
     private var scaleGesture: some Gesture {
         MagnifyGesture()
             .onChanged { value in
-                print( value.magnification )
-                
                 let proposedScale = lastScale * (1 / value.magnification)
                 let difference = proposedScale - lastScale
-                let scale = lastScale + (difference)
+                let scale = lastScale + (difference / 2)
                 
                 self.viewModel.setScale(to: scale)
             }
             .onEnded { value in
                 self.lastScale = viewModel.scale
+            }
+    }
+    
+//    MARK: EventCreationGesture
+    @State private var creatingEvent: Bool = false
+    
+    private var createEventHoldGesture: some Gesture {
+        LongPressGesture(minimumDuration: 1)
+            .onEnded { value in
+                print("other ending")
+                viewModel.sendEvent()
+                viewModel.gestureInProgress = true
+            }
+            .simultaneously(with: DragGesture(minimumDistance: 0, coordinateSpace: .named(coordinateSpaceName)) )
+            .onChanged { value in
+                if !viewModel.gestureInProgress && value.first != nil {
+                    viewModel.createEvent(from: value.second?.location.y ?? 0)
+                } else if viewModel.gestureInProgress {
+                    
+                    
+                    
+                }
+            }
+            .onEnded { _ in
+                viewModel.storingNewEvent = false
+                viewModel.gestureInProgress = false
+            }
+//            .onChanged { value in
+//                print("running")
+////                if value.first != nil {
+////                    self.creatingEvent = true
+//////                    self.createEvent(at: value.second!.location.y)
+////                }
+//            }
+            
+    }
+    
+    private var createEventResizeGesture: some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                
+//                self.createEvent(at: value.location.y)
             }
     }
     
@@ -125,16 +165,13 @@ struct TestingCalendarContainer: View {
                         
                         let day = .now - (Double(i) * Constants.DayTime)
                         
-                        //                                    Rectangle()
                         TestCalendarView(events: viewModel.getEvents(on: day),
                                          on: day)
-                        //       
-//                        .foregroundStyle(.red)
+
                         .padding(.horizontal, 5)
                         .frame(width: geo.size.width - calendarLabelWidth)
                         .id(i)
                         .task { await viewModel.loadEvents(for: day, in: events) }
-                        .coordinateSpace(name: coordinateSpaceName)
                     }
                     .scrollTargetLayout()
                 }
@@ -167,8 +204,6 @@ struct TestingCalendarContainer: View {
                             .frame(height: 175)
                             .foregroundStyle(.clear)
                         
-                        Text( "\(viewModel.scale)" )
-                        
                         ZStack(alignment: .top) {
                             
                             makeCalendar()
@@ -178,9 +213,14 @@ struct TestingCalendarContainer: View {
                         }
                         .id(1)
                         .padding(.bottom, 150)
+                        
+                        .onTapGesture { }
+                        .gesture(createEventHoldGesture)
+                        
+                        .coordinateSpace(name: coordinateSpaceName)
                     }
                     .onAppear { proxy.scrollTo(1, anchor: .top) }
-                    .highPriorityGesture(scaleGesture)
+//                    .highPriorityGesture(scaleGesture)
                     .scrollDisabled(viewModel.gestureInProgress)
                 }
             }
