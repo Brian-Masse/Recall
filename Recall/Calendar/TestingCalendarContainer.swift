@@ -30,7 +30,7 @@ struct TestingCalendarContainer: View {
     }
     
     @ViewBuilder
-    private func makeCalendarMark(hour: Int, minute: Int = 0, includeLabel: Bool = true) -> some View {
+    private func makeCalendarMark(hour: Int, minute: Int = 0, includeLabel: Bool = true, opacity: Double = 0.15) -> some View {
         HStack(alignment: .top) {
             
             if includeLabel {
@@ -43,7 +43,7 @@ struct TestingCalendarContainer: View {
             
             Rectangle()
                 .frame(height: 0.5)
-                .opacity(0.4)
+                .opacity(opacity)
         }
         .alignmentGuide(VerticalAlignment.top) { _ in
             let timeInterval = Double(hour) *  Constants.HourTime + Double(minute) * Constants.MinuteTime
@@ -60,7 +60,7 @@ struct TestingCalendarContainer: View {
             
             let currentComps = Calendar.current.dateComponents([.hour, .minute], from: .now)
             
-            makeCalendarMark(hour: currentComps.hour!, minute: currentComps.minute!, includeLabel: false)
+            makeCalendarMark(hour: currentComps.hour!, minute: currentComps.minute!, includeLabel: false, opacity: 1)
                 .foregroundStyle(.red)
         }
     }
@@ -121,7 +121,7 @@ struct TestingCalendarContainer: View {
     @State private var newEventResizeOffset: Double = 0
     
     private func createEvent() {
-        let startTime = CalendarEventPreviewView.getTime(from: newEventoffset, on: viewModel.currentDay)
+        let startTime = viewModel.getTime(from: newEventoffset, on: viewModel.currentDay)
         let endTime = startTime + ( newEventResizeOffset * viewModel.scale )
         
         let blankTag = RecallCategory()
@@ -142,8 +142,6 @@ struct TestingCalendarContainer: View {
     private var createEventHoldGesture: some Gesture {
         LongPressGesture(minimumDuration: 1)
             .onEnded { value in withAnimation {
-                
-                print("creating")
                 self.creatingEvent = true
                 viewModel.gestureInProgress = true
             } }
@@ -151,14 +149,14 @@ struct TestingCalendarContainer: View {
             .onChanged { value in
                 if !viewModel.gestureInProgress && value.first != nil {
                     let position: Double = Double(value.second?.location.y ?? 0)
-                    self.newEventoffset = CalendarEventPreviewView.roundPosition(position,
+                    self.newEventoffset = viewModel.roundPosition(position,
                                                                                       to: RecallModel.index.dateSnapping)
                     self.newEventResizeOffset = Constants.HourTime / viewModel.scale
                     
                 } else if viewModel.gestureInProgress {
                     
                     let height = value.second?.translation.height ?? 0
-                    let proposedResizeOffset = CalendarEventPreviewView.roundPosition(height,
+                    let proposedResizeOffset = viewModel.roundPosition(height,
                                                                                       to: RecallModel.index.dateSnapping)
                     
                     withAnimation { self.newEventResizeOffset =  max(0, proposedResizeOffset) }
@@ -255,7 +253,7 @@ struct TestingCalendarContainer: View {
                         
                         .coordinateSpace(name: coordinateSpaceName)
                     }
-//                    .highPriorityGesture(scaleGesture)
+                    .simultaneousGesture(scaleGesture)
                     .scrollDisabled(viewModel.gestureInProgress)
                 }
             }
@@ -263,6 +261,9 @@ struct TestingCalendarContainer: View {
                 CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay,
                                                                 editing: true,
                                                                 event: newEvent)
+            }
+            .halfPageScreen("Select Events", presenting: $viewModel.selecting) {
+                EventSelectionEditorView()
             }
         }
     }

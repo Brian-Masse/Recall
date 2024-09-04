@@ -77,8 +77,7 @@ struct CalendarEventPreviewContentView: View {
 //    MARK: Vars
     
     @Environment(\.colorScheme) var colorScheme
-    
-    @EnvironmentObject var containerModel: CalendarContainerModel
+    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
@@ -106,8 +105,8 @@ struct CalendarEventPreviewContentView: View {
         self.forDisplay = forDisplay
     }
     
-    private func selected() -> Bool {
-        let index = containerModel.selection.firstIndex(of: event)
+    private var isSelected: Bool {
+        let index = viewModel.selection.firstIndex(of: event)
         return index != nil
     }
     
@@ -116,7 +115,11 @@ struct CalendarEventPreviewContentView: View {
         
         ZStack {
             RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                .foregroundStyle(.background)
+            
+            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                 .foregroundColor(event.getColor())
+                .opacity(viewModel.selecting && !isSelected ? 0.3 : 1)
             
             VStack(alignment: .leading) {
                 HStack {Spacer()}

@@ -18,7 +18,7 @@ struct TabBar: View {
     @Binding var pageSelection: MainView.MainPage
     
     @State private var timer: Timer? = nil
-    @State private var compact: Bool = true
+    @State private var compact: Bool = false
     
     private var primaryPadding: Double { compact ? 15 : 35 }
     
@@ -49,12 +49,6 @@ struct TabBar: View {
                 pageSelection = page
                 
                 if let timer = self.timer { timer.invalidate() }
-                
-//                self.timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false, block: { timer in
-//                    withAnimation { compact = true }
-//                    timer.invalidate()
-//                    self.timer = nil
-//                })
             }}
         
     }

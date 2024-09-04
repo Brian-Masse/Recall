@@ -106,11 +106,11 @@ struct CalendarEventPreviewView: View {
         DragGesture(coordinateSpace: .named(coordinateSpaceName))
             .onChanged { dragGesture in
                 if !moving || resizing { return }
-                withAnimation { moveOffset = CalendarEventPreviewView.roundPosition(dragGesture.location.y, to: index.dateSnapping) }
+                withAnimation { moveOffset = viewModel.roundPosition(dragGesture.location.y, to: index.dateSnapping) }
             }
             .onEnded { dragGesture in
                 if moving && !resizing {
-                    let roundedStartTime = CalendarEventPreviewView.getTime(from: self.moveOffset, on: event.startTime)
+                    let roundedStartTime = viewModel.getTime(from: self.moveOffset, on: event.startTime)
                     let roundedEndTime = roundedStartTime + event.getLengthInHours() * Constants.HourTime
                     
                     event.updateDate(startDate: roundedStartTime, endDate: roundedEndTime )
@@ -126,11 +126,11 @@ struct CalendarEventPreviewView: View {
                 if moving || !resizing { return }
                 self.resizeDirection = direction
                 
-                withAnimation { self.resizeOffset = CalendarEventPreviewView.roundPosition(dragGesture.location.y, to: index.dateSnapping) }
+                withAnimation { self.resizeOffset = viewModel.roundPosition(dragGesture.location.y, to: index.dateSnapping) }
             }
             .onEnded { dragGesture in
                 
-                let roundedTime = CalendarEventPreviewView.getTime(from: self.resizeOffset, on: event.startTime)
+                let roundedTime = viewModel.getTime(from: self.resizeOffset, on: event.startTime)
                 
                 if direction == .up { event.updateDate(startDate: roundedTime) }
                 if direction == .down { event.updateDate(endDate: roundedTime) }
@@ -139,47 +139,15 @@ struct CalendarEventPreviewView: View {
             }
     }
     
-//    MARK: Struct Methods
-//    this translates a position into a date
-//    it is involved in placing events on the timeline correctly
-    static func getTime(from position: CGFloat, on date: Date) -> Date {
-        let timeInterval = position * RecallCalendarViewModel.shared.scale
-        let hour = (timeInterval / Constants.HourTime).rounded(.down)
-        let minutes = ((timeInterval / Constants.HourTime) - hour) * CGFloat(Constants.MinuteTime)
-        
-        var comps = DateComponents()
-        comps.hour = Int(hour)
-        comps.minute = Int(minutes)
-        
-        return Calendar.current.date(byAdding: comps, to: date.resetToStartOfDay()) ?? .now
-    }
-    
-    static func roundPosition(_ position: Double, to timeRounding: TimeRounding) -> Double {
-        let hoursInPosition = (position * RecallCalendarViewModel.shared.scale) / Constants.HourTime
-        let roundedHours = (hoursInPosition * Double(timeRounding.rawValue)).rounded(.down) / Double(timeRounding.rawValue)
-        return (roundedHours * Constants.HourTime) / RecallCalendarViewModel.shared.scale
-        
-    }
-    
 //    MARK: Input Response
 //    this function runs anyitme a user selects any option from the context menu
 //    its meant to disable any features that may be incmpatible with the currently performered action
     @MainActor
     private func defaultContextMenuAction() { }
     
-    private func toggleSelection() {
-        if let index = containerModel.selection.firstIndex(where: { selectedEvent in
-            selectedEvent == event
-        }) {
-            containerModel.selection.remove(at: index)
-        } else {
-            containerModel.selection.append( event )
-        }
-    }
-    
     private func onTap() {
-//        if containerModel.selecting { withAnimation { toggleSelection() }}
-        showingEvent = true
+        if viewModel.selecting { viewModel.selectEvent(event) }
+        else { showingEvent = true }
     }
 
     
@@ -300,8 +268,8 @@ struct CalendarEventPreviewView: View {
                     
                     ContextMenuButton("select", icon: "selection.pin.in.out") {
                         defaultContextMenuAction()
-                        containerModel.selecting = true
-                        containerModel.selection.append(event)
+                        viewModel.selecting = true
+                        viewModel.selectEvent(event)
                     }
                     
                     ContextMenuButton("delete", icon: "trash", role: .destructive) {
@@ -323,9 +291,6 @@ struct CalendarEventPreviewView: View {
                 .sheet(isPresented: $showingEvent) { CalendarEventView(event: event, events: events) }
             
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
-//                .halfPageScreen("Select Events", presenting: $containerModel.selecting) {
-//                    EventSelectionEditorView().environmentObject(containerModel)
-//                }
         }
         .zIndex( resizing || moving ? 5 : 0 )
         
