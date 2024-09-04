@@ -1,5 +1,5 @@
 # Recall
-v2.2.0
+
 
 <picture>
     <!-- <source srcset="./icon_512x512@2x@2x.png" media="(prefers-color-scheme: dark)" alt="Recall by Brian Masse"> -->
@@ -102,6 +102,10 @@ I independently developed this project, from problem identification, project bra
 
 CHANGES
 - Improved the Design of the Calendar Page
+- Fixed layouting bugs in the calendar
+- Reworked Calendar Interactions
+- Improved performance of Calendar Layoutting
+- Redesigned the Tab bar
 
 ### **Version 2.1.0**
  

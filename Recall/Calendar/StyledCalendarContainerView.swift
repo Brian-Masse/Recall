@@ -60,9 +60,6 @@ struct StyledCalendarContainerView: View {
                 
                 ForEach( filtered, id: \.self ) { event in
                     CalendarEventPreviewView(event: event,
-                                             spacing: spacing,
-                                             geo: geo,
-                                             startHour: startHour,
                                              events: filtered)
                     .environmentObject(containerModel)
                 }

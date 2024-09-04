@@ -31,7 +31,7 @@ enum TimeRounding: Int, CaseIterable, Identifiable {
 //Should only be placed ontop of a caldndar container
 struct CalendarEventPreviewView: View {
     
-    private let blockCoordinateSpaceKey: String = "blockCOordinateSpace"
+    private let coordinateSpaceName = "CalendarContainerCoordinateSpace"
     private let holdDuration: Double = 0.1
 
     private enum ResizeDirection: Int {
@@ -42,29 +42,23 @@ struct CalendarEventPreviewView: View {
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var containerModel: CalendarContainerModel
+    @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     @ObservedRealmObject var event: RecallCalendarEvent
     @ObservedRealmObject var index = RecallModel.index
     
-    let spacing: CGFloat
-    let geo: GeometryProxy
-    let startHour: Int
     let events: [RecallCalendarEvent]
-    
-    var overlapData: RecallCalendarEvent.OverlapData { event.getOverlapData(in: geo.size.width - 20, from: events) }
 
-    init( event: RecallCalendarEvent, spacing: CGFloat, geo: GeometryProxy, startHour: Int, events: [RecallCalendarEvent]) {
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent]) {
         self.event = event
-        self.spacing = spacing
-        self.geo = geo
-        self.startHour = startHour
         self.events = events
+        
+        
     }
     
-    @State var startDate: Date = .now
-    @State var endDate: Date = .now
-    @State var length: CGFloat = 0  //measured in hours
-    @State var roundedStartDate: Date = .now
+    @State private var moveOffset: Double = 0
+    @State private var resizeOffset: Double = 0
+    @State private var resizeDirection: ResizeDirection = .up
     
     @State var moving: Bool = false //local variables
     @State var resizing: Bool = false //used to block the movement gesture while resizing
@@ -91,150 +85,92 @@ struct CalendarEventPreviewView: View {
     }
     
 //    MARK: Convenience vars
-    private func clampPosition(_ pos: CGFloat ) -> CGFloat {
-        min( max( 0, pos ), (24 * spacing) - 1 )
-    }
-    
-    private func beginMoving() {
-        containerModel.dragging = true
+    private func beginMoving() { withAnimation {
+        viewModel.gestureInProgress = true
         moving = true
-    }
+    } }
     
-    private func beginResizing() {
-        containerModel.dragging = true
+    private func beginResizing() { withAnimation {
+        viewModel.gestureInProgress = true
         resizing = true
-    }
+    } }
     
-    private func getWidth() -> CGFloat {
-        max(overlapData.width, 1)
-    }
-    
-    private func getOverrideHeight() -> CGFloat {
-        containerModel.editingEvent?._id == event._id ? containerModel.editingLength : length
-    }
-    
-    private func getHeight() -> CGFloat {
-        max(CGFloat(getOverrideHeight()) * spacing, 10)
-    }
-    
-    private func getVerticalOffset(from startDate: Date) -> CGFloat {
-        max(CGFloat(startDate.getHoursFromStartOfDay() - Double(startHour)) * spacing, 0)
-    }
-    
-    private func getHorizontalOffset( ) -> CGFloat {
-        overlapData.offset
-    }
-    
-    private func resetEditingControls() {
+    private func resetEditingControls() { withAnimation {
+        viewModel.gestureInProgress = false
         resizing = false
         moving = false
-    }
+    } }
     
 //    MARK: Drag
     private var drag: some Gesture {
-        DragGesture(coordinateSpace: .named(blockCoordinateSpaceKey))
+        DragGesture(coordinateSpace: .named(coordinateSpaceName))
             .onChanged { dragGesture in
                 if !moving || resizing { return }
-                startDate = getTime(from: clampPosition(dragGesture.location.y))
-                endDate   = startDate + (length * Constants.HourTime)
-                
-                roundedStartDate = getNearestTime(from: clampPosition(dragGesture.location.y), to: index.dateSnapping)
+                withAnimation { moveOffset = viewModel.roundPosition(dragGesture.location.y, to: index.dateSnapping) }
             }
             .onEnded { dragGesture in
-                if containerModel.dragging && !resizing {
-                    containerModel.dragging = false
-                    moving = false
-                    event.updateDate(startDate: roundedStartDate, endDate: roundedStartDate + ( length * Constants.HourTime ) )
+                if moving && !resizing {
+                    let roundedStartTime = viewModel.getTime(from: self.moveOffset, on: event.startTime)
+                    let roundedEndTime = roundedStartTime + event.getLengthInHours() * Constants.HourTime
+                    
+                    event.updateDate(startDate: roundedStartTime, endDate: roundedEndTime )
                 }
+                self.resetEditingControls()
             }
     }
     
 //    MARK: Resize
     private func resizeGesture(_ direction: ResizeDirection) -> some Gesture {
-        DragGesture( coordinateSpace: .named(blockCoordinateSpaceKey) )
+        DragGesture( coordinateSpace: .named(coordinateSpaceName) )
             .onChanged { dragGesture in
-                if !containerModel.dragging || !resizing { return }
-                if direction == .up {
-                    startDate        = min(getTime(from: clampPosition(dragGesture.location.y)), endDate - Constants.HourTime)
-                    roundedStartDate = min(getNearestTime(from: clampPosition(dragGesture.location.y), to: index.dateSnapping), endDate - Constants.HourTime)
-                    length           = endDate.timeIntervalSince(startDate) / Constants.HourTime
-                } else {
-                    endDate             = max(getTime(from: clampPosition(dragGesture.location.y)), startDate + Constants.HourTime)
-                    let roundedEndDate  = max(getNearestTime(from: clampPosition(dragGesture.location.y), to: index.dateSnapping, roundingRule: .up), startDate + Constants.HourTime)
-                    length              = endDate.timeIntervalSince(startDate) / Constants.HourTime
-                    roundedStartDate    = roundedEndDate - length * Constants.HourTime
-                }
+                if moving || !resizing { return }
+                self.resizeDirection = direction
+                
+                withAnimation { self.resizeOffset = viewModel.roundPosition(dragGesture.location.y, to: index.dateSnapping) }
             }
             .onEnded { dragGesture in
-                resizing = false
-                containerModel.dragging = false
-                if direction == .up { event.updateDate(startDate: roundedStartDate)
-                } else { event.updateDate(endDate: roundedStartDate + length * Constants.HourTime ) }
-            }
-    }
-    
-//    When a user begins dragging or resizing the box that appears to show them where it will be snapped to needs to make sure that its initial position is correct
-    private func prepareMovementSnapping() {
-        roundedStartDate = startDate
-    }
-    
-//    MARK: Struct Methods
-//    this translates a position into a date
-//    it is involved in placing events on the timeline correctly
-    private func getTime(from position: CGFloat) -> Date {
-        let pos = position + ( CGFloat(startHour) * spacing )
-        let hour = (pos / spacing).rounded(.down) + CGFloat(startHour)
-        let minutes = ((pos / spacing) - hour) * CGFloat(Constants.MinuteTime)
-        
-        return Calendar.current.date(bySettingHour: Int(hour), minute: Int(minutes), second: 0, of: startDate) ?? .now
-    }
-    
-//    this snaps the time to a set position based on the users preferences
-    private func getNearestTime(from position: CGFloat, to timeRounding: TimeRounding, roundingRule: FloatingPointRoundingRule = .down ) -> Date {
-        let pos = position + ( CGFloat(startHour) * spacing )
-        var hour = (pos / spacing).rounded(.down)
-        let minutes = ((pos / spacing) - hour)
-        var roundedMinutes = ((minutes * CGFloat(timeRounding.rawValue)).rounded(roundingRule) / CGFloat(timeRounding.rawValue)) * CGFloat(Constants.MinuteTime)
-        
-        if roundedMinutes == 60 {
-            roundedMinutes = 0
-            hour += 1
-        }
-        
-        return Calendar.current.date(bySettingHour: Int(hour), minute: Int(roundedMinutes), second: 0, of: startDate) ?? .now
-    }
+                
+                let roundedTime = viewModel.getTime(from: self.resizeOffset, on: event.startTime)
+                
+                if direction == .up { event.updateDate(startDate: roundedTime) }
+                if direction == .down { event.updateDate(endDate: roundedTime) }
 
-    private func setup() {
-        startDate = event.startTime
-        endDate = event.endTime
-        
-        let startTime = event.startTime.getHoursFromStartOfDay()
-        let endTime = event.endTime.getHoursFromStartOfDay()
-        length = endTime - startTime
+                self.resetEditingControls()
+            }
     }
     
 //    MARK: Input Response
-
 //    this function runs anyitme a user selects any option from the context menu
 //    its meant to disable any features that may be incmpatible with the currently performered action
     @MainActor
-    private func defaultContextMenuAction() { containerModel.selecting = false }
-    
-    private func toggleSelection() {
-        if let index = containerModel.selection.firstIndex(where: { selectedEvent in
-            selectedEvent == event
-        }) {
-            containerModel.selection.remove(at: index)
-        } else {
-            containerModel.selection.append( event )
-        }
-    }
+    private func defaultContextMenuAction() { }
     
     private func onTap() {
-        if containerModel.selecting { withAnimation { toggleSelection() }}
+        if viewModel.selecting { viewModel.selectEvent(event) }
         else { showingEvent = true }
+    }
+
+    
+//    MARK: Offets
+    private func getPreviewOffset(in geo: GeometryProxy) -> Double {
+        let movementOffset = moveOffset - geo.frame(in: .named(coordinateSpaceName)).minY
+        return movementOffset
+    }
+    
+    private func getPreviewHeight(in geo: GeometryProxy) -> Double {
+        let frame = geo.frame(in: .named(coordinateSpaceName))
+        let resizeOffset = resizeOffset - (resizeDirection == .up ? frame.maxY : frame.minY)
+        let defaultLength = (event.getLengthInHours() * Constants.HourTime) / viewModel.scale
+        return defaultLength + abs(resizeOffset) - frame.height
+    }
+    
+    private func resetOffsets(in geo: GeometryProxy) {
+        let frame = geo.frame(in: .named(coordinateSpaceName))
         
-        
+        withAnimation {
+            moveOffset = frame.minY
+            resizeOffset = (resizeDirection == .up ? frame.maxY : frame.minY) + frame.height
+        }
     }
     
     
@@ -245,54 +181,66 @@ struct CalendarEventPreviewView: View {
             makeLengthHandle(.up)
             Spacer()
             makeLengthHandle(.down)
-        }.frame(height: getHeight() + 120)
+        }
     }
     
     @ViewBuilder
     private func makeLengthHandle(_ direction: ResizeDirection) -> some View {
         if resizing {
-            Rectangle()
-                .foregroundColor(.white.opacity(0.01))
-                .onTapGesture { }
-                .simultaneousGesture(resizeGesture( direction ))
-                .frame(minHeight: 10, maxHeight: 20)
-                .overlay(
-                    Image(systemName: direction == .up ? "chevron.up" : "chevron.down")
-                        .padding(.horizontal)
-                        .rectangularBackground(style: .secondary)
-                        .offset(y: direction == .up ? 20 : -20)
-                        .onTapGesture { }
-                        .simultaneousGesture(resizeGesture( direction ))
-                )
+            ZStack {
+                Rectangle()
+                    .foregroundStyle(.clear)
+                    .contentShape(Rectangle())
+                
+                Image(systemName: direction == .up ? "chevron.up" : "chevron.down")
+                    .bold()
+            }
+            .frame(height: 20)
+            .offset(y: direction == .up ? -30 : 30)
+            .gesture(resizeGesture( direction ) )
+        }
+    }
+    
+    private struct TestShape: Shape {
+        let padding = 7
+        
+        func path(in rect: CGRect) -> Path {
+            Path { path in
+             
+                path.move(to: .init(x: rect.minX, y: rect.minY + 10))
+                path.addLine(to: .init(x: rect.maxX, y: rect.minY + 10))
+                path.addLine(to: .init(x: rect.maxX, y: rect.maxY - 10))
+                path.addLine(to: .init(x: rect.minX, y: rect.maxY - 10))
+                path.addLine(to: .init(x: rect.minX, y: rect.minY + 10))
+            }
         }
     }
     
     var body: some View {
-        ZStack {
-            if moving || resizing {
-                Rectangle()
-                    .foregroundColor(.red.opacity(0.5))
-                    .cornerRadius(Constants.UIDefaultCornerRadius)
-                    .frame(width: getWidth(), height: getHeight())
-                    .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: roundedStartDate))
-            }
-        
-            CalendarEventPreviewContentView(event: event,
-                                            events: events,
-                                            width: getWidth(),
-                                            height: getHeight())
-                .environmentObject(containerModel)
-                .frame(width: getWidth(), height: getHeight())
-                .overlay(makeLengthHandles())
-                .overlay(Rectangle()
-                    .fill(.clear)
-                    .contentShape(Rectangle())
-                    .padding(.vertical, 20)
-                    .simultaneousGesture( drag, including:  !resizing ? .all : .subviews  )
-                    .coordinateSpace(name: blockCoordinateSpaceKey)
-                )
+        GeometryReader { geo in
+            
+            CalendarEventPreviewContentView(event: event, events: events, width: geo.size.width, height: geo.size.height)
+//                .id(event.id)
+                .contentShape(TestShape())
+            
+                .background(alignment: resizeDirection == .up ? .bottom : .top) {
+                    if resizing || moving {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                                .stroke(style: .init(lineWidth: 3, lineCap: .round, dash: [5, 10], dashPhase: 15))
+                            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                                .opacity(0.3)
+                        }
+                            .foregroundStyle(event.getColor())
+                            .overlay(makeLengthHandles())
+
+                            .onAppear { resetOffsets(in: geo)  }
+                            .offset(y: getPreviewOffset(in: geo) )
+                            .frame(height: getPreviewHeight(in: geo) )
+                    }
+                }
+            
                 .contextMenu {
-                    
                     ContextMenuButton("move", icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") {
                         defaultContextMenuAction()
                         beginMoving()
@@ -320,8 +268,8 @@ struct CalendarEventPreviewView: View {
                     
                     ContextMenuButton("select", icon: "selection.pin.in.out") {
                         defaultContextMenuAction()
-                        containerModel.selecting = true
-                        containerModel.selection.append(event)
+                        viewModel.selecting = true
+                        viewModel.selectEvent(event)
                     }
                     
                     ContextMenuButton("delete", icon: "trash", role: .destructive) {
@@ -330,29 +278,19 @@ struct CalendarEventPreviewView: View {
                         else { event.delete() }
                     }
                 }
-                .offset(x: getHorizontalOffset(), y: getVerticalOffset(from: startDate))
                 .onTapGesture { onTap() }
-                
-                .coordinateSpace(name: blockCoordinateSpaceKey)
             
-                .onAppear { setup() }
-                .onChange(of: containerModel.dragging) { newValue in
-                    prepareMovementSnapping()
-                    if !newValue { resetEditingControls() }
-                }
+                .opacity(resizing || moving ? 0.5 : 1)
+                .padding(2)
+
+                .gesture(drag)
             
-                .shadow(radius: (resizing || moving) ? 10 : 0)
                 .sheet(isPresented: $showingEditingScreen) {
                     CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
                 }
-                .sheet(isPresented: $showingEvent) {
-                    CalendarEventView(event: event, events: events)
-                }
+                .sheet(isPresented: $showingEvent) { CalendarEventView(event: event, events: events) }
             
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
-                .halfPageScreen("Select Events", presenting: $containerModel.selecting) {
-                    EventSelectionEditorView().environmentObject(containerModel)
-                }
         }
         .zIndex( resizing || moving ? 5 : 0 )
         

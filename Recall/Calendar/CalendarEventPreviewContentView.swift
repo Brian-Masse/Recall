@@ -77,8 +77,7 @@ struct CalendarEventPreviewContentView: View {
 //    MARK: Vars
     
     @Environment(\.colorScheme) var colorScheme
-    
-    @EnvironmentObject var containerModel: CalendarContainerModel
+    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
@@ -106,8 +105,8 @@ struct CalendarEventPreviewContentView: View {
         self.forDisplay = forDisplay
     }
     
-    private func selected() -> Bool {
-        let index = containerModel.selection.firstIndex(of: event)
+    private var isSelected: Bool {
+        let index = viewModel.selection.firstIndex(of: event)
         return index != nil
     }
     
@@ -115,9 +114,12 @@ struct CalendarEventPreviewContentView: View {
     var body: some View {
         
         ZStack {
-            Rectangle()
+            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                .foregroundStyle(.background)
+            
+            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                 .foregroundColor(event.getColor())
-                .cornerRadius(Constants.UIDefaultCornerRadius)
+                .opacity(viewModel.selecting && !isSelected ? 0.3 : 1)
             
             VStack(alignment: .leading) {
                 HStack {Spacer()}
@@ -128,19 +130,19 @@ struct CalendarEventPreviewContentView: View {
             }
             .padding(.horizontal)
             
-            if !forDisplay {
-                if containerModel.selecting && !selected() {
-                    Rectangle()
-                        .foregroundStyle(colorScheme == .dark ? .black : .white)
-                        .opacity(0.7)
-                        .cornerRadius(Constants.UIDefaultCornerRadius)
-                }
-            }
+//            if !forDisplay {
+//                if containerModel.selecting && !selected() {
+//                    Rectangle()
+//                        .foregroundStyle(colorScheme == .dark ? .black : .white)
+//                        .opacity(0.7)
+//                        .cornerRadius(Constants.UIDefaultCornerRadius)
+//                }
+//            }
         }
         .foregroundColor(.black)
-        .padding(.vertical, 2)
+//        .padding(.vertical, 2)
         .if(allowTapGesture) { view in view.onTapGesture { showingEvent = true } }
-        .frame(height: height)
+//        .frame(height: height)
         .sheet(isPresented: $showingEvent) {
             CalendarEventView(event: event, events: events)
         }
