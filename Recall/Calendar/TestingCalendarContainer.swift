@@ -150,8 +150,6 @@ struct TestingCalendarContainer: View {
             .simultaneously(with: DragGesture(minimumDistance: 0, coordinateSpace: .named(coordinateSpaceName)) )
             .onChanged { value in
                 if !viewModel.gestureInProgress && value.first != nil {
-                    print("initial sizing")
-                    
                     let position: Double = Double(value.second?.location.y ?? 0)
                     self.newEventoffset = CalendarEventPreviewView.roundPosition(position,
                                                                                       to: RecallModel.index.dateSnapping)
@@ -167,8 +165,6 @@ struct TestingCalendarContainer: View {
                 }
             }
             .onEnded { _ in withAnimation {
-                print("done ")
-                
                 creatingEvent = false
                 viewModel.gestureInProgress = false
                 
@@ -233,6 +229,7 @@ struct TestingCalendarContainer: View {
                 }
             }
             .scrollTargetBehavior(.paging)
+            .scrollDisabled(viewModel.gestureInProgress)
             
         }
         .padding(.leading, calendarLabelWidth)

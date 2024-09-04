@@ -162,21 +162,6 @@ struct TestCalendarView: View {
         .border(.blue)
     }
     
-    private struct TestShape: Shape {
-        let padding = 10
-        
-        func path(in rect: CGRect) -> Path {
-            Path { path in
-             
-                path.move(to: .init(x: rect.minX, y: rect.minY + 10))
-                path.addLine(to: .init(x: rect.maxX, y: rect.minY + 10))
-                path.addLine(to: .init(x: rect.maxX, y: rect.maxY - 10))
-                path.addLine(to: .init(x: rect.minX, y: rect.maxY - 10))
-                path.addLine(to: .init(x: rect.minX, y: rect.minY + 10))
-            }
-        }
-    }
-    
 //    MARK: EventCollection
     @ViewBuilder
     private func makeEventCollection(from collisionRecord: CollisionRecord, in geo: GeometryProxy) -> some View {
@@ -197,8 +182,7 @@ struct TestCalendarView: View {
                                 -CGFloat(getVerticalOffset(of: events[i],
                                                            relativeTo: events[collisionRecord.forwardCollisions.lowerBound].startTime))
                             }
-                            .border(.red)
-                            .contentShape(TestShape())
+//                            .contentShape( viewModel.gestureInProgress ? Rectangle() : TestShape())
 //                            .overlay {
 //                                VStack {
 //                                    

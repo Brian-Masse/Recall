@@ -227,9 +227,24 @@ struct CalendarEventPreviewView: View {
                 Image(systemName: direction == .up ? "chevron.up" : "chevron.down")
                     .bold()
             }
-                .frame(height: 20)
-                .offset(y: direction == .up ? -30 : 30)
-                .gesture(resizeGesture( direction ))
+            .frame(height: 20)
+            .offset(y: direction == .up ? -30 : 30)
+            .gesture(resizeGesture( direction ) )
+        }
+    }
+    
+    private struct TestShape: Shape {
+        let padding = 7
+        
+        func path(in rect: CGRect) -> Path {
+            Path { path in
+             
+                path.move(to: .init(x: rect.minX, y: rect.minY + 10))
+                path.addLine(to: .init(x: rect.maxX, y: rect.minY + 10))
+                path.addLine(to: .init(x: rect.maxX, y: rect.maxY - 10))
+                path.addLine(to: .init(x: rect.minX, y: rect.maxY - 10))
+                path.addLine(to: .init(x: rect.minX, y: rect.minY + 10))
+            }
         }
     }
     
@@ -238,6 +253,7 @@ struct CalendarEventPreviewView: View {
             
             CalendarEventPreviewContentView(event: event, events: events, width: geo.size.width, height: geo.size.height)
 //                .id(event.id)
+                .contentShape(TestShape())
             
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
