@@ -16,7 +16,7 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) { }
 }
 
-struct TestingCalendarContainer: View {
+struct CalendarContainer: View {
     
 //    MARK: Calendar
     private func getCalendarMarkLabel(hour: Int) -> String {
@@ -270,5 +270,5 @@ struct TestingCalendarContainer: View {
 }
 
 #Preview {
-    TestingCalendarContainer(events: [])
+    CalendarContainer(events: [])
 }
