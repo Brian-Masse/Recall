@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import UIUniversals
+import SwiftUI
 
 
 //Each user will have one of these objects stored under their profile in the database
@@ -43,6 +44,8 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var defaultEventSnapping: Int = TimeRounding.quarter.rawValue
     @Persisted var recallEventsAtEndOfLastRecall: Bool = true
     @Persisted var recallEventsWithEventTime: Bool = true
+    
+    @Persisted var calendarDensity: Int = 0
     
     @Persisted var notificationsEnabled: Bool = false
     @Persisted var notificationsTime: Date = .now
@@ -185,6 +188,15 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         RealmManager.updateObject(self) { thawed in
             thawed.recallEventsWithEventTime = value
         }
+    }
+    
+    @MainActor
+    func setCalendarDensity(to value: Int) {
+        RealmManager.updateObject(self) { thawed in
+            withAnimation { thawed.calendarDensity = value }
+        }
+        
+        RecallCalendarViewModel.shared.getScale(from: value)
     }
     
     

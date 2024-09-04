@@ -14,6 +14,7 @@ import UIUniversals
 struct ProfileView: View {
     
 //    MARK: Vars
+    @Environment(\.colorScheme) var colorScheme
     @Namespace var profileNamespace
     
     @State var showingDataTransfer: Bool = false
@@ -281,6 +282,42 @@ struct ProfileView: View {
         }
     }
     
+    @ViewBuilder
+    private func makeCalendarDensityOption(_ option: Int, caption: String) -> some View {
+        
+        VStack {
+            Image("CalendarDensity\(option)")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .clipped()
+                .padding(.bottom, 5)
+            
+            UniversalText(caption, size: Constants.UISmallTextSize, font: Constants.titleFont)
+                .if( index.calendarDensity == option ) { view in view.foregroundStyle(.black) }
+        }
+            .padding(10)
+            .background {
+                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                    .foregroundStyle( index.calendarDensity == option ? Colors.getAccent(from: colorScheme) : .clear )
+            }
+            .onTapGesture { withAnimation {
+                index.setCalendarDensity(to: option)
+            } }
+    }
+    
+    @ViewBuilder
+    private func makeCalendarDensitySelector() -> some View {
+        VStack(alignment: .leading) {
+            UniversalText( "Calendar Size", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            
+            HStack(spacing: 0) {
+                makeCalendarDensityOption(0, caption: "compact")
+                makeCalendarDensityOption(1, caption: "regular")
+                makeCalendarDensityOption(2, caption: "roomy")
+            }
+        }
+    }
+    
     
 //    MARK: Event Settings Body
     @ViewBuilder
@@ -291,6 +328,10 @@ struct ProfileView: View {
                     if newValue != RecallModel.index.defaultEventLength { madeDefaultEventLengthChanges = true }
                     else { madeDefaultEventLengthChanges = false }
                 }
+            
+            makeSettingsDivider()
+            
+            makeCalendarDensitySelector()
             
             makeSettingsDivider()
             
@@ -313,6 +354,7 @@ struct ProfileView: View {
             makeDefaultRecallStyleSelector()
             
             makeDefaultTimeSnappingSelector()
+            
         }
     }
     

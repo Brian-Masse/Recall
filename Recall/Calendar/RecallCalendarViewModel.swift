@@ -13,11 +13,11 @@ class RecallCalendarViewModel: ObservableObject {
     
     static let shared = RecallCalendarViewModel()
     
-//    MARK: Vars
+    //    MARK: Vars
     var filteredEvents: [String:[RecallCalendarEvent]] = [:]
     
     @Published private(set) var currentDay: Date = Date.now
-//    this will be toggled whenever the view should scroll to the currentDay
+    //    this will be toggled whenever the view should scroll to the currentDay
     @Published private(set) var shouldScrollCalendar: Bool = false
     
     @Published var scale: Double = 100
@@ -25,6 +25,10 @@ class RecallCalendarViewModel: ObservableObject {
     
     @Published var selecting: Bool = false
     @Published var selection: [ RecallCalendarEvent ] = []
+    
+    init() {
+        self.getScale(from: RecallModel.index.calendarDensity)
+    }
     
 //    MARK: Setters
     func setCurrentDay(to day: Date, scrollToDay: Bool = true) {
@@ -37,6 +41,15 @@ class RecallCalendarViewModel: ObservableObject {
     func setScale(to scale: Double) {
         let scale = min( 200, max( 40, scale ) )
         self.scale = scale
+    }
+    
+    func getScale(from density: Int) {
+        switch density {
+        case 0: self.scale = 120
+        case 1: self.scale = 85
+        case 2: self.scale = 50
+        default: break
+        }
     }
     
 //    MARK: Positioning Functions
