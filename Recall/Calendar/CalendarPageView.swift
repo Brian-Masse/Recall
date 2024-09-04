@@ -16,10 +16,10 @@ struct CalendarPageView: View {
 //    MARK: Convenience Functions
     
     private func setCurrentDay(with date: Date) {
-        if date > containerModel.currentDay { slideDirection = .right }
+        if date > viewModel.currentDay { slideDirection = .right }
         else { slideDirection = .left }
         
-        withAnimation { containerModel.setCurrentDay(to: date) }
+        withAnimation { viewModel.setCurrentDay(to: date) }
     }
     
 //   MARK: vars
@@ -29,6 +29,7 @@ struct CalendarPageView: View {
     let goals: [RecallGoal]
     
     @ObservedObject var containerModel: CalendarContainerModel = sharedContainerModel
+    @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     @State var showingCreateEventView: Bool = false
     @State var showingProfileView: Bool = false
@@ -37,23 +38,20 @@ struct CalendarPageView: View {
     
     @State var slideDirection: AnyTransition.SlideDirection = .right
     
-    @Namespace private var calendarPageView
+    @Namespace private var calendarPageViewNameSpace
     
     private func formatDate(_ date: Date) -> String {
-        let weekDay = date.formatted(.dateTime.weekday())
-        let month = date.formatted(.dateTime.month(.abbreviated))
-        let day = date.formatted(.dateTime.day())
-        return "\(weekDay), \(month) \(day)"
+        date.formatted(.dateTime.weekday().month().day())
     }
     
 //    MARK: ViewBuilders
     
     @ViewBuilder
     private func makeDateLabel() -> some View {
-        let matches = containerModel.currentDay.matches(.now, to: .day)
+        let matches = viewModel.currentDay.matches(.now, to: .day)
         
         HStack {
-            let currentLabel    = formatDate(containerModel.currentDay)
+            let currentLabel    = formatDate(viewModel.currentDay)
             let nowLabel        = formatDate(.now)
             
             if !matches {
@@ -65,70 +63,61 @@ struct CalendarPageView: View {
             UniversalText(nowLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                 .onTapGesture { setCurrentDay(with: .now) }
         }
-        .padding(.bottom)
     }
     
 //    MARK: DateSelector
     @ViewBuilder
-    private func makeDateSelectorContent(from date: Date, string: String, month: String) -> some View {
-        let activeDay = date.matches(containerModel.currentDay, to: .day)
-        
-        if activeDay {
-            VStack {
-                UniversalText(string, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true)
-                UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false, scale: true )
-            }
-            .universalTextStyle()
-        } else {
-            UniversalText(string, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true)
-                .overlay {
-                    if date.isFirstOfMonth() && !containerModel.currentDay.matches(date, to: .day) {
-                        UniversalText( month, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true )
-                            .offset(y: -60)
-                    }
-                }
-                .padding(.horizontal, 2)
-        }
-    }
-    
-    @ViewBuilder
     private func makeDateSelector(from date: Date) -> some View {
         
-        let string = date.formatted(.dateTime.day(.twoDigits))
-        let month = date.formatted(.dateTime.month(.abbreviated)).lowercased()
+        let dayString = date.formatted(.dateTime.day(.twoDigits))
+        let monthString = date.formatted(.dateTime.month(.abbreviated)).lowercased()
+        let isCurrentDay = date.matches(viewModel.currentDay, to: .day)
     
-        makeDateSelectorContent(from: date, string: string, month: month)
-            .if(containerModel.currentDay.matches(date, to: .day)) { view in
-                view
-                    .padding()
-                    .rectangularBackground(0, style: .secondary, foregroundColor: .black)
+        VStack {
+            UniversalText(dayString,
+                          size: Constants.UIDefaultTextSize,
+                          font: Constants.titleFont,
+                          wrap: false, scale: true)
+            .opacity(isCurrentDay ? 1 : 0.75)
+            
+            if isCurrentDay {
+                UniversalText(monthString,
+                              size: Constants.UIDefaultTextSize,
+                              font: Constants.titleFont,
+                              wrap: false, scale: true )
             }
-            .onTapGesture { setCurrentDay(with: date) }
+        }
+        .padding(.vertical)
+        .padding(.horizontal, isCurrentDay ? 15 : 5)
+        .background {
+            if isCurrentDay {
+                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                    .matchedGeometryEffect(id: "currentDaySelector", in: calendarPageViewNameSpace)
+                    .universalStyledBackgrond(.secondary, onForeground: true)
+            }
+        }
+        .onTapGesture { setCurrentDay(with: date) }
     }
 
     
     @ViewBuilder
     private func makeDateSelectors() -> some View {
         ScrollViewReader { reader in
-            ScrollView(.horizontal) {
-                HStack(alignment: .center) {
-                    ForEach(-100..<100) { i in
-                        let date: Date = (Date.now) - (Double( 3 - i ) * Constants.DayTime)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(alignment: .center, spacing: 0) {
+                    
+                    ForEach(0..<100) { i in
+                        let date: Date = (Date.now) - (Double(i) * Constants.DayTime)
                         makeDateSelector(from: date)
                             .id(i)
                     }
                 }
-                .onAppear() {
-                    reader.scrollTo(4, anchor: .trailing)
-                }.onChange(of: containerModel.currentDay) { newValue in
-                    if newValue.matches(Date.now, to: .day) {
-                        withAnimation { reader.scrollTo(4, anchor: .trailing) }
-                    }
+                .frame(height: 75)
+                .onChange(of: viewModel.currentDay) {
+                    let proposedIndex = floor(Date.now.timeIntervalSince(viewModel.currentDay) / Constants.DayTime)
+                    reader.scrollTo(Int(proposedIndex))
                 }
-                .makeDateSelectorsHStackSnapping()
             }
-            .makeDateSlectorsScrollViewSnapping()
-            .scrollIndicators(.never)
         }
     }
     
@@ -136,8 +125,8 @@ struct CalendarPageView: View {
     @ViewBuilder
     private func makeHeader() -> some View {
         HStack {
-            UniversalText( "Today's Recall",
-                           size: Constants.UITitleTextSize,
+            UniversalText( "Recall",
+                           size: Constants.UIHeaderTextSize,
                            font: Constants.titleFont,
                            wrap: false, scale: true )
             Spacer()
@@ -161,31 +150,30 @@ struct CalendarPageView: View {
     
     var body: some View {
         
-        VStack(alignment: .leading) {
-            makeHeader()
-                .padding(.bottom, -7)
-            
-            HStack {
-                makeDateSelectors()
+        VStack() {
+            VStack(alignment: .leading, spacing: 5) {
+                makeHeader()
+                    .padding(.horizontal, 7)
                 
-                LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
+                HStack {
+                    makeDateSelectors()
+                    
+                    LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
+                }
             }
+            .padding(.bottom )
             
-            GeometryReader { geo in
-                CalendarContainer(with: Array(events), from: 0, to: 24, geo: geo, slideDirection: $slideDirection)
-                    .environmentObject(containerModel)
-                    .onAppear { containerModel.setCurrentDay(to: containerModel.currentDay) }
-            }
+            TestingCalendarContainer(events: Array(events))
         }
-        .padding()
+        .padding(7)
         .sheet(isPresented: $showingCreateEventView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: containerModel.currentDay)
+            CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay)
         }
         .sheet(isPresented: $showingProfileView) {
             ProfileView()
         }
         .sheet(isPresented: $showingCalendarView) {
-            CalendarPage(currentDay: $containerModel.currentDay, goals: goals )
+            CalendarPage()
         }
         .universalBackground()
         
