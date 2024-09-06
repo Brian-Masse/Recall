@@ -156,7 +156,7 @@ private struct HalfPageScreen<C: View>: ViewModifier {
         
         ZStack {
             content
-                .onChange(of: toggleScreen) { newValue in presenting = newValue }
+                .onChange(of: toggleScreen) { presenting = toggleScreen }
 
             if presenting {
                 Text("")

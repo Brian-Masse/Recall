@@ -86,7 +86,7 @@ struct MainView: View {
             Constants.setupConstants()
             RecallModel.dataModel.storeData( events: arrEvents, goals: arrGoals )
         }
-        .onChange(of: events) { nEvents in RecallModel.dataModel.storeData( events: Array(nEvents)) }
+        .onChange(of: events) { RecallModel.dataModel.storeData( events: Array(events)) }
         
 
         .universalBackground()

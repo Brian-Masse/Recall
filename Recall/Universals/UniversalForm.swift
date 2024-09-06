@@ -94,8 +94,8 @@ struct StyledTextField: View {
                 .tint(Colors.getAccent(from: colorScheme) )
                 .font(Font.custom(AndaleMono.shared.postScriptName, size: Constants.UIDefaultTextSize))
                 .rectangularBackground(style: .secondary)
-                .onChange(of: self.focused) { value in
-                    withAnimation { self.showingClearButton = value }
+                .onChange(of: self.focused) {
+                    withAnimation { self.showingClearButton = self.focused }
                 }
             
             if showingClearButton && clearable && !binding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {

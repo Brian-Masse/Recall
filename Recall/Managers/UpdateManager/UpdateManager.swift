@@ -72,9 +72,9 @@ class UpdateManager: ObservableObject {
         }
         let version = "1.0.0"
         let recentUpdateObject = RecallRecentUpdate(version: version)
-        if RecallModel.ownerID == "64e3f9d5ac7aee58fbbceb37" {
-            RealmManager.addObject(  recentUpdateObject, realm: self.realm)
-        }
+//        if RecallModel.ownerID == "64e3f9d5ac7aee58fbbceb37" {
+//            RealmManager.addObject(  recentUpdateObject, realm: self.realm)
+//        }
         return recentUpdateObject
     }
     

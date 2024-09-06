@@ -65,8 +65,8 @@ extension TutorialViews {
         @ViewBuilder
         private func makeNameView() -> some View {
             StyledTextField(title: "What was the first thing you did today?", binding: $name)
-                .onChange(of: name) { newValue in
-                    if newValue.isEmpty { return }
+                .onChange(of: name) {
+                    if name.isEmpty { return }
                     nextButtonIsActive = true
                 }
                 .slideTransition()
@@ -75,8 +75,8 @@ extension TutorialViews {
         @ViewBuilder
         private func makeNotesView() -> some View {
             StyledTextField(title: "Add additional notes about this event", binding: $notes)
-                .onChange(of: notes) { newValue in
-                    if newValue.isEmpty { return }
+                .onChange(of: notes) {
+                    if notes.isEmpty { return }
                     nextButtonIsActive = true
                 }
                 .slideTransition()
@@ -138,8 +138,8 @@ extension TutorialViews {
                                      label: "",
                                      goalRatings: Dictionary())
             }
-            .onChange(of: tag) { newValue in
-                if newValue.label != "" && !newValue.label.isEmpty {
+            .onChange(of: tag) {
+                if tag.label != "" && !tag.label.isEmpty {
                     nextButtonIsActive = true
                 } else {
                     nextButtonIsActive = false
@@ -199,7 +199,6 @@ extension TutorialViews {
                                                 from: 0, to: 24,
                                                 geo: geo,
                                                 scale: 2)
-                    .environmentObject( CalendarContainerModel() )
                 }
                 LargeRoundedButton("Recall", icon: "arrow.up", wide: true) { showingEventCretionView = true }
             }

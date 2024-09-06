@@ -47,7 +47,6 @@ struct StyledCalendarContainerView: View {
         
     }
     
-    @StateObject var containerModel: CalendarContainerModel = CalendarContainerModel()
     
 //    MARK: Body
     var body: some View {
@@ -56,12 +55,11 @@ struct StyledCalendarContainerView: View {
                 
                 let filtered = filterEvents()
                 
-                CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
+//                CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
                 
                 ForEach( filtered, id: \.self ) { event in
                     CalendarEventPreviewView(event: event,
                                              events: filtered)
-                    .environmentObject(containerModel)
                 }
                 .padding(.leading, 40)
             }

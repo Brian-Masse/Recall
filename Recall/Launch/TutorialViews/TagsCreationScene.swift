@@ -60,8 +60,8 @@ extension TutorialViews {
         private func makeNameView() -> some View {
             VStack(alignment: .leading) {
                 StyledTextField(title: "Whats the name of this tag?", binding: $name)
-                    .onChange(of: name) { newValue in
-                        if newValue.isEmpty { return }
+                    .onChange(of: name) { 
+                        if name.isEmpty { return }
                         nextButtonIsActive = true
                     }
                 

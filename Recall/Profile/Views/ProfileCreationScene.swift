@@ -190,11 +190,11 @@ struct ProfileCreationView: View {
             if RealmManager.usedSignInWithApple { progressScene() }
             showingContinueButton = ( !firstName.isEmpty && !lastName.isEmpty )
         }
-        .onChange(of: firstName)    { newValue in
-            showingContinueButton = ( !newValue.isEmpty && !lastName.isEmpty )
+        .onChange(of: firstName)    {
+            showingContinueButton = ( !firstName.isEmpty && !lastName.isEmpty )
         }
-        .onChange(of: lastName)     { newValue in
-            showingContinueButton = ( !firstName.isEmpty && !newValue.isEmpty )
+        .onChange(of: lastName)     {
+            showingContinueButton = ( !firstName.isEmpty && !lastName.isEmpty )
         }
     }
     
@@ -225,11 +225,11 @@ struct ProfileCreationView: View {
         .onAppear() {
             showingContinueButton = ( !email.isEmpty && validatePhoneNumber(phoneNumber) )
         }
-        .onChange(of: email) { newValue in
-            showingContinueButton = ( !newValue.isEmpty && validatePhoneNumber(phoneNumber) )
+        .onChange(of: email) {
+            showingContinueButton = ( !email.isEmpty && validatePhoneNumber(phoneNumber) )
         }
-        .onChange(of: phoneNumber) { newValue in
-            showingContinueButton = ( !email.isEmpty && validatePhoneNumber(newValue) )
+        .onChange(of: phoneNumber) {
+            showingContinueButton = ( !email.isEmpty && validatePhoneNumber(phoneNumber) )
         }
         
     }
@@ -249,8 +249,8 @@ struct ProfileCreationView: View {
         }
         .slideTransition()
         .onAppear() { showingContinueButton = validateBirthday( dateOfBirth ) }
-        .onChange(of: dateOfBirth) { newValue in
-            showingContinueButton = validateBirthday(newValue)
+        .onChange(of: dateOfBirth) {
+            showingContinueButton = validateBirthday(dateOfBirth)
         }
     }
     

@@ -324,8 +324,8 @@ struct ProfileView: View {
     private func makeEventSettings() -> some View {
         VStack(alignment: .leading, spacing: 20) {
             makeDefaultEventLengthSelector()
-                .onChange(of: defaultEventLength) { newValue in
-                    if newValue != RecallModel.index.defaultEventLength { madeDefaultEventLengthChanges = true }
+                .onChange(of: defaultEventLength) {
+                    if defaultEventLength != RecallModel.index.defaultEventLength { madeDefaultEventLengthChanges = true }
                     else { madeDefaultEventLengthChanges = false }
                 }
             
@@ -382,9 +382,9 @@ struct ProfileView: View {
                 UniversalText( "Daily reminder", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
             .onAppear { Task { await checkStatus() } }
-            .onChange(of: notificationsEnabled) { newValue in
+            .onChange(of: notificationsEnabled) {
                 
-                if newValue {
+                if notificationsEnabled {
                     Task {
                         let results = await NotificationManager.shared.requestNotifcationPermissions()
                         notificationsEnabled = results
@@ -392,7 +392,7 @@ struct ProfileView: View {
                     }
                 }
                 
-                madeNotificationChanges = (newValue != index.notificationsEnabled)
+                madeNotificationChanges = (notificationsEnabled != index.notificationsEnabled)
             }
             
             if !showingNotificationToggle {
@@ -401,8 +401,8 @@ struct ProfileView: View {
             
             if notificationsEnabled {
                 TimeSelector(label: "", time: $notificationTime, size: Constants.UIDefaultTextSize)
-                    .onChange(of: notificationTime) { newValue in
-                        madeNotificationChanges = !( newValue.matches(index.notificationsTime, to: .minute) && newValue.matches(index.notificationsTime, to: .hour) )
+                    .onChange(of: notificationTime) {
+                        madeNotificationChanges = !( notificationTime.matches(index.notificationsTime, to: .minute) && notificationTime.matches(index.notificationsTime, to: .hour) )
                     }
             }
             

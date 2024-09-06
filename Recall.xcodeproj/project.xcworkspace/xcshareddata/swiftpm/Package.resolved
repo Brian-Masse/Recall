@@ -1,0 +1,60 @@
+{
+  "originHash" : "c1b2d4fee033604b47a9a0593abf8985b39b4e07dc9466386233ba4f20502f7b",
+  "pins" : [
+    {
+      "identity" : "flowgrid",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rdev/FlowGrid",
+      "state" : {
+        "revision" : "67b26028505b117020acd43ad5465cb59a5b0f3d",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core.git",
+      "state" : {
+        "revision" : "dea51e1e9b2219689cf27b44a0206135b984f9cf",
+        "version" : "14.11.1"
+      }
+    },
+    {
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "76d79455a3d736ec01d4ef1864aa62cc5f0fc2cb"
+      }
+    },
+    {
+      "identity" : "symbolpicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xnth97/SymbolPicker.git",
+      "state" : {
+        "revision" : "e0601230feea4289760c0e5b68dbafa15aa59bfb",
+        "version" : "1.5.1"
+      }
+    },
+    {
+      "identity" : "uiuniversals",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Brian-Masse/UIUniversals",
+      "state" : {
+        "branch" : "main",
+        "revision" : "5ddb8ce1f6080bbd60bb34bad855e1090584d80d"
+      }
+    },
+    {
+      "identity" : "universaldonationpackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Brian-Masse/UniversalDonationPackage",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d600ebc438ed97f5ad7facf01d4a66a60b223acf"
+      }
+    }
+  ],
+  "version" : 3
+}

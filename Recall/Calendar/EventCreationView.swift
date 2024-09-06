@@ -472,7 +472,7 @@ struct CalendarEventCreationView: View {
         .padding([.horizontal], Constants.UIFormPagePadding)
         .universalStyledBackgrond(.accent)
         
-        .onChange(of: category) { newValue in goalRatings = RecallCalendarEvent.translateGoalRatingList(newValue.goalRatings) }
+        .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
         .sheet(isPresented: $showingTagCreationView) {
             CategoryCreationView(editing: false,
                                  tag: nil,

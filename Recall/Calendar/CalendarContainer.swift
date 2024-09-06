@@ -202,7 +202,7 @@ struct CalendarContainer: View {
                         let day = .now - (Double(i) * Constants.DayTime)
                         
                         ZStack(alignment: .top) {
-                            TestCalendarView(events: viewModel.getEvents(on: day),
+                            CalendarView(events: viewModel.getEvents(on: day),
                                              on: day)
                             
                             makeEventCreationPreview()
@@ -221,7 +221,7 @@ struct CalendarContainer: View {
                 })
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo) }
                 .onAppear { scrollToCurrentDay(proxy: proxy) }
-                .onChange(of: viewModel.shouldScrollCalendar) { _ in scrollToCurrentDay(proxy: proxy) }
+                .onChange(of: viewModel.shouldScrollCalendar) {  scrollToCurrentDay(proxy: proxy) }
                 .onChange(of: events) { oldValue, newValue in
                     viewModel.invalidateEvents(newEvents: newValue)
                 }

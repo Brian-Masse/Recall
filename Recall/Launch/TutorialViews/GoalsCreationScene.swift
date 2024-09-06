@@ -85,8 +85,8 @@ extension TutorialViews {
         private func makeNameView() -> some View {
             VStack(alignment: .leading) {
                 StyledTextField(title: "What is the name of your goal?", binding: $name)
-                    .onChange(of: name) { newValue in
-                        if newValue.isEmpty { return }
+                    .onChange(of: name) {
+                        if name.isEmpty { return }
                         nextButtonIsActive = true
                     }
                     .padding(.bottom)
@@ -107,8 +107,8 @@ extension TutorialViews {
         @ViewBuilder
         private func makeDescriptionView() -> some View {
             StyledTextField(title: "What is the purpose of this goal?", binding: $description)
-                .onChange(of: description) { newValue in
-                    if newValue.isEmpty { return }
+                .onChange(of: description) {
+                    if description.isEmpty { return }
                     nextButtonIsActive = true
                 }
                 .slideTransition()

@@ -229,7 +229,8 @@ class RealmManager: ObservableObject {
                                            RecallGoal.self,
                                            RecallIndex.self,
                                            GoalNode.self,
-                                           DictionaryNode.self
+                                           DictionaryNode.self,
+                                           RecallRecentUpdate.self
         ]
     }
     

@@ -41,7 +41,6 @@ struct CalendarEventPreviewView: View {
     
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var containerModel: CalendarContainerModel
     @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     @ObservedRealmObject var event: RecallCalendarEvent
@@ -52,8 +51,6 @@ struct CalendarEventPreviewView: View {
     init( event: RecallCalendarEvent, events: [RecallCalendarEvent]) {
         self.event = event
         self.events = events
-        
-        
     }
     
     @State private var moveOffset: Double = 0
@@ -220,7 +217,6 @@ struct CalendarEventPreviewView: View {
         GeometryReader { geo in
             
             CalendarEventPreviewContentView(event: event, events: events, width: geo.size.width, height: geo.size.height)
-//                .id(event.id)
                 .contentShape(TestShape())
             
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {

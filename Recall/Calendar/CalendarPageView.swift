@@ -23,12 +23,9 @@ struct CalendarPageView: View {
     }
     
 //   MARK: vars
-    static let sharedContainerModel = CalendarContainerModel()
-    
     let events: [RecallCalendarEvent]
     let goals: [RecallGoal]
     
-    @ObservedObject var containerModel: CalendarContainerModel = sharedContainerModel
     @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     @State var showingCreateEventView: Bool = false
@@ -163,7 +160,7 @@ struct CalendarPageView: View {
             }
             .padding(.bottom )
             
-            TestingCalendarContainer(events: Array(events))
+            CalendarContainer(events: Array(events))
         }
         .padding(7)
         .sheet(isPresented: $showingCreateEventView) {
