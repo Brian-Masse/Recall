@@ -316,7 +316,6 @@ struct CalendarPage: View {
                 .padding(.bottom, 5)
             
             makeCalendar()
-                .padding(.bottom, 30)
         }
         .padding()
         .universalBackground()
