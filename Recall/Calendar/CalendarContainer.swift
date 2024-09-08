@@ -120,6 +120,16 @@ struct CalendarContainer: View {
     @State private var newEventoffset: Double = 0
     @State private var newEventResizeOffset: Double = 0
     
+    private func cleanEvent() {
+        if let newEvent {
+            if newEvent.title.isEmpty || newEvent.getTagLabel().isEmpty {
+                RealmManager.deleteObject(newEvent) { event in
+                    newEvent.title.isEmpty
+                }
+            }
+        }
+    }
+    
     private func createEvent() {
         let startTime = viewModel.getTime(from: newEventoffset, on: viewModel.currentDay)
         let endTime = startTime + ( newEventResizeOffset * viewModel.scale )
@@ -151,15 +161,23 @@ struct CalendarContainer: View {
                     let position: Double = Double(value.second?.location.y ?? 0)
                     self.newEventoffset = viewModel.roundPosition(position,
                                                                                       to: RecallModel.index.dateSnapping)
-                    self.newEventResizeOffset = Constants.HourTime / viewModel.scale
+                    self.newEventResizeOffset = (Constants.HourTime / 4) / viewModel.scale
                     
                 } else if viewModel.gestureInProgress {
                     
-                    let height = value.second?.translation.height ?? 0
-                    let proposedResizeOffset = viewModel.roundPosition(height,
-                                                                                      to: RecallModel.index.dateSnapping)
+                    let position = Double(value.second?.location.y ?? 0)
+                    let proposedStartPosition = viewModel.roundPosition(position, to: RecallModel.index.dateSnapping)
                     
-                    withAnimation { self.newEventResizeOffset =  max(0, proposedResizeOffset) }
+                    if proposedStartPosition < newEventoffset {
+                        withAnimation { self.newEventoffset = proposedStartPosition }
+                        
+                    } else {
+                        let height = value.second?.location.y ?? 0
+                        let proposedResizeOffset = viewModel.roundPosition(height, to: RecallModel.index.dateSnapping) - self.newEventoffset
+                        
+                        let minLength = (Constants.HourTime / 4) / viewModel.scale
+                        withAnimation { self.newEventResizeOffset =  max(minLength, proposedResizeOffset)  }
+                    }
                 }
             }
             .onEnded { _ in withAnimation {
@@ -245,6 +263,18 @@ struct CalendarContainer: View {
                             makeCalendar()
                             
                             makeCalendarCarousel(in: geo)
+                            
+                            VStack {
+                                Spacer()
+                                
+                                Rectangle()
+                                    .frame(height: 10)
+                                    .foregroundStyle(.clear)
+                                    .allowsHitTesting(false)
+                                    .id("scrollTarget")
+                                
+                                Spacer()
+                            }
                         }
                         .padding(.bottom, 150)
                         
@@ -255,8 +285,10 @@ struct CalendarContainer: View {
                     }
                     .simultaneousGesture(scaleGesture)
                     .scrollDisabled(viewModel.gestureInProgress)
+                    .onAppear { proxy.scrollTo("scrollTarget") }
                 }
             }
+            .onChange(of: showingEventCreationView) { if !showingEventCreationView { cleanEvent() } }
             .sheet(isPresented: $showingEventCreationView) {
                 CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay,
                                                                 editing: true,

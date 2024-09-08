@@ -177,6 +177,7 @@ struct CalendarView: View {
                     ForEach( collisionRecord.forwardCollisions, id: \.self ) { i in
                         
                         CalendarEventPreviewView(event: events[i], events: events)
+                            .id(i)
                             .frame(height: getLength(of: events[i]))
                             .alignmentGuide(VerticalAlignment.top) { _ in
                                 -CGFloat(getVerticalOffset(of: events[i],
