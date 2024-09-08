@@ -103,7 +103,9 @@ struct CalendarPageView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .center, spacing: 0) {
                     
-                    ForEach(0..<100) { i in
+                    let dayCount = RecallModel.index.daysSinceFirstEvent()
+                    
+                    ForEach(0..<dayCount, id: \.self) { i in
                         let date: Date = (Date.now) - (Double(i) * Constants.DayTime)
                         makeDateSelector(from: date)
                             .id(i)

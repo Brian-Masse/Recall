@@ -150,7 +150,7 @@ struct CalendarContainer: View {
     }
     
     private var createEventHoldGesture: some Gesture {
-        LongPressGesture(minimumDuration: 1)
+        LongPressGesture(minimumDuration: 0.65)
             .onEnded { value in withAnimation {
                 self.creatingEvent = true
                 viewModel.gestureInProgress = true
@@ -215,7 +215,9 @@ struct CalendarContainer: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 0) {
                     
-                    ForEach(0...100, id: \.self) { i in
+                    let dayCount = RecallModel.index.daysSinceFirstEvent()
+                    
+                    ForEach(0...dayCount, id: \.self) { i in
                         
                         let day = .now - (Double(i) * Constants.DayTime)
                         

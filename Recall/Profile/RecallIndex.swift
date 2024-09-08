@@ -68,6 +68,10 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         self.earliestEventDate = date
     }
     
+    func daysSinceFirstEvent() -> Int {
+        Int(Date.now.timeIntervalSince(earliestEventDate) / (Constants.DayTime))
+    }
+    
     func update( firstName: String, lastName: String, email: String, phoneNumber: Int, dateOfBirth: Date ) {
         RealmManager.updateObject(self) { thawed in
             thawed.firstName = firstName
