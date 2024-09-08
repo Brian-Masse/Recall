@@ -150,7 +150,7 @@ struct CalendarContainer: View {
     }
     
     private var createEventHoldGesture: some Gesture {
-        LongPressGesture(minimumDuration: 0.65)
+        LongPressGesture(minimumDuration: 1)
             .onEnded { value in withAnimation {
                 self.creatingEvent = true
                 viewModel.gestureInProgress = true
