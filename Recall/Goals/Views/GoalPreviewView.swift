@@ -47,13 +47,10 @@ struct GoalPreviewView: View {
     private func makeMetaData() -> some View {
         VStack {
             HStack {
-                UniversalText(goal.goalDescription,
-                              size: Constants.UISmallTextSize,
-                              font: Constants.mainFont)
-                    .frame(maxWidth: 80)
-                    .padding(.vertical, 5)
-
-                Divider(vertical: true)
+//                    .frame(maxWidth: 80)
+//                    .padding(.vertical, 5)
+//
+//                Divider(vertical: true)
 
                 VStack(alignment: .trailing) {
                     UniversalText("completed",
@@ -61,22 +58,24 @@ struct GoalPreviewView: View {
                                   font: Constants.mainFont)
                     UniversalText("\(dataModel.goalMetData.0)",
                                   size: Constants.UIHeaderTextSize,
-                                  font: Constants.mainFont)
+                                  font: Constants.titleFont)
 
                     UniversalText("missed",
                                   size: Constants.UISmallTextSize,
                                   font: Constants.mainFont)
                     UniversalText("\(dataModel.goalMetData.1)",
                                   size: Constants.UIHeaderTextSize,
-                                  font: Constants.mainFont)
+                                  font: Constants.titleFont)
                 }
+                .opacity(0.75)
 
-                Divider(vertical: true)
 
                 ActivityPerDay(recentData: true, title: "", goal: goal, data: dataModel.recentProgressOverTimeData)
+//                    .padding()
+//                    .background(RoundedRectangle( cornerRadius: Constants.UIDefaultCornerRadius).stroke().foregroundStyle(.background) )
+                    .padding(.horizontal, 7)
             }
         }
-        .frame(height: 80)
     }
     
 //    MARK: ProgressBar
@@ -86,7 +85,7 @@ struct GoalPreviewView: View {
             GeometryReader { geo in
 
                 Rectangle()
-                    .universalStyledBackgrond(.secondary, onForeground: true)
+                    .universalStyledBackgrond(.primary, onForeground: true)
                     .cornerRadius(Constants.UIDefaultCornerRadius)
                 
                 Rectangle()
@@ -114,16 +113,18 @@ struct GoalPreviewView: View {
             if dataModel.dataLoaded {
                 VStack(alignment: .leading) {
                     makeHeader()
-                        .padding(.bottom, 7)
+                    
+//                    Divider()
+//                        .padding(.bottom)
                     
                     makeMetaData()
-                        .padding(.bottom, 7)
+                        .padding(.bottom)
                     
-                    makeProgressBar()
+//                    makeProgressBar()
                     
-                    Spacer()
+//                    Spacer()
                 }
-                .rectangularBackground(style: .primary, stroke: true)
+                .rectangularBackground(style: .secondary, stroke: true)
                 .onTapGesture { showingGoalView = true }
                 .contextMenu {
                     ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") { showingEditingView = true }

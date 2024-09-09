@@ -55,24 +55,10 @@ struct ActivityPerDay: View {
     @Environment(\.colorScheme) var colorScheme
     
     let recentData: Bool
-//    var timePeriod: Double { recentData ? 8 : .greatestFiniteMagnitude }
-    
     let title: String
     
     let goal: RecallGoal
-//    let events: [RecallCalendarEvent]
-//    let showYAxis: Bool
-    
     let data: [DataNode]
-    
-//    private func getData() -> [DataNode] {
-//        let startTime: Date = (.now - (timePeriod * Constants.DayTime))
-//        return events.filter { event in event.startTime > startTime }.compactMap { event in
-//            let count = event.getGoalPrgress(goal)
-//            return DataNode(date: event.startTime, count: count, category: "", goal: goal.label)
-//
-//        }
-//    }
     
     @MainActor
     @ViewBuilder
@@ -93,45 +79,35 @@ struct ActivityPerDay: View {
         .if(!recentData) { view in view.reversedXAxis() }
         .chartXAxis {
             AxisMarks(values: .stride(by: .day)) { value in
-                if !recentData {
-                    if let date = value.as( Date.self ) {
-                        
-                        let dateLabel = "\(date.formatted(.dateTime.day(.twoDigits)))"
-                        //
-                        let sundayLabel = !date.isSunday() ? "" : "Sun"
-                        let bottomLabel = date.isFirstOfMonth() ? "\(date.formatted(.dateTime.month()))" : ( sundayLabel )
-                        
-                        
-                        
-                                            AxisValueLabel {
-                                                Text(dateLabel)
-                                                UniversalText( dateLabel, size: Constants.UISmallTextSize, font: Constants.mainFont )
-                                            }
-                        
-                        AxisValueLabel("\( dateLabel)\n\(bottomLabel)")
-                        
-//                        VStack(alignment: .leading) {
+                if value.index == 0 { AxisGridLine() }
+                
+                if let date = value.as( Date.self ) {
+                    
+                    let dateLabel = "\(date.formatted(.dateTime.day(.twoDigits)))"
+                    
+                    AxisValueLabel {
+                        UniversalText( dateLabel, size: Constants.UISmallTextSize, font: Constants.mainFont )
+                    }
 //
-//                            Text(  )
-//
-//                            UniversalText( , size: Constants.UISmallTextSize, font: Constants.mainFont)
-//                            UniversalText(bottomLabel, size: Constants.UISmallTextSize, font: Constants.mainFont)
-//                        }
-//                        
-//                        
-                        if date.matches(goal.creationDate, to: .day) {
-                            AxisGridLine(centered: true, stroke: .init(lineWidth: 1, lineCap: .round, dash: [2, 6]))
-                                .foregroundStyle(.red)
-                            
-                        }
+                    if date.matches(goal.creationDate, to: .day) {
+                        AxisGridLine(centered: true, stroke: .init(lineWidth: 1, lineCap: .round, dash: [2, 6]))
+                            .foregroundStyle(.red)
+                        
                     }
                 }
             }
         }
         .chartYAxis {
-            AxisMarks(position: .leading) { value in
+            
+            AxisMarks(position: .leading, values: .stride(by: 20)) { value in
                 if let count = value.as(Int.self) {
-                    if !recentData { AxisValueLabel( "\(count) HR" ) }
+                    if !recentData {
+                        AxisValueLabel( "\(count) HR" )
+                    }
+                    
+                    if count == 0 {
+                        AxisGridLine()
+                    }
                 }
             }
         }
