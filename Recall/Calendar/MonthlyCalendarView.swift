@@ -161,7 +161,7 @@ struct CalendarPage: View {
                 }
                 
             }
-            .rectangularBackground(LocalConstants.strokePadding, style: .secondary)
+            .rectangularBackground(LocalConstants.strokePadding, style: .secondary, stroke: true)
         }
     }
     

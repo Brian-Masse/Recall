@@ -157,9 +157,11 @@ struct CalendarEventCreationView: View {
                 .foregroundStyle( category.label == tag.label ? .black : tag.getColor() )
             
             UniversalText( tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            
+            Spacer()
         }
-        .if(category.label == tag.label) { view in view.rectangularBackground(12, style: .accent, foregroundColor: .black)  }
-        .if(category.label != tag.label) { view in view.rectangularBackground(12, style: .secondary) }
+//        .if(category.label == tag.label) { view in view.rectangularBackground(12, style: .accent, foregroundColor: .black)  }
+//        .if(category.label != tag.label) { view in view.rectangularBackground(12, style: .secondary) }
         .onTapGesture { withAnimation { category = tag }}
     }
     
@@ -324,15 +326,24 @@ struct CalendarEventCreationView: View {
     
 //    MARK: TagSelector
     @ViewBuilder
+    private func makeTagList( _ list: [RecallCategory] ) -> some View {
+        VStack {
+            ForEach( list, id: \.id ) { tag in
+                makeTagSelector(tag: tag)
+                
+                Divider()
+            }
+        }
+    }
+    
+    @ViewBuilder
     private func makeTagSelector() -> some View {
         UniversalText("Select a tag", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
         
         let favorites = Array( categories.filter({ tag in tag.isFavorite }) )
         let allTags = Array( categories.filter({ tag in !tag.isFavorite }) )
         
-        WrappedHStack(collection: favorites ) { tag in
-            makeTagSelector(tag: tag)
-        }.padding(.bottom)
+        makeTagList(favorites)
         
         HStack {
             UniversalText("All Tags", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
@@ -349,9 +360,7 @@ struct CalendarEventCreationView: View {
         }
         
         if showingAllTags {
-            WrappedHStack(collection: allTags ) { tag in
-                makeTagSelector(tag: tag)
-            }.padding(.bottom)
+            makeTagList(allTags)
             
             LargeRoundedButton("create another tag", icon: "arrow.up", wide: true, foregroundColor: nil, style: .secondary) { showingTagCreationView = true }
         }
