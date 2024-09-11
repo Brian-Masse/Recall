@@ -19,8 +19,8 @@ struct RecallApp: App {
                          secondaryLight:    .init(240, 240, 240),
                          baseDark:          .init(0, 0, 0),
                          secondaryDark:     .init(25.5, 25.5, 25.5),
-                         lightAccent:       .init(66, 122, 69),
-                         darkAccent:        .init(95, 255, 135))
+                         lightAccent:       .init(130, 130, 100),
+                         darkAccent:        .init(254, 249, 188))
         
         Constants.UIDefaultCornerRadius = 20
         

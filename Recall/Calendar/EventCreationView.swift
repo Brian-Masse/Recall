@@ -317,8 +317,10 @@ struct CalendarEventCreationView: View {
                 endTime = min( startTime + length, maxEndTime )
             }
         } else {
-            TimeSelector(label: "When did this event start?", time: $startTime)
-            TimeSelector(label: "When did this event end?", time: $endTime)
+//            TimeSelector(label: "When did this event start?", time: $startTime)
+//            TimeSelector(label: "When did this event end?", time: $endTime)
+            
+            CactusTimeDial()
         }
         
         makeRecallTypeSelector()
