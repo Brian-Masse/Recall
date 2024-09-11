@@ -76,6 +76,7 @@
 		C9E0B17D2B03E5F000318508 /* RecallUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E0B17C2B03E5F000318508 /* RecallUpdate.swift */; };
 		C9E3E0182C8A9DFB000E0911 /* CalendarContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E3E0172C8A9DFB000E0911 /* CalendarContainer.swift */; };
 		C9E3E01C2C9143FE000E0911 /* CactusTimeDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E3E01B2C9143FE000E0911 /* CactusTimeDial.swift */; };
+		C9E3E01E2C91F099000E0911 /* CreationFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E3E01D2C91F099000E0911 /* CreationFormView.swift */; };
 		C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D152A68AC820023EBC0 /* RecallGoal.swift */; };
 		C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E49D172A68AF750023EBC0 /* GoalCreationView.swift */; };
 		C9EA0EE52A6B48F200E36EF1 /* CategoriesPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA0EE42A6B48F200E36EF1 /* CategoriesPageView.swift */; };
@@ -187,6 +188,7 @@
 		C9E0B17C2B03E5F000318508 /* RecallUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallUpdate.swift; sourceTree = "<group>"; };
 		C9E3E0172C8A9DFB000E0911 /* CalendarContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarContainer.swift; sourceTree = "<group>"; };
 		C9E3E01B2C9143FE000E0911 /* CactusTimeDial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CactusTimeDial.swift; sourceTree = "<group>"; };
+		C9E3E01D2C91F099000E0911 /* CreationFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreationFormView.swift; sourceTree = "<group>"; };
 		C9E49D152A68AC820023EBC0 /* RecallGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoal.swift; sourceTree = "<group>"; };
 		C9E49D172A68AF750023EBC0 /* GoalCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalCreationView.swift; sourceTree = "<group>"; };
 		C9EA0EE42A6B48F200E36EF1 /* CategoriesPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesPageView.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 			children = (
 				C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */,
 				C91BCF302A61DDBA003C6DD6 /* Constants.swift */,
+				C9E3E01D2C91F099000E0911 /* CreationFormView.swift */,
 				C9E3E01B2C9143FE000E0911 /* CactusTimeDial.swift */,
 				C94B1F102A688855007E8537 /* UniversalForm.swift */,
 				C91BCF322A61DE55003C6DD6 /* Extensions.swift */,
@@ -679,6 +682,7 @@
 				C91E1CF72AFC788800029F43 /* TemplatesPagView.swift in Sources */,
 				C91A812E2C77DB6F00EFF561 /* TabBar.swift in Sources */,
 				C98F2F2E2A9D336200E92B30 /* GoalsCreationScene.swift in Sources */,
+				C9E3E01E2C91F099000E0911 /* CreationFormView.swift in Sources */,
 				C98F2F302A9D3F3300E92B30 /* TagsCreationScene.swift in Sources */,
 				C91BCF3C2A61E3EE003C6DD6 /* MainView.swift in Sources */,
 				C9E3E0182C8A9DFB000E0911 /* CalendarContainer.swift in Sources */,
