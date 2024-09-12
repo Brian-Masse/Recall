@@ -54,7 +54,6 @@ struct GoalMultiplierSelector: View {
         }
         .rectangularBackground(style: .secondary)
     }
-    
 }
 
 //MARK: Creation View
@@ -63,6 +62,8 @@ struct CalendarEventCreationView: View {
     struct LocalConstants {
         static let questionTextSize: CGFloat = Constants.UISubHeaderTextSize
     }
+    
+    @Environment(\.colorScheme) var colorShcheme
     
     @ViewBuilder
     static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, template: Bool = false, favorite: Bool = false) -> some View {
@@ -149,22 +150,6 @@ struct CalendarEventCreationView: View {
         endTime = Calendar.current.date(bySettingHour: endComps.hour!, minute: endComps.minute!, second: endComps.second!, of: day + ( requestingNewDay ? Constants.DayTime : 0  ) )!
     }
     
-    @ViewBuilder
-    private func makeTagSelector(tag: RecallCategory) -> some View {
-        HStack {
-            
-            Image(systemName: "tag")
-                .foregroundStyle( category.label == tag.label ? .black : tag.getColor() )
-            
-            UniversalText( tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-            
-            Spacer()
-        }
-//        .if(category.label == tag.label) { view in view.rectangularBackground(12, style: .accent, foregroundColor: .black)  }
-//        .if(category.label != tag.label) { view in view.rectangularBackground(12, style: .secondary) }
-        .onTapGesture { withAnimation { category = tag }}
-    }
-    
     private func getTemplates(from events: [RecallCalendarEvent]) async  {
         self.templates = events.filter { event in event.isTemplate }
     }
@@ -221,59 +206,6 @@ struct CalendarEventCreationView: View {
         self.goalRatings = RecallCalendarEvent.translateGoalRatingList(event.goalRatings)
     }
     
-//    MARK: Bindings
-    private var startTimeBinding: Binding<Float> {
-        Binding { Float(startTime.getHoursFromStartOfDay().round(to: 2)) }
-        set: { newValue, _ in
-            startTime = startTime.dateBySetting(hour: Double(newValue)).round(to: index.dateSnapping)
-        }
-    }
-    
-    private var startTimeLabel: Binding<String> {
-        Binding { startTime.formatted(date: .omitted, time: .shortened) }
-        set: { newValue, _ in }
-    }
-    
-    private var endTimeBinding: Binding<Float> {
-        Binding { Float(endTime.getHoursFromStartOfDay().round(to: 2)) }
-        set: { newValue, _ in
-            endTime = endTime.dateBySetting(hour: Double(newValue)).round(to: index.dateSnapping)
-        }
-    }
-    
-    private var endTimeLabel: Binding<String> {
-        Binding { endTime.formatted(date: .omitted, time: .shortened) }
-        set: { newValue, _ in }
-    }
-    
-    
-//    MARK: SectionBuilders
-    
-    @ViewBuilder
-    private func makeTemplateSelector() -> some View {
-        HStack {
-            UniversalText("templates", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
-            Spacer()
-            LargeRoundedButton("", icon: showingTemplates ? "arrow.up" : "arrow.down", small: true) { withAnimation {
-                showingTemplates.toggle()
-            } }
-        }
-        if showingTemplates {
-            WrappedHStack(collection: templates) { template in
-                HStack {
-                    Image(systemName: "arrow.up.right")
-                    UniversalText(template.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                }
-                .if( (activeTempalte?.title ?? "") == template.title ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
-                .if( (activeTempalte?.title ?? "") != template.title ) { view in view.rectangularBackground(style: .secondary) }
-                .onTapGesture {
-                    if (activeTempalte?.title ?? "") == template.title { activeTempalte = nil }
-                    else { fillInformation(from: template) }
-                }
-            }
-        }
-    }
-    
 //    MARK: RecallTypeSelector
     @ViewBuilder
     private func makeRecallTypeSelectorOption( _ label: String, icon: String, option: Bool ) -> some View {
@@ -305,28 +237,55 @@ struct CalendarEventCreationView: View {
     @ViewBuilder
     private func makeOverviewQuestions() -> some View {
         StyledTextField(title: "What is the name of this event?", binding: $title, clearable: true)
-        StyledTextField(title: "Leave an optional note", binding: $notes, clearable: true)
+        StyledTextField(title: "Leave an optional note", binding: $notes, clearable: true, multiLine: true)
             .padding(.bottom)
     }
     
+    
+//    MARK: TimeSelector
     @ViewBuilder
     private func makeTimeSelector() -> some View {
+        if editing {
+            StyledDatePicker($day, title: "Change Event Date", fontSize: Constants.formQuestionTitleSize)
+                .padding(.bottom)
+        }
+        
         if recallByLength {
             LengthSelector("How long is this event?", length: $eventLength) { length in
                 let maxEndTime = endTime.resetToStartOfDay() + Constants.DayTime
                 endTime = min( startTime + length, maxEndTime )
             }
         } else {
-//            TimeSelector(label: "When did this event start?", time: $startTime)
-//            TimeSelector(label: "When did this event end?", time: $endTime)
-            
-            CactusTimeDial()
+            CactusTimeDial(time: $startTime, title: "Event start time")
+            CactusTimeDial(time: $endTime, title: "Event end time")
         }
         
         makeRecallTypeSelector()
     }
     
 //    MARK: TagSelector
+    @ViewBuilder
+    private func makeTagSelector(tag: RecallCategory) -> some View {
+        HStack {
+            
+            Image(systemName: "tag.fill")
+                .foregroundStyle( category.label == tag.label ? .black : tag.getColor() )
+            
+            UniversalText( tag.label, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+            
+            Spacer()
+        }
+        .padding(.vertical, 3)
+        .background {
+            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                .foregroundStyle( category.label == tag.label ? Colors.getAccent(from: colorShcheme) : .clear )
+                .padding(-7)
+            
+        }
+        .contentShape(Rectangle())
+        .onTapGesture { withAnimation { category = tag }}
+    }
+    
     @ViewBuilder
     private func makeTagList( _ list: [RecallCategory] ) -> some View {
         VStack {
@@ -346,143 +305,87 @@ struct CalendarEventCreationView: View {
         let allTags = Array( categories.filter({ tag in !tag.isFavorite }) )
         
         makeTagList(favorites)
+            .padding(.bottom)
         
         HStack {
-            UniversalText("All Tags", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+            UniversalText("All Tags", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
         
             Spacer()
             
-            LargeRoundedButton("", to: "",
-                               icon: "arrow.down", to: "arrow.up",
-                               wide: false, small: true,
-                               foregroundColor: nil,
-                               style: .secondary) {
+            LargeRoundedButton("", to: "", icon: "arrow.down", to: "arrow.up", wide: false, small: true, foregroundColor: nil, style: .secondary) {
                 showingAllTags
             } action: { showingAllTags.toggle() }
         }
         
         if showingAllTags {
             makeTagList(allTags)
-            
             LargeRoundedButton("create another tag", icon: "arrow.up", wide: true, foregroundColor: nil, style: .secondary) { showingTagCreationView = true }
         }
+        
+        makeGoalSelector()
     }
     
+//    MARK: GoalSelector
     @ViewBuilder
     private func makeGoalSelector() -> some View {
-        VStack(alignment: .leading) {
-            if category.label != "" {
-                Divider(strokeWidth: 1)
-                
-                UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-                
-                if category.goalRatings.count > 0 {
-                    UniversalText("From Tag", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                    ForEach( Array(goals), id: \.key ) { goal in
-                        if category.goalRatings.contains(where: { node in node.key == goal.key }) {
-                            GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
-                        }
+        if category.label != "" {
+            Divider()
+            
+            UniversalText("Goals", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
+            
+            if category.goalRatings.count > 0 {
+                UniversalText("From Tag", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+                ForEach( Array(goals), id: \.key ) { goal in
+                    if category.goalRatings.contains(where: { node in node.key == goal.key }) {
+                        GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
                     }
                 }
-                
-                HStack {
-                    UniversalText("All Goals", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                    Spacer()
-                    LargeRoundedButton("",
-                                       icon: showingAllGoals ? "arrow.up" : "arrow.down",
-                                       small: true,
-                                       foregroundColor: nil,
-                                       style: .secondary) { showingAllGoals.toggle() }
-                }.padding(.top)
-                
-                VStack {
-                    if showingAllGoals {
-                        ForEach( Array(goals), id: \.key ) { goal in
-                            GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func makeDateChanger() -> some View {
-        
-        VStack(alignment: .leading) {
-            if editing {
-                StyledDatePicker($day, title: "Change Event Date", fontSize: Constants.UIHeaderTextSize)
             }
             
+            HStack {
+                UniversalText("All Goals", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+                Spacer()
+                LargeRoundedButton("",
+                                   icon: showingAllGoals ? "arrow.up" : "arrow.down",
+                                   small: true,
+                                   foregroundColor: nil,
+                                   style: .secondary) { showingAllGoals.toggle() }
+            }.padding(.top)
+            
+            VStack {
+                if showingAllGoals {
+                    ForEach( Array(goals), id: \.key ) { goal in
+                        GoalMultiplierSelector(goal: goal, goalRatings: $goalRatings, showToggle: true)
+                    }
+                }
+            }
         }
-        
     }
-    
-    @State var showingTemplates: Bool = false
+
     @State var activeTempalte: RecallCalendarEvent? = nil
     @State var showingError: Bool = false
+    
+    private enum EventCreationFormSection : Int, CreationFormEnumProtocol {
+        case overview
+        case time
+        case tags
+    }
 
 //    MARK: Body
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            
-            UniversalText(editing ? "Edit Event" : "Create Event", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-                .foregroundColor(.black)
-                .padding(.top, 7)
-            
-            ZStack(alignment: .bottom) {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .leading) {
-                        
-//                        makeTemplateSelector()
-//                            .padding(.bottom)
-
-                        makeOverviewQuestions()
-                            .padding(.bottom)
-                        
-                        if !editing {
-                            Divider(strokeWidth: 1).opacity(0.3)
-                                .padding(.bottom)
-                            
-                            makeTimeSelector()
-                                .padding(.bottom)
-                            
-                            makeDateChanger()
-                                .padding(.bottom)
-                        }
-                        
-                        Divider(strokeWidth: 1).opacity(0.3)
-                            .padding(.bottom)
-                        
-                        makeTagSelector()
-                            .padding(.bottom)
-                        
-                        makeGoalSelector()
-                            .padding(.bottom)
-                        
-                        if editing {
-                            Divider(strokeWidth: 1).opacity(0.3)
-                            
-                            makeTimeSelector()
-                                .padding(.bottom)
-                            
-                            makeDateChanger()
-                                .padding(.bottom)
-                        }
-                    }
-                    .padding(.bottom, Constants.UIBottomOfPagePadding)
-                }.padding(.top)
-                
-                LargeRoundedButton("done", icon: "arrow.down") { submit() }
-            }
-            .rectangularBackground(style: .primary, cornerRadius: 50)
-            .padding( .bottom, 7 )
-        }
-        .ignoresSafeArea()
-        .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
-        .padding([.horizontal], Constants.UIFormPagePadding)
-        .universalStyledBackgrond(.accent)
         
+        let title = editing ? "Edit Event" : "Create Event"
+        
+        CreationFormView(title,
+                         section: EventCreationFormSection.self,
+                         sequence: editing ? [.overview, .tags, .time] : nil,
+                         submit: submit) { section in
+            switch section {
+            case .overview: makeOverviewQuestions()
+            case .time: makeTimeSelector()
+            case .tags: makeTagSelector()
+            }
+        }
         .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
         .sheet(isPresented: $showingTagCreationView) {
             CategoryCreationView(editing: false,

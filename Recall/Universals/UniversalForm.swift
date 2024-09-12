@@ -67,16 +67,24 @@ struct StyledTextField: View {
     let title: String
     let binding: Binding<String>
     let clearable: Bool
+    let multiLine: Bool
     
-    init( title: String, binding: Binding<String>, clearable: Bool = false ) {
+    init( title: String, binding: Binding<String>, clearable: Bool = false, multiLine: Bool = false ) {
         self.title = title
         self.binding = binding
         self.clearable = clearable
+        self.multiLine = multiLine
     }
     
     @Environment(\.colorScheme) var colorScheme
     @FocusState var focused: Bool
     @State var showingClearButton: Bool = false
+    
+    @ViewBuilder
+    private func makeTextField() -> some View {
+        if multiLine { TextField("", text: binding, axis: .vertical) }
+        else { TextField("", text: binding) }
+    }
     
     var body: some View {
         
@@ -86,13 +94,14 @@ struct StyledTextField: View {
                           font: Constants.titleFont)
             .padding(.trailing)
             
-            TextField("", text: binding, axis: .vertical)
+            makeTextField()
                 .focused($focused)
                 .lineLimit(1...)
                 .frame(maxWidth: .infinity)
                 .padding( .trailing, 5 )
                 .tint(Colors.getAccent(from: colorScheme) )
                 .font(Font.custom(AndaleMono.shared.postScriptName, size: Constants.UIDefaultTextSize))
+            
                 .rectangularBackground(style: .secondary)
                 .onChange(of: self.focused) {
                     withAnimation { self.showingClearButton = self.focused }

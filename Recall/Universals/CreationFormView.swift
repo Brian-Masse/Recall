@@ -20,12 +20,26 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
     let section: Section.Type
         
     @ViewBuilder var contentBuilder: (Section) -> C
+    private let submit: () -> Void
     
-    private let title: String = "hello"
+    private let title: String
+    private let sequence: [Section]?
+    
+    init( _ title: String, section: Section.Type, sequence: [Section]? = nil, submit: @escaping () -> Void, @ViewBuilder contentBuilder: @escaping (Section) -> C ) {
+        self.title = title
+        self.contentBuilder = contentBuilder
+        self.submit = submit
+        self.section = section
+        self.sequence = sequence
+    }
     
     private let largeCornerRadius: Double = 50
+    private let smallCornerRadius: Double = (Constants.UIDefaultCornerRadius - 5)
     
-    private var allCases: [Section] { Array( section.allCases ) }
+    private var allCases: [Section] {
+        if let sequence { return sequence }
+        return Array( section.allCases )
+    }
     private var caseCount: Int { allCases.count }
     
 //    MARK: Header
@@ -51,34 +65,31 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
             
             ZStack(alignment: .bottom) {
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 7) {
+                    VStack(spacing: Constants.UIFormPagePadding) {
                         ForEach( 0..<section.allCases.count, id: \.self ) { i in
                             
                             let section = allCases[i]
-                            let cornerRadius: Double = (i == 0 || i == self.section.allCases.count - 1) ? 50 : 0
                             
-                            VStack {
+                            VStack(alignment: .leading) {
                                 HStack { Spacer() }
                                 contentBuilder( section )
                             }
-                            .frame(height: 400)
+                            .padding()
+                            .padding(.bottom, i == caseCount - 1 ? Constants.UIBottomOfPagePadding : 0)
                             .background {
-                                UnevenRoundedRectangle(cornerRadii: .init(topLeading: i == 0 ? largeCornerRadius : Constants.UIDefaultCornerRadius,
-                                                                          bottomLeading: i == caseCount - 1 ? largeCornerRadius : Constants.UIDefaultCornerRadius,
-                                                                          bottomTrailing: i == caseCount - 1 ? largeCornerRadius : Constants.UIDefaultCornerRadius,
-                                                                          topTrailing: i == 0 ? largeCornerRadius : Constants.UIDefaultCornerRadius))
+                                UnevenRoundedRectangle(cornerRadii: .init(topLeading: i == 0 ? largeCornerRadius : smallCornerRadius,
+                                                                          bottomLeading: i == caseCount - 1 ? largeCornerRadius : smallCornerRadius,
+                                                                          bottomTrailing: i == caseCount - 1 ? largeCornerRadius : smallCornerRadius,
+                                                                          topTrailing: i == 0 ? largeCornerRadius : smallCornerRadius))
                                 .foregroundStyle( Colors.getBase(from: colorScheme) )
-                                
-                                
                             }
                         }
                     }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: largeCornerRadius))
                 
-                LargeRoundedButton("done", icon: "arrow.down") {  }
-                    .shadow(radius: 10)
-                    .padding(.bottom, 10)
+                LargeRoundedButton("done", icon: "arrow.down") { submit() }
+                    .padding(.bottom, 35)
             }
             .padding(.bottom, Constants.UIFormPagePadding)
             .ignoresSafeArea()
@@ -102,13 +113,15 @@ private struct CreationFormDemoView: View {
     
     var body: some View {
             
-        CreationFormView( section: DemoSection.self ) { section in
-            switch section {
-            case .section1 : Text("section 1")
-            case .section2 : Text("section 2")
-            case .section3 : Text("section 2")
-            }
-        }
+//        CreationFormView( section: DemoSection.self ) { section in
+//            switch section {
+//            case .section1 : Text("section 1")
+//            case .section2 : Text("section 2")
+//            case .section3 : Text("section 2")
+//            }
+//        }
+        
+        VStack {}
     }
 }
 

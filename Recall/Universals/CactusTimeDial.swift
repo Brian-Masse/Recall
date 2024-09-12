@@ -9,16 +9,21 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
-
-
+//MARK: CactusTimeDial
 struct CactusTimeDial: View {
     
     @Environment(\.colorScheme) var colorScheme
     @Namespace private var dialNamespace
+    @ObservedObject private var viewModel = TimeDialViewModel.shared
     
+    private let id: String = UUID().uuidString
     private let timePromptId = "timePromptId"
     
-    @State private var time: Date = .now
+    private let softImpact = UIImpactFeedbackGenerator(style: .soft)
+    private let lightImpact = UIImpactFeedbackGenerator(style: .light)
+    private let rigidImpact = UIImpactFeedbackGenerator(style: .rigid)
+    
+    @Binding var time: Date
     
     @State private var postMeridian: Bool = false
     @State private var currentMeridianSwitch: Int = 0
@@ -32,7 +37,14 @@ struct CactusTimeDial: View {
     private let aspectRatio: Double = 2
     private let circleSize: Double = 55
     
-    let title: String = "Select the time"
+    let title: String
+    
+//    MARK: ViewModel
+    private class TimeDialViewModel: ObservableObject {
+        static let shared = TimeDialViewModel()
+        
+        @Published var currentlyPresentedDial: String = ""
+    }
     
 //    MARK: Convenience Vars
     private var currentDay: Date {
@@ -107,11 +119,10 @@ struct CactusTimeDial: View {
 //    MARK: Labels
     @ViewBuilder
     private func makeDigitLabel(_ title: String) -> some View {
-        Text(title)
+        UniversalText( title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             .opacity(0.75)
-            .bold()
-            .font(.title3)
             .frame(width: 30, height: 30)
+            .contentShape(DialClipMask())
     }
     
     @ViewBuilder
@@ -277,6 +288,10 @@ struct CactusTimeDial: View {
                 
                 self.currentAngularProgress = fraction
                 
+                if Int(currentAngularProgress * 100) % 5 == 0 {
+                    self.rigidImpact.impactOccurred(intensity: 0.5)
+                }
+                
                 if selectingHour {
                     togglePlaneGestureMeridian(from: y)
                     let hourValue = 12 - fraction * 12
@@ -306,6 +321,10 @@ struct CactusTimeDial: View {
             .onChanged { value in
                 self.currentLinearProgress = value.location.x / (radius * 2)
                 
+                if Int(currentLinearProgress * 100) % 5 == 0 {
+                    self.rigidImpact.impactOccurred(intensity: 0.5)
+                }
+                
                 if selectingHour {
                     toggleLinearGestureMeridian(from: currentLinearProgress)
                     let hourValue = ( currentLinearProgress * 24 )
@@ -327,10 +346,7 @@ struct CactusTimeDial: View {
     @ViewBuilder
     private func makeTimePreviewText(_ text: String, action: @escaping () -> Void) -> some View {
         UniversalButton {
-            Text( text )
-                .lineLimit(1)
-                .font(.title2)
-                .bold()
+            UniversalText( text, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
                 .rectangularBackground(style: .secondary)
             
         } action: { action() }
@@ -339,10 +355,8 @@ struct CactusTimeDial: View {
     @ViewBuilder
     private func makeMeridianSelector() -> some View {
         UniversalButton {
-            Text(postMeridian ? "PM" : "AM")
-                .bold()
+            UniversalText( postMeridian ? "PM" : "AM", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
         } action: { postMeridian.toggle() }
-            .animation(nil, value: postMeridian)
     }
     
     @ViewBuilder
@@ -350,13 +364,15 @@ struct CactusTimeDial: View {
         HStack(spacing: 5) {
             makeTimePreviewText(formatHour(currentHour)) { selectingHour = true }
             
-            Text(":")
-                .bold()
+            UniversalText( ":", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             
             makeTimePreviewText(formatMinute(currentMinute)) { selectingHour = false }
             
             makeMeridianSelector()
-        }.frame(minWidth: 200)
+        }
+        .frame(minWidth: 175, alignment: showingDial ? .center : .trailing)
+        .animation(nil, value: postMeridian)
+        .animation(nil, value: time)
     }
     
 //    MARK: header
@@ -364,14 +380,10 @@ struct CactusTimeDial: View {
     private func makeHeader() -> some View {
         ZStack(alignment: .trailing) {
             HStack {
-                Text(title)
-                    .font(.title3)
-                    .bold()
-                Spacer()
+                UniversalText( title, size: Constants.formQuestionTitleSize, font: Constants.titleFont )
+                Spacer(minLength: 150)
             }
-            .onTapGesture {
-                showingDial = false
-            }
+            .onTapGesture { showingDial.toggle() }
             
             if !showingDial {
                 makeTimePreview()
@@ -415,6 +427,19 @@ struct CactusTimeDial: View {
     }
     
 //    MARK: FullDialLayout
+    private struct DialClipMask: Shape {
+        let padding: Double = 12
+        func path(in rect: CGRect) -> Path {
+            Path { path in
+                path.move(to: .init(x: rect.minX - padding, y: rect.minY - padding))
+                path.addLine(to: .init(x: rect.maxX + padding, y: rect.minY - padding))
+                path.addLine(to: .init(x: rect.maxX + padding, y: rect.maxY + padding))
+                path.addLine(to: .init(x: rect.minX - padding, y: rect.maxY + padding))
+                path.addLine(to: .init(x: rect.minX - padding, y: rect.minY - padding))
+            }
+        }
+    }
+    
     @ViewBuilder
     private func makeFullDialLayout() -> some View {
         GeometryReader { geo in
@@ -423,11 +448,17 @@ struct CactusTimeDial: View {
             Rectangle()
                 .foregroundStyle(.clear)
                 .contentShape(Rectangle())
-                .gesture(planeGesture(in: radius ))
+                .highPriorityGesture(planeGesture(in: radius ))
             
             .overlay(alignment: .bottom) {
-                if selectingHour { makeHourLabels(in: radius) }
-                else { makeMinuteLabels(in: radius) }
+                ZStack(alignment: .bottom) {
+                    Rectangle()
+                        .foregroundStyle(.clear)
+                    
+                    if selectingHour { makeHourLabels(in: radius) }
+                    else { makeMinuteLabels(in: radius) }
+                }
+                .clipShape(DialClipMask())
             }
             .overlay(alignment: .bottom) {
                 makeTimePreview()
@@ -441,33 +472,34 @@ struct CactusTimeDial: View {
                 }
             }
         }
+        .transition(.scale.combined(with: .opacity))
         .animation(.easeInOut(duration: 1), value: postMeridian)
         .animation(.easeInOut, value: selectingHour)
+
         .padding([.bottom, .horizontal])
-        
         .aspectRatio(aspectRatio - 0.2, contentMode: .fit)
-        .clipShape(Rectangle())
-        
-        .onAppear { withoutAnimation { postMeridian = currentHour > 12 } }
+        .onAppear { viewModel.currentlyPresentedDial = id }
         
         makeLinearControl()
             .padding(.horizontal, 30)
+            .padding(.bottom, 7)
     }
-    
-    
     
 //    MARK: Body
     var body: some View {
         
-        VStack {
+        VStack(spacing: 0) {
             makeHeader()
-            
+
             if showingDial {
                 makeFullDialLayout()
-                    .transition(.scale)
             }
         }
-        .animation(.easeInOut, value: showingDial)
+        .animation(.spring, value: showingDial)
+        .onAppear { withoutAnimation { postMeridian = currentHour > 12 } }
+        .onChange(of: viewModel.currentlyPresentedDial) {
+            if viewModel.currentlyPresentedDial != id { self.showingDial = false }
+        }
     }
 }
 
@@ -483,6 +515,18 @@ extension AnyTransition {
     }
 }
 
+struct CactusTimeDialDemoView: View {
+    
+    var body: some View {
+        
+        VStack {
+//            CactusTimeDial()
+//            
+//            CactusTimeDial()
+        }
+    }
+}
+
 #Preview {
-    CactusTimeDial()
+    CactusTimeDialDemoView()
 }

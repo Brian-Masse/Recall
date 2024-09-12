@@ -115,48 +115,24 @@ struct CategoryCreationView: View {
                 }
             }
         }
-        .padding(.bottom, 100)
+    }
+    
+    private enum TagCreationFormSection : Int, CreationFormEnumProtocol {
+        case overview
+        case goals
     }
     
 //    MARK: Body
     var body: some View {
         
-        VStack(alignment: .leading, spacing: 7) {
-            
-            UniversalText(editing ? "Edit Tag" : "Create Tag", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-                .foregroundColor(.black)
-                .padding(.top, 7)
-            
-            ZStack(alignment: .bottom) {
-                ScrollView(.vertical) {
-                    VStack(alignment: .leading) {
-                        
-                        makeOverviewSection()
-                        
-                        makeGoalSelection()
-                        
-                    }
-                }
-                
-                LargeRoundedButton("Done", icon: "arrow.down") {
-//                    Task {
-//                        await
-                        submit()
-//
-//                    }
-                }
-                
+        let title = editing ? "Edit Tag" : "Create Tag"
+        
+        CreationFormView(title, section: TagCreationFormSection.self, submit: submit) { section in
+            switch section {
+            case .overview : makeOverviewSection()
+            case .goals : makeGoalSelection()
             }
-            .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
-            .padding(5)
-            .universalTextStyle()
-            .rectangularBackground(style: .primary, cornerRadius: 50)
-            .padding(.bottom, 7)
         }
-        .ignoresSafeArea()
-        .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
-        .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .universalStyledBackgrond(.accent)
         .defaultAlert($showingAlert,
                       title: "Incomplete Form",
                       description: "Please provide a label before creating the tag")

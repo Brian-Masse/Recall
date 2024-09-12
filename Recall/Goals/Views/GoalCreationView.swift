@@ -206,46 +206,27 @@ struct GoalCreationView: View {
         }.padding(.bottom, 100)
     }
     
+    private enum GoalCreationFormSection : Int, CreationFormEnumProtocol {
+        case overview
+        case frequency
+        case time
+    }
+    
 //    MARK: Body
     var body: some View {
         
-        VStack(alignment: .leading, spacing: 7) {
-            UniversalText(editing ? "Edit Goal" : "Create Goal", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-                .foregroundColor(.black)
-                .padding(.top, 7)
-
-            ZStack(alignment: .bottom) {
-                ScrollView(.vertical) {
-                    VStack(alignment: .leading) {
-                        
-                        makeOverviewSection()
-                        
-                        Divider(strokeWidth: 1).opacity(0.3)
-                            .padding(.bottom)
-                        
-                        makeTagSelection()
-                        
-                        Divider(strokeWidth: 1).opacity(0.3)
-                            .padding(.bottom)
-                        
-                        makeTargetSelector()
-                        
-                        makePrioritySelector()
-
-                    }
-                }
-                
-                LargeRoundedButton("Done", icon: "arrow.down") { submit() }
+        let title = editing ? "Edit Goal" : "Create Goal"
+        
+        
+        CreationFormView(title, section: GoalCreationFormSection.self, submit: submit) { section in
+            switch section {
+            case .overview : makeOverviewSection()
+            case .frequency : makeTagSelection()
+            case .time :
+                makeTargetSelector()
+                makePrioritySelector()
             }
-            .padding(5)
-            .universalTextStyle()
-            .rectangularBackground(style: .primary, cornerRadius: 50)
-            .padding(.bottom, 7)
         }
-        .ignoresSafeArea()
-        .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
-        .padding([.top, .horizontal], Constants.UIFormPagePadding)
-        .universalStyledBackgrond(.accent)
         .defaultAlert($showingAlert,
                       title: "Incomplete Form",
                       description: "Please provide a name, description, and target before creating the goal")
