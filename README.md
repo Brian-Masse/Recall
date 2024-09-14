@@ -98,6 +98,13 @@ I independently developed this project, from problem identification, project bra
 
 ## **Version History**
 
+### **Version 2.2.0**
+CHANGES
+- Redesigned all Forms
+- Redesigned Goals Page
+
+- Fixed various bugs related to the calendar layout
+
 ### **Version 2.1.1**
 
 CHANGES
