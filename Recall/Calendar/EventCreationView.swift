@@ -272,6 +272,7 @@ struct CalendarEventCreationView: View {
                 .foregroundStyle( category.label == tag.label ? .black : tag.getColor() )
             
             UniversalText( tag.label, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                .foregroundStyle( category.label == tag.label ? .black : ( colorShcheme == .dark ? .white : .black ))
             
             Spacer()
         }
