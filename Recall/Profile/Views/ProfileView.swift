@@ -286,7 +286,9 @@ struct ProfileView: View {
     private func makeCalendarDensityOption(_ option: Int, caption: String) -> some View {
         
         VStack {
-            Image("CalendarDensity\(option)")
+            let colorScheme = colorScheme == .dark ? "dark" : "light"
+            
+            Image("\(colorScheme)-calendar-desnity-\(option)")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .clipped()
@@ -311,9 +313,9 @@ struct ProfileView: View {
             UniversalText( "Calendar Size", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
             
             HStack(spacing: 0) {
-                makeCalendarDensityOption(0, caption: "compact")
+                makeCalendarDensityOption(2, caption: "compact")
                 makeCalendarDensityOption(1, caption: "regular")
-                makeCalendarDensityOption(2, caption: "roomy")
+                makeCalendarDensityOption(0, caption: "roomy")
             }
         }
     }
