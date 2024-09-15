@@ -16,9 +16,9 @@ struct RecallApp: App {
 //    because they should only be invoked from UIUniversals after this point
     private func setupUIUniversals() {
         Colors.setColors(baseLight:         .init(255, 255, 255),
-                         secondaryLight:    .init(240, 240, 240),
+                         secondaryLight:    .init(242, 242, 240),
                          baseDark:          .init(0, 0, 0),
-                         secondaryDark:     .init(25.5, 25.5, 25.5),
+                         secondaryDark:     .init(27.5, 27.5, 25.5),
                          lightAccent:       .init(130, 130, 100),
                          darkAccent:        .init(199, 204, 145))
         
