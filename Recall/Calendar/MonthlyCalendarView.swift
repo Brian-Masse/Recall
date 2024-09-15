@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import UIUniversals
+import RealmSwift
 
 //MARK: CalendarPageViewModel
 class CalendarPageViewModel: ObservableObject {
@@ -32,14 +33,14 @@ class CalendarPageViewModel: ObservableObject {
             .count > 0
     }
     
-    func renderMonth(_ month: Date) {
+    func renderMonth(_ month: Date, events: [RecallCalendarEvent]) async {
         if self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] ?? false { return }
         
         let dayCount = Calendar.current.range(of: .day, in: .month, for: month)?.count ?? 0
         let startOfMonth = getStartOfMonth(for: month)
         let endOfMonth = Calendar.current.date(byAdding: .month, value: 1, to: startOfMonth)!
         
-        let events = RecallModel.realmManager.realm.objects(RecallCalendarEvent.self).filter { event in
+        let events = events.filter { event in
             event.startTime > startOfMonth && event.startTime < endOfMonth
         }
         let arrEvents = Array(events)
@@ -50,9 +51,12 @@ class CalendarPageViewModel: ObservableObject {
             
             self.recallLog[ day.formatted(date: .numeric, time: .omitted) ] = recallWasCompleted
         }
-        
+//        
         self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] = true
-        self.objectWillChange.send()
+        
+        DispatchQueue.main.sync {
+            self.objectWillChange.send()
+        }
     }
 }
 
@@ -73,6 +77,10 @@ struct CalendarPage: View {
     
     @State private var currentMonth: Date = .now
     @State private var upperBound: Int = 10
+    
+    @ObservedResults(RecallCalendarEvent.self) var events
+    
+    private var arrEvents: [RecallCalendarEvent] { Array(events) }
     
 //    MARK: Convenience Functions
     @MainActor
@@ -193,7 +201,7 @@ struct CalendarPage: View {
     @MainActor
     @ViewBuilder
     private func makeDay(for day: Date, roundLeftEdge: Bool, roundRightEdge: Bool) -> some View {
-        let isCurrentDay = day.matches(.now, to: .day)
+//        let isCurrentDay = day.matches(.now, to: .day)
         let dayNumber: Int = getDay(of: day)
         
         let recallWasCompleted: Bool = checkRecallCompletion(on: day)
@@ -249,7 +257,7 @@ struct CalendarPage: View {
                                 .id(i)
                                 .onAppear {
                                     
-                                    viewModel.renderMonth(date)
+                                    Task { await viewModel.renderMonth(date, events: arrEvents) }
                                     
                                     if i > upperBound - 5 {
                                         upperBound += 10
@@ -260,7 +268,6 @@ struct CalendarPage: View {
                         }
                     }
                 }
-//                .onAppear { proxy.scrollTo(0, anchor: .top) }
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
             }
         }

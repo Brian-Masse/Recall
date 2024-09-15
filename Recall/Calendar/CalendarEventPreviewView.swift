@@ -197,28 +197,11 @@ struct CalendarEventPreviewView: View {
             .gesture(resizeGesture( direction ) )
         }
     }
-    
-    private struct TestShape: Shape {
-        let padding = 7
-        
-        func path(in rect: CGRect) -> Path {
-            Path { path in
-             
-                path.move(to: .init(x: rect.minX, y: rect.minY + 10))
-                path.addLine(to: .init(x: rect.maxX, y: rect.minY + 10))
-                path.addLine(to: .init(x: rect.maxX, y: rect.maxY - 10))
-                path.addLine(to: .init(x: rect.minX, y: rect.maxY - 10))
-                path.addLine(to: .init(x: rect.minX, y: rect.minY + 10))
-            }
-        }
-    }
-    
+
     var body: some View {
         GeometryReader { geo in
             
             CalendarEventPreviewContentView(event: event, events: events, width: geo.size.width, height: geo.size.height)
-                .contentShape(TestShape())
-            
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
                         ZStack {
