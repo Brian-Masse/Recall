@@ -181,12 +181,6 @@ struct ProfileView: View {
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
-            UniversalText( "Icon", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
-            
-            makeIconSettings()
-                .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
-                .padding(.bottom, 20)
-            
             UniversalText( "Account Settings", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             
             makeActionButtons()
@@ -411,53 +405,6 @@ struct ProfileView: View {
             if madeNotificationChanges {
                 ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeNotificationChanges
                 } action: { saveSettings() }
-            }
-        }
-    }
-    
-//    MARK: Icon Picker
-    @ViewBuilder
-    private func makeIconPicker(icon: String) -> some View {
-        let active = icon == activeIcon
-        VStack {
-            Image(icon)
-                .resizable()
-                .frame(width: 75, height: 75)
-                .cornerRadius(15)
-                .shadow(radius: 5)
-            
-            UniversalText( icon, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-                .if(active) { view in view.foregroundColor(.black) }
-                .if(!active) { view in view.universalTextStyle() }
-        }
-        .padding(.horizontal, 25)
-        .padding(5)
-        .background( VStack {
-            if active {
-                Rectangle()
-                    .universalStyledBackgrond(.accent, onForeground: true)
-                    .cornerRadius(Constants.UIDefaultCornerRadius)
-                    .matchedGeometryEffect(id: "background", in: profileNamespace)
-            }
-            
-        })
-        .onTapGesture {
-            withAnimation { activeIcon = icon }
-            UIApplication.shared.setAlternateIconName(icon) { error in
-                if let err = error { print( err.localizedDescription ) }
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func makeIconSettings() -> some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Spacer()
-                makeIconPicker(icon: "light")
-                Spacer()
-                makeIconPicker(icon: "dark")
-                Spacer()
             }
         }
     }
