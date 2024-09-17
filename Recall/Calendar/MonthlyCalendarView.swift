@@ -47,9 +47,11 @@ class CalendarPageViewModel: ObservableObject {
         
         for i in 0..<dayCount {
             let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth)!
-            let recallWasCompleted = recallWasCompleted(on: day, in: arrEvents)
+//            let recallWasCompleted = recallWasCompleted(on: day, in: arrEvents)
             
-            self.recallLog[ day.formatted(date: .numeric, time: .omitted) ] = recallWasCompleted
+//            DispatchQueue.main.sync {
+            self.recallLog[ day.formatted(date: .numeric, time: .omitted) ] = true
+//            }
         }
 //        
         self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] = true
@@ -144,12 +146,12 @@ struct CalendarPage: View {
                     ForEach(-startOfMonthOffset..<Int(dayCount), id: \.self) { i in
                         let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth) ?? .now
                         
-                        let roundLeftEdge = shouldRoundLeftEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset)
-                        let roundRightEdge = shouldRoundRightEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset, monthCount: dayCount)
+//                        let roundLeftEdge = shouldRoundLeftEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset)
+//                        let roundRightEdge = shouldRoundRightEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset, monthCount: dayCount)
                         
                         VStack {
                             if i >= 0 {
-                                makeDay(for: day, roundLeftEdge: roundLeftEdge, roundRightEdge: roundRightEdge)
+                                makeDay(for: day, roundLeftEdge: true, roundRightEdge: true)
                             } else {
                                 Rectangle().foregroundStyle(.clear)
                             }
@@ -324,21 +326,7 @@ struct CalendarPage: View {
             
             makeCalendar()
         }
-        .padding()
+        .padding(7)
         .universalBackground()
     }
 }
-
-//struct TestView: View {
-//    
-//    @State private var day: Date = .now
-//    
-//    var body: some View {
-//        CalendarPage(currentDay: $day, goals: [])
-//    }
-//    
-//}
-
-//#Preview(body: {
-//    TestView()
-//})

@@ -1,5 +1,6 @@
 # Recall
-v2.2.0
+
+v2.2.1
 
 <picture>
     <!-- <source srcset="./icon_512x512@2x@2x.png" media="(prefers-color-scheme: dark)" alt="Recall by Brian Masse"> -->
@@ -86,7 +87,7 @@ _**Universals**_
 _**Resources**_
 
 - fonts for the application
-s
+  s
 
 ## **System Design & Technologies**
 
@@ -99,7 +100,9 @@ I independently developed this project, from problem identification, project bra
 ## **Version History**
 
 ### **Version 2.2.0**
+
 CHANGES
+
 - Redesigned all Forms
 - Redesigned Goals Page
 
@@ -108,6 +111,7 @@ CHANGES
 ### **Version 2.1.1**
 
 CHANGES
+
 - Improved the Design of the Calendar Page
 - Fixed layouting bugs in the calendar
 - Reworked Calendar Interactions
@@ -115,15 +119,17 @@ CHANGES
 - Redesigned the Tab bar
 
 ### **Version 2.1.0**
- 
- CHANGES
- - Improved the loading time for on a cold launch
- - Redesigned the Profile Page
- - Redesigned all page headers throughout the app
- - Removed About Me Section
- 
- NEW FEATURES
- - Added a month calendar view to quickly skip to previous days
+
+CHANGES
+
+- Improved the loading time for on a cold launch
+- Redesigned the Profile Page
+- Redesigned all page headers throughout the app
+- Removed About Me Section
+
+NEW FEATURES
+
+- Added a month calendar view to quickly skip to previous days
 
 ### **Version 2.0.1**
 

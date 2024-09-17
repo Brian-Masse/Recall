@@ -24,6 +24,7 @@ struct MainView: View {
             self.rawValue
         }
     }
+
     
     
     //    MARK: Vars

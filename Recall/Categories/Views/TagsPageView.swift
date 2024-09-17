@@ -38,7 +38,7 @@ struct TagPageView: View {
         var body: some View {
             VStack(spacing: 5) {
                 HStack {
-                    Image(systemName: "tag")
+                    Image(systemName: "tag.fill")
                         .foregroundStyle(tag.getColor())
                     
                     UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
