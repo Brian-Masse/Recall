@@ -47,11 +47,9 @@ class CalendarPageViewModel: ObservableObject {
         
         for i in 0..<dayCount {
             let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth)!
-//            let recallWasCompleted = recallWasCompleted(on: day, in: arrEvents)
+            let recallWasCompleted = recallWasCompleted(on: day, in: arrEvents)
             
-//            DispatchQueue.main.sync {
-            self.recallLog[ day.formatted(date: .numeric, time: .omitted) ] = true
-//            }
+            self.recallLog[ day.formatted(date: .numeric, time: .omitted) ] = recallWasCompleted
         }
 //        
         self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] = true
@@ -145,13 +143,13 @@ struct CalendarPage: View {
                     
                     ForEach(-startOfMonthOffset..<Int(dayCount), id: \.self) { i in
                         let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth) ?? .now
-                        
-//                        let roundLeftEdge = shouldRoundLeftEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset)
-//                        let roundRightEdge = shouldRoundRightEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset, monthCount: dayCount)
+                    
+                        let roundLeftEdge = shouldRoundLeftEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset)
+                        let roundRightEdge = shouldRoundRightEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset, monthCount: dayCount)
                         
                         VStack {
                             if i >= 0 {
-                                makeDay(for: day, roundLeftEdge: true, roundRightEdge: true)
+                                makeDay(for: day, roundLeftEdge: roundLeftEdge, roundRightEdge: roundRightEdge)
                             } else {
                                 Rectangle().foregroundStyle(.clear)
                             }
