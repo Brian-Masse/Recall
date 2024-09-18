@@ -173,7 +173,7 @@ extension TutorialViews {
             
             VStack(alignment: .leading) {
                 
-                ScrollView(.vertical) {
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading) {
                         ForEach( goals, id: \.label ) { goal in
                             makeGoalOverview(goal)

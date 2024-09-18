@@ -90,7 +90,7 @@ struct EventSelectionEditorView: View {
     private func makeEventList() -> some View {
         
         VStack(alignment: .leading) {
-            ScrollView(.horizontal) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(viewModel.selection) { event in
                         makeEventPreivew(event)
@@ -129,7 +129,7 @@ struct EventSelectionEditorView: View {
     var body: some View {
 
         GeometryReader { geo in
-            ScrollView(.vertical) {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading) {
                     
                     makeEventList()

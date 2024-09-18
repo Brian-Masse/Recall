@@ -75,7 +75,7 @@ struct CalendarEventView: View {
                 UniversalText("Notes", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
                     .padding(.bottom, 5)
                 
-                ScrollView(.vertical) {
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack {
                         UniversalText( event.notes, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                             .padding(.trailing)
@@ -123,7 +123,7 @@ struct CalendarEventView: View {
     @ViewBuilder
     private func makeQuickActions() -> some View {
         UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-        ScrollView(.horizontal) {
+        ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 LargeRoundedButton("edit", icon: "arrow.up.forward", color: event.getColor())                { showingEditingScreen = true }
                 LargeRoundedButton("favorite", icon: "arrow.up.forward", color: event.getColor())       { event.toggleFavorite() }
@@ -168,7 +168,7 @@ struct CalendarEventView: View {
             
             makePageHeader()
             
-            ScrollView(.vertical) {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading) {
                     
                     makeQuickActions()

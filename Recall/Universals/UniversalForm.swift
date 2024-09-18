@@ -47,7 +47,7 @@ struct StyledColorPicker: View {
                            size: Constants.formQuestionTitleSize,
                            font: Constants.titleFont )
             
-            ScrollView(.horizontal) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     Spacer()
                     ForEach(Colors.colorOptions.indices, id: \.self) { i in

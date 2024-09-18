@@ -50,7 +50,7 @@ struct StyledCalendarContainerView: View {
     
 //    MARK: Body
     var body: some View {
-        ScrollView(.vertical) {
+        ScrollView(.vertical, showsIndicators: false) {
             ZStack(alignment: .topLeading) {
                 
                 let filtered = filterEvents()

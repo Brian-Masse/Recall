@@ -520,7 +520,7 @@ struct ProfileView: View {
             makePageHeader()
                 .padding(.bottom)
             
-            ScrollView(.vertical) {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack {
                     makeDemographicInfo()
                         .padding(.bottom, 20)

@@ -108,7 +108,7 @@ struct GoalView: View {
     @ViewBuilder
     private func makeQuickActions() -> some View {
         UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-        ScrollView(.horizontal) {
+        ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 LargeRoundedButton("edit", icon: "arrow.up.forward") { showingEditingScreen = true }
                 LargeRoundedButton("delete", icon: "arrow.up.forward") { showingDeletionAlert = true }
@@ -129,7 +129,7 @@ struct GoalView: View {
         UniversalText("Goal Review", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
             .padding(.bottom)
         
-        ScrollView(.horizontal) {
+        ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 makeCircularProgressWidget(title: "Current Progress", value: progressData, total: Double(goal.targetHours))
                 
@@ -161,7 +161,7 @@ struct GoalView: View {
                 LargeRoundedButton("", icon: "arrow.down") { presentationMode.wrappedValue.dismiss() }
             }
             
-            ScrollView(.vertical) {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading) {
                     
                     makeOverview()

@@ -205,7 +205,7 @@ struct ActivitiesPerDay: View {
             Group {
                 if getMaxIndex() > 0 {
                     if scrollable {
-                        ScrollView(.horizontal) {
+                        ScrollView(.horizontal, showsIndicators: false) {
                             makeChart()
                                 .frame(width: Double(daysSinceLastEvent()) * 16 )
                                 .padding(.trailing)
@@ -261,7 +261,7 @@ struct GoalCompletionOverTime: View {
                 } }
             }
             
-            ScrollView(.horizontal) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 Chart {
                     ForEach(0...getMaxIndex(), id: \.self) { i in
                         let datum = data[i]
@@ -321,7 +321,7 @@ struct GoalProgressOverTime: View {
                 } }
             }
             
-            ScrollView(.horizontal) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 Chart {
                     ForEach(0...maxIndex, id: \.self) { i in
                         

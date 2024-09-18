@@ -87,7 +87,7 @@ extension TutorialViews {
 //        MARK: GoalRatings
         @ViewBuilder
         private func makeGoalsPicker() -> some View {
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading) {
                     UniversalText( "What goals should this tag contribute to?",
                                    size: Constants.UIHeaderTextSize,

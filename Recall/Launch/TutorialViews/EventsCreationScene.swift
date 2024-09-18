@@ -118,7 +118,7 @@ extension TutorialViews {
         @ViewBuilder
         private func makeTagSelector() -> some View {
             
-            ScrollView(.vertical) {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading) {
                     UniversalText("What tag best categorizes this event?", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                         .padding(.bottom, 7)
@@ -149,7 +149,7 @@ extension TutorialViews {
         
         @ViewBuilder
         private func makeGoalModifier() -> some View {
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading) {
                     UniversalText("Change goal multipliers for this event", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                         .padding(.bottom, 5)
