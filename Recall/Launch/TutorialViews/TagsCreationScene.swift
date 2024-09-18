@@ -24,7 +24,7 @@ extension TutorialViews {
         @State var sentTag: Bool = false
         
         @State var name: String = ""
-        @State var color: Color = Colors.lightAccent
+        @State var color: Color = Colors.defaultLightAccent
         @State var goalRatings: Dictionary<String, String> = Dictionary()
         
 

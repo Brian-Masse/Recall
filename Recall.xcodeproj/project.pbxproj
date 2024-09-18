@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -64,10 +64,11 @@
 		C98F2F2E2A9D336200E92B30 /* GoalsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2D2A9D336200E92B30 /* GoalsCreationScene.swift */; };
 		C98F2F302A9D3F3300E92B30 /* TagsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */; };
 		C98F2F322A9DC49300E92B30 /* EventsCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F312A9DC49300E92B30 /* EventsCreationScene.swift */; };
-		C9AEEB622B604BB900D48FD8 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9AEEB612B604BB900D48FD8 /* UIUniversals */; };
 		C9B8DF5F2C63344500B11A38 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C9D24AA62C62C65800A7F279 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C9BF38BA2C9A0EA200AA8C3F /* dark.png in Resources */ = {isa = PBXBuildFile; fileRef = C9BF38B82C9A0EA200AA8C3F /* dark.png */; };
 		C9BF38BB2C9A0EA200AA8C3F /* light.png in Resources */ = {isa = PBXBuildFile; fileRef = C9BF38B92C9A0EA200AA8C3F /* light.png */; };
+		C9BF38BE2C9B568400AA8C3F /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38BD2C9B568400AA8C3F /* UIUniversals */; };
+		C9BF38C12C9B56CA00AA8C3F /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38C02C9B56CA00AA8C3F /* UIUniversals */; };
 		C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */; };
 		C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */; };
 		C9D24AA72C62C65800A7F279 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C9D24AA62C62C65800A7F279 /* RealmSwift */; };
@@ -203,7 +204,8 @@
 			files = (
 				C9D24AA72C62C65800A7F279 /* RealmSwift in Frameworks */,
 				C9EE9EB82B608FA50090DB16 /* UniversalDonationPackage in Frameworks */,
-				C9AEEB622B604BB900D48FD8 /* UIUniversals in Frameworks */,
+				C9BF38C12C9B56CA00AA8C3F /* UIUniversals in Frameworks */,
+				C9BF38BE2C9B568400AA8C3F /* UIUniversals in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,9 +535,10 @@
 			);
 			name = Recall;
 			packageProductDependencies = (
-				C9AEEB612B604BB900D48FD8 /* UIUniversals */,
 				C9EE9EB72B608FA50090DB16 /* UniversalDonationPackage */,
 				C9D24AA62C62C65800A7F279 /* RealmSwift */,
+				C9BF38BD2C9B568400AA8C3F /* UIUniversals */,
+				C9BF38C02C9B56CA00AA8C3F /* UIUniversals */,
 			);
 			productName = Recall;
 			productReference = C91BCEEE2A618435003C6DD6 /* Recall.app */;
@@ -612,9 +615,9 @@
 			packageReferences = (
 				C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
 				C954AACD2A76B60000897BCE /* XCRemoteSwiftPackageReference "FlowGrid" */,
-				C9AEEB602B604BB900D48FD8 /* XCRemoteSwiftPackageReference "UIUniversals" */,
 				C9EE9EB62B608FA40090DB16 /* XCRemoteSwiftPackageReference "UniversalDonationPackage" */,
 				C9D24AA52C62C65800A7F279 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				C9BF38BF2C9B56CA00AA8C3F /* XCLocalSwiftPackageReference "../Packages/UIUniversals" */,
 			);
 			productRefGroup = C91BCEEF2A618435003C6DD6 /* Products */;
 			projectDirPath = "";
@@ -1097,6 +1100,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		C9BF38BF2C9B56CA00AA8C3F /* XCLocalSwiftPackageReference "../Packages/UIUniversals" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Packages/UIUniversals;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1112,14 +1122,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
-			};
-		};
-		C9AEEB602B604BB900D48FD8 /* XCRemoteSwiftPackageReference "UIUniversals" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Brian-Masse/UIUniversals";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 		C9D24AA52C62C65800A7F279 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
@@ -1141,9 +1143,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C9AEEB612B604BB900D48FD8 /* UIUniversals */ = {
+		C9BF38BD2C9B568400AA8C3F /* UIUniversals */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C9AEEB602B604BB900D48FD8 /* XCRemoteSwiftPackageReference "UIUniversals" */;
+			productName = UIUniversals;
+		};
+		C9BF38C02C9B56CA00AA8C3F /* UIUniversals */ = {
+			isa = XCSwiftPackageProductDependency;
 			productName = UIUniversals;
 		};
 		C9D24AA62C62C65800A7F279 /* RealmSwift */ = {

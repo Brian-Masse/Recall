@@ -276,6 +276,7 @@ class RealmManager: ObservableObject {
         self.realm = realm
         await RecallModel.updateManager.initialize()
         await self.checkProfile()
+        RecallModel.index.updateAccentColor()
     }
     
 //    MARK: Subscription Functions

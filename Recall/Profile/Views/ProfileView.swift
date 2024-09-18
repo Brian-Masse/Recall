@@ -16,6 +16,7 @@ struct ProfileView: View {
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     @Namespace var profileNamespace
+    @ObservedObject private var colors = Colors.shared
     
     @State var showingDataTransfer: Bool = false
     @State var showingEditingView: Bool = false
@@ -174,6 +175,13 @@ struct ProfileView: View {
             makeEventSettings()
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
+            
+            UniversalText( "Apperance", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            
+            makeAccentColorPicker()
+                .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
+                .padding(.bottom, 20)
+            
             
             UniversalText( "Reminders", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             
@@ -408,6 +416,62 @@ struct ProfileView: View {
             }
         }
     }
+    
+//    MARK: Color Preferences
+    private struct Triangle: Shape {
+        func path(in rect: CGRect) -> Path {
+            Path { path in
+                path.move(to: .zero)
+                path.addLine(to: .init(x: rect.width, y: 0))
+                path.addLine(to: .init(x: 0, y: rect.height))
+                path.addLine(to: .zero)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func makeAccentColorOption(_ accentColor: Colors.AccentColor, index: Int) -> some View {
+        VStack {
+            ZStack {
+                Circle()
+                    .foregroundStyle(accentColor.lightAccent)
+                
+                Circle()
+                    .foregroundStyle(accentColor.darkAccent)
+                    .clipShape(Triangle())
+            }
+            .padding(10)
+            .background(
+                Circle().foregroundStyle(self.index.recallAccentColorIndex == index ? Colors.getBase(from: colorScheme) : .clear)
+            )
+            
+            UniversalText( accentColor.title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+        }
+        .onTapGesture {
+            withAnimation { self.index.setAccentColor(to: index) }
+        }
+    }
+    
+    @ViewBuilder
+    private func makeAccentColorPicker() -> some View {
+        GeometryReader { geo in
+            let coloumnCount: Double = 4
+            let spacing: Double = 10
+            let width = (geo.size.width - (spacing * (coloumnCount + 1))) / coloumnCount
+            
+            LazyVGrid(columns: [ .init(.adaptive(minimum: width, maximum: width),
+                                       spacing: spacing,
+                                       alignment: .center) ]) {
+                ForEach( 0..<Colors.accentColorOptions.count, id: \.self ) { i in
+                    let color = Colors.accentColorOptions[i]
+                    makeAccentColorOption(color, index: i)
+                }
+            }
+        }
+        .frame(height: 250)
+    }
+    
+    
     
 //    MARK: Header/Footers
     @ViewBuilder

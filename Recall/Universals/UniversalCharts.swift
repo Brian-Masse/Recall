@@ -147,7 +147,7 @@ struct CircularProgressView: View {
         ZStack {
             Circle()
                 .stroke(
-                    colorScheme == .dark ? .black : Colors.baseLight,
+                    Colors.getBase(from: colorScheme),
                     lineWidth: Constants.UICircularProgressWidth
                 )
             Circle()

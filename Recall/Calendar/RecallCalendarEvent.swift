@@ -156,7 +156,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     @MainActor
     func getColor() -> Color {
-        category?.getColor() ?? Colors.lightAccent
+        category?.getColor() ?? Colors.defaultLightAccent
     }
     
     func getTagLabel() -> String {

@@ -36,7 +36,7 @@ struct CategoryCreationView: View {
     
     @State var label: String
     @State var goalRatings: Dictionary<String, String>
-    @State var color: Color = Colors.lightAccent
+    @State var color: Color = Colors.defaultLightAccent
     
     @State var showingAlert: Bool = false
     

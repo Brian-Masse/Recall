@@ -11,8 +11,76 @@ import Charts
 import UIUniversals
 
 //MARK: Colors
+extension Color {
+    ///initialize a color with rgb measured from 0 to 255
+    init( _ red: Double, _ green: Double, _ blue: Double ) {
+        self.init(red: red / 255, green: green / 255, blue: blue / 255)
+    }
+    
+    func safeMix(with other: Color, by fraction: Double = 0.5) -> Color {
+        if #available(iOS 18.0, *) {
+            return self.mix(with: other, by: fraction)
+        } else {
+            return other
+        }
+    }
+}
+
 extension Colors {
-    static let colorOptions: [Color] = [ lightAccent, darkAccent, blue, purple, grape, pink, red, yellow,  ]
+    struct AccentColor: Hashable {
+        let title: String
+        let lightAccent: Color
+        let darkAccent: Color
+        let mixValue: Double
+        
+        init( title: String, lightAccent: Color, darkAccent: Color, mixValue: Double = 0.035 ) {
+            self.title = title
+            self.lightAccent = lightAccent
+            self.darkAccent = darkAccent
+            self.mixValue = mixValue
+        }
+    }
+    
+    static let colorOptions: [Color] = [ defaultLightAccent, defaultDarkAccent, blue, purple, grape, pink, red, yellow,  ]
+    
+    static let accentColorOptions: [AccentColor] = [
+        
+            .init(title: "Recall",
+                  lightAccent: .init(130, 130, 100),
+                  darkAccent: .init(178, 196, 128)),
+            
+            .init(title: "Classic",
+                  lightAccent: .init(66, 122, 69),
+                  darkAccent: .init(95, 255, 135),
+                  mixValue: 0.025),
+     
+            .init(title: "blue",
+                  lightAccent: Colors.blue.safeMix(with: .white, by: 0.15),
+                  darkAccent: Colors.blue),
+            
+            .init(title: "purple",
+                  lightAccent: Colors.purple.safeMix(with: .white, by: 0.15),
+                  darkAccent: Colors.purple,
+                  mixValue: 0.025),
+            
+            .init(title: "grape",
+                  lightAccent: Colors.grape.safeMix(with: .white, by: 0.15),
+                  darkAccent: Colors.grape),
+            
+            .init(title: "pink",
+                  lightAccent: Colors.pink.safeMix(with: .white, by: 0.15),
+                  darkAccent: Colors.pink),
+            
+            .init(title: "red",
+                  lightAccent: Colors.red.safeMix(with: .white, by: 0.15),
+                  darkAccent: Colors.red,
+                  mixValue: 0.02),
+        
+            .init(title: "yellow",
+                  lightAccent: Colors.yellow.safeMix(with: .white, by: 0.15),
+                  darkAccent: Colors.yellow)
+            
+    ]
 }
 
 

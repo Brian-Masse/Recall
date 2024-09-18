@@ -14,7 +14,6 @@ import UniversalDonationPackage
 struct CalendarPageView: View {
     
 //    MARK: Convenience Functions
-    
     private func setCurrentDay(with date: Date) {
         if date > viewModel.currentDay { slideDirection = .right }
         else { slideDirection = .left }
@@ -153,7 +152,7 @@ struct CalendarPageView: View {
             VStack(alignment: .leading, spacing: 5) {
                 makeHeader()
                     .padding(.horizontal, 7)
-                
+
                 HStack {
                     makeDateSelectors()
                     

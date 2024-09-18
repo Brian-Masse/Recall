@@ -1,5 +1,5 @@
 {
-  "originHash" : "c1b2d4fee033604b47a9a0593abf8985b39b4e07dc9466386233ba4f20502f7b",
+  "originHash" : "704f4f79b069e227ea3e423dd1abd8ba260ae9c3af52ed341ba7c5b9e32075c7",
   "pins" : [
     {
       "identity" : "flowgrid",
@@ -35,15 +35,6 @@
       "state" : {
         "revision" : "e0601230feea4289760c0e5b68dbafa15aa59bfb",
         "version" : "1.5.1"
-      }
-    },
-    {
-      "identity" : "uiuniversals",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Brian-Masse/UIUniversals",
-      "state" : {
-        "branch" : "main",
-        "revision" : "5ddb8ce1f6080bbd60bb34bad855e1090584d80d"
       }
     },
     {

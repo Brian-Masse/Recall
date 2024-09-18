@@ -46,6 +46,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var recallEventsWithEventTime: Bool = true
     
     @Persisted var calendarDensity: Int = 0
+    @Persisted var recallAccentColorIndex: Int = 0
     
     @Persisted var notificationsEnabled: Bool = false
     @Persisted var notificationsTime: Date = .now
@@ -203,6 +204,14 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         RecallCalendarViewModel.shared.getScale(from: value)
     }
     
+    @MainActor
+    func setAccentColor(to value: Int) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.recallAccentColorIndex = value
+        }
+        
+        self.updateAccentColor(to: value)
+    }
     
 //    MARK: postProfileCreationInit
 //    This runs after the user has created their profile, (in turn setting their name, number, email, and birthday)
@@ -275,6 +284,17 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         RealmManager.updateObject(goal) { thawed in
             goal.indexedGoalProgressHistory = List()
         }
+    }
+    
+//    MARK: Color
+    func updateAccentColor(to index: Int? = nil) {
+        let accentColor = Colors.accentColorOptions[index ?? self.recallAccentColorIndex]
+        let mixValue = accentColor.mixValue
+        
+        Colors.setColors(secondaryLight: Colors.defaultSecondaryLight.safeMix(with: accentColor.lightAccent, by: mixValue),
+                         secondaryDark: Colors.defaultSecondaryDark.safeMix(with: accentColor.darkAccent, by: mixValue),
+                         lightAccent: accentColor.lightAccent,
+                         darkAccent: accentColor.darkAccent)
     }
     
     
