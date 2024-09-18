@@ -181,6 +181,8 @@ struct CalendarContainer: View {
                 }
             }
             .onEnded { _ in withAnimation {
+                if !creatingEvent { return }
+                
                 creatingEvent = false
                 viewModel.gestureInProgress = false
                 
@@ -280,8 +282,7 @@ struct CalendarContainer: View {
                         }
                         .padding(.bottom, 150)
                         
-                        .onTapGesture { }
-                        .gesture(createEventHoldGesture)
+                        .simultaneousGesture(createEventHoldGesture)
                         
                         .coordinateSpace(name: coordinateSpaceName)
                     }

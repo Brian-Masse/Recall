@@ -262,7 +262,7 @@ struct CalendarEventPreviewView: View {
                 .opacity(resizing || moving ? 0.5 : 1)
                 .padding(2)
 
-                .gesture(drag)
+                .simultaneousGesture(drag)
             
                 .sheet(isPresented: $showingEditingScreen) {
                     CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)

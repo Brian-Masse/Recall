@@ -74,6 +74,7 @@ struct MainView: View {
                                  currentDay: $currentDay)
                         .tag( MainPage.data )
                 }
+                .animation(.easeInOut, value: currentPage)
                 
                 if !showingHalfPage {
                     TabBar(pageSelection: $currentPage)
