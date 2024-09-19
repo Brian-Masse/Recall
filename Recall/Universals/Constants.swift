@@ -33,7 +33,7 @@ extension Colors {
         let darkAccent: Color
         let mixValue: Double
         
-        init( title: String, lightAccent: Color, darkAccent: Color, mixValue: Double = 0.035 ) {
+        init( title: String, lightAccent: Color, darkAccent: Color, mixValue: Double = 0.020 ) {
             self.title = title
             self.lightAccent = lightAccent
             self.darkAccent = darkAccent
@@ -51,8 +51,7 @@ extension Colors {
             
             .init(title: "Classic",
                   lightAccent: .init(66, 122, 69),
-                  darkAccent: .init(95, 255, 135),
-                  mixValue: 0.025),
+                  darkAccent: .init(95, 255, 135)),
      
             .init(title: "blue",
                   lightAccent: Colors.blue.safeMix(with: .white, by: 0.15),
@@ -60,8 +59,7 @@ extension Colors {
             
             .init(title: "purple",
                   lightAccent: Colors.purple.safeMix(with: .white, by: 0.15),
-                  darkAccent: Colors.purple,
-                  mixValue: 0.025),
+                  darkAccent: Colors.purple),
             
             .init(title: "grape",
                   lightAccent: Colors.grape.safeMix(with: .white, by: 0.15),
@@ -73,8 +71,7 @@ extension Colors {
             
             .init(title: "red",
                   lightAccent: Colors.red.safeMix(with: .white, by: 0.15),
-                  darkAccent: Colors.red,
-                  mixValue: 0.02),
+                  darkAccent: Colors.red),
         
             .init(title: "yellow",
                   lightAccent: Colors.yellow.safeMix(with: .white, by: 0.15),

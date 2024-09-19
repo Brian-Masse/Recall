@@ -315,9 +315,9 @@ struct ProfileView: View {
             UniversalText( "Calendar Size", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
             
             HStack(spacing: 0) {
-                makeCalendarDensityOption(2, caption: "compact")
+                makeCalendarDensityOption(0, caption: "compact")
                 makeCalendarDensityOption(1, caption: "regular")
-                makeCalendarDensityOption(0, caption: "roomy")
+                makeCalendarDensityOption(2, caption: "roomy")
             }
         }
     }
