@@ -22,6 +22,7 @@ class RecallCalendarViewModel: ObservableObject {
     
 //    if the calendar is split into two days, then this indicates which of the day the user is interacting with
     @Published private(set) var subDayIndex: Int = 0
+    let daysPerView: Int = 3
     
     @Published var scale: Double = 100
     @Published var gestureInProgress: Bool = false
@@ -126,9 +127,12 @@ class RecallCalendarViewModel: ObservableObject {
         self.filteredEvents = [:]
         
         Task {
-            await loadEvents(for: currentDay, in: newEvents )
-            await loadEvents(for: currentDay - Constants.DayTime, in: newEvents )
+//            render the day to the left
             await loadEvents(for: currentDay + Constants.DayTime, in: newEvents )
+            
+            for i in 0..<daysPerView {
+                await loadEvents(for: currentDay - (Constants.DayTime * Double(i)), in: newEvents )
+            }
         }
     }
     

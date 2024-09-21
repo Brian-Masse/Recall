@@ -14,56 +14,94 @@ import UIUniversals
 struct TabBar: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    
     @Namespace private var tabBarNamespace
     @Binding var pageSelection: MainView.MainPage
     
-    @State private var timer: Timer? = nil
-    @State private var compact: Bool = false
+    @State private var showingRecallButton: Bool = true
+    @State private var showingCreateEventScreen: Bool = false
     
-    private var primaryPadding: Double { compact ? 15 : 35 }
-    
-    private var secondaryPadding: Double { compact ? 3 : 10 }
+    private let buttonPadding: Double = 15
+//
+    private let buttonRadius: Double = 42.5
+    private let surroundingPadding: Double = 5
     
 //    MARK: TabBarButton
     @ViewBuilder
     private func makeTabBarButton(page: MainView.MainPage, icon: String) -> some View {
         let isActivePage = page == pageSelection
         
-        Image(systemName: icon)
-            .frame(width: 20, height: 20)
-            .foregroundStyle( isActivePage ? .black : ( colorScheme == .dark ? .white : .black ) )
-        
-            .padding(.vertical, !compact ? primaryPadding : 10)
-            .padding(.horizontal, isActivePage ? 35 : secondaryPadding )
-            .background {
-                if page == pageSelection {
-                    Rectangle()
-                        .universalStyledBackgrond(.accent, onForeground: true)
-                        .cornerRadius(70)
-                        .matchedGeometryEffect(id: "highlight", in: tabBarNamespace)
-                }
+        ZStack {
+            if page == pageSelection {
+                Circle()
+                    .matchedGeometryEffect(id: "highlight", in: tabBarNamespace)
+                    .frame(width: buttonRadius * 2, height: buttonRadius * 2)
+                    .universalStyledBackgrond(.accent, onForeground: true)
             }
+            
+            Image(systemName: icon)
+                .bold()
+                .frame(width: 20, height: 20)
+                .foregroundStyle( isActivePage ? .black : ( colorScheme == .dark ? .white : .black ) )
+                .padding(buttonPadding)
+        }
         
             .onTapGesture { withAnimation {
-                compact = false
                 pageSelection = page
                 
-                if let timer = self.timer { timer.invalidate() }
+                if page == .calendar { showingRecallButton = true }
+                else { showingRecallButton = false }
             }}
         
+    }
+
+    @ViewBuilder
+    private func makeRecallButton() -> some View {
+        UniversalButton {
+            Image(systemName: "arrow.turn.left.up")
+                .bold()
+                .foregroundStyle(.black)
+                .padding(.vertical, 20)
+                .padding(.horizontal, 30)
+                .background {
+                    RoundedRectangle(cornerRadius: 70)
+                        .matchedGeometryEffect(id: "highlight", in: tabBarNamespace)
+                        .universalStyledBackgrond(.accent, onForeground: true)
+                }
+        } action: { showingCreateEventScreen = true }
     }
     
 //    MARK: Body
     var body: some View {
-        HStack(spacing: 10) {
-            makeTabBarButton(page: .calendar, icon: "calendar") .padding(.leading, pageSelection == .calendar ? 0 : 10 )
-            makeTabBarButton(page: .goals, icon: "flag.checkered")
-            makeTabBarButton(page: .categories, icon: "tag")
-            makeTabBarButton(page: .data, icon: "chart.bar") .padding(.trailing, pageSelection == .data ? 0 : 10 )
+        HStack {
+            if showingRecallButton {
+                makeRecallButton()
+            } else {
+                makeTabBarButton(page: .calendar, icon: "calendar")
+                    .frame(width: buttonRadius * 2, height: buttonRadius * 2)
+                    .background {
+                        RoundedRectangle(cornerRadius: 55)
+                            .foregroundStyle(.thinMaterial)
+                            .shadow(radius: 5)
+                    }
+            }
+            
+            HStack(spacing: 0) {
+                makeTabBarButton(page: .goals, icon: "flag.checkered")
+                makeTabBarButton(page: .categories, icon: "tag")
+                makeTabBarButton(page: .data, icon: "chart.bar")
+            }
+            .padding(surroundingPadding)
+            .background {
+                RoundedRectangle(cornerRadius: 55)
+                    .foregroundStyle(.thinMaterial)
+                    .shadow(radius: 5)
+            }
         }
-        .padding(5)
-        .background(.thinMaterial)
-        .cornerRadius(55)
-        .shadow(radius: 5)
+        .frame(height: (buttonRadius * 2) + (surroundingPadding * 2) )
+        .sheet(isPresented: $showingCreateEventScreen) {
+            CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay)
+        }
     }
 }

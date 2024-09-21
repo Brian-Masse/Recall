@@ -63,19 +63,19 @@ struct MainView: View {
                     
                     GoalsPageView(goals: arrGoals, events: arrEvents, tags: arrTags )
                         .tag( MainPage.goals )
-
+                    
                     CategoriesPageView(events: arrEvents, categories: arrTags )
                         .tag( MainPage.categories )
-                
+                    
                     DataPageView(events: arrEvents,
                                  goals: arrGoals,
                                  tags: arrTags,
                                  mainViewPage: $currentPage,
                                  currentDay: $currentDay)
-                        .tag( MainPage.data )
+                    .tag( MainPage.data )
                 }
                 .animation(.easeInOut, value: currentPage)
-                
+
                 if !showingHalfPage {
                     TabBar(pageSelection: $currentPage)
                         .padding(.bottom, 55)

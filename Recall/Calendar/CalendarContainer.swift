@@ -83,7 +83,12 @@ struct CalendarContainer: View {
     private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy) {
 //        if scrollPosition.x > 0 { return }
         let x = scrollPosition.x
-        let proposedIndex = Int(floor(abs(x - calendarLabelWidth - scrollDetectionPadding) / abs(geo.size.width - calendarLabelWidth) * 2))
+        let daysPerView =  Double(viewModel.daysPerView)
+        
+        let scrollDetectionPadding = self.scrollDetectionPadding / daysPerView
+        let calendarWidth = abs(geo.size.width - calendarLabelWidth) / daysPerView
+        
+        let proposedIndex = Int(floor(abs(x - calendarLabelWidth - scrollDetectionPadding) / calendarWidth))
         let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
         
         if !self.viewModel.currentDay.matches(proposedDate, to: .day) {
@@ -92,8 +97,8 @@ struct CalendarContainer: View {
     }
     
     private func setSubDayIndex(from scrollPosition: Double, in geo: GeometryProxy) {
-        let proposedIndex: Int = Int(floor((abs(scrollPosition) / geo.size.width) * 2))
-        let index = min(max( 0, proposedIndex ), 2)
+        let proposedIndex: Int = Int(floor((abs(scrollPosition) / geo.size.width) * Double(viewModel.daysPerView)))
+        let index = min(max( 0, proposedIndex ), viewModel.daysPerView)
         viewModel.setSubDayIndex(to: index)
     }
     
@@ -138,9 +143,9 @@ struct CalendarContainer: View {
     }
     
     private func createEvent() {
-        let subDayOffset = Double(1 - viewModel.subDayIndex) * Constants.DayTime
+        let subDayOffset = Double(viewModel.subDayIndex) * Constants.DayTime
         
-        let startTime = viewModel.getTime(from: newEventoffset, on: viewModel.currentDay) + subDayOffset
+        let startTime = viewModel.getTime(from: newEventoffset, on: viewModel.currentDay) - subDayOffset
         let endTime = startTime + ( newEventResizeOffset * viewModel.scale )
         
         let blankTag = RecallCategory()
@@ -223,11 +228,36 @@ struct CalendarContainer: View {
         }
     }
     
+//    MARK: CalendarLabels
+    @ViewBuilder
+    private func makeCalendarLabels() -> some View {
+        let format = Date.FormatStyle().weekday(.abbreviated).day()
+            
+//            .month(.abbreviated).day()
+        
+        HStack(spacing: 0) {
+            ForEach(0..<viewModel.daysPerView, id: \.self) { i in
+                let day = viewModel.currentDay.addingTimeInterval(Double(i) * -Constants.DayTime)
+
+                let label = day.formatted(format)
+                
+                HStack {
+                    Spacer()
+                    UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+//                        .padding()
+//                        .background {
+//                            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius).foregroundStyle(.background) }
+                    Spacer()
+                }
+            }
+        }.background()
+    }
+    
 //    MARK: CalendarCarousel
     private func calculateSubDayIndex(on day: Date) -> Int {
-        let difference = abs(viewModel.currentDay.timeIntervalSince(day)) + Constants.DayTime
+        let difference = abs(viewModel.currentDay.timeIntervalSince(day))
         let proposedIndex = Int(floor( difference / Constants.DayTime ))
-        return proposedIndex % 2
+        return proposedIndex % viewModel.daysPerView
     }
     
     @ViewBuilder
@@ -240,7 +270,7 @@ struct CalendarContainer: View {
                     
                     ForEach(0...dayCount, id: \.self) { i in
                         
-                        let day = .now - (Double(i) * Constants.DayTime)
+                        let day = .now.resetToStartOfDay() - (Double(i) * Constants.DayTime)
                         
                         ZStack(alignment: .top) {
                             CalendarView(events: viewModel.getEvents(on: day),
@@ -248,9 +278,8 @@ struct CalendarContainer: View {
                             makeEventCreationPreview(on: calculateSubDayIndex(on: day))
                         }
 
-                        .padding(.horizontal, 5)
-                        .border(.green)
-                        .frame(width: (geo.size.width - calendarLabelWidth) / 2)
+                        .padding(.horizontal, 2)
+                        .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
                         .id(i)
                         .task { await viewModel.loadEvents(for: day, in: events) }
                     }
@@ -299,8 +328,6 @@ struct CalendarContainer: View {
                                 
                                 Spacer()
                             }
-                            
-                            Text("\(viewModel.subDayIndex)")
                         }
                         .padding(.bottom, 150)
                         
@@ -311,6 +338,10 @@ struct CalendarContainer: View {
                     .simultaneousGesture(scaleGesture)
                     .scrollDisabled(viewModel.gestureInProgress)
                     .onAppear { proxy.scrollTo("scrollTarget") }
+                    .overlay(alignment: .top) {
+                        makeCalendarLabels()
+                            .padding(.leading, calendarLabelWidth)
+                    }
                 }
             }
             .onChange(of: showingEventCreationView) { if !showingEventCreationView { cleanEvent() } }

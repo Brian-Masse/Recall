@@ -183,7 +183,6 @@ struct CalendarView: View {
                                 -CGFloat(getVerticalOffset(of: events[i],
                                                            relativeTo: events[collisionRecord.forwardCollisions.lowerBound].startTime))
                             }
-                            .border(.red)
                     }
                 } else if collisionRecord.backwardsCollisionIndicies.contains(i + collisionRecord.backwardCollisions.lowerBound) {
                     Rectangle()
@@ -192,6 +191,12 @@ struct CalendarView: View {
                 }
             }
         }
+    }
+    
+//    MARK: DateLabel
+    @ViewBuilder
+    private func makeDateLabel() -> some View {
+        
     }
     
 //    MARK: Initialization
