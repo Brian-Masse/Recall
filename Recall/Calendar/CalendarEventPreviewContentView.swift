@@ -90,8 +90,8 @@ struct CalendarEventPreviewContentView: View {
     
 //   These are all relativley arbitrary values, but they've been found to work across a number of device sizes and text scales
     let minWidth: CGFloat = 250
-    private let minHeight: CGFloat = 60
-    private let minHeightForDescription: CGFloat = 68
+    private let minHeight: CGFloat = 65
+    private let minHeightForDescription: CGFloat = 75
     
     @State var showingEvent: Bool = false
     

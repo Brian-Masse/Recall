@@ -183,6 +183,7 @@ struct CalendarView: View {
                                 -CGFloat(getVerticalOffset(of: events[i],
                                                            relativeTo: events[collisionRecord.forwardCollisions.lowerBound].startTime))
                             }
+                            .border(.red)
                     }
                 } else if collisionRecord.backwardsCollisionIndicies.contains(i + collisionRecord.backwardCollisions.lowerBound) {
                     Rectangle()
@@ -199,7 +200,7 @@ struct CalendarView: View {
     private let events: [RecallCalendarEvent]
     private let day: Date
     
-    init(events: [RecallCalendarEvent], on day: Date ) {
+    init(events: [RecallCalendarEvent], on day: Date) {
         self.day = day
         self.events = events
     }
@@ -221,7 +222,6 @@ struct CalendarView: View {
                             return -offset
                         }
                 }
-                
                 Rectangle()
                     .foregroundStyle(.clear)
             }

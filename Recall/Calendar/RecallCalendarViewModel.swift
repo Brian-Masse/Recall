@@ -20,6 +20,9 @@ class RecallCalendarViewModel: ObservableObject {
     //    this will be toggled whenever the view should scroll to the currentDay
     @Published private(set) var shouldScrollCalendar: Bool = false
     
+//    if the calendar is split into two days, then this indicates which of the day the user is interacting with
+    @Published private(set) var subDayIndex: Int = 0
+    
     @Published var scale: Double = 100
     @Published var gestureInProgress: Bool = false
     
@@ -36,6 +39,10 @@ class RecallCalendarViewModel: ObservableObject {
         withAnimation { self.currentDay = day }
         
         if scrollToDay { shouldScrollCalendar.toggle() }
+    }
+    
+    func setSubDayIndex(to index: Int) {
+        self.subDayIndex = index
     }
     
     func setScale(to scale: Double) {
@@ -121,6 +128,7 @@ class RecallCalendarViewModel: ObservableObject {
         Task {
             await loadEvents(for: currentDay, in: newEvents )
             await loadEvents(for: currentDay - Constants.DayTime, in: newEvents )
+            await loadEvents(for: currentDay + Constants.DayTime, in: newEvents )
         }
     }
     

@@ -81,13 +81,20 @@ struct CalendarContainer: View {
     
 //    MARK: Struct Methods
     private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy) {
-        if scrollPosition.x > 0 { return }
-        let proposedIndex = Int(floor(abs(scrollPosition.x - calendarLabelWidth - scrollDetectionPadding) / abs(geo.size.width - calendarLabelWidth)))
+//        if scrollPosition.x > 0 { return }
+        let x = scrollPosition.x
+        let proposedIndex = Int(floor(abs(x - calendarLabelWidth - scrollDetectionPadding) / abs(geo.size.width - calendarLabelWidth) * 2))
         let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
         
         if !self.viewModel.currentDay.matches(proposedDate, to: .day) {
             self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
         }
+    }
+    
+    private func setSubDayIndex(from scrollPosition: Double, in geo: GeometryProxy) {
+        let proposedIndex: Int = Int(floor((abs(scrollPosition) / geo.size.width) * 2))
+        let index = min(max( 0, proposedIndex ), 2)
+        viewModel.setSubDayIndex(to: index)
     }
     
     private func scrollToCurrentDay(proxy: ScrollViewProxy) {
@@ -131,7 +138,9 @@ struct CalendarContainer: View {
     }
     
     private func createEvent() {
-        let startTime = viewModel.getTime(from: newEventoffset, on: viewModel.currentDay)
+        let subDayOffset = Double(1 - viewModel.subDayIndex) * Constants.DayTime
+        
+        let startTime = viewModel.getTime(from: newEventoffset, on: viewModel.currentDay) + subDayOffset
         let endTime = startTime + ( newEventResizeOffset * viewModel.scale )
         
         let blankTag = RecallCategory()
@@ -149,7 +158,7 @@ struct CalendarContainer: View {
         RealmManager.addObject(event)
     }
     
-    private var createEventHoldGesture: some Gesture {
+    private func createEventHoldGesture(in geo: GeometryProxy) -> some Gesture {
         LongPressGesture(minimumDuration: 1)
             .onEnded { value in withAnimation {
                 self.creatingEvent = true
@@ -158,10 +167,14 @@ struct CalendarContainer: View {
             .simultaneously(with: DragGesture(minimumDistance: 0, coordinateSpace: .named(coordinateSpaceName)) )
             .onChanged { value in
                 if !viewModel.gestureInProgress && value.first != nil {
+                    
+                    self.setSubDayIndex(from: Double(value.second?.location.x ?? 0), in: geo)
+                    
                     let position: Double = Double(value.second?.location.y ?? 0)
                     self.newEventoffset = viewModel.roundPosition(position,
                                                                                       to: RecallModel.index.dateSnapping)
                     self.newEventResizeOffset = (Constants.HourTime / 4) / viewModel.scale
+                    
                     
                 } else if viewModel.gestureInProgress {
                     
@@ -195,8 +208,8 @@ struct CalendarContainer: View {
     
 //    MARK: EventCreationPreview
     @ViewBuilder
-    private func makeEventCreationPreview() -> some View {
-        if self.creatingEvent {
+    private func makeEventCreationPreview(on subDayIndex: Int) -> some View {
+        if self.creatingEvent && subDayIndex == viewModel.subDayIndex {
             ZStack {
                 RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                     .stroke(style: .init(lineWidth: 3, lineCap: .round, dash: [5, 10], dashPhase: 15))
@@ -211,6 +224,12 @@ struct CalendarContainer: View {
     }
     
 //    MARK: CalendarCarousel
+    private func calculateSubDayIndex(on day: Date) -> Int {
+        let difference = abs(viewModel.currentDay.timeIntervalSince(day)) + Constants.DayTime
+        let proposedIndex = Int(floor( difference / Constants.DayTime ))
+        return proposedIndex % 2
+    }
+    
     @ViewBuilder
     private func makeCalendarCarousel(in geo: GeometryProxy) -> some View {
         ScrollViewReader { proxy in
@@ -226,21 +245,22 @@ struct CalendarContainer: View {
                         ZStack(alignment: .top) {
                             CalendarView(events: viewModel.getEvents(on: day),
                                              on: day)
-                            
-                            makeEventCreationPreview()
+                            makeEventCreationPreview(on: calculateSubDayIndex(on: day))
                         }
 
                         .padding(.horizontal, 5)
-                        .frame(width: geo.size.width - calendarLabelWidth)
+                        .border(.green)
+                        .frame(width: (geo.size.width - calendarLabelWidth) / 2)
                         .id(i)
                         .task { await viewModel.loadEvents(for: day, in: events) }
                     }
-                    .scrollTargetLayout()
                 }
                 .background(GeometryReader { geo in
                     Color.clear
                         .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named(coordinateSpaceName)).origin)
                 })
+                .scrollTargetLayout()
+                
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo) }
                 .onAppear { scrollToCurrentDay(proxy: proxy) }
                 .onChange(of: viewModel.shouldScrollCalendar) {  scrollToCurrentDay(proxy: proxy) }
@@ -248,7 +268,7 @@ struct CalendarContainer: View {
                     viewModel.invalidateEvents(newEvents: newValue)
                 }
             }
-            .scrollTargetBehavior(.paging)
+            .scrollTargetBehavior(.viewAligned)
             .scrollDisabled(viewModel.gestureInProgress)
             
         }
@@ -279,10 +299,12 @@ struct CalendarContainer: View {
                                 
                                 Spacer()
                             }
+                            
+                            Text("\(viewModel.subDayIndex)")
                         }
                         .padding(.bottom, 150)
                         
-                        .simultaneousGesture(createEventHoldGesture)
+                        .simultaneousGesture(createEventHoldGesture(in: geo))
                         
                         .coordinateSpace(name: coordinateSpaceName)
                     }
