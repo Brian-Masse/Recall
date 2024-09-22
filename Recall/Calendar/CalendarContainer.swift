@@ -235,8 +235,6 @@ struct CalendarContainer: View {
     @ViewBuilder
     private func makeCalendarLabels() -> some View {
         let format = Date.FormatStyle().weekday(.abbreviated).day()
-            
-//            .month(.abbreviated).day()
         
         HStack(spacing: 0) {
             ForEach(0..<viewModel.daysPerView, id: \.self) { i in
@@ -246,14 +244,14 @@ struct CalendarContainer: View {
                 
                 HStack {
                     Spacer()
-                    UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-//                        .padding()
-//                        .background {
-//                            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius).foregroundStyle(.background) }
+                    UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                     Spacer()
                 }
             }
-        }.background()
+        }
+        .padding(.vertical, 7)
+        .background()
+        .opacity(0.75)
     }
     
 //    MARK: CalendarCarousel
@@ -345,10 +343,10 @@ struct CalendarContainer: View {
                     .simultaneousGesture(scaleGesture)
                     .scrollDisabled(viewModel.gestureInProgress)
                     .onAppear { proxy.scrollTo("scrollTarget") }
-                    .overlay(alignment: .top) {
+                    .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
                         makeCalendarLabels()
                             .padding(.leading, calendarLabelWidth)
-                    }
+                    } }
                 }
             }
             .onChange(of: showingEventCreationView) { if !showingEventCreationView { cleanEvent() } }

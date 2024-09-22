@@ -23,7 +23,7 @@ class RecallCalendarViewModel: ObservableObject {
     
 //    if the calendar is split into two days, then this indicates which of the day the user is interacting with
     @Published private(set) var subDayIndex: Int = 0
-    let daysPerView: Int = 2
+    @Published private(set) var daysPerView: Int = 2
     
     @Published var scale: Double = 100
     @Published var gestureInProgress: Bool = false
@@ -50,6 +50,10 @@ class RecallCalendarViewModel: ObservableObject {
         }
     }
     
+    func setDaysPerView(to count: Int) { withAnimation {
+        self.daysPerView = count
+    }}
+    
     func setSubDayIndex(to index: Int) {
         self.subDayIndex = index
     }
@@ -65,6 +69,15 @@ class RecallCalendarViewModel: ObservableObject {
         case 1: self.scale = 85
         case 2: self.scale = 50
         default: break
+        }
+    }
+    
+    func getDensity() -> Int {
+        switch self.scale {
+        case 120: return 0
+        case 85 : return 1
+        case 50 : return 2
+        default: return 0
         }
     }
     

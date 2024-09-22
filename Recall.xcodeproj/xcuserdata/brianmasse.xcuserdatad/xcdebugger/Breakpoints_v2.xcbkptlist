@@ -702,8 +702,8 @@
             filePath = "Recall/Calendar/RecallCalendarViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "121"
-            endingLineNumber = "121"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
             landmarkName = "loadEvents(for:in:)"
             landmarkType = "7">
          </BreakpointContent>
