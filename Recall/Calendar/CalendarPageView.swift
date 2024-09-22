@@ -25,6 +25,7 @@ struct CalendarPageView: View {
     let events: [RecallCalendarEvent]
     let goals: [RecallGoal]
     
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     @State var showingCreateEventView: Bool = false
@@ -158,6 +159,7 @@ struct CalendarPageView: View {
         HStack {
             ForEach( 0..<7, id: \.self) { i in
                 let day = calendar.date(byAdding: .day, value: 6 - i, to: week)!
+                let isCurrentDay = day.matches(viewModel.currentDay, to: .day)
                 
                 HStack {
                     Spacer()
@@ -168,16 +170,18 @@ struct CalendarPageView: View {
                         
                         UniversalText( day.formatted(dayFormat), size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
                     }
-                    .background {
-                        if day.matches(viewModel.currentDay, to: .day) {
-                            Circle()
-                                .frame(width: 50, height: 50)
-                                .universalStyledBackgrond(.accent, onForeground: true)
-                        }
-                        
-                    }
+                    .opacity( i == 0 || i == 6 ? 0.5 : 1 )
+                    .foregroundStyle( isCurrentDay ? .black :  ( colorScheme == .dark ? .white : .black ) )
+                    .background { if isCurrentDay  {
+                        Circle()
+                            .frame(width: 50, height: 50)
+                            .universalStyledBackgrond(.accent, onForeground: true)
+                    } }
+                    
                     Spacer()
                 }
+                .contentShape(Rectangle())
+                .onTapGesture { setCurrentDay(with: day) }
             }
         }
     }
@@ -187,20 +191,14 @@ struct CalendarPageView: View {
     var body: some View {
         
         VStack() {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading) {
                 makeHeader()
                     .padding(.horizontal, 7)
 
-                HStack {
-                    makeDateTape(on: viewModel.currentDay)
-//                    makeDateSelectors()
-                    
-//                    LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
-                }
+//                makeDateSelectors()
+                makeDateTape(on: viewModel.currentDay)
+                    .padding(.vertical)
             }
-            .padding(.bottom )
-        
-            Text("\(viewModel.currentDay.formatted(date: .abbreviated, time: .omitted  ))")
             
             CalendarContainer(events: Array(events))
         }

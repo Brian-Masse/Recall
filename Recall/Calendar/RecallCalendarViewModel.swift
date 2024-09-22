@@ -19,6 +19,7 @@ class RecallCalendarViewModel: ObservableObject {
     @Published private(set) var currentDay: Date = Date.now
     //    this will be toggled whenever the view should scroll to the currentDay
     @Published private(set) var shouldScrollCalendar: Bool = false
+    @Published private(set) var scrollingCalendar: Bool = false
     
 //    if the calendar is split into two days, then this indicates which of the day the user is interacting with
     @Published private(set) var subDayIndex: Int = 0
@@ -39,7 +40,14 @@ class RecallCalendarViewModel: ObservableObject {
     
         withAnimation { self.currentDay = day }
         
-        if scrollToDay { shouldScrollCalendar.toggle() }
+        if scrollToDay {
+            shouldScrollCalendar.toggle()
+            scrollingCalendar = true
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.scrollingCalendar = false
+            }
+        }
     }
     
     func setSubDayIndex(to index: Int) {

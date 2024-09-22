@@ -92,9 +92,9 @@ struct CalendarContainer: View {
         let proposedIndex = Int(floor( (x + calendarLabelWidth + scrollDetectionPadding) / calendarWidth) )
         let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
         
-//        print(x, proposedIndex)
-        
-        if !self.viewModel.currentDay.matches(proposedDate, to: .day) {
+        if !viewModel.scrollingCalendar
+//            && !self.viewModel.currentDay.matches(proposedDate, to: .day)
+        {
             self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
         }
     }
@@ -107,7 +107,7 @@ struct CalendarContainer: View {
     
     private func scrollToCurrentDay(proxy: ScrollViewProxy) {
         let index = floor(Date.now.timeIntervalSince(viewModel.currentDay) / Constants.DayTime)
-        withAnimation { proxy.scrollTo(Int(index)) }
+        withAnimation { proxy.scrollTo(Int(index), anchor: .leading) }
     }
     
 //    MARK: ScaleGesture
@@ -279,25 +279,26 @@ struct CalendarContainer: View {
                             CalendarView(events: viewModel.getEvents(on: day),
                                              on: day)
                             makeEventCreationPreview(on: calculateSubDayIndex(on: day))
+                            
+                            Text("\(i)")
                         }
                         .padding(.horizontal, 2)
                         .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
+                        .task { await viewModel.loadEvents(for: day, in: events) }
                         .id(i)
-                        .task {
-                            await viewModel.loadEvents(for: day, in: events)
-                        }
                     }
                 }
+                .scrollTargetLayout()
+                .onChange(of: viewModel.shouldScrollCalendar) { scrollToCurrentDay(proxy: proxy) }
+                
                 .background(GeometryReader { geo in
                     Color.clear
-                        .rotationEffect(Angle(degrees: 180)).scaleEffect(x: 1.0, y: -1.0, anchor: .center)
                         .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named(coordinateSpaceName)).origin)
                 })
-                .scrollTargetLayout()
                 
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo) }
                 .onAppear { scrollToCurrentDay(proxy: proxy) }
-                .onChange(of: viewModel.shouldScrollCalendar) {  scrollToCurrentDay(proxy: proxy) }
+                
                 .onChange(of: events) { oldValue, newValue in
                     viewModel.invalidateEvents(newEvents: newValue)
                 }
