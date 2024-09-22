@@ -22,7 +22,7 @@ class RecallCalendarViewModel: ObservableObject {
     
 //    if the calendar is split into two days, then this indicates which of the day the user is interacting with
     @Published private(set) var subDayIndex: Int = 0
-    let daysPerView: Int = 3
+    let daysPerView: Int = 2
     
     @Published var scale: Double = 100
     @Published var gestureInProgress: Bool = false
@@ -94,6 +94,9 @@ class RecallCalendarViewModel: ObservableObject {
     static func dateKey(from date: Date) -> String { date.formatted(date: .complete, time: .omitted) }
     
     func loadEvents( for day: Date, in events: [RecallCalendarEvent] ) async {
+        
+        if abs(currentDay.timeIntervalSince(day) / Constants.DayTime) > 4 { return }
+        
         let key = RecallCalendarViewModel.dateKey(from: day)
         if filteredEvents[key] != nil { return }
         

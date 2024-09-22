@@ -140,12 +140,50 @@ struct CalendarPageView: View {
                 .onTapGesture { showingProfileView = true }
         }
         
-        makeDateLabel()
+        
+//        makeDateLabel()
+    }
+    
+//    MARK: DateTape
+    @ViewBuilder
+    private func makeDateTape(on day: Date) -> some View {
+        let calendar = Calendar(identifier: .gregorian)
+        
+        let comps = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: day)
+        let week = calendar.date(from: comps) ?? day + Constants.WeekTime
+        
+        let dayFormat = Date.FormatStyle().day(.twoDigits)
+        let dayOfWeekFormat = Date.FormatStyle().weekday(.narrow)
+        
+        HStack {
+            ForEach( 0..<7, id: \.self) { i in
+                let day = calendar.date(byAdding: .day, value: 6 - i, to: week)!
+                
+                HStack {
+                    Spacer()
+                    VStack(spacing: 0) {
+                        UniversalText( day.formatted(dayOfWeekFormat), size: Constants.UISmallTextSize, font: Constants.mainFont )
+                            .opacity(0.75)
+                            .padding(.bottom, -5)
+                        
+                        UniversalText( day.formatted(dayFormat), size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                    }
+                    .background {
+                        if day.matches(viewModel.currentDay, to: .day) {
+                            Circle()
+                                .frame(width: 50, height: 50)
+                                .universalStyledBackgrond(.accent, onForeground: true)
+                        }
+                        
+                    }
+                    Spacer()
+                }
+            }
+        }
     }
     
     
 //    MARK: Body
-    
     var body: some View {
         
         VStack() {
@@ -154,12 +192,15 @@ struct CalendarPageView: View {
                     .padding(.horizontal, 7)
 
                 HStack {
-                    makeDateSelectors()
+                    makeDateTape(on: viewModel.currentDay)
+//                    makeDateSelectors()
                     
-                    LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
+//                    LargeRoundedButton("recall", icon: "arrow.up") { showingCreateEventView = true }
                 }
             }
             .padding(.bottom )
+        
+            Text("\(viewModel.currentDay.formatted(date: .abbreviated, time: .omitted  ))")
             
             CalendarContainer(events: Array(events))
         }

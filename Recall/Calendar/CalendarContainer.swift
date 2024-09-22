@@ -82,14 +82,17 @@ struct CalendarContainer: View {
 //    MARK: Struct Methods
     private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy) {
 //        if scrollPosition.x > 0 { return }
-        let x = scrollPosition.x
+        let x = abs(scrollPosition.x)
+        
         let daysPerView =  Double(viewModel.daysPerView)
         
-        let scrollDetectionPadding = self.scrollDetectionPadding / daysPerView
         let calendarWidth = abs(geo.size.width - calendarLabelWidth) / daysPerView
+        let scrollDetectionPadding = calendarWidth / 2
         
-        let proposedIndex = Int(floor(abs(x - calendarLabelWidth - scrollDetectionPadding) / calendarWidth))
+        let proposedIndex = Int(floor( (x + calendarLabelWidth + scrollDetectionPadding) / calendarWidth) )
         let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
+        
+//        print(x, proposedIndex)
         
         if !self.viewModel.currentDay.matches(proposedDate, to: .day) {
             self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
@@ -277,15 +280,17 @@ struct CalendarContainer: View {
                                              on: day)
                             makeEventCreationPreview(on: calculateSubDayIndex(on: day))
                         }
-
                         .padding(.horizontal, 2)
                         .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
                         .id(i)
-                        .task { await viewModel.loadEvents(for: day, in: events) }
+                        .task {
+                            await viewModel.loadEvents(for: day, in: events)
+                        }
                     }
                 }
                 .background(GeometryReader { geo in
                     Color.clear
+                        .rotationEffect(Angle(degrees: 180)).scaleEffect(x: 1.0, y: -1.0, anchor: .center)
                         .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named(coordinateSpaceName)).origin)
                 })
                 .scrollTargetLayout()
@@ -299,6 +304,7 @@ struct CalendarContainer: View {
             }
             .scrollTargetBehavior(.viewAligned)
             .scrollDisabled(viewModel.gestureInProgress)
+            
             
         }
         .padding(.leading, calendarLabelWidth)
