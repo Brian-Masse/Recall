@@ -101,10 +101,17 @@ I independently developed this project, from problem identification, project bra
 
 ### **Version 2.2.0**
 
+ADDITIONS
+- added controls for calendar density
+- added split screen for primary calendar
+- added recall button to tool bar
+
 CHANGES
 
 - Redesigned all Forms
 - Redesigned Goals Page
+- Redesigned Date Selector
+- redesigned tab bar
 
 - Fixed various bugs related to the calendar layout
 
