@@ -99,7 +99,7 @@ I independently developed this project, from problem identification, project bra
 
 ## **Version History**
 
-### **Version 2.2.0**
+### **Version 2.2.1**
 
 ADDITIONS
 - added controls for calendar density
