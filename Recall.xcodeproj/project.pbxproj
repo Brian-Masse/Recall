@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -620,7 +620,6 @@
 				C954AACD2A76B60000897BCE /* XCRemoteSwiftPackageReference "FlowGrid" */,
 				C9EE9EB62B608FA40090DB16 /* XCRemoteSwiftPackageReference "UniversalDonationPackage" */,
 				C9D24AA52C62C65800A7F279 /* XCRemoteSwiftPackageReference "realm-swift" */,
-				C9BF38BF2C9B56CA00AA8C3F /* XCLocalSwiftPackageReference "../Packages/UIUniversals" */,
 			);
 			productRefGroup = C91BCEEF2A618435003C6DD6 /* Products */;
 			projectDirPath = "";
@@ -1103,13 +1102,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCLocalSwiftPackageReference section */
-		C9BF38BF2C9B56CA00AA8C3F /* XCLocalSwiftPackageReference "../Packages/UIUniversals" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Packages/UIUniversals;
-		};
-/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
