@@ -41,6 +41,7 @@
 		C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923D51B2A8F119C00E432B9 /* RecallGoalDataModel.swift */; };
 		C928E15A2A7B546E00E981F1 /* EventsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E1592A7B546E00E981F1 /* EventsDataSection.swift */; };
 		C928E15C2A7C3B3300E981F1 /* GoalsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E15B2A7C3B3300E981F1 /* GoalsDataSection.swift */; };
+		C93228EE2CA87ABE00E91F6B /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C93228ED2CA87ABE00E91F6B /* UIUniversals */; };
 		C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F102A688855007E8537 /* UniversalForm.swift */; };
 		C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F152A6891E9007E8537 /* CalendarPageView.swift */; };
 		C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F172A68931F007E8537 /* GoalsPageView.swift */; };
@@ -207,6 +208,7 @@
 				C9D24AA72C62C65800A7F279 /* RealmSwift in Frameworks */,
 				C9EE9EB82B608FA50090DB16 /* UniversalDonationPackage in Frameworks */,
 				C9BF38C12C9B56CA00AA8C3F /* UIUniversals in Frameworks */,
+				C93228EE2CA87ABE00E91F6B /* UIUniversals in Frameworks */,
 				C9BF38BE2C9B568400AA8C3F /* UIUniversals in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -542,6 +544,7 @@
 				C9D24AA62C62C65800A7F279 /* RealmSwift */,
 				C9BF38BD2C9B568400AA8C3F /* UIUniversals */,
 				C9BF38C02C9B56CA00AA8C3F /* UIUniversals */,
+				C93228ED2CA87ABE00E91F6B /* UIUniversals */,
 			);
 			productName = Recall;
 			productReference = C91BCEEE2A618435003C6DD6 /* Recall.app */;
@@ -620,6 +623,7 @@
 				C954AACD2A76B60000897BCE /* XCRemoteSwiftPackageReference "FlowGrid" */,
 				C9EE9EB62B608FA40090DB16 /* XCRemoteSwiftPackageReference "UniversalDonationPackage" */,
 				C9D24AA52C62C65800A7F279 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				C93228EC2CA87ABE00E91F6B /* XCRemoteSwiftPackageReference "UIUniversals" */,
 			);
 			productRefGroup = C91BCEEF2A618435003C6DD6 /* Products */;
 			projectDirPath = "";
@@ -1104,6 +1108,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		C93228EC2CA87ABE00E91F6B /* XCRemoteSwiftPackageReference "UIUniversals" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Brian-Masse/UIUniversals";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		C94B1F122A6888C1007E8537 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/xnth97/SymbolPicker.git";
@@ -1139,6 +1151,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C93228ED2CA87ABE00E91F6B /* UIUniversals */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C93228EC2CA87ABE00E91F6B /* XCRemoteSwiftPackageReference "UIUniversals" */;
+			productName = UIUniversals;
+		};
 		C9BF38BD2C9B568400AA8C3F /* UIUniversals */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = UIUniversals;
