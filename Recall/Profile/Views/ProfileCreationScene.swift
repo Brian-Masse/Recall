@@ -315,7 +315,7 @@ struct ProfileCreationView: View {
             HStack {
                 UniversalText( title, size: size, font: Constants.titleFont )
                 Spacer()
-                ResizableIcon(icon, size: size)
+                RecallIcon(icon)
             }
             
             if !hideMetaData {

@@ -131,12 +131,12 @@ struct CalendarPageView: View {
             Spacer()
             
             
-            ResizableIcon("calendar", size: Constants.UIDefaultTextSize)
+            RecallIcon("calendar")
                 .rectangularBackground(style: .secondary)
                 .padding(.leading)
                 .onTapGesture { showingCalendarView = true }
             
-            ResizableIcon("person", size: Constants.UIDefaultTextSize)
+            RecallIcon("person")
                 .rectangularBackground(style: .secondary)
                 .onTapGesture { showingProfileView = true }
         }

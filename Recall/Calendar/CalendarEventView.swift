@@ -49,7 +49,7 @@ struct CalendarEventView: View {
             Spacer()
             
             VStack {
-                ResizableIcon(icon, size: Constants.UISubHeaderTextSize)
+                RecallIcon(icon)
                     .padding(5)
                 UniversalText(title, size: Constants.UISmallTextSize, font: Constants.mainFont)
             }

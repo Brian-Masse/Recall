@@ -16,7 +16,7 @@ struct CalendarEventPreviewContentView: View {
     @ViewBuilder
     private func makeMetadataTag(label: String, icon: String) -> some View {
         HStack {
-            if icon != "" { ResizableIcon(icon, size: Constants.UIDefaultTextSize) }
+            if icon != "" { RecallIcon(icon, bold: false).font(.callout) }
             if label != "" { UniversalText(label, size: Constants.UISmallTextSize, font: Constants.titleFont, scale: true) }
         }
         .foregroundColor(.black)

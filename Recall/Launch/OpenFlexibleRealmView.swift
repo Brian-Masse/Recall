@@ -27,7 +27,7 @@ struct OpenFlexibleSyncRealmView: View {
         
         var body: some View {
             HStack {
-                ResizableIcon(icon, size: Constants.UIDefaultTextSize)
+                RecallIcon(icon, bold: false)
                 UniversalText(title, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: true)
             }
             .opacity(0.7)

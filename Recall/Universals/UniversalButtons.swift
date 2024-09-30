@@ -73,7 +73,7 @@ struct IconButton: View {
                         .padding(.trailing, 5)
                 }
                 
-                RecallIcon(icon)
+                RecallIcon(icon, bold: false)
                 
                 if full { Spacer() }
             }

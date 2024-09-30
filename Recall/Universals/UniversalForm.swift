@@ -20,7 +20,7 @@ struct RecallIcon: View {
     }
     
     var body: some View {
-        RecallIcon(icon)
+        Image(systemName: icon)
             .bold(bold)
     }
 }

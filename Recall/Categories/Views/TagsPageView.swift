@@ -44,16 +44,7 @@ struct TagPageView: View {
                     UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
                     
                     Spacer()
-                    
-                    HStack {
-                        UniversalText("Favorite", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                        RecallIcon(tag.isFavorite ? "checkmark" : "arrow.up")
-                    }
-                    .onTapGesture { withAnimation { tag.toggleFavorite() }}
                 }
-                
-//                makeGoalTags()
-//                    .padding(.leading, 25)
             }
             .padding(.vertical, 5)
             .rectangularBackground(7, style: .secondary)

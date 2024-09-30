@@ -34,9 +34,9 @@ struct TabBar: View {
         
         ZStack {
             if page == pageSelection {
-                Circle()
+                RoundedRectangle(cornerRadius: 100)
                     .matchedGeometryEffect(id: "highlight", in: tabBarNamespace)
-                    .frame(width: buttonRadius * 2, height: buttonRadius * 2)
+                    .frame(width: buttonRadius * 2, height: buttonRadius * 2 * 2/3)
                     .universalStyledBackgrond(.accent, onForeground: true)
             }
             
@@ -79,7 +79,7 @@ struct TabBar: View {
                 makeRecallButton()
             } else {
                 makeTabBarButton(page: .calendar, icon: "calendar")
-                    .frame(width: buttonRadius * 2, height: buttonRadius * 2)
+                    .frame(width: buttonRadius * 2, height: buttonRadius * 2 * (2/3))
                     .background {
                         RoundedRectangle(cornerRadius: 55)
                             .foregroundStyle(.thinMaterial)
