@@ -172,7 +172,7 @@ struct GoalCreationView: View {
                 UniversalText("Which tag would you like to track?", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
                 WrappedHStack(collection: Array(tags)) { tag in
                     HStack {
-                        Image(systemName: "tag")
+                        RecallIcon("tag")
                         UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                     }
                     .onTapGesture { targetTag = tag }

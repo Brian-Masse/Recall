@@ -31,7 +31,7 @@ struct EventsDataSection: View {
         HStack {
             Spacer()
             UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            Image(systemName: icon)
+            RecallIcon(icon)
             Spacer()
         }
         .if( period != timePeriod) { view in view.rectangularBackground(style: .secondary) }

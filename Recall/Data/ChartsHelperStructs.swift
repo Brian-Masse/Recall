@@ -71,7 +71,7 @@ struct HideableDataCollection: ViewModifier {
             HStack {
                 Spacer()
                 UniversalText("see all data", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                Image(systemName: showing ? "arrow.up" : "arrow.down")
+                RecallIcon(showing ? "arrow.up" : "arrow.down")
                 Spacer()
             }
             .rectangularBackground(7, style: .secondary)

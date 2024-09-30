@@ -53,7 +53,7 @@ struct CalendarPageView: View {
             
             if !matches {
                 UniversalText(currentLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                Image(systemName: "arrow.forward")
+                RecallIcon("arrow.forward")
                     .opacity(0.8)
             }
             
@@ -194,7 +194,7 @@ struct CalendarPageView: View {
     private func makeCalendarLayoutButton(icon: String, count: Int, activeValue: Int, action: @escaping (Int) -> Void) -> some View {
         let isCurrent = activeValue == count
         
-        Image(systemName: icon)
+        RecallIcon(icon)
             .padding(.horizontal, isCurrent ? 15 : 7)
             .padding(.vertical)
             .contentShape(Rectangle())
@@ -250,7 +250,7 @@ struct CalendarPageView: View {
             HStack {
                 Spacer()
                 
-                Image(systemName: showingToolBar ? "chevron.up" : "chevron.down")
+                RecallIcon(showingToolBar ? "chevron.up" : "chevron.down")
                     .padding(.vertical, 5)
                     .opacity(0.65)
                 

@@ -109,7 +109,7 @@ struct ProfileCreationView: View {
         
         ZStack {
             HStack {
-                Image(systemName: "arrow.backward")
+                RecallIcon("arrow.backward")
                 UniversalText( "back", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                 Spacer()
             }
@@ -260,7 +260,7 @@ struct ProfileCreationView: View {
         HStack {
             Spacer()
             UniversalText( label, size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
-            Image(systemName: "arrow.up.forward")
+            RecallIcon("arrow.up.forward")
             Spacer()
         }
     }
@@ -325,7 +325,7 @@ struct ProfileCreationView: View {
                 
                 HStack {
                     
-                    Image(systemName: "tag")
+                    RecallIcon("tag")
                     UniversalText( tag, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
                     
                     Spacer()

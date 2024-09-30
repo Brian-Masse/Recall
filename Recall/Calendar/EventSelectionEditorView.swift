@@ -69,7 +69,7 @@ struct EventSelectionEditorView: View {
     private func makeEventPreivew(_ event: RecallCalendarEvent) -> some View {
         
         HStack {
-            Image(systemName: "checkmark")
+            RecallIcon("checkmark")
             UniversalText( event.title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
         }
             .foregroundStyle(.black)
@@ -116,7 +116,7 @@ struct EventSelectionEditorView: View {
         HStack {
             Spacer()
             UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-            Image(systemName: icon)
+            RecallIcon(icon)
             Spacer()
         }
         .rectangularBackground(style: .secondary)

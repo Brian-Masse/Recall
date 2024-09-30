@@ -189,7 +189,7 @@ struct CalendarEventPreviewView: View {
                     .foregroundStyle(.clear)
                     .contentShape(Rectangle())
                 
-                Image(systemName: direction == .up ? "chevron.up" : "chevron.down")
+                RecallIcon(direction == .up ? "chevron.up" : "chevron.down")
                     .bold()
             }
             .frame(height: 20)

@@ -194,7 +194,7 @@ struct ActivitiesPerDay: View {
                 
                 HStack {
                     UniversalText( "load more", size: Constants.UISmallTextSize, font: Constants.mainFont )
-                    Image(systemName: "arrow.down.to.line")
+                    RecallIcon("arrow.down.to.line")
                 }
                 .padding(5)
                 .onTapGesture { withAnimation {
@@ -253,7 +253,7 @@ struct GoalCompletionOverTime: View {
                 
                 HStack {
                     UniversalText( "load more", size: Constants.UISmallTextSize, font: Constants.mainFont )
-                    Image(systemName: "arrow.down.to.line")
+                    RecallIcon("arrow.down.to.line")
                 }
                 .padding(5)
                 .onTapGesture { withAnimation {
@@ -313,7 +313,7 @@ struct GoalProgressOverTime: View {
                 
                 HStack {
                     UniversalText( "load more", size: Constants.UISmallTextSize, font: Constants.mainFont )
-                    Image(systemName: "arrow.down.to.line")
+                    RecallIcon("arrow.down.to.line")
                 }
                 .padding(5)
                 .onTapGesture { withAnimation {

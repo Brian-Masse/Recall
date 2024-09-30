@@ -40,7 +40,7 @@ struct TabBar: View {
                     .universalStyledBackgrond(.accent, onForeground: true)
             }
             
-            Image(systemName: icon)
+            RecallIcon(icon)
                 .bold()
                 .frame(width: 20, height: 20)
                 .foregroundStyle( isActivePage ? .black : ( colorScheme == .dark ? .white : .black ) )
@@ -59,7 +59,7 @@ struct TabBar: View {
     @ViewBuilder
     private func makeRecallButton() -> some View {
         UniversalButton {
-            Image(systemName: "arrow.turn.left.up")
+            RecallIcon("arrow.turn.left.up")
                 .bold()
                 .foregroundStyle(.black)
                 .padding(.vertical, 20)

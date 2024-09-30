@@ -58,7 +58,7 @@ struct UpdateView: View {
             HStack {
                 Spacer()
                 UniversalText("View all udpates", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                Image(systemName: "arrow.up.doc")
+                RecallIcon("arrow.up.doc")
                 Spacer()
             }
             .rectangularBackground(style: .secondary)

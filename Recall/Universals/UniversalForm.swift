@@ -9,6 +9,22 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+struct RecallIcon: View {
+    
+    let icon: String
+    let bold: Bool
+    
+    init(_ icon: String, bold: Bool = true) {
+        self.icon = icon
+        self.bold = bold
+    }
+    
+    var body: some View {
+        RecallIcon(icon)
+            .bold(bold)
+    }
+}
+
 
 //This file contains form components and styles used across the app to make the more consistent and easier to acess
 //MARK: Basic
@@ -112,7 +128,7 @@ struct StyledTextField: View {
                     HStack {
                         Spacer()
                         UniversalText( "clear", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                        Image(systemName: "xmark")
+                        RecallIcon("xmark")
                         Spacer()
                         
                     }

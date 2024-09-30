@@ -34,7 +34,7 @@ struct ConditionalLargeRoundedButton: View {
         HStack {
             if wide { Spacer() }
             if title != "" { UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont) }
-            Image(systemName: icon)
+            RecallIcon(icon)
             if wide { Spacer() }
             
         }
@@ -73,7 +73,7 @@ struct IconButton: View {
                         .padding(.trailing, 5)
                 }
                 
-                Image(systemName: icon)
+                RecallIcon(icon)
                 
                 if full { Spacer() }
             }

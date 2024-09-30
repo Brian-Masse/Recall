@@ -28,7 +28,7 @@ struct DataPageView: View {
         HStack {
             Spacer()
             VStack {
-                Image(systemName: icon)
+                RecallIcon(icon)
                     .padding(.bottom, 7)
                 
                 UniversalText( page.rawValue, size: Constants.UISmallTextSize, font: Constants.mainFont )

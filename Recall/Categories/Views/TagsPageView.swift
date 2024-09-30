@@ -38,7 +38,7 @@ struct TagPageView: View {
         var body: some View {
             VStack(spacing: 5) {
                 HStack {
-                    Image(systemName: "tag.fill")
+                    RecallIcon("tag.fill")
                         .foregroundStyle(tag.getColor())
                     
                     UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
@@ -47,7 +47,7 @@ struct TagPageView: View {
                     
                     HStack {
                         UniversalText("Favorite", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                        Image(systemName: tag.isFavorite ? "checkmark" : "arrow.up")
+                        RecallIcon(tag.isFavorite ? "checkmark" : "arrow.up")
                     }
                     .onTapGesture { withAnimation { tag.toggleFavorite() }}
                 }

@@ -261,7 +261,7 @@ struct ProfileView: View {
         HStack {
             Spacer()
             VStack {
-                Image(systemName: icon)
+                RecallIcon(icon)
                     .padding(.bottom, 5)
                 UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
             }
@@ -276,7 +276,7 @@ struct ProfileView: View {
         
         VStack(alignment: .leading) {
             UniversalText( SettingsConstants.recallStyleLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-            HStack {
+               HStack {
                 makeDefaultRecallStyleSelectorOption("Recall with event time", icon: "calendar", option: true)
                 makeDefaultRecallStyleSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: false)
             }

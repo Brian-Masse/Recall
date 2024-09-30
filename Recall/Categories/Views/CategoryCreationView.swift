@@ -93,7 +93,7 @@ struct CategoryCreationView: View {
                 let key = goal.getEncryptionKey()
                 
                 HStack {
-                    Image(systemName: "arrow.up.forward")
+                    RecallIcon("arrow.up.forward")
                     UniversalText(goal.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                 }
                 .if(!hasGoalRating(at: key)) { view in view.rectangularBackground(style: .secondary) }

@@ -107,7 +107,7 @@ extension TutorialViews {
         @ViewBuilder
         private func makeTagSelector(tag: RecallCategory) -> some View {
             HStack {
-                Image(systemName: "tag")
+                RecallIcon("tag")
                 UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             }
             .onTapGesture { self.tag = tag }

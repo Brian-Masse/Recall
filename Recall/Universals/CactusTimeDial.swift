@@ -236,7 +236,7 @@ struct CactusTimeDial: View {
                 HStack(spacing: 7) {
                     let count = 24
                     
-                    Image(systemName: "chevron.left")
+                    RecallIcon("chevron.left")
                         .opacity(0.2)
                     
                     ForEach( 0...count, id: \.self ) { i in
@@ -253,7 +253,7 @@ struct CactusTimeDial: View {
                             .scaleEffect(y: currentLinearProgress == -100 ? 0.8 : scale)
                     }
                     
-                    Image(systemName: "chevron.right")
+                    RecallIcon("chevron.right")
                         .opacity(0.2)
                 }
                 .bold()

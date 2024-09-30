@@ -48,7 +48,7 @@ struct CategoriesPageView: View {
         HStack {
             Spacer()
             VStack {
-                Image(systemName: icon)
+                RecallIcon(icon)
                     .padding(.bottom, 5)
                 UniversalText( page.rawValue, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true)
             }

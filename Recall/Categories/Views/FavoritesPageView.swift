@@ -146,7 +146,7 @@ struct FavoritesPageView: View {
         HStack {
             Spacer()
             UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.mainFont, wrap: false, scale: true )
-            Image(systemName: icon)
+            RecallIcon(icon)
             Spacer()
         }
         .if( grouping == selection ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }

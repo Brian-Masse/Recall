@@ -41,7 +41,7 @@ struct GoalMultiplierSelector: View {
                 .frame(width: 150)
 
             if showToggle {
-                Image(systemName: "checkmark")
+                RecallIcon("checkmark")
                     .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 == 0 ) { view in view.rectangularBackground(style: .primary) }
                     .if( Int( goalRatings[goal.key] ?? "0" ) ?? 0 != 0 ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
                 
@@ -213,7 +213,7 @@ struct CalendarEventCreationView: View {
         HStack {
             Spacer()
             VStack {
-                Image(systemName: icon)
+                RecallIcon(icon)
                     .padding(.bottom, 5)
                 UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
             }.padding(.horizontal, 15)
@@ -268,7 +268,7 @@ struct CalendarEventCreationView: View {
     private func makeTagSelector(tag: RecallCategory) -> some View {
         HStack {
             
-            Image(systemName: "tag.fill")
+            RecallIcon("tag.fill")
                 .foregroundStyle( category.label == tag.label ? .black : tag.getColor() )
             
             UniversalText( tag.label, size: Constants.UIDefaultTextSize, font: Constants.titleFont )

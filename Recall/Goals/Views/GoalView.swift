@@ -24,7 +24,7 @@ struct GoalView: View {
     func makeOverViewDataView(title: String, icon: String, data: String) -> some View {
         
         HStack {
-            Image(systemName: icon)
+            RecallIcon(icon)
             UniversalText(title,
                           size: Constants.UIDefaultTextSize,
                           font: Constants.mainFont)
@@ -95,7 +95,7 @@ struct GoalView: View {
             
             WrappedHStack(collection: Array(contributingTags)) { tag in
                 HStack {
-                    Image(systemName: "arrow.up.right")
+                    RecallIcon("arrow.up.right")
                     UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                     
                 }

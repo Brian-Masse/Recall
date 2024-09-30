@@ -144,7 +144,7 @@ struct TutorialViews: View {
             HStack {
                 if scene.rawValue >= 1 {
                     Group {
-                        Image(systemName: "arrow.backward")
+                        RecallIcon("arrow.backward")
                         UniversalText( "back", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                     }
                     .opacity(0.5)
@@ -155,7 +155,7 @@ struct TutorialViews: View {
                 
                 HStack {
                     UniversalText( "skip", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                    Image(systemName: "arrow.forward")
+                    RecallIcon("arrow.forward")
                 }
                 .opacity(0.5)
                 .onTapGesture { showSkipTutorialWarning = true }

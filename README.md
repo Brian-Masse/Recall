@@ -12,9 +12,15 @@ view Recall on the [App Store](https://apps.apple.com/us/app/recall/id6466136108
 Recall is a calendar based app designed around recording daily events to be able to view trends in productivity, goal completion, and time management over time. It is built natively in swift and swiftUI on the front end, and uses MongoDB and Realm DeviceSync on the backend.
 
 ## **Upcoming Features**
-- Image Collections on Events
-- Home Screen Widgets 
+
+New Ways to Browse:
+- Puts photo gallery, search, favorites, and templates on the same page
+- Ability to Uplaod images with events
+- Ability to search through events
 - Locations + links for events
+
+New Ways to Customize:
+- Home Screen Widgets 
 - Personalized Color Pallets
 
 ## **Package Dependencies**
