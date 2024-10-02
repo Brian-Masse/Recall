@@ -361,7 +361,3 @@ struct CalendarContainer: View {
         }
     }
 }
-
-#Preview {
-    CalendarContainer(events: [])
-}

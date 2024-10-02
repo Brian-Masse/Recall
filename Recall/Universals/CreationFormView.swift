@@ -124,7 +124,3 @@ private struct CreationFormDemoView: View {
         VStack {}
     }
 }
-
-#Preview {
-    CreationFormDemoView()
-}

@@ -82,9 +82,3 @@ struct IconButton: View {
         } action: { action() }
     }
 }
-
-#Preview {
-    IconButton("plus", label: "Hello") {
-        print("hi")
-    }
-}

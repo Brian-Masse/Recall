@@ -526,7 +526,3 @@ struct CactusTimeDialDemoView: View {
         }
     }
 }
-
-#Preview {
-    CactusTimeDialDemoView()
-}

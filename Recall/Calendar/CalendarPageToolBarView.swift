@@ -18,8 +18,3 @@ struct CalendarPageToolBarView: View {
         }
     }
 }
-
-
-#Preview {
-    CalendarPageToolBarView()
-}
