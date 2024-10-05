@@ -82,14 +82,16 @@ struct StyledTextField: View {
     
     let title: String
     let binding: Binding<String>
+    let prompt: String
     let clearable: Bool
     let multiLine: Bool
     
-    init( title: String, binding: Binding<String>, clearable: Bool = false, multiLine: Bool = false ) {
+    init( title: String, binding: Binding<String>, prompt: String = "", clearable: Bool = false, multiLine: Bool = false ) {
         self.title = title
         self.binding = binding
         self.clearable = clearable
         self.multiLine = multiLine
+        self.prompt = prompt
     }
     
     @Environment(\.colorScheme) var colorScheme
@@ -98,18 +100,20 @@ struct StyledTextField: View {
     
     @ViewBuilder
     private func makeTextField() -> some View {
-        if multiLine { TextField("", text: binding, axis: .vertical) }
-        else { TextField("", text: binding) }
+        if multiLine { TextField(prompt, text: binding, axis: .vertical) }
+        else { TextField(prompt, text: binding) }
     }
     
     var body: some View {
         
         VStack(alignment: .leading, spacing: 5) {
-            UniversalText(title,
-                          size: Constants.formQuestionTitleSize,
-                          font: Constants.titleFont)
-            .padding(.trailing)
-            
+            if !title.isEmpty {
+                UniversalText(title,
+                              size: Constants.formQuestionTitleSize,
+                              font: Constants.titleFont)
+                .padding(.trailing)
+            }
+                
             makeTextField()
                 .focused($focused)
                 .lineLimit(1...)
