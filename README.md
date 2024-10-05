@@ -2,11 +2,6 @@
 
 view Recall on the [App Store](https://apps.apple.com/us/app/recall/id6466136108)
 
-<picture>
-    <!-- <source srcset="./icon_512x512@2x@2x.png" media="(prefers-color-scheme: dark)" alt="Recall by Brian Masse"> -->
-    <img src="./icon_512x512@2x@2x.png" alt="Recall by Brian Masse" width='80'>
-</picture>
-
 ## **About Recall**
 
 Recall is a calendar based app designed around recording daily events to be able to view trends in productivity, goal completion, and time management over time. It is built natively in swift and swiftUI on the front end, and uses MongoDB and Realm DeviceSync on the backend.
