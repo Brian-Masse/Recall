@@ -812,8 +812,8 @@
             filePath = "Recall/Managers/LocationManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
             landmarkName = "getLocationInformation()"
             landmarkType = "7">
          </BreakpointContent>

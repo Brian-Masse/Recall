@@ -22,15 +22,24 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
     @ViewBuilder var contentBuilder: (Section) -> C
     private let submit: () -> Void
     
+    @Binding private var fullScreenSectionId: Int
+    
     private let title: String
     private let sequence: [Section]?
     
-    init( _ title: String, section: Section.Type, sequence: [Section]? = nil, submit: @escaping () -> Void, @ViewBuilder contentBuilder: @escaping (Section) -> C ) {
+    init( _ title: String,
+          section: Section.Type,
+          sequence: [Section]? = nil,
+          fullScreenSectionId: Binding<Int> = Binding { -1 } set: { _ in },
+          submit: @escaping () -> Void,
+          @ViewBuilder contentBuilder: @escaping (Section) -> C ) {
+        
         self.title = title
         self.contentBuilder = contentBuilder
         self.submit = submit
         self.section = section
         self.sequence = sequence
+        self._fullScreenSectionId = fullScreenSectionId
     }
     
     private let largeCornerRadius: Double = 50
@@ -64,26 +73,42 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
             Spacer()
             
             ZStack(alignment: .bottom) {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: Constants.UIFormPagePadding) {
-                        ForEach( 0..<section.allCases.count, id: \.self ) { i in
-                            
-                            let section = allCases[i]
-                            
-                            VStack(alignment: .leading) {
-                                HStack { Spacer() }
-                                contentBuilder( section )
+                GeometryReader { geo in
+                    ScrollViewReader { proxy in
+                        ScrollView(.vertical, showsIndicators: false) {
+                            VStack(spacing: Constants.UIFormPagePadding) {
+                                ForEach( 0..<section.allCases.count, id: \.self ) { i in
+                                    
+                                    let section = allCases[i]
+                                    
+                                    VStack(alignment: .leading) {
+                                        HStack { Spacer() }
+                                        
+                                        contentBuilder( section )
+                                        
+                                        Spacer()
+                                    }
+                                    .id(section.rawValue)
+                                    .frame(minHeight: section.rawValue == fullScreenSectionId ? geo.size.height : 0)
+                                    .padding()
+                                    .padding(.bottom, i == caseCount - 1 ? Constants.UIBottomOfPagePadding : 0)
+                                    .animation( .easeInOut(duration: 0.25), value: fullScreenSectionId )
+                                    .background {
+                                        UnevenRoundedRectangle(cornerRadii: .init(topLeading: i == 0 ? largeCornerRadius : smallCornerRadius,
+                                                                                  bottomLeading: i == caseCount - 1 ? largeCornerRadius : smallCornerRadius,
+                                                                                  bottomTrailing: i == caseCount - 1 ? largeCornerRadius : smallCornerRadius,
+                                                                                  topTrailing: i == 0 ? largeCornerRadius : smallCornerRadius))
+                                        .foregroundStyle( Colors.getBase(from: colorScheme) )
+                                    }
+                                }
                             }
-                            .padding()
-                            .padding(.bottom, i == caseCount - 1 ? Constants.UIBottomOfPagePadding : 0)
-                            .background {
-                                UnevenRoundedRectangle(cornerRadii: .init(topLeading: i == 0 ? largeCornerRadius : smallCornerRadius,
-                                                                          bottomLeading: i == caseCount - 1 ? largeCornerRadius : smallCornerRadius,
-                                                                          bottomTrailing: i == caseCount - 1 ? largeCornerRadius : smallCornerRadius,
-                                                                          topTrailing: i == 0 ? largeCornerRadius : smallCornerRadius))
-                                .foregroundStyle( Colors.getBase(from: colorScheme) )
+                            .onChange(of: fullScreenSectionId) {
+                                if fullScreenSectionId != -1 { withAnimation {
+                                    proxy.scrollTo(self.fullScreenSectionId, anchor: .top)
+                                } }
                             }
                         }
+                        .scrollDisabled(fullScreenSectionId != -1)
                     }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: largeCornerRadius))
@@ -103,7 +128,7 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
 
 
 //MARK: DemoView
-private struct CreationFormDemoView: View {
+struct CreationFormDemoView: View {
     
     enum DemoSection: Int, CreationFormEnumProtocol {
         case section1
@@ -111,16 +136,35 @@ private struct CreationFormDemoView: View {
         case section3
     }
     
+    @State private var text: String = "hi"
+    @State private var fullScreenBinding: Int = -1
+    
+    @ViewBuilder
+    private func makeSpacer(_ label: String) -> some View {
+        Rectangle()
+            .frame(height: 220)
+            .foregroundStyle(.clear)
+            .contentShape(Rectangle())
+            .overlay(Text(label))
+            .onTapGesture {
+                fullScreenBinding = 1
+            }
+    }
+    
     var body: some View {
             
-//        CreationFormView( section: DemoSection.self ) { section in
-//            switch section {
-//            case .section1 : Text("section 1")
-//            case .section2 : Text("section 2")
-//            case .section3 : Text("section 2")
-//            }
-//        }
-        
-        VStack {}
+        CreationFormView("hello", section: DemoSection.self, fullScreenSectionId: $fullScreenBinding) {
+            
+        } contentBuilder: { section in
+            switch section {
+            case .section1: makeSpacer("1")
+            case .section2: makeSpacer("2")
+            case .section3: makeSpacer("3")
+            }
+        }
     }
+}
+
+#Preview {
+    CreationFormDemoView()
 }

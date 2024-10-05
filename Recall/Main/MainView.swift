@@ -59,11 +59,9 @@ struct MainView: View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
                 TabView(selection: $currentPage) {
-                    
-                    StyledLocationPicker($location, title: "test")
-//                    CalendarPageView(events: arrEvents, goals: arrGoals)
-//                        .halfPageScreenReceiver(showing: $showingHalfPage)
-//                        .tag( MainPage.calendar )
+                    CalendarPageView(events: arrEvents, goals: arrGoals)
+                        .halfPageScreenReceiver(showing: $showingHalfPage)
+                        .tag( MainPage.calendar )
                     
                     GoalsPageView(goals: arrGoals, events: arrEvents, tags: arrTags )
                         .tag( MainPage.goals )

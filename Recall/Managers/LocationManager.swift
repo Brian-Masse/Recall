@@ -24,7 +24,6 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
         switch manager.authorizationStatus {
         case .notDetermined://The user choose allow or denny your app to get the location yet
             manager.requestWhenInUseAuthorization()
-            print("requested permission")
             
         case .restricted://The user cannot change this app’s status, possibly due to active restrictions such as parental controls being in place.
             print("Location restricted")
@@ -36,7 +35,6 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
             print("Location authorizedAlways")
             
         case .authorizedWhenInUse://This authorization allows you to use all location services and receive location events only when your app is in use
-            print("Location authorized when in use")
             lastKnownLocation = manager.location?.coordinate
             
         @unknown default:
@@ -51,7 +49,7 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
         if let coordinate = manager.location?.coordinate {
             let mapItem = MKMapItem.forCurrentLocation()
             
-            return .init(location: coordinate, title: mapItem.placemark.title ?? "")
+            return .init(location: coordinate, title: mapItem.placemark.title ?? "placemark")
         }
         
         return nil

@@ -19,29 +19,36 @@ struct StyledLocationPicker: View {
     private let title: String
     
     @State private var showingSearchView: Bool = false
+    @Binding private var showingFullScreen: Int
     
     @State private var position = MapCameraPosition.automatic
+    @Namespace private var mapNameSpace
     
-    init( _ location: Binding<LocationResult?>, title: String ) {
+    @State private var inFullScreen: Bool = false
+    
+    init( _ location: Binding<LocationResult?>,
+          title: String,
+          showingFullScreen: Binding<Int> = Binding { -1 } set: { _ in }
+ ) {
         self._selectedLocation = location
         self.title = title
+        self._showingFullScreen = showingFullScreen
     }
     
-//    MARK: ViewBuilders
+//    MARK: Map
     @ViewBuilder
     private func makeMap() -> some View {
-        Map(position: $position, selection: $selectedLocation) {
-            ForEach(searchResults) { result in
-               Marker(coordinate: result.location) {
-                   Image(systemName: "mappin")
-               }
-               .tag(result)
-           }
+        Map(position: $position, scope: mapNameSpace) {
+            if let location = searchResults.first?.location {
+                Marker(coordinate: location) {
+                    Image(systemName: "mappin")
+                }
+            }
         }
-        .frame(height: 300)
-        .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+        .onTapGesture { showingFullScreen = (showingFullScreen == -1 ? 3 : -1 ) }
     }
     
+//    MARK: Header
     @ViewBuilder
     private func makeLocationTitle() -> some View {
         if let selectedLocation {
@@ -49,30 +56,77 @@ struct StyledLocationPicker: View {
         }
     }
     
-//    MARK: Body
-    var body: some View {
+//    MARK: Layouts
+    @ViewBuilder
+    private func makeCondensedLayout() -> some View {
         VStack(alignment: .leading, spacing: 10) {
             
             UniversalText( title, size: Constants.formQuestionTitleSize, font: Constants.titleFont )
             makeLocationTitle()
             
             makeMap()
+                .frame(height: 250)
+                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
             
-            StyledLocationSearchView(searchResults: $searchResults)
-                .onChange(of: selectedLocation) {
-                    showingSearchView = selectedLocation == nil
-                    if let selectedLocation {
-                        position = .camera(.init(centerCoordinate: selectedLocation.location,
-                                                                  distance: 5000))
-                    }
+            StyledLocationSearchView(searchResults: $searchResults, inFullScreen: $inFullScreen)
+            
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder
+    private func makeFullLayout() -> some View {
+        ZStack(alignment: .topLeading) {
+            makeMap()
+            
+            HStack {
+                VStack(alignment: .leading) {
+                    UniversalText( title, size: Constants.formQuestionTitleSize, font: Constants.titleFont )
+                    makeLocationTitle()
                 }
-                .onChange(of: searchResults) {
-                    if let firstResult = searchResults.first, searchResults.count == 1 {
-                        withAnimation {
-                            selectedLocation = firstResult
-                        }
-                    }
+                Spacer()
+            }
+            .padding(.bottom)
+            .background(.thinMaterial)
+            
+            StyledLocationSearchView(searchResults: $searchResults, inFullScreen: $inFullScreen)
+                .shadow(color: .black.opacity(0.2), radius: 15, y: 10)
+            
+        }
+    }
+    
+//    MARK: Body
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            
+            if inFullScreen {
+                makeFullLayout()
+            } else {
+                makeCondensedLayout()
+            }
+        }
+        .overlay {
+            
+            Text(inFullScreen ? "Full Screen" : "Condensed")
+                .background(.red)
+                .onTapGesture {
+                    withAnimation { inFullScreen.toggle() }
                 }
+            
+        }
+        .onChange(of: selectedLocation) {
+            showingSearchView = selectedLocation == nil
+            if let selectedLocation {
+                position = .camera(.init(centerCoordinate: selectedLocation.location,
+                                                          distance: 5000))
+            }
+        }
+        .onChange(of: searchResults) {
+            if let firstResult = searchResults.first, searchResults.count == 1 {
+                withAnimation {
+                    selectedLocation = firstResult
+                }
+            }
         }
     }
 }
@@ -86,6 +140,8 @@ private struct StyledLocationSearchView: View {
     
     @State private var showingSearchResults: Bool = false
     @State private var searchString = ""
+    
+    @Binding var inFullScreen: Bool
     
     private func didTapOnCompletion(_ completion: SearchCompletions) {
         Task {
@@ -130,7 +186,10 @@ private struct StyledLocationSearchView: View {
         HStack(spacing: 7) {
             StyledTextField(title: "", binding: $searchString, prompt: "Search")
                 .onSubmit {
-                    Task { searchResults = (try? await locationService.search(with: searchString)) ?? [] }
+                    Task {
+                        searchResults = (try? await locationService.search(with: searchString)) ?? []
+                        print("running, \([searchResults.count])")
+                    }
                 }
             
             UniversalButton {
@@ -147,46 +206,51 @@ private struct StyledLocationSearchView: View {
         }
     }
     
-    @ViewBuilder
-    private func clearSearch() -> some View {
-        
-    }
-    
-    
 //    MARK: Body
     var body: some View {
      
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
             
-            makeTextField()
+            if inFullScreen { Spacer() }
             
-            if showingSearchResults {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 10) {
-                        ForEach( locationService.completions ) { completion in
-                            makeLocationItem(completion)
-                            
-                            Divider()
+            VStack {
+                makeTextField()
+                
+                ZStack {
+                    Rectangle()
+                        .foregroundStyle(.clear)
+                    
+                    if showingSearchResults {
+                        ScrollView(.vertical, showsIndicators: false) {
+                            VStack(spacing: 10) {
+                                ForEach( locationService.completions ) { completion in
+                                    makeLocationItem(completion)
+                                    
+                                    Divider()
+                                }
+                            }
                         }
+                        .frame(maxHeight: 300)
+                        .rectangularBackground(style: .secondary)
                     }
                 }
-                .rectangularBackground(style: .secondary)
+                .frame(height: inFullScreen ? 300: 0)
             }
-                
+            .background { if inFullScreen {
+                Rectangle().foregroundStyle(.thinMaterial)
+            } }
         }
+        .border(.green)
+        
         .onChange(of: searchString) {
             locationService.update(queryFragment: searchString)
             withAnimation { showingSearchResults = !searchString.isEmpty }
         }
-        
-        .onAppear {
-            getUserLocation()
-        }
+        .onAppear { getUserLocation() }
 //        .presentationDetents([.fraction(1/3), .large])
 //        .presentationBackground(.regularMaterial)
 //        .presentationBackgroundInteraction(.enabled(upThrough: .large))
     }
-    
 }
 
 private struct StyledLocationSearchDemoView: View {
@@ -196,9 +260,12 @@ private struct StyledLocationSearchDemoView: View {
     @State private var location: LocationResult? = nil
     
     var body: some View {
-        StyledTextField(title: "test", binding: $text)
-        
-        StyledLocationPicker($location, title: "Event Location")
+//        StyledTextField(title: "test", binding: $text)
+//        ScrollView {
+            StyledLocationPicker($location, title: "Event Location")
+//                .border(.blue)
+//        }
+//        .border(.red)
     }
 }
 
