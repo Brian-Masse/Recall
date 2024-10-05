@@ -88,6 +88,7 @@
 		C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA0EE62A6B556300E36EF1 /* CategoryCreationView.swift */; };
 		C9EE07E52C63114C00BE4ED3 /* MonthlyCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EE07E42C63114C00BE4ED3 /* MonthlyCalendarView.swift */; };
 		C9EE9EB82B608FA50090DB16 /* UniversalDonationPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9EE9EB72B608FA50090DB16 /* UniversalDonationPackage */; };
+		C9F829282CB0C783002342B7 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F829272CB0C783002342B7 /* LocationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -202,6 +203,7 @@
 		C9EA0EE42A6B48F200E36EF1 /* CategoriesPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesPageView.swift; sourceTree = "<group>"; };
 		C9EA0EE62A6B556300E36EF1 /* CategoryCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCreationView.swift; sourceTree = "<group>"; };
 		C9EE07E42C63114C00BE4ED3 /* MonthlyCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyCalendarView.swift; sourceTree = "<group>"; };
+		C9F829272CB0C783002342B7 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -481,6 +483,7 @@
 			isa = PBXGroup;
 			children = (
 				C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */,
+				C9F829272CB0C783002342B7 /* LocationManager.swift */,
 				C91BCF212A61C374003C6DD6 /* RealmManager.swift */,
 				C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */,
 				C98CEE0D2AFFFC2300B75924 /* UpdateManager */,
@@ -757,6 +760,7 @@
 				C98F2F252A94435600E92B30 /* SplashScreen.swift in Sources */,
 				C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */,
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
+				C9F829282CB0C783002342B7 /* LocationManager.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,
 				C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */,
 				C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */,
@@ -939,6 +943,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Recall/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Recall.;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Recall needs your location to provide location information on events";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -982,6 +987,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Recall/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Recall.;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Recall needs your location to provide location information on events";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

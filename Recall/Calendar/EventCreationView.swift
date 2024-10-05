@@ -233,12 +233,16 @@ struct CalendarEventCreationView: View {
         }
     }
     
+    @State private var location: LocationResult? = nil
+    
 //    MARK: OverviewQuestions
     @ViewBuilder
     private func makeOverviewQuestions() -> some View {
         StyledTextField(title: "What is the name of this event?", binding: $title, clearable: true)
         StyledTextField(title: "Leave an optional note", binding: $notes, clearable: true, multiLine: true)
             .padding(.bottom)
+        
+        StyledLocationPicker($location, title: "Event Location")
     }
     
     

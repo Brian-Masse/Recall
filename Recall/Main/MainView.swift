@@ -48,6 +48,8 @@ struct MainView: View {
     @State var uiTabarController: UITabBarController?
     
     //    MARK: Body
+    @State private var location: LocationResult? = nil
+    
     var body: some View {
         
         let arrEvents = Array(events)
@@ -57,9 +59,11 @@ struct MainView: View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
                 TabView(selection: $currentPage) {
-                    CalendarPageView(events: arrEvents, goals: arrGoals)
-                        .halfPageScreenReceiver(showing: $showingHalfPage)
-                        .tag( MainPage.calendar )
+                    
+                    StyledLocationPicker($location, title: "test")
+//                    CalendarPageView(events: arrEvents, goals: arrGoals)
+//                        .halfPageScreenReceiver(showing: $showingHalfPage)
+//                        .tag( MainPage.calendar )
                     
                     GoalsPageView(goals: arrGoals, events: arrEvents, tags: arrTags )
                         .tag( MainPage.goals )

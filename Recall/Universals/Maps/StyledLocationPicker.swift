@@ -74,7 +74,6 @@ struct StyledLocationPicker: View {
                     }
                 }
         }
-        .padding()
     }
 }
 
@@ -96,6 +95,12 @@ private struct StyledLocationSearchView: View {
         }
         
         withAnimation { showingSearchResults = false }
+    }
+    
+    private func getUserLocation() {
+        if let locationResult = LocationManager.shared.getLocationInformation() {
+            self.searchResults = [ locationResult ]
+        }
     }
     
 //    MARK: ViewBuilders
@@ -128,11 +133,12 @@ private struct StyledLocationSearchView: View {
                     Task { searchResults = (try? await locationService.search(with: searchString)) ?? [] }
                 }
             
-            RecallIcon("location.fill.viewfinder")
-                .rectangularBackground(style: .secondary)
-            
-//            Spacer()
-            
+            UniversalButton {
+                RecallIcon("location.fill.viewfinder")
+                    .rectangularBackground(style: .secondary)
+            } action: { getUserLocation() }
+
+        
             if showingToggle {
                 UniversalButton { RecallIcon( showingSearchResults ? "chevron.up" : "chevron.down") }
                 action: { showingSearchResults.toggle() }
@@ -173,9 +179,12 @@ private struct StyledLocationSearchView: View {
             withAnimation { showingSearchResults = !searchString.isEmpty }
         }
         
-        .presentationDetents([.fraction(1/3), .large])
-        .presentationBackground(.regularMaterial)
-        .presentationBackgroundInteraction(.enabled(upThrough: .large))
+        .onAppear {
+            getUserLocation()
+        }
+//        .presentationDetents([.fraction(1/3), .large])
+//        .presentationBackground(.regularMaterial)
+//        .presentationBackgroundInteraction(.enabled(upThrough: .large))
     }
     
 }

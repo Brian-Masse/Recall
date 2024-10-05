@@ -2,14 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Recall needs access to your location to provide location data for your events</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>RenoMono.otf</string>
-		<string>Syne-VariableFont_wght.ttf</string>
-		<string>AndaleMono.ttf</string>
-	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Recall needs your location to provide location information for your events</string>
 	<key>CFBundleIcons</key>
 	<dict>
 		<key>CFBundleAlternateIcons</key>
@@ -30,5 +24,11 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>RenoMono.otf</string>
+		<string>Syne-VariableFont_wght.ttf</string>
+		<string>AndaleMono.ttf</string>
+	</array>
 </dict>
 </plist>
