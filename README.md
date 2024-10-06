@@ -47,6 +47,7 @@ CHANGES
 - Redesigned Goals Page
 - Redesigned Date Selector
 - redesigned tab bar
+- Added the ability to create events in between days
 
 - Fixed various bugs related to the calendar layout
 

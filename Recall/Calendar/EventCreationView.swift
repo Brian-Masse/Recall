@@ -187,10 +187,14 @@ struct CalendarEventCreationView: View {
     }
     
     private func checkCompletion() -> Bool {
+//        if endTime < startTime {
+//            self.alertTitle = "Incomplete Form"
+//            self.alertMessage = "make sure the event end time is after the event start time"
+//            return false
+//        }
+        
         if endTime < startTime {
-            self.alertTitle = "Incomplete Form"
-            self.alertMessage = "make sure the event end time is after the event start time"
-            return false
+            endTime += Constants.DayTime
         }
         
         self.alertTitle = "Incomplete Form"
