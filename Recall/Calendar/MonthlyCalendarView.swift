@@ -33,6 +33,7 @@ class CalendarPageViewModel: ObservableObject {
             .count > 0
     }
     
+    @MainActor
     func renderMonth(_ month: Date, events: [RecallCalendarEvent]) async {
         if self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] ?? false { return }
         
@@ -54,9 +55,9 @@ class CalendarPageViewModel: ObservableObject {
 //        
         self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] = true
         
-        DispatchQueue.main.sync {
+//        DispatchQueue.main.sync {
             self.objectWillChange.send()
-        }
+//        }
     }
 }
 
@@ -75,8 +76,8 @@ struct CalendarPage: View {
     @ObservedObject var viewModel = CalendarPageViewModel.shared
     @ObservedObject var calendarViewModel = RecallCalendarViewModel.shared
     
-    @State private var currentMonth: Date = .now
-    @State private var upperBound: Int = 10
+//    @State private var currentMonth: Date = .now
+//    @State private var upperBound: Int = 10
     
     @ObservedResults(RecallCalendarEvent.self) var events
     
@@ -127,13 +128,15 @@ struct CalendarPage: View {
         let width = gridItemWidth(in: geo)
         
         VStack(alignment: .leading, spacing: 0) {
+//
+            
             
             UniversalText( getMonthName(for: date),
                            size: Constants.UISubHeaderTextSize,
                            font: Constants.titleFont)
             .padding(.vertical, 10)
             .padding(.top)
-            
+  
             ZStack {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: width, maximum: width),
                                              spacing: LocalConstants.gridSpacing,
@@ -149,6 +152,8 @@ struct CalendarPage: View {
                         
                         VStack {
                             if i >= 0 {
+//                                Text("1")
+//                                Text("\(day.formatted())")
                                 makeDay(for: day, roundLeftEdge: roundLeftEdge, roundRightEdge: roundRightEdge)
                             } else {
                                 Rectangle().foregroundStyle(.clear)
@@ -239,38 +244,83 @@ struct CalendarPage: View {
     }
     
 //    MARK: Calendar
+    
+    @State private var offset: CGFloat = 0
+    
     @MainActor
     @ViewBuilder
     private func makeCalendar() -> some View {
+        
         GeometryReader { geo in
-            
-            ScrollViewReader { proxy in
-                ScrollView(.vertical, showsIndicators: false) {
-                    
-                    LazyVStack {
-
-                        
-                        ForEach( 0..<upperBound, id: \.self ) { i in
-                            let date = Calendar.current.date(byAdding: .month, value: -i, to: currentMonth)!
-                            
-                            makeMonth(date, in: geo)
-                                .id(i)
-                                .onAppear {
-                                    
-                                    Task { await viewModel.renderMonth(date, events: arrEvents) }
-                                    
-                                    if i > upperBound - 5 {
-                                        upperBound += 10
-                                    } else if i < upperBound - 15 {
-                                        upperBound -= 10
-                                    }
-                                }
-                        }
-                    }
-                }
-                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+            InfiniteMonthScrollView { month in
+                makeMonth(month, in: geo)
+                    .task { await viewModel.renderMonth(month, events: arrEvents) }
+                
+//                MonthView(month: month)
             }
         }
+        
+//        GeometryReader { geo in
+//            
+//            ScrollViewReader { proxy in
+//                ScrollView(.vertical, showsIndicators: false) {
+//                    
+//                    LazyVStack {
+//
+////                        ForEach(1000...1100, id: \.self) { i in
+////                            Text("\(i - 1000)")
+////                                .background(.red)
+////                                .frame(height: 120)
+////                        }
+//                        
+//                        ForEach( 0..<upperBound, id: \.self ) { i in
+//                            let index = upperBound - i
+//                            
+//                            let date = Calendar.current.date(byAdding: .month, value: -index, to: currentMonth)!
+//                            
+//                            makeMonth(date, in: geo)
+//                                .id( date.matches(.now, to: .month) ? "startMonth" : "\(index)" )
+//                                .opacity(0.5)
+//                                .overlay {
+//                                    Text("\(i), \(index), \(upperBound)")
+//                                        .background(.red)
+//                                }
+//                                .border(.red)
+//                                .frame(height: 450)
+////                                .rotation3DEffect(.degrees(180), axis: (x: 1, y: 0, z: 0))
+////                                .scaleEffect(y: -1)
+////                                .id(i)
+//                                .onAppear {
+//                                    
+//                                    Task { await viewModel.renderMonth(date, events: arrEvents) }
+//                                    
+//                                    if index > upperBound - 5 {
+//                                        print("increaseing")
+//                                        
+//                                        offset += 450 * 10
+//                                        
+//                                        upperBound += 10
+//                                        
+//                                    } else if index < upperBound - 15 {
+//                                        print("decreasing")
+//                                        
+//                                        offset -= 450 * 10
+//                                        upperBound -= 10
+//                                    }
+//                                }
+//                        }
+//                    }
+////                    .offset(y: -offset)
+//                }
+//                .onAppear() {
+//                    proxy.scrollTo("startMonth", anchor: .top)
+//                    offset = 0
+//                }
+////                .rotation3DEffect(.degrees(180), axis: (x: 1, y: 0, z: 0))
+//                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+//            }
+//        }
+////        .scaleEffect(y: -1)
     }
     
 //    MARK: ViewBuilders

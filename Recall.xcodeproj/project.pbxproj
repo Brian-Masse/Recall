@@ -72,6 +72,7 @@
 		C9BF38BE2C9B568400AA8C3F /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38BD2C9B568400AA8C3F /* UIUniversals */; };
 		C9BF38C12C9B56CA00AA8C3F /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38C02C9B56CA00AA8C3F /* UIUniversals */; };
 		C9BF38C32C9E4E2400AA8C3F /* CalendarPageToolBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BF38C22C9E4E2400AA8C3F /* CalendarPageToolBarView.swift */; };
+		C9BFBC912CB3897900ADC110 /* InfiniteScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BFBC902CB3897900ADC110 /* InfiniteScroller.swift */; };
 		C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */; };
 		C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */; };
 		C9D24AA72C62C65800A7F279 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C9D24AA62C62C65800A7F279 /* RealmSwift */; };
@@ -189,6 +190,7 @@
 		C9BF38B82C9A0EA200AA8C3F /* dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dark.png; sourceTree = "<group>"; };
 		C9BF38B92C9A0EA200AA8C3F /* light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = light.png; sourceTree = "<group>"; };
 		C9BF38C22C9E4E2400AA8C3F /* CalendarPageToolBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageToolBarView.swift; sourceTree = "<group>"; };
+		C9BFBC902CB3897900ADC110 /* InfiniteScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteScroller.swift; sourceTree = "<group>"; };
 		C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCreationScene.swift; sourceTree = "<group>"; };
 		C9D299E52CACB83200814965 /* StyledLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledLocationPicker.swift; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 			children = (
 				C9D299E42CACB81400814965 /* Maps */,
 				C9E3E02E2C9207B5000E0911 /* CactusTimeDial.swift */,
+				C9BFBC902CB3897900ADC110 /* InfiniteScroller.swift */,
 				C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */,
 				C91BCF302A61DDBA003C6DD6 /* Constants.swift */,
 				C9E3E01D2C91F099000E0911 /* CreationFormView.swift */,
@@ -738,6 +741,7 @@
 				C9E3E0182C8A9DFB000E0911 /* CalendarContainer.swift in Sources */,
 				C98198DC2AE9ECC90039AF9C /* HalfPageView.swift in Sources */,
 				C9EA0EE52A6B48F200E36EF1 /* CategoriesPageView.swift in Sources */,
+				C9BFBC912CB3897900ADC110 /* InfiniteScroller.swift in Sources */,
 				C9E3E02F2C9207B5000E0911 /* CactusTimeDial.swift in Sources */,
 				C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */,
 				C98573482B8A7A58001D9895 /* StyledCalendarContainerView.swift in Sources */,
