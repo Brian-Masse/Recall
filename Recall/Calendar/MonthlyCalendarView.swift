@@ -33,7 +33,6 @@ class CalendarPageViewModel: ObservableObject {
             .count > 0
     }
     
-    @MainActor
     func renderMonth(_ month: Date, events: [RecallCalendarEvent]) async {
         if self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] ?? false { return }
         
@@ -55,9 +54,9 @@ class CalendarPageViewModel: ObservableObject {
 //        
         self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] = true
         
-//        DispatchQueue.main.sync {
+        DispatchQueue.main.sync {
             self.objectWillChange.send()
-//        }
+        }
     }
 }
 
@@ -252,75 +251,13 @@ struct CalendarPage: View {
     private func makeCalendar() -> some View {
         
         GeometryReader { geo in
-            InfiniteMonthScrollView { month in
+            InfiniteScroller { i in
+                let month = Calendar.current.date(byAdding: .month, value: i, to: .now)!
+                
                 makeMonth(month, in: geo)
                     .task { await viewModel.renderMonth(month, events: arrEvents) }
-                
-//                MonthView(month: month)
             }
         }
-        
-//        GeometryReader { geo in
-//            
-//            ScrollViewReader { proxy in
-//                ScrollView(.vertical, showsIndicators: false) {
-//                    
-//                    LazyVStack {
-//
-////                        ForEach(1000...1100, id: \.self) { i in
-////                            Text("\(i - 1000)")
-////                                .background(.red)
-////                                .frame(height: 120)
-////                        }
-//                        
-//                        ForEach( 0..<upperBound, id: \.self ) { i in
-//                            let index = upperBound - i
-//                            
-//                            let date = Calendar.current.date(byAdding: .month, value: -index, to: currentMonth)!
-//                            
-//                            makeMonth(date, in: geo)
-//                                .id( date.matches(.now, to: .month) ? "startMonth" : "\(index)" )
-//                                .opacity(0.5)
-//                                .overlay {
-//                                    Text("\(i), \(index), \(upperBound)")
-//                                        .background(.red)
-//                                }
-//                                .border(.red)
-//                                .frame(height: 450)
-////                                .rotation3DEffect(.degrees(180), axis: (x: 1, y: 0, z: 0))
-////                                .scaleEffect(y: -1)
-////                                .id(i)
-//                                .onAppear {
-//                                    
-//                                    Task { await viewModel.renderMonth(date, events: arrEvents) }
-//                                    
-//                                    if index > upperBound - 5 {
-//                                        print("increaseing")
-//                                        
-//                                        offset += 450 * 10
-//                                        
-//                                        upperBound += 10
-//                                        
-//                                    } else if index < upperBound - 15 {
-//                                        print("decreasing")
-//                                        
-//                                        offset -= 450 * 10
-//                                        upperBound -= 10
-//                                    }
-//                                }
-//                        }
-//                    }
-////                    .offset(y: -offset)
-//                }
-//                .onAppear() {
-//                    proxy.scrollTo("startMonth", anchor: .top)
-//                    offset = 0
-//                }
-////                .rotation3DEffect(.degrees(180), axis: (x: 1, y: 0, z: 0))
-//                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
-//            }
-//        }
-////        .scaleEffect(y: -1)
     }
     
 //    MARK: ViewBuilders
@@ -339,8 +276,6 @@ struct CalendarPage: View {
     
     @ViewBuilder
     private func makeDaysOfWeekHeader() -> some View {
-        
-        
         HStack(alignment: .center, spacing: 0 ) {
             ForEach( 0..<7, id: \.self ) { i in
 
