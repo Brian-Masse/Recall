@@ -42,7 +42,7 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
         self._fullScreenSectionId = fullScreenSectionId
     }
     
-    private let largeCornerRadius: Double = 50
+    private let largeCornerRadius: Double = 58
     private let smallCornerRadius: Double = (Constants.UIDefaultCornerRadius - 5)
     
     private var allCases: [Section] {

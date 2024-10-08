@@ -32,60 +32,49 @@ struct TabBar: View {
     private func makeTabBarButton(page: MainView.MainPage, icon: String) -> some View {
         let isActivePage = page == pageSelection
         
-        ZStack {
-            if page == pageSelection {
-                RoundedRectangle(cornerRadius: 100)
-                    .matchedGeometryEffect(id: "highlight", in: tabBarNamespace)
-                    .frame(width: buttonRadius * 2, height: buttonRadius * 2 * 2/3)
-                    .universalStyledBackgrond(.accent, onForeground: true)
+        UniversalButton {
+            ZStack {
+                if page == pageSelection {
+                    RoundedRectangle(cornerRadius: 100)
+                        .transition(.scale.combined(with: .blurReplace()))
+                        .matchedGeometryEffect(id: "highlight", in: tabBarNamespace)
+                        .frame(width: buttonRadius * 2, height: buttonRadius * 2 * 2/3)
+                        .universalStyledBackgrond(.accent, onForeground: true)
+                }
+                
+                RecallIcon(icon)
+                    .bold()
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle( isActivePage ? .black : ( colorScheme == .dark ? .white : .black ) )
+                    .padding(buttonPadding)
             }
             
-            RecallIcon(icon)
-                .bold()
-                .frame(width: 20, height: 20)
-                .foregroundStyle( isActivePage ? .black : ( colorScheme == .dark ? .white : .black ) )
-                .padding(buttonPadding)
+        } action: {
+            pageSelection = page
+            
+            if page == .calendar {
+                if showingRecallButton { showingCreateEventScreen = true }
+                showingRecallButton = true
+            }
+            else { showingRecallButton = false }
         }
-        
-            .onTapGesture { withAnimation {
-                pageSelection = page
-                
-                if page == .calendar { showingRecallButton = true }
-                else { showingRecallButton = false }
-            }}
-        
     }
 
     @ViewBuilder
     private func makeRecallButton() -> some View {
-        UniversalButton {
-            RecallIcon("arrow.turn.left.up")
-                .bold()
-                .foregroundStyle(.black)
-                .padding(.vertical, 20)
-                .padding(.horizontal, 30)
-                .background {
-                    RoundedRectangle(cornerRadius: 70)
-                        .matchedGeometryEffect(id: "highlight", in: tabBarNamespace)
-                        .universalStyledBackgrond(.accent, onForeground: true)
-                }
-        } action: { showingCreateEventScreen = true }
+        makeTabBarButton(page: .calendar, icon: showingRecallButton ? "arrow.turn.left.up" : "calendar")
+            .frame(width: buttonRadius * 2, height: buttonRadius * 2 * (2/3))
+            .background {
+                RoundedRectangle(cornerRadius: 55)
+                    .foregroundStyle(.thinMaterial)
+                    .shadow(radius: 5)
+            }
     }
     
 //    MARK: Body
     var body: some View {
         HStack {
-            if showingRecallButton {
-                makeRecallButton()
-            } else {
-                makeTabBarButton(page: .calendar, icon: "calendar")
-                    .frame(width: buttonRadius * 2, height: buttonRadius * 2 * (2/3))
-                    .background {
-                        RoundedRectangle(cornerRadius: 55)
-                            .foregroundStyle(.thinMaterial)
-                            .shadow(radius: 5)
-                    }
-            }
+            makeRecallButton()
             
             HStack(spacing: 0) {
                 makeTabBarButton(page: .goals, icon: "flag.checkered")
