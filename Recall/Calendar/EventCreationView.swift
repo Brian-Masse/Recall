@@ -128,6 +128,7 @@ struct CalendarEventCreationView: View {
     @State var category: RecallCategory
     @State var goalRatings: Dictionary<String, String>
     
+    @State private var showingLocationPicker: Bool = false
     @State private var location: LocationResult? = nil
     
     let template: Bool
@@ -242,9 +243,27 @@ struct CalendarEventCreationView: View {
 //    MARK: OverviewQuestions
     @ViewBuilder
     private func makeOverviewQuestions() -> some View {
-        StyledTextField(title: "What is the name of this event?", binding: $title, clearable: true)
-        StyledTextField(title: "Leave an optional note", binding: $notes, clearable: true, multiLine: true)
-            .padding(.bottom)
+        VStack(alignment: .leading, spacing: 10) {
+            StyledTextField(title: "Overview", binding: $title, prompt: "title", clearable: true)
+            StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
+            
+            HStack {
+                StyledTextField(title: "", binding: $notes, prompt: "Optional Link", clearable: true, multiLine: true)
+                
+                RecallIcon("location")
+                    .if( location != nil ) { view in view.foregroundStyle(.black) }
+                    .rectangularBackground(style: location == nil ? .secondary : .accent)
+                    .onTapGesture { showingLocationPicker = true }
+                
+            }
+            
+            if location != nil {
+                UniversalText("\(location!.title)", size: Constants.UISmallTextSize + 3, font: Constants.mainFont)
+                    .opacity(0.75)
+                    .padding(.leading)
+                    .padding(.trailing, 30)
+            }
+        }
     }
     
     
@@ -369,21 +388,14 @@ struct CalendarEventCreationView: View {
         }
     }
     
-//    MARK: LocationSelector
-    @ViewBuilder
-    private func makeLocationSelector() -> some View {
-        StyledLocationPicker($location, title: "Event Location", showingFullScreen: $fullScreenSectionId)
-    }
 
     @State private var activeTempalte: RecallCalendarEvent? = nil
     @State private var showingError: Bool = false
-    @State private var fullScreenSectionId: Int = -1
     
     private enum EventCreationFormSection : Int, CreationFormEnumProtocol {
         case overview
         case time
         case tags
-        case location
     }
 
 //    MARK: Body
@@ -393,14 +405,12 @@ struct CalendarEventCreationView: View {
         
         CreationFormView(title,
                          section: EventCreationFormSection.self,
-                         sequence: editing ? [.overview, .tags, .location, .time] : nil,
-                         fullScreenSectionId: $fullScreenSectionId,
+                         sequence: editing ? [.overview, .tags, .time] : nil,
                          submit: submit) { section in
             switch section {
-            case .overview: makeOverviewQuestions()
+            case .overview: makeOverviewQuestions().padding(.vertical)
             case .time: makeTimeSelector()
             case .tags: makeTagSelector()
-            case .location: makeLocationSelector()
             }
         }
         .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
@@ -409,6 +419,9 @@ struct CalendarEventCreationView: View {
                                  tag: nil,
                                  label: "",
                                  goalRatings: Dictionary())
+        }
+        .sheet(isPresented: $showingLocationPicker) {
+            StyledLocationPicker($location, title: "Event Location")
         }
         .task { await getTemplates(from: Array(events)) }
         .alert(alertTitle,

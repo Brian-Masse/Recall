@@ -49,7 +49,7 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
         if let coordinate = manager.location?.coordinate {
             let mapItem = MKMapItem.forCurrentLocation()
             
-            return .init(location: coordinate, title: mapItem.placemark.title ?? "placemark")
+            return .init(location: coordinate, title: mapItem.placemark.title ?? "Current Location")
         }
         
         return nil

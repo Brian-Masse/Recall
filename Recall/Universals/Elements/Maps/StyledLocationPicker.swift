@@ -13,26 +13,21 @@ import MapKit
 //MARK: StyledLocationPicker
 struct StyledLocationPicker: View {
     
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var searchResults = [LocationResult]()
     @Binding private var selectedLocation: LocationResult?
     
     private let title: String
     
     @State private var showingSearchView: Bool = false
-    @Binding private var showingFullScreen: Int
     
     @State private var position = MapCameraPosition.automatic
     @Namespace private var mapNameSpace
     
-    @State private var inFullScreen: Bool = false
-    
-    init( _ location: Binding<LocationResult?>,
-          title: String,
-          showingFullScreen: Binding<Int> = Binding { -1 } set: { _ in }
- ) {
+    init( _ location: Binding<LocationResult?>, title: String ) {
         self._selectedLocation = location
         self.title = title
-        self._showingFullScreen = showingFullScreen
     }
     
 //    MARK: Map
@@ -45,7 +40,7 @@ struct StyledLocationPicker: View {
                 }
             }
         }
-        .onTapGesture { showingFullScreen = (showingFullScreen == -1 ? 3 : -1 ) }
+        .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
     }
     
 //    MARK: Header
@@ -56,63 +51,35 @@ struct StyledLocationPicker: View {
         }
     }
     
-//    MARK: Layouts
-    @ViewBuilder
-    private func makeCondensedLayout() -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            
-            UniversalText( title, size: Constants.formQuestionTitleSize, font: Constants.titleFont )
-            makeLocationTitle()
-            
-            makeMap()
-                .frame(height: 250)
-                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
-            
-            StyledLocationSearchView(searchResults: $searchResults, inFullScreen: $inFullScreen)
-            
-            Spacer()
-        }
-    }
-    
-    @ViewBuilder
-    private func makeFullLayout() -> some View {
-        ZStack(alignment: .topLeading) {
-            makeMap()
-            
-            HStack {
-                VStack(alignment: .leading) {
-                    UniversalText( title, size: Constants.formQuestionTitleSize, font: Constants.titleFont )
-                    makeLocationTitle()
-                }
-                Spacer()
-            }
-            .padding(.bottom)
-            .background(.thinMaterial)
-            
-            StyledLocationSearchView(searchResults: $searchResults, inFullScreen: $inFullScreen)
-                .shadow(color: .black.opacity(0.2), radius: 15, y: 10)
-            
-        }
-    }
-    
 //    MARK: Body
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             
-            if inFullScreen {
-                makeFullLayout()
-            } else {
-                makeCondensedLayout()
+            VStack(alignment: .leading, spacing: 7) {
+                UniversalText( title, size: Constants.formQuestionTitleSize, font: Constants.titleFont )
+                makeLocationTitle()
             }
-        }
-        .overlay {
             
-            Text(inFullScreen ? "Full Screen" : "Condensed")
-                .background(.red)
-                .onTapGesture {
-                    withAnimation { inFullScreen.toggle() }
-                }
+            makeMap()
             
+            StyledLocationSearchView(searchResults: $searchResults)
+            
+            if selectedLocation != nil {
+                UniversalButton {
+                    HStack {
+                        Spacer()
+                        
+                        UniversalText( "Done", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                        
+                        RecallIcon("checkmark")
+                        
+                        Spacer()
+                    }
+                    .foregroundStyle(.black)
+                    .rectangularBackground(style: .accent)
+                } action: { dismiss() }
+            }
+
         }
         .onChange(of: selectedLocation) {
             showingSearchView = selectedLocation == nil
@@ -128,6 +95,10 @@ struct StyledLocationPicker: View {
                 }
             }
         }
+        .padding(.bottom)
+        .padding()
+        .universalBackground()
+        .ignoresSafeArea()
     }
 }
 
@@ -138,10 +109,13 @@ private struct StyledLocationSearchView: View {
     @State private var locationService = LocationService(completer: .init())
     @Binding var searchResults: [LocationResult]
     
+    @State private var inSearch: Bool = false
     @State private var showingSearchResults: Bool = false
     @State private var searchString = ""
     
-    @Binding var inFullScreen: Bool
+    private var searchResultsHeight: Double {
+        inSearch ? 500 : ( showingSearchResults ? 300 : 0 )
+    }
     
     private func didTapOnCompletion(_ completion: SearchCompletions) {
         Task {
@@ -150,7 +124,10 @@ private struct StyledLocationSearchView: View {
             }
         }
         
-        withAnimation { showingSearchResults = false }
+        withAnimation {
+            inSearch = false
+            showingSearchResults = false
+        }
     }
     
     private func getUserLocation() {
@@ -178,18 +155,16 @@ private struct StyledLocationSearchView: View {
         } action: { didTapOnCompletion(completion) }
     }
     
+//    MARK: TextField
     @ViewBuilder
     private func makeTextField() -> some View {
         
         let showingToggle = !locationService.completions.isEmpty
         
         HStack(spacing: 7) {
-            StyledTextField(title: "", binding: $searchString, prompt: "Search")
+            StyledTextField(title: "", binding: $searchString, prompt: "Search", isFocussed: $inSearch)
                 .onSubmit {
-                    Task {
-                        searchResults = (try? await locationService.search(with: searchString)) ?? []
-                        print("running, \([searchResults.count])")
-                    }
+                    Task { searchResults = (try? await locationService.search(with: searchString)) ?? [] }
                 }
             
             UniversalButton {
@@ -199,9 +174,37 @@ private struct StyledLocationSearchView: View {
 
         
             if showingToggle {
-                UniversalButton { RecallIcon( showingSearchResults ? "chevron.up" : "chevron.down") }
-                action: { showingSearchResults.toggle() }
+                UniversalButton { RecallIcon( showingSearchResults ? "chevron.down" : "chevron.up") }
+                action: {
+                    if inSearch { inSearch = false }
+                    else { showingSearchResults.toggle() }
+                }
                     .padding(7)
+            }
+        }
+    }
+    
+//    MARK: Results
+    @ViewBuilder
+    private func makeResults() -> some View {
+        if locationService.completions.isEmpty {
+            Rectangle()
+                .foregroundStyle(.clear)
+                .overlay(alignment:  .top) {
+                    UniversalText( "Begin Typing to See Results", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                        .opacity(0.75)
+                }
+                
+            
+        } else {
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 10) {
+                    ForEach( locationService.completions ) { completion in
+                        makeLocationItem(completion)
+                        
+                        Divider()
+                    }
+                }
             }
         }
     }
@@ -210,68 +213,40 @@ private struct StyledLocationSearchView: View {
     var body: some View {
      
         VStack(spacing: 0) {
-            
-            if inFullScreen { Spacer() }
-            
-            VStack {
-                makeTextField()
-                
-                ZStack {
-                    Rectangle()
-                        .foregroundStyle(.clear)
-                    
-                    if showingSearchResults {
-                        ScrollView(.vertical, showsIndicators: false) {
-                            VStack(spacing: 10) {
-                                ForEach( locationService.completions ) { completion in
-                                    makeLocationItem(completion)
-                                    
-                                    Divider()
-                                }
-                            }
-                        }
-                        .frame(maxHeight: 300)
+            makeTextField()
+
+            ZStack {
+                if showingSearchResults {
+                    makeResults()
                         .rectangularBackground(style: .secondary)
-                    }
+                        .transition(.blurReplace())
+                        .padding(.top, 7)
                 }
-                .frame(height: inFullScreen ? 300: 0)
-            }
-            .background { if inFullScreen {
-                Rectangle().foregroundStyle(.thinMaterial)
-            } }
+            }.frame(height: searchResultsHeight)
         }
-        .border(.green)
-        
+        .onChange(of: inSearch) { withAnimation {
+            if inSearch { showingSearchResults = true }
+        } }
         .onChange(of: searchString) {
             locationService.update(queryFragment: searchString)
             withAnimation { showingSearchResults = !searchString.isEmpty }
         }
         .onAppear { getUserLocation() }
-//        .presentationDetents([.fraction(1/3), .large])
-//        .presentationBackground(.regularMaterial)
-//        .presentationBackgroundInteraction(.enabled(upThrough: .large))
+        .ignoresSafeArea()
     }
 }
 
+//MARK: Preview
 private struct StyledLocationSearchDemoView: View {
     
     @State private var text: String = ""
-    
     @State private var location: LocationResult? = nil
     
     var body: some View {
-//        StyledTextField(title: "test", binding: $text)
-//        ScrollView {
-            StyledLocationPicker($location, title: "Event Location")
-//                .border(.blue)
-//        }
-//        .border(.red)
+        StyledLocationPicker($location, title: "Event Location")
     }
 }
 
 #Preview {
-    
-//    StyledLocationSearchView()
-//    StyledLocationPicker()
     StyledLocationSearchDemoView()
 }

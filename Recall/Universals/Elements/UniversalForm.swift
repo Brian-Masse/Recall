@@ -86,12 +86,15 @@ struct StyledTextField: View {
     let clearable: Bool
     let multiLine: Bool
     
-    init( title: String, binding: Binding<String>, prompt: String = "", clearable: Bool = false, multiLine: Bool = false ) {
+    @Binding var isFocussed: Bool
+    
+    init( title: String, binding: Binding<String>, prompt: String = "", clearable: Bool = false, multiLine: Bool = false, isFocussed: Binding<Bool> = .constant(false) ) {
         self.title = title
         self.binding = binding
         self.clearable = clearable
         self.multiLine = multiLine
         self.prompt = prompt
+        self._isFocussed = isFocussed
     }
     
     @Environment(\.colorScheme) var colorScheme
@@ -124,7 +127,13 @@ struct StyledTextField: View {
             
                 .rectangularBackground(style: .secondary)
                 .onChange(of: self.focused) {
-                    withAnimation { self.showingClearButton = self.focused }
+                    withAnimation {
+                        self.showingClearButton = self.focused
+                        self.isFocussed = self.focused
+                    }
+                }
+                .onChange(of: self.isFocussed) {
+                    self.focused = self.isFocussed
                 }
             
             if showingClearButton && clearable && !binding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
