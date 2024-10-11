@@ -124,10 +124,13 @@ struct CalendarPageView: View {
     @ViewBuilder
     private func makeHeader() -> some View {
         HStack {
-            UniversalText( "Recall",
-                           size: Constants.UIHeaderTextSize,
-                           font: Constants.titleFont,
-                           wrap: false, scale: true )
+            UniversalButton {
+                UniversalText( "Recall",
+                               size: Constants.UIHeaderTextSize,
+                               font: Constants.titleFont,
+                               wrap: false, scale: true )
+            } action: { setCurrentDay(with: .now) }
+
             Spacer()
             
             
