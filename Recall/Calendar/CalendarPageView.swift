@@ -24,6 +24,7 @@ struct CalendarPageView: View {
 //   MARK: vars
     let events: [RecallCalendarEvent]
     let goals: [RecallGoal]
+    let dailySummaries: [RecallDailySummary]
     
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
@@ -297,7 +298,7 @@ struct CalendarPageView: View {
             makeToolRibbon()
                 .gesture(toolBarGesture)
             
-            CalendarContainer(events: Array(events))
+            CalendarContainer(events: Array(events), summaries: dailySummaries)
         }
         .padding(7)
         .sheet(isPresented: $showingCreateEventView) {

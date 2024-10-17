@@ -74,6 +74,10 @@ class RealmManager: ObservableObject {
         .init(named: QuerySubKey.dictionary.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
+    var summaryQuery: (QueryPermission<RecallDailySummary>) {
+        .init(named: QuerySubKey.summary.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
+    
 //    MARK: Initialization
     init() {
         Task { await self.checkLogin() }
@@ -221,6 +225,7 @@ class RealmManager: ObservableObject {
             self.addInitialSubscription(self.indexQuery, to: subs)
             self.addInitialSubscription(self.goalsNodeQuery, to: subs)
             self.addInitialSubscription(self.dicQuery, to: subs)
+            self.addInitialSubscription(self.summaryQuery, to: subs)
             
         })
         
@@ -230,7 +235,8 @@ class RealmManager: ObservableObject {
                                            RecallIndex.self,
                                            GoalNode.self,
                                            DictionaryNode.self,
-                                           RecallRecentUpdate.self
+                                           RecallRecentUpdate.self,
+                                           RecallDailySummary.self
         ]
     }
     
@@ -282,40 +288,6 @@ class RealmManager: ObservableObject {
 //    MARK: Subscription Functions
 //    Subscriptions are only used when the app is online
 //    otherwise you are able to retrieve all the data from the Realm by default
-    private func addSubcriptions() async {
-        await self.removeAllNonBaseSubscriptions()
-        
-        let _:RecallCalendarEvent?  = await self.addGenericSubcriptions(name: QuerySubKey.calendarComponent.rawValue, query: calendarEventQuery.query )
-        let _:RecallCategory?       = await self.addGenericSubcriptions(name: QuerySubKey.category.rawValue, query: categoryQuery.query )
-        let _:RecallGoal?           = await self.addGenericSubcriptions(name: QuerySubKey.goal.rawValue, query: goalsQuery.query )
-        let _:GoalNode?             = await self.addGenericSubcriptions(name: QuerySubKey.goalNode.rawValue, query: goalsNodeQuery.query )
-        let _:RecallIndex?          = await self.addGenericSubcriptions(name: QuerySubKey.index.rawValue, query: indexQuery.query )
-        let _:DictionaryNode?       = await self.addGenericSubcriptions(name: QuerySubKey.dictionary.rawValue, query: dicQuery.query )
-
-    }
-    
-//    MARK: Helper Functions
-    func addGenericSubcriptions<T>(realm: Realm? = nil, name: String, query: @escaping ((Query<T>) -> Query<Bool>) ) async -> T? where T:RealmSwiftObject  {
-            
-        let localRealm = (realm == nil) ? self.realm! : realm!
-        let subscriptions = localRealm.subscriptions
-        
-        do {
-            try await subscriptions.update {
-                
-                let querySub = QuerySubscription(name: name, query: query)
-                
-                if checkSubscription(name: name, realm: localRealm) {
-                    let foundSubscriptions = subscriptions.first(named: name)!
-                    foundSubscriptions.updateQuery(toType: T.self, where: query)
-                }
-                else { subscriptions.append(querySub) }
-            }
-        } catch { print("error adding subcription: \(error)") }
-        
-        return nil
-    }
-    
     func removeSubscription(name: String) async {
         let subscriptions = self.realm.subscriptions
         let foundSubscriptions = subscriptions.first(named: name)
@@ -355,7 +327,6 @@ class RealmManager: ObservableObject {
 //                        key.rawValue == subscription.name
 //                    }) {
                         await self.removeSubscription(name: subscription.name!)
-                        
 //                    }
                 }
             }

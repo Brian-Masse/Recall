@@ -196,8 +196,8 @@ struct FavoritesPageView: View {
                 .padding(.bottom, Constants.UIBottomOfPagePadding)
             }
         }
-        .onChange(of: grouping) { _ in Task { await updateGrouping() } }
-        .onChange(of: events)   { _ in Task { await updateGrouping() } }
+        .onChange(of: grouping) { Task { await updateGrouping() } }
+        .onChange(of: events)   { Task { await updateGrouping() } }
         .task { await updateGrouping() }
         .onDisappear { dataLoaded = false }
     }

@@ -15,6 +15,7 @@ enum QuerySubKey: String, CaseIterable {
     case goalNode
     case index
     case dictionary
+    case summary
 }
 
 
@@ -41,7 +42,7 @@ class QueryPermission<T: Object> {
     func addQuery(_ name: String, _ query: @escaping ((Query<T>) -> Query<Bool>) ) async {
         let additionalQuery = QueryPermission(named: name, query: query)
         
-        let _ = await RecallModel.realmManager.addGenericSubcriptions(name: name, query: query)
+//        let _ = await RecallModel.realmManager.addGenericSubcriptions(name: name, query: query)
         additionalQueries.append(additionalQuery)
     }
     

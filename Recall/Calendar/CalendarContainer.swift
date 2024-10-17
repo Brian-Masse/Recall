@@ -75,8 +75,9 @@ struct CalendarContainer: View {
     
     private let coordinateSpaceName = "CalendarContainerCoordinateSpace"
     
-    init(events: [RecallCalendarEvent]) {
+    init(events: [RecallCalendarEvent], summaries: [RecallDailySummary]) {
         self.events = events
+        self.summaries = summaries
     }
     
 //    MARK: Struct Methods
@@ -277,8 +278,6 @@ struct CalendarContainer: View {
                             CalendarView(events: viewModel.getEvents(on: day),
                                              on: day)
                             makeEventCreationPreview(on: calculateSubDayIndex(on: day))
-                            
-                            Text("\(i)")
                         }
                         .padding(.horizontal, 2)
                         .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
@@ -309,44 +308,152 @@ struct CalendarContainer: View {
         .padding(.leading, calendarLabelWidth)
     }
     
+    
+//    MARK: DailySummary
+    let summaries: [RecallDailySummary]
+    
+    @State private var dailySummary: RecallDailySummary? = nil
+    
+    @State private var dailySummaryNotes: String = ""
+    @State private var dailySummaryDate: Date = .now
+    
+    @MainActor
+    private func createNewDailySummary() {
+        let summary = RecallDailySummary(date: dailySummaryDate, notes: dailySummaryNotes)
+        RealmManager.addObject(summary)
+    }
+    
+    @MainActor
+    private func fetchDailySummary(for date: Date) async {
+        self.dailySummaryDate = date
+        if let summary = await RecallDailySummary.getSummary(on: date, from: summaries) {
+            withAnimation { self.dailySummary = summary }
+        } else {
+            withAnimation { self.dailySummary = nil }
+        }
+    }
+    
+    private func incrementDailySummaryDate(by direction: Double) {
+        self.dailySummaryDate += (direction * Constants.DayTime)
+        Task { await self.fetchDailySummary(for: dailySummaryDate) }
+    }
+    
+    @ViewBuilder
+    private func makeDailySummaryDatePicker() -> some View {
+        
+        let format = Date.FormatStyle().weekday().month().day()
+        
+        let onLeftEdge = viewModel.currentDay.matches(dailySummaryDate, to: .day)
+        let onRightEdge = dailySummaryDate.matches(viewModel.currentDay - Double(viewModel.daysPerView - 1) * Constants.DayTime, to: .day)
+        
+        HStack {
+         
+            UniversalButton { RecallIcon("chevron.left") } action: { if !onLeftEdge {
+                incrementDailySummaryDate(by: 1)
+            }}
+                .opacity( onLeftEdge ? 0.5 : 1  )
+            
+            UniversalText( dailySummaryDate.formatted(format), size: Constants.UIDefaultTextSize, font: Constants.titleFont, wrap: false)
+                .padding(.horizontal, 20)
+            
+            UniversalButton { RecallIcon("chevron.right") } action: { if !onRightEdge {
+                incrementDailySummaryDate(by: -1)
+            }}
+            .opacity( onRightEdge ? 0.5 : 1  )
+            
+        }
+        .rectangularBackground(style: .secondary)
+    }
+    
+    @ViewBuilder
+    private func makeDailySummaryEditor() -> some View {
+        StyledTextField(title: "", binding: $dailySummaryNotes, prompt: "add notes about how the day went")
+        
+        if !dailySummaryNotes.isEmpty {
+            UniversalButton {
+                HStack {
+                    Spacer()
+                    
+                    UniversalText( "done", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                    RecallIcon("checkmark")
+                    
+                    Spacer()
+                }.rectangularBackground(style: .accent)
+            } action: { createNewDailySummary() }
+        }
+    }
+    
+    @ViewBuilder
+    private func makeDaily
+    
+    @ViewBuilder
+    private func makeDailySummary() -> some View {
+        VStack(alignment: .leading) {
+            
+            HStack {
+                UniversalText("Daily Review", size: Constants.UISubHeaderTextSize, font: Constants.titleFont, scale: true)
+                Spacer()
+            }
+                .overlay { HStack {
+                    Spacer()
+                    makeDailySummaryDatePicker()
+                } }
+                .padding(.bottom)
+            
+            if let dailySummary {
+                Text(dailySummary.notes)
+            } else {
+                makeDailySummaryEditor()
+            }
+        }
+        .padding(.vertical)
+        .task { await fetchDailySummary(for: viewModel.currentDay) }
+        .onChange(of: viewModel.currentDay) { Task { await fetchDailySummary(for: viewModel.currentDay) } }
+    }
+    
 //    MARK: Body
     var body: some View {
         VStack {
             GeometryReader { geo in
-                ScrollViewReader { proxy in
+                VStack {
+                
+                    makeDailySummary()
                     
-                    ScrollView(.vertical, showsIndicators: false) {
+                    ScrollViewReader { proxy in
                         
-                        ZStack(alignment: .top) {
-                            makeCalendar()
+                        ScrollView(.vertical, showsIndicators: false) {
                             
-                            makeCalendarCarousel(in: geo)
-                            
-                            VStack {
-                                Spacer()
+                            ZStack(alignment: .top) {
+                                makeCalendar()
                                 
-                                Rectangle()
-                                    .frame(height: 10)
-                                    .foregroundStyle(.clear)
-                                    .allowsHitTesting(false)
-                                    .id("scrollTarget")
+//                                makeCalendarCarousel(in: geo)
                                 
-                                Spacer()
+                                VStack {
+                                    Spacer()
+                                    
+                                    Rectangle()
+                                        .frame(height: 10)
+                                        .foregroundStyle(.clear)
+                                        .allowsHitTesting(false)
+                                        .id("scrollTarget")
+                                    
+                                    Spacer()
+                                }
                             }
+                            .padding(.bottom, 150)
+                            
+                            .simultaneousGesture(createEventHoldGesture(in: geo))
+                            
+                            .coordinateSpace(name: coordinateSpaceName)
                         }
-                        .padding(.bottom, 150)
-                        
-                        .simultaneousGesture(createEventHoldGesture(in: geo))
-                        
-                        .coordinateSpace(name: coordinateSpaceName)
+                        .simultaneousGesture(scaleGesture)
+                        .scrollDisabled(viewModel.gestureInProgress)
+                        .onAppear { proxy.scrollTo("scrollTarget") }
+                        .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
+                            makeCalendarLabels()
+                                .padding(.leading, calendarLabelWidth)
+                        } }
                     }
-                    .simultaneousGesture(scaleGesture)
-                    .scrollDisabled(viewModel.gestureInProgress)
-                    .onAppear { proxy.scrollTo("scrollTarget") }
-                    .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
-                        makeCalendarLabels()
-                            .padding(.leading, calendarLabelWidth)
-                    } }
                 }
             }
             .onChange(of: showingEventCreationView) { if !showingEventCreationView { cleanEvent() } }

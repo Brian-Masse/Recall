@@ -36,6 +36,7 @@ struct MainView: View {
                       where: { goal in goal.ownerID == RecallModel.ownerID } ) var goals
     @ObservedResults( RecallCategory.self,
                       where: { tag in tag.ownerID == RecallModel.ownerID } ) var tags
+    @ObservedResults( RecallDailySummary.self ) var summaries
     
     @State var currentPage: MainPage = .calendar
     @State var shouldRefreshData: Bool = false
@@ -55,11 +56,12 @@ struct MainView: View {
         let arrEvents = Array(events)
         let arrGoals = Array(goals)
         let arrTags = Array(tags)
+        let arrSummaries = Array(summaries)
     
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
                 TabView(selection: $currentPage) {
-                    CalendarPageView(events: arrEvents, goals: arrGoals)
+                    CalendarPageView(events: arrEvents, goals: arrGoals, dailySummaries: arrSummaries)
                         .halfPageScreenReceiver(showing: $showingHalfPage)
                         .tag( MainPage.calendar )
                     
