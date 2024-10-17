@@ -83,11 +83,13 @@ struct MainView: View {
                 if !showingHalfPage {
                     TabBar(pageSelection: $currentPage)
                         .padding(.bottom, 55)
+                        .ignoresSafeArea(.keyboard)
                 }
                 
                 UpdateView()
             }
         }
+        .ignoresSafeArea(.keyboard)
         .task {
             Constants.setupConstants()
             RecallModel.dataModel.storeData( events: arrEvents, goals: arrGoals )

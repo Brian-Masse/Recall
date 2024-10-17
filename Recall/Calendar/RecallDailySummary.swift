@@ -24,6 +24,12 @@ class RecallDailySummary: Object, Identifiable {
         self.notes = notes
     }
     
+    func update(notes: String) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.notes = notes
+        }
+    }
+    
     static func getSummary(on date: Date, from summaries: [RecallDailySummary]) async -> RecallDailySummary? {
         return summaries.first { $0.date.matches(date, to: .day) }
     }
