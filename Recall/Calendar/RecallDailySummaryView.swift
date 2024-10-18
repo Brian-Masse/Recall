@@ -87,6 +87,8 @@ struct RecallDailySummaryView: View {
         }
         .rectangularBackground(style: .secondary)
         
+//        Probably one of the worst days of my life :) Never felt so gutted, confused, guilty, and betrayed. Especially with the juxtoposition to a year ago, dealing with losing aanika permanently is hitting me pretty hard.
+        
         if !edittiingSummary && dailySummary != nil {
             UniversalButton { RecallIcon("pencil").rectangularBackground(style: .secondary)
             } action: { editDailySummary() }
@@ -96,7 +98,7 @@ struct RecallDailySummaryView: View {
 //    MARK: Layouts
     @ViewBuilder
     private func makeDailySummaryEditor() -> some View {
-        StyledTextField(title: "", binding: $dailySummaryNotes, prompt: "add notes about how the day went")
+        StyledTextField(title: "", binding: $dailySummaryNotes, prompt: "add notes about how the day went", multiLine: true)
             .transition(.blurReplace)
         
         if !dailySummaryNotes.isEmpty {
