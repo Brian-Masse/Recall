@@ -253,7 +253,7 @@ class RealmManager: ObservableObject {
         
         if let index = results.first(where: { index in index.ownerID == RecallModel.ownerID }) {
             self.index = index
-            self.index.toggleNotifcations(to: index.notificationsEnabled, time: index.notificationsTime)
+            self.index.onAppear()
             self.setState(.tutorial)
             
         } else {

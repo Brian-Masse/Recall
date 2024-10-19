@@ -51,6 +51,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var notificationsEnabled: Bool = false
     @Persisted var notificationsTime: Date = .now
     
+//    MARK: Initializer
     convenience init( ownerID: String, email: String, firstName: String, lastName: String) {
         self.init()
         self.ownerID = ownerID
@@ -61,6 +62,16 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         
         Task {
             await initializeIndex()
+            await indexEvents()
+        }
+    }
+    
+    @MainActor
+    func onAppear() {
+        self.toggleNotifcations(to: self.notificationsEnabled, time: self.notificationsTime)
+        
+        Task {
+            await indexEvents()
         }
     }
     
@@ -73,6 +84,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         Int(Date.now.timeIntervalSince(earliestEventDate) / (Constants.DayTime))
     }
     
+//    MARK: Update
     func update( firstName: String, lastName: String, email: String, phoneNumber: Int, dateOfBirth: Date ) {
         RealmManager.updateObject(self) { thawed in
             thawed.firstName = firstName
@@ -90,6 +102,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         self.phoneNumber != 0
     }
     
+//    MARK: Tutorial
     func finishTutorial() {
         RealmManager.updateObject(self) { thawed in
             thawed.finishedTutorial = true
@@ -295,6 +308,58 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
                          secondaryDark: Colors.defaultSecondaryDark.safeMix(with: accentColor.darkAccent, by: mixValue),
                          lightAccent: accentColor.lightAccent,
                          darkAccent: accentColor.darkAccent)
+    }
+    
+    
+//    MARK: EventsIndex
+    @Persisted private var eventsIndexUpToDate: Bool = false
+    @Persisted var eventsIndex = Map<String, Int>()
+    
+    @MainActor
+    func addEventToIndex( on date: Date ) {
+        let key = date.getDayKey()
+        let count = eventsIndex[key] ?? 0
+        
+        RealmManager.updateObject(self) { thawed in
+            thawed.eventsIndex[key] = count + 1
+        }
+    }
+    
+    @MainActor
+    func removeEventFromIndex( on date: Date ) {
+        let key = date.getDayKey()
+        let count = eventsIndex[key] ?? 0
+        
+        if count > 0 {
+            RealmManager.updateObject(self) { thawed in
+                thawed.eventsIndex[key] = count - 1
+            }
+        }
+    }
+    
+    @MainActor
+    func updateEventsIndex( oldDate: Date, newDate: Date ) {
+        removeEventFromIndex(on: oldDate)
+        removeEventFromIndex(on: newDate)
+    }
+    
+    @MainActor
+    func indexEvents() async {
+        if eventsIndexUpToDate { return }
+        
+        RealmManager.updateObject(self) { thawed in
+            thawed.eventsIndex = Map<String, Int>()
+        }
+        
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        
+        for event in events {
+            addEventToIndex(on: event.startTime)
+        }
+        
+        RealmManager.updateObject(self) { thawed in
+            thawed.eventsIndexUpToDate = true
+        }
     }
     
     

@@ -22,6 +22,15 @@ extension Date {
         
         return Calendar.current.date(bySettingHour: roundedHours, minute: Int(roundedMinutes), second: 0, of: self) ?? self
     }
+    
+    func getMonthKey() -> String {
+        let style = Date.FormatStyle().month().year()
+        return self.formatted(style)
+    }
+    
+    func getDayKey() -> String {
+        self.formatted(date: .numeric, time: .omitted)
+    }
 }
 
 //MARK: Double

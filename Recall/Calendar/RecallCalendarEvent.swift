@@ -62,6 +62,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @MainActor
 //    MARK: Updates
     func update( title: String, notes: String, startDate: Date, endDate: Date, tagID: ObjectId, goalRatings: Dictionary<String, String> ) {
+        if !self.startTime.matches(startDate, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: startDate) }
+        
         RealmManager.updateObject(self) { thawed in
             thawed.title = title
             thawed.notes = notes
@@ -75,10 +77,17 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             updateRecentRecallEventEndTime(to: endDate)
         }
         
+        RecallModel.index.addEventToIndex(on: startDate)
+        
         checkUpdateEarliestEvent()
     }
     
+    @MainActor
     func updateDate(startDate: Date? = nil, endDate: Date? = nil) {
+        if let startDate {
+            if !self.startTime.matches(startDate, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: startDate) }
+        }
+        
         RealmManager.updateObject(self) { thawed in
             thawed.startTime = startDate ?? thawed.startTime
             thawed.endTime = endDate ?? thawed.endTime
@@ -93,9 +102,12 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
 //    unlike updateDate, which sets the event's date to that new value, this only sets the date components
 //    preserving the time details
+    @MainActor
     func updateDateComponent(to date: Date) {
         let newStart = self.startTime.dateBySetting(dateFrom: date)
         let newEnd = self.endTime.dateBySetting(dateFrom: date)
+        
+        if !self.startTime.matches(newStart, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: newStart) }
         
         RealmManager.updateObject(self) { thawed in
             thawed.startTime = newStart
@@ -198,6 +210,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     @MainActor
     func delete(preserveTemplate: Bool = false) {
+        RecallModel.index.removeEventFromIndex(on: self.startTime)
+        
         if !preserveTemplate {
             if self.isTemplate { self.toggleTemplate() }
             RealmManager.deleteObject(self) { event in event._id == self._id }

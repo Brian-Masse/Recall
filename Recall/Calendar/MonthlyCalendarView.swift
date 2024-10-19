@@ -146,14 +146,14 @@ struct CalendarPage: View {
                     ForEach(-startOfMonthOffset..<Int(dayCount), id: \.self) { i in
                         let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth) ?? .now
                     
-                        let roundLeftEdge = shouldRoundLeftEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset)
-                        let roundRightEdge = shouldRoundRightEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset, monthCount: dayCount)
+//                        let roundLeftEdge = shouldRoundLeftEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset)
+//                        let roundRightEdge = shouldRoundRightEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset, monthCount: dayCount)
                         
                         VStack {
                             if i >= 0 {
 //                                Text("1")
 //                                Text("\(day.formatted())")
-                                makeDay(for: day, roundLeftEdge: roundLeftEdge, roundRightEdge: roundRightEdge)
+                                makeDay(for: day, roundLeftEdge: false, roundRightEdge: false)
                             } else {
                                 Rectangle().foregroundStyle(.clear)
                             }
@@ -208,7 +208,10 @@ struct CalendarPage: View {
 //        let isCurrentDay = day.matches(.now, to: .day)
         let dayNumber: Int = getDay(of: day)
         
-        let recallWasCompleted: Bool = checkRecallCompletion(on: day)
+        let key = day.getDayKey()
+        let recallWasCompleted: Bool = (RecallModel.index.eventsIndex[key] ?? 0) != 0
+        
+//        checkRecallCompletion(on: day)
 //        Int.random(in: 0...1) == 1
         
         VStack(spacing: 0 ) {
@@ -255,7 +258,7 @@ struct CalendarPage: View {
                 let month = Calendar.current.date(byAdding: .month, value: i, to: .now)!
                 
                 makeMonth(month, in: geo)
-                    .task { await viewModel.renderMonth(month, events: arrEvents) }
+//                    .task { await viewModel.renderMonth(month, events: arrEvents) }
             }
         }
     }
