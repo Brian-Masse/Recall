@@ -120,6 +120,8 @@ struct CalendarEventCreationView: View {
     
     @State var title: String
     @State var notes: String
+    @State var link: String = ""
+    
     @State var startTime: Date
     @State var endTime: Date
     @State var eventLength: Double = RecallModel.index.defaultEventLength
@@ -248,13 +250,12 @@ struct CalendarEventCreationView: View {
             StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
             
             HStack {
-                StyledTextField(title: "", binding: $notes, prompt: "Optional Link", clearable: true, multiLine: true)
+                StyledTextField(title: "", binding: $link, prompt: "Optional Link", clearable: true)
                 
                 RecallIcon("location")
                     .if( location != nil ) { view in view.foregroundStyle(.black) }
                     .rectangularBackground(style: location == nil ? .secondary : .accent)
                     .onTapGesture { showingLocationPicker = true }
-                
             }
             
             if location != nil {
