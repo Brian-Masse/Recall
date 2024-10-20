@@ -107,6 +107,11 @@ struct StyledTextField: View {
         else { TextField(prompt, text: binding) }
     }
     
+    @MainActor
+    private func updateClearButton() { withAnimation {
+        self.showingClearButton = focused && clearable && !binding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    } }
+    
     var body: some View {
         
         VStack(alignment: .leading, spacing: 5) {
@@ -117,39 +122,33 @@ struct StyledTextField: View {
                 .padding(.trailing)
             }
                 
-            makeTextField()
-                .focused($focused)
-                .lineLimit(1...)
-                .frame(maxWidth: .infinity)
-                .padding( .trailing, 5 )
-                .tint(Colors.getAccent(from: colorScheme) )
-                .font(Font.custom(AndaleMono.shared.postScriptName, size: Constants.UIDefaultTextSize))
-            
-                .rectangularBackground(style: .secondary)
-                .onChange(of: self.focused) {
-                    withAnimation {
-                        self.showingClearButton = self.focused
+            ZStack(alignment: .topTrailing) {
+                makeTextField()
+                    .focused($focused)
+                    .lineLimit(1...)
+                    .font(Font.custom(AndaleMono.shared.postScriptName, size: Constants.UIDefaultTextSize))
+                    .frame(maxWidth: .infinity)
+                    .tint(Colors.getAccent(from: colorScheme) )
+                    .padding(.trailing, ( multiLine ? 0 : ( showingClearButton ? 25 : 0 ) ) + 5 )
+                
+                    .rectangularBackground(style: .secondary)
+                    .onChange(of: self.focused) {
+                        self.updateClearButton()
                         self.isFocussed = self.focused
                     }
-                }
-                .onChange(of: self.isFocussed) {
-                    self.focused = self.isFocussed
-                }
-            
-            if showingClearButton && clearable && !binding.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                VStack {
-                    HStack {
-                        Spacer()
-                        UniversalText( "clear", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                    .onChange(of: binding.wrappedValue) { self.updateClearButton() }
+                    .onChange(of: self.isFocussed) { self.focused = self.isFocussed }
+                    .zIndex(0)
+                
+                if showingClearButton  {
+                    UniversalButton {
                         RecallIcon("xmark")
-                        Spacer()
-                        
-                    }
-                    .rectangularBackground(style: .secondary)
-                    .onTapGesture {
-                        withAnimation { binding.wrappedValue = "" }
-                    }
-                }.transition(.opacity)
+                            .padding()
+                            .padding(.top, 1)
+                    } action: { binding.wrappedValue = "" }
+                        .zIndex(100)
+                        .transition(.blurReplace)
+                }
             }
         }
     }
