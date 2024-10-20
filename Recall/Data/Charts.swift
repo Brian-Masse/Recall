@@ -130,6 +130,8 @@ struct ActivitiesPerDay: View {
                 .cornerRadius(Constants.UIBarMarkCOrnerRadius)
             }
         }
+        .chartLegend(.hidden)
+        .frame(height: 230)
         .reversedXAxis()
         .chartOverTimeXAxis()
         .colorChartByTag()
@@ -159,13 +161,52 @@ struct ActivitiesPerDay: View {
         }
     }
     
+    @State private var showingFullLegend: Bool = false
+    
+    @ViewBuilder
+    private func makeLegend() -> some View {
+        let rowCount: Double = 4
+        let tags: [RecallCategory] = RealmManager.retrieveObjects()
+        let itemsPerRow: Int = Int(ceil(Double(tags.count) / rowCount))
+        
+        HStack {
+            UniversalText( "Legend", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+            Spacer()
+        }
+        
+        ScrollView(.horizontal, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 10) {
+                
+                ForEach( 0..<Int(rowCount), id: \.self ) { f in
+                 
+                    HStack(spacing: 7) {
+                        ForEach( 0..<itemsPerRow, id: \.self ) { i in
+                            let index = i + ( itemsPerRow * f )
+                            if index < tags.count {
+                                let tag = tags[index]
+                                
+                                Circle()
+                                    .foregroundStyle(tag.getColor())
+                                    .frame(width: 10, height: 10)
+                                
+                                UniversalText(tag.label, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                                    .opacity(0.75)
+                                    .padding(.trailing)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     private func getMaxIndex() -> Int { min( data.count - 1, loadedDataCount ) }
     private func daysSinceLastEvent() -> Int {
         Int( Date.now.timeIntervalSince(data[getMaxIndex()].date) / Constants.DayTime)
     }
     
 //    this controls how much data will be rendered onAppear
-    static let initialLoadedDataCount: Int = 150
+    static let initialLoadedDataCount: Int = 250
     
     let title: String
     let data: [DataNode]
@@ -202,20 +243,16 @@ struct ActivitiesPerDay: View {
                 } }
             }
             
-            Group {
+            VStack {
                 if getMaxIndex() > 0 {
-                    if scrollable {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            makeChart()
-                                .frame(width: Double(daysSinceLastEvent()) * 16 )
-                                .padding(.trailing)
-                                .frame(height: 250)
-                        }
-                    }else {
+                    ScrollView(.horizontal, showsIndicators: false) {
                         makeChart()
-                            .frame(height: 300)
+                            .frame(width: Double(daysSinceLastEvent()) * 16 )
+                            .padding(.trailing)
                     }
                 }
+                
+                makeLegend()
             }
             .rectangularBackground(style: .transparent, stroke: true)
         }
