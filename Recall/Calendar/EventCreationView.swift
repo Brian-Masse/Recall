@@ -120,7 +120,7 @@ struct CalendarEventCreationView: View {
     
     @State var title: String
     @State var notes: String
-    @State var link: String = ""
+    @State var link: URL? = nil
     
     @State var startTime: Date
     @State var endTime: Date
@@ -190,12 +190,6 @@ struct CalendarEventCreationView: View {
     }
     
     private func checkCompletion() -> Bool {
-//        if endTime < startTime {
-//            self.alertTitle = "Incomplete Form"
-//            self.alertMessage = "make sure the event end time is after the event start time"
-//            return false
-//        }
-        
         if endTime < startTime {
             endTime += Constants.DayTime
         }
@@ -250,7 +244,7 @@ struct CalendarEventCreationView: View {
             StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
             
             HStack {
-                StyledTextField(title: "", binding: $link, prompt: "Optional Link", clearable: true)
+                StyledURLField("", binding: $link, prompt: "Optional Link")
                 
                 RecallIcon("location")
                     .if( location != nil ) { view in view.foregroundStyle(.black) }

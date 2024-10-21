@@ -77,6 +77,76 @@ struct StyledColorPicker: View {
     }
 }
 
+//MARK: StyledURLField
+//"https://github.com/Brian-Masse"
+struct StyledURLField: View {
+    
+    let title: String
+    let prompt: String
+    
+    @State private var text: String = ""
+    @Binding private var url: URL?
+    
+    @State private var isFocussed: Bool = false
+    @State private var showingURL: Bool = false
+    
+    init( _ title: String, binding: Binding<URL?>, prompt: String = "" ) {
+        self.title = title
+        self._url = binding
+        self.prompt = prompt
+    }
+    
+    private var showingCompleteButton: Bool {
+        self.isFocussed && !self.text.isEmpty
+    }
+    
+    private func getURL() {
+        if let url = URL(string: self.text) {
+            self.url = url
+            self.showingURL = true
+        }
+    }
+    
+    var body: some View {
+        
+        
+        HStack {
+            if !showingURL || url == nil {
+                StyledTextField(title: title, binding: $text, prompt: prompt, clearable: true, isFocussed: $isFocussed)
+                
+                if showingCompleteButton {
+                    UniversalButton {
+                        RecallIcon( "checkmark" )
+                            .rectangularBackground(style: .secondary)
+                            .transition(.blurReplace)
+                        
+                    } action: { self.getURL() }
+                }
+                
+            } else {
+                HStack {
+                    Link(self.url!.absoluteString, destination: self.url!)
+                    Spacer()
+                }.rectangularBackground(style: .secondary)
+                
+                UniversalButton {
+                    RecallIcon("pencil")
+                        .rectangularBackground(style: .secondary)
+                } action: {
+                    self.showingURL = false
+                    self.isFocussed = true
+                }
+            }
+        }
+        .animation(.easeInOut, value: self.isFocussed)
+        .animation(.easeInOut, value: self.text)
+        
+        .onChange(of: self.isFocussed) {
+            if !self.isFocussed { self.getURL() }
+        }
+    }
+}
+
 //MARK: StyledTextField
 struct StyledTextField: View {
     
