@@ -73,6 +73,7 @@ struct CalendarEventPreviewView: View {
         let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
                                         title: event.title,
                                         notes: event.notes,
+                                        urlString: event.urlString,
                                         startTime: event.startTime + Constants.HourTime,
                                         endTime: event.endTime + Constants.HourTime,
                                         categoryID: event.category!._id,

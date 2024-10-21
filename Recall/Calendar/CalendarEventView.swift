@@ -100,6 +100,9 @@ struct CalendarEventView: View {
         UniversalText( times, size: Constants.UIDefaultTextSize, font: Constants.mainFont ).padding(.bottom, 2)
             .padding([.bottom, .trailing])
 
+        if let url = URL(string: event.urlString) {
+            Link(url.absoluteString, destination: url)
+        }
     }
     
     @ViewBuilder

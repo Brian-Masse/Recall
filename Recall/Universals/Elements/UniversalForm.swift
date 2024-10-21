@@ -126,6 +126,7 @@ struct StyledURLField: View {
             } else {
                 HStack {
                     Link(self.url!.absoluteString, destination: self.url!)
+                        .lineLimit(1)
                     Spacer()
                 }.rectangularBackground(style: .secondary)
                 

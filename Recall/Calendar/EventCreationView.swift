@@ -86,6 +86,7 @@ struct CalendarEventCreationView: View {
                                       event: event,
                                       title: event!.title,
                                       notes: event!.notes,
+                                      link: URL(string: event!.urlString),
                                       startTime: event!.startTime,
                                       endTime: event!.endTime,
                                       day: event!.startTime,
@@ -120,7 +121,7 @@ struct CalendarEventCreationView: View {
     
     @State var title: String
     @State var notes: String
-    @State var link: URL? = nil
+    @State var link: URL?
     
     @State var startTime: Date
     @State var endTime: Date
@@ -171,6 +172,7 @@ struct CalendarEventCreationView: View {
             let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
                                             title: title,
                                             notes: notes,
+                                            urlString: link?.absoluteString ?? "",
                                             startTime: startTime,
                                             endTime: endTime,
                                             categoryID: category._id,
@@ -181,6 +183,7 @@ struct CalendarEventCreationView: View {
         } else {
             event!.update(title: title,
                           notes: notes,
+                          urlString: link?.absoluteString ?? "",
                           startDate: startTime,
                           endDate: endTime,
                           tagID: category._id,

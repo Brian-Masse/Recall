@@ -160,6 +160,7 @@ struct CalendarContainer: View {
         let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
                                         title: "",
                                         notes: "",
+                                        urlString: "",
                                         startTime: startTime,
                                         endTime: endTime,
                                         categoryID: blankTag._id,

@@ -210,6 +210,7 @@ extension TutorialViews {
                 let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
                                                 title: name,
                                                 notes: notes,
+                                                urlString: "",
                                                 startTime: startTime,
                                                 endTime: endTime,
                                                 categoryID: tag._id,

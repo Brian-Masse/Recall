@@ -17,6 +17,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     @Persisted var title: String = ""
     @Persisted var notes: String = ""
+    @Persisted var urlString: String = ""
+    
     @Persisted var isTemplate: Bool = false
     @Persisted var isFavorite: Bool = false
     
@@ -30,12 +32,21 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
 //    MARK: Main
     @MainActor
-    convenience init(ownerID: String, title: String, notes: String, startTime: Date, endTime: Date, categoryID: ObjectId, goalRatings: Dictionary<String, String>) {
+    convenience init(ownerID: String,
+                     title: String,
+                     notes: String,
+                     urlString: String,
+                     startTime: Date,
+                     endTime: Date,
+                     categoryID: ObjectId,
+                     goalRatings: Dictionary<String, String>) {
         self.init()
         self.ownerID = ownerID
         
         self.title = title
         self.notes = notes
+        self.urlString = urlString
+        
         self.startTime = startTime
         self.endTime = endTime
         
@@ -61,12 +72,19 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     @MainActor
 //    MARK: Updates
-    func update( title: String, notes: String, startDate: Date, endDate: Date, tagID: ObjectId, goalRatings: Dictionary<String, String> ) {
+    func update( title: String,
+                 notes: String,
+                 urlString: String,
+                 startDate: Date,
+                 endDate: Date,
+                 tagID: ObjectId,
+                 goalRatings: Dictionary<String, String> ) {
         if !self.startTime.matches(startDate, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: startDate) }
         
         RealmManager.updateObject(self) { thawed in
             thawed.title = title
             thawed.notes = notes
+            thawed.urlString = urlString
             thawed.startTime = startDate
             thawed.endTime = endDate
             
