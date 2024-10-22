@@ -19,6 +19,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @Persisted var notes: String = ""
     @Persisted var urlString: String = ""
     
+    @Persisted var locationLongitude: Double = 0
+    @Persisted var locationLatitude: Double = 0
+    @Persisted var locationTitle: String = ""
+    
     @Persisted var isTemplate: Bool = false
     @Persisted var isFavorite: Bool = false
     
@@ -36,6 +40,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                      title: String,
                      notes: String,
                      urlString: String,
+                     location: LocationResult? = nil,
                      startTime: Date,
                      endTime: Date,
                      categoryID: ObjectId,
@@ -50,6 +55,12 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         self.startTime = startTime
         self.endTime = endTime
         
+        if let location = location {
+            self.locationTitle = location.title
+            self.locationLongitude = location.location.longitude
+            self.locationLatitude = location.location.latitude
+        }
+        
         if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) { self.category = retrievedCategory }
         self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
         
@@ -62,13 +73,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @MainActor
     override init() {
         super.init()
-        
         self.cachedGoalRatings = self.goalRatings
     }
     
-    func identifier() -> String {
-        ownerID + title + startTime.formatted() + endTime.formatted()
-    }
+    func identifier() -> String { ownerID + title + startTime.formatted() + endTime.formatted() }
     
     @MainActor
 //    MARK: Updates
@@ -77,6 +85,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                  urlString: String,
                  startDate: Date,
                  endDate: Date,
+                 location: LocationResult? = nil,
                  tagID: ObjectId,
                  goalRatings: Dictionary<String, String> ) {
         if !self.startTime.matches(startDate, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: startDate) }
@@ -87,6 +96,12 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.urlString = urlString
             thawed.startTime = startDate
             thawed.endTime = endDate
+            
+            if let location = location {
+                thawed.locationTitle = location.title
+                thawed.locationLongitude = location.location.longitude
+                thawed.locationLatitude = location.location.latitude
+            }
             
             if let retrievedTag = RecallCategory.getCategoryObject(from: tagID) { thawed.category = retrievedTag }
             thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)

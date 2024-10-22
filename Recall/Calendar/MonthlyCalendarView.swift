@@ -28,35 +28,8 @@ class CalendarPageViewModel: ObservableObject {
         Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Calendar.current.startOfDay(for: date)))!
     }
     
-    private func recallWasCompleted(on date: Date, in events: [RecallCalendarEvent]) -> Bool {
-        events.filter { event in event.startTime.matches(date, to: .day) }
-            .count > 0
-    }
-    
-    func renderMonth(_ month: Date, events: [RecallCalendarEvent]) async {
-        if self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] ?? false { return }
-        
-        let dayCount = Calendar.current.range(of: .day, in: .month, for: month)?.count ?? 0
-        let startOfMonth = getStartOfMonth(for: month)
-        let endOfMonth = Calendar.current.date(byAdding: .month, value: 1, to: startOfMonth)!
-        
-        let events = events.filter { event in
-            event.startTime > startOfMonth && event.startTime < endOfMonth
-        }
-        let arrEvents = Array(events)
-        
-        for i in 0..<dayCount {
-            let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth)!
-            let recallWasCompleted = recallWasCompleted(on: day, in: arrEvents)
-            
-            self.recallLog[ day.formatted(date: .numeric, time: .omitted) ] = recallWasCompleted
-        }
-//        
-        self.renderedMonths[ CalendarPageViewModel.makeMonthKey(from: month) ] = true
-        
-        DispatchQueue.main.sync {
-            self.objectWillChange.send()
-        }
+    func recallWasCompleted(on date: Date) -> Bool {
+        (RecallModel.index.eventsIndex[date.getDayKey()] ?? 0) != 0
     }
 }
 
@@ -146,14 +119,12 @@ struct CalendarPage: View {
                     ForEach(-startOfMonthOffset..<Int(dayCount), id: \.self) { i in
                         let day = Calendar.current.date(byAdding: .day, value: i, to: startOfMonth) ?? .now
                     
-//                        let roundLeftEdge = shouldRoundLeftEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset)
-//                        let roundRightEdge = shouldRoundRightEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset, monthCount: dayCount)
+                        let roundLeftEdge = shouldRoundLeftEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset)
+                        let roundRightEdge = shouldRoundRightEdgeOfDay(day, startOfMonthOffset: startOfMonthOffset, monthCount: dayCount)
                         
                         VStack {
                             if i >= 0 {
-//                                Text("1")
-//                                Text("\(day.formatted())")
-                                makeDay(for: day, roundLeftEdge: false, roundRightEdge: false)
+                                makeDay(for: day, roundLeftEdge: roundLeftEdge, roundRightEdge: roundRightEdge)
                             } else {
                                 Rectangle().foregroundStyle(.clear)
                             }
@@ -183,7 +154,7 @@ struct CalendarPage: View {
         let previousDay = Calendar.current.date(byAdding: .day, value: -1, to: day)!
         
         if dayCount == 1 { return true }
-        if !checkRecallCompletion(on: previousDay ) { return true }
+        if !viewModel.recallWasCompleted(on: previousDay ) { return true }
         
         return (dayCount + startOfMonthOffset - 1) % 7 == 0
     }
@@ -193,13 +164,9 @@ struct CalendarPage: View {
         let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: day)!
         
         if dayCount == monthCount { return true }
-        if !checkRecallCompletion(on: nextDay ) { return true }
+        if !viewModel.recallWasCompleted(on: nextDay ) { return true }
         
         return (dayCount + startOfMonthOffset) % 7 == 0
-    }
-    
-    private func checkRecallCompletion(on day: Date) -> Bool {
-        viewModel.recallLog[ day.formatted(date: .numeric, time: .omitted) ] ?? false
     }
     
     @MainActor
@@ -207,11 +174,7 @@ struct CalendarPage: View {
     private func makeDay(for day: Date, roundLeftEdge: Bool, roundRightEdge: Bool) -> some View {
 //        let isCurrentDay = day.matches(.now, to: .day)
         let dayNumber: Int = getDay(of: day)
-        
-        let key = day.getDayKey()
-        let recallWasCompleted: Bool = (RecallModel.index.eventsIndex[key] ?? 0) != 0
-        
-//        checkRecallCompletion(on: day)
+        let recallWasCompleted: Bool = viewModel.recallWasCompleted(on: day)
 //        Int.random(in: 0...1) == 1
         
         VStack(spacing: 0 ) {
@@ -258,7 +221,6 @@ struct CalendarPage: View {
                 let month = Calendar.current.date(byAdding: .month, value: i, to: .now)!
                 
                 makeMonth(month, in: geo)
-//                    .task { await viewModel.renderMonth(month, events: arrEvents) }
             }
         }
     }

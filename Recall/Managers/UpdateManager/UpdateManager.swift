@@ -208,14 +208,14 @@ class UpdateManager: ObservableObject {
     
     private func openRealm() async {
 
-        if let user = self.user {
+//        if let user = self.user {
 //            let configuration = createConfiguration(user: user)
 //            do {
 //                self.realm = try await Realm(configuration: configuration, downloadBeforeOpen: .always)
 //            } catch {
 //                print( "error opening updateRealm: \(error.localizedDescription)" )
 //            }
-        }
+//        }
     }
     
     private func addGenericSubscription<T: RealmSwiftObject>(_ name: String, subscriptions: SyncSubscriptionSet) -> T? {

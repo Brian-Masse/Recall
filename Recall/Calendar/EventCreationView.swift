@@ -173,6 +173,7 @@ struct CalendarEventCreationView: View {
                                             title: title,
                                             notes: notes,
                                             urlString: link?.absoluteString ?? "",
+                                            location: location,
                                             startTime: startTime,
                                             endTime: endTime,
                                             categoryID: category._id,
@@ -186,6 +187,7 @@ struct CalendarEventCreationView: View {
                           urlString: link?.absoluteString ?? "",
                           startDate: startTime,
                           endDate: endTime,
+                          location: location,
                           tagID: category._id,
                           goalRatings: goalRatings)
         }
