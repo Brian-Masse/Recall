@@ -26,14 +26,17 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
     @Persisted var goalRatings: RealmSwift.List<GoalNode> = List()
     
     @MainActor
-    convenience init(ownerID: String, label: String, goalRatings: Dictionary<String, String>, color: Color) {
+    convenience init(ownerID: String, label: String, goalRatings: Dictionary<String, String>, color: Color, previewTag: Bool = false) {
         self.init()
         
         self.ownerID = ownerID
         self.label = label
         
         self.setColor(with: color)
-        self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+        
+        if !previewTag {
+            self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+        }
     }
     
     enum TagUpdatingOption: String {

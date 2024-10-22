@@ -43,7 +43,7 @@ struct CalendarEventPreviewContentView: View {
                        scale: true,
                        minimumScaleFactor: 0.5)
 
-        if height > minHeightForDescription && index.showNotesOnPreview && !event.notes.isEmpty {
+        if height > minHeightForDescription && /*index.showNotesOnPreview &&*/ !event.notes.isEmpty {
             UniversalText( event.notes,
                            size: Constants.UISmallTextSize,
                            font: Constants.mainFont )
@@ -86,7 +86,7 @@ struct CalendarEventPreviewContentView: View {
     let allowTapGesture: Bool
     let forDisplay: Bool // describes whether it is an interactable event or a display
     
-    @ObservedRealmObject var index = RecallModel.index
+//    @ObservedRealmObject var index = RecallModel.index
     
 //   These are all relativley arbitrary values, but they've been found to work across a number of device sizes and text scales
     let minWidth: CGFloat = 250
@@ -146,6 +146,5 @@ struct CalendarEventPreviewContentView: View {
         .sheet(isPresented: $showingEvent) {
             CalendarEventView(event: event, events: events)
         }
-        
     }
 }

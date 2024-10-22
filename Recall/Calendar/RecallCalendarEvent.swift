@@ -44,7 +44,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                      startTime: Date,
                      endTime: Date,
                      categoryID: ObjectId,
-                     goalRatings: Dictionary<String, String>) {
+                     goalRatings: Dictionary<String, String>,
+                     previewEvent: Bool = false) {
         self.init()
         self.ownerID = ownerID
         
@@ -61,13 +62,15 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             self.locationLatitude = location.location.latitude
         }
         
-        if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) { self.category = retrievedCategory }
-        self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+        if !previewEvent {
+            if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) { self.category = retrievedCategory }
+            self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
         
-        checkUpdateEarliestEvent()
-        
-        RecallModel.shared.updateEvent(self)
-        updateRecentRecallEventEndTime(to: endTime)
+            checkUpdateEarliestEvent()
+            
+            RecallModel.shared.updateEvent(self)
+            updateRecentRecallEventEndTime(to: endTime)
+        }
     }
 
     @MainActor

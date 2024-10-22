@@ -58,8 +58,12 @@ struct StyledCalendarContainerView: View {
 //                CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
                 
                 ForEach( filtered, id: \.self ) { event in
-                    CalendarEventPreviewView(event: event,
-                                             events: filtered)
+                    CalendarEventPreviewContentView(event: event,
+                                                    events: filtered,
+                                                    width: 100,
+                                                    height: 100)
+//                    CalendarEventPreviewView(event: event,
+//                                             events: filtered)
                 }
                 .padding(.leading, 40)
             }
