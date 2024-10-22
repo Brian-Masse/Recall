@@ -58,10 +58,7 @@ struct StyledCalendarContainerView: View {
 //                CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
                 
                 ForEach( filtered, id: \.self ) { event in
-                    CalendarEventPreviewContentView(event: event,
-                                                    events: filtered,
-                                                    width: 100,
-                                                    height: 100)
+                    CalendarEventPreviewContentView(event: event, events: filtered)
 //                    CalendarEventPreviewView(event: event,
 //                                             events: filtered)
                 }
@@ -72,3 +69,4 @@ struct StyledCalendarContainerView: View {
         .rectangularBackground(10, style: .transparent, stroke: true)
     }
 }
+

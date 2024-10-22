@@ -116,8 +116,6 @@ struct FavoritesPageView: View {
                     ForEach( groupedEvents ) { event in
                         CalendarEventPreviewContentView(event: event,
                                                         events: events,
-                                                        width: geo.size.width - 50,
-                                                        height: 100,
                                                         allowTapGesture: true,
                                                         forDisplay: true)
                         .contextMenu {

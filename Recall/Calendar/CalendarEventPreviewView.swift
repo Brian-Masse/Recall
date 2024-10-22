@@ -202,7 +202,7 @@ struct CalendarEventPreviewView: View {
     var body: some View {
         GeometryReader { geo in
             
-            CalendarEventPreviewContentView(event: event, events: events, width: geo.size.width, height: geo.size.height)
+            CalendarEventPreviewContentView(event: event, events: events)
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
                         ZStack {

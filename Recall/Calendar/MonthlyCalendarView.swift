@@ -203,6 +203,7 @@ struct CalendarPage: View {
             
         }
         .onTapGesture {
+//            print( RecallModel.index.eventsIndex[ day.getDayKey() ] )
             calendarViewModel.setCurrentDay(to: day)
             dismiss()
         }

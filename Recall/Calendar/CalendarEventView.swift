@@ -198,23 +198,5 @@ struct CalendarEventView: View {
 
 
 #Preview {
-    
-    let tag = RecallCategory(ownerID: "",
-                             label: "working",
-                             goalRatings: [:],
-                             color: .init(64, 99, 67),
-                             previewTag: true)
-    
-    let event = RecallCalendarEvent(ownerID: "",
-                                    title: "test event",
-                                    notes: "Its been a long long time. A moment to shine, shine, shine, shine, shinnnnnnnnnneeeeee. Ooooh ohh",
-                                    urlString: "https://github.com/Brian-Masse/Recall",
-                                    startTime: .now,
-                                    endTime: .now + Constants.HourTime * 2,
-                                    categoryID: tag._id,
-                                    goalRatings: [:],
-                                    previewEvent: true)
-    
-    CalendarEventView(event: event, events: [])
-    
+    CalendarEventView(event: sampleEvent, events: [])
 }
