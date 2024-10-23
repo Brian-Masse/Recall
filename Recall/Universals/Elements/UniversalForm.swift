@@ -84,7 +84,7 @@ struct StyledURLField: View {
     let title: String
     let prompt: String
     
-    @State private var text: String = ""
+    @State private var text: String
     @Binding private var url: URL?
     
     @State private var isFocussed: Bool = false
@@ -93,6 +93,7 @@ struct StyledURLField: View {
     init( _ title: String, binding: Binding<URL?>, prompt: String = "" ) {
         self.title = title
         self._url = binding
+        self.text = binding.wrappedValue?.absoluteString ?? ""
         self.prompt = prompt
     }
     
@@ -133,7 +134,6 @@ struct StyledURLField: View {
                         Spacer()
                         
                     }
-                    .padding([.leading, .top])
                     .opacity(0.75)
                 } action: {
                     self.showingURL = false
@@ -142,6 +142,8 @@ struct StyledURLField: View {
                 .transition(.blurReplace)
             }
         }
+        .onAppear { showingURL = !self.text.isEmpty }
+        
         .animation(.easeInOut, value: self.isFocussed)
         .animation(.easeInOut, value: self.text)
         

@@ -27,6 +27,7 @@ private struct PhotoPickerModifier: ViewModifier {
                 if !viewModel.showingPhotoPicker { return }
                 Task { await viewModel.loadPhotoPickerItems(oldValue: oldVal) }
             }
+            .onDisappear { viewModel.clear() }
     }
 }
 
@@ -48,7 +49,7 @@ struct StyledPhotoPickerCarousel: View {
     }
     
     @ViewBuilder
-    private func makePhotoPreview(_ image: UIImage) -> some View {
+    private func makePhotoPreview(_ image: UIImage, allowsRemoval: Bool = true) -> some View {
         ZStack(alignment: .topTrailing) {
             Image(uiImage: image)
                 .resizable()
@@ -56,15 +57,17 @@ struct StyledPhotoPickerCarousel: View {
                 .frame(height: imageHeight)
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultTextSize))
             
-            UniversalButton {
-                RecallIcon("xmark")
-                    .font(.callout)
-                    .padding(7)
-                    .background {
-                        Circle().opacity(0.5).foregroundStyle(.background)
-                    }
-                    .padding(7)
-            } action: { viewModel.removePhoto(image) }
+            if allowsRemoval {
+                UniversalButton {
+                    RecallIcon("xmark")
+                        .font(.callout)
+                        .padding(7)
+                        .background {
+                            Circle().opacity(0.5).foregroundStyle(.background)
+                        }
+                        .padding(7)
+                } action: { viewModel.removePhoto(image) }
+            }
         }
         .onTapGesture { viewModel.showingPhotoPicker = true }
         .transition(.blurReplace)
@@ -79,10 +82,11 @@ struct StyledPhotoPickerCarousel: View {
             .frame(height: imageHeight)
     }
     
+//    MARK: Body
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            if !viewModel.photoPickerItems.isEmpty {
-                LazyHStack(spacing: 10) {
+            LazyHStack(spacing: 10) {
+                if viewModel.photoPickerItems.count >= viewModel.selectedImages.count {
                     ForEach( 0..<viewModel.photoPickerItems.count, id: \.self) { i in
                         if i < viewModel.selectedImages.count {
                             let image = viewModel.selectedImages[i]
@@ -91,9 +95,14 @@ struct StyledPhotoPickerCarousel: View {
                             makePhotoLoadingPreview()
                         }
                     }
+                } else {
+                    
+                    ForEach( viewModel.selectedImages, id: \.self ) { image in
+                        makePhotoPreview(image, allowsRemoval: false)
+                    }
                 }
-                .frame(height: imageHeight)
             }
+            .frame(height: viewModel.photoPickerItems.count == 0 && viewModel.selectedImages.count == 0 ? 0 : imageHeight)
         }
         .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultTextSize))
         .photoPickerModifier()

@@ -86,6 +86,7 @@ struct CalendarEventCreationView: View {
                                       title: event!.title,
                                       notes: event!.notes,
                                       link: URL(string: event!.urlString),
+                                      location: event!.getLocationResult(),
                                       startTime: event!.startTime,
                                       endTime: event!.endTime,
                                       day: event!.startTime,
@@ -119,6 +120,9 @@ struct CalendarEventCreationView: View {
     @State var notes: String
     @State var link: URL?
     
+    @State private var showingLocationPicker: Bool = false
+    @State var location: LocationResult?
+    
     @State var startTime: Date
     @State var endTime: Date
     @State var eventLength: Double = RecallModel.index.defaultEventLength
@@ -127,8 +131,7 @@ struct CalendarEventCreationView: View {
     @State var category: RecallCategory
     @State var goalRatings: Dictionary<String, String>
     
-    @State private var showingLocationPicker: Bool = false
-    @State private var location: LocationResult? = nil
+    @ObservedObject private var viewModel = StyledPhotoPickerViewModel.shared
 
     let favorite: Bool
 
@@ -165,6 +168,7 @@ struct CalendarEventCreationView: View {
                                             notes: notes,
                                             urlString: link?.absoluteString ?? "",
                                             location: location,
+                                            images: viewModel.selectedImages,
                                             startTime: startTime,
                                             endTime: endTime,
                                             categoryID: category._id,
@@ -178,6 +182,7 @@ struct CalendarEventCreationView: View {
                           startDate: startTime,
                           endDate: endTime,
                           location: location,
+                          images: viewModel.selectedImages,
                           tagID: category._id,
                           goalRatings: goalRatings)
         }
@@ -237,15 +242,8 @@ struct CalendarEventCreationView: View {
             StyledTextField(title: "", binding: $title, prompt: "title", clearable: true)
             StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
             
-            EventCreationViewTabBar()
-            
-            if location != nil {
-                UniversalText("\(location!.title)", size: Constants.UISmallTextSize + 3, font: Constants.mainFont)
-                    .opacity(0.75)
-                    .padding(.leading)
-                    .padding(.trailing, 30)
-            }
-        }
+            EventCreationViewTabBar(link: $link, location: $location)
+        }.padding(.top)
     }
     
     
@@ -384,17 +382,20 @@ struct CalendarEventCreationView: View {
         
         let title = editing ? "Edit Event" : "Create Event"
         
-        CreationFormView(title,
-                         section: EventCreationFormSection.self,
-                         sequence: editing ? [.overview, .tags, .time] : nil,
-                         submit: submit) { section in
-            switch section {
-            case .overview: makeOverviewQuestions().padding(.vertical)
-            case .time: makeTimeSelector()
-            case .tags: makeTagSelector()
+        VStack {
+            CreationFormView(title,
+                             section: EventCreationFormSection.self,
+                             sequence: editing ? [.overview, .tags, .time] : nil,
+                             submit: submit) { section in
+                switch section {
+                case .overview: makeOverviewQuestions()
+                case .time: makeTimeSelector()
+                case .tags: makeTagSelector()
+                }
             }
         }
-        .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
+         .task { if self.editing { viewModel.selectedImages = await event!.getImages() }}
+         .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
         .sheet(isPresented: $showingTagCreationView) {
             CategoryCreationView(editing: false,
                                  tag: nil,
@@ -410,6 +411,5 @@ struct CalendarEventCreationView: View {
         } message: {
             Text(alertMessage)
         }
-
     }
 }

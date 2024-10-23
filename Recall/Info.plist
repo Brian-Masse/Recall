@@ -4,6 +4,8 @@
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Recall needs your location to provide location information for your events</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Recal would like to access your camera to provide images for your events</string>
 	<key>CFBundleIcons</key>
 	<dict>
 		<key>CFBundleAlternateIcons</key>

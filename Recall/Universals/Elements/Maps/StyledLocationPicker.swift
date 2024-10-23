@@ -203,7 +203,7 @@ private struct StyledLocationSearchView: View {
             
         } else {
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 10) {
+                LazyVStack(spacing: 10) {
                     ForEach( locationService.completions ) { completion in
                         makeLocationItem(completion)
                         

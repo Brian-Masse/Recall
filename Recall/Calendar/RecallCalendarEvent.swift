@@ -23,6 +23,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @Persisted var locationLatitude: Double = 0
     @Persisted var locationTitle: String = ""
     
+    @Persisted var images: RealmSwift.List< Data > = List()
+    
     @Persisted var isTemplate: Bool = false
     @Persisted var isFavorite: Bool = false
     
@@ -41,6 +43,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                      notes: String,
                      urlString: String,
                      location: LocationResult? = nil,
+                     images: [UIImage] = [],
                      startTime: Date,
                      endTime: Date,
                      categoryID: ObjectId,
@@ -61,6 +64,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             self.locationLongitude = location.location.longitude
             self.locationLatitude = location.location.latitude
         }
+        
+        let imageData = getImageDataList(from: images)
+        self.images = imageData
         
         if !previewEvent {
             if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) { self.category = retrievedCategory }
@@ -89,6 +95,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                  startDate: Date,
                  endDate: Date,
                  location: LocationResult? = nil,
+                 images: [UIImage],
                  tagID: ObjectId,
                  goalRatings: Dictionary<String, String> ) {
         if !self.startTime.matches(startDate, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: startDate) }
@@ -99,6 +106,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.urlString = urlString
             thawed.startTime = startDate
             thawed.endTime = endDate
+            
+            let imageData = getImageDataList(from: images)
+            thawed.images = imageData
             
             if let location = location {
                 thawed.locationTitle = location.title
@@ -177,6 +187,25 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     }
     
 //    MARK: Convenience Functions
+    func getLocationResult() -> LocationResult? {
+        if self.locationTitle.isEmpty { return nil }
+        
+        return .init(location: .init(latitude: self.locationLatitude,
+                              longitude: self.locationLongitude)
+              , title: self.locationTitle)
+    }
+    
+    private func getImageDataList(from images: [UIImage]) -> RealmSwift.List<Data> {
+        let list = RealmSwift.List<Data>()
+        
+        for image in images {
+            let data = PhotoManager.encodeImage(image)
+            list.append(data)
+        }
+        
+        return list
+    }
+    
     func getURL() -> URL? {
         URL(string: self.urlString)
     }
@@ -246,6 +275,19 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 
     private func updateRecentRecallEventEndTime(to time: Date) {
         RecallModel.index.setMostRecentRecallEvent(to: time)
+    }
+    
+    @MainActor
+    func getImages() async -> [UIImage] {
+        var images: [UIImage] = []
+        
+        for data in self.images {
+            if let image = PhotoManager.decodeUIImage(from: data) {
+                images.append(image)
+            }
+        }
+        
+        return images
     }
     
     @MainActor

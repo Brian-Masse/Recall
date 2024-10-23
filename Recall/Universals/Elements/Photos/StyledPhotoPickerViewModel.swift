@@ -21,6 +21,13 @@ class StyledPhotoPickerViewModel: ObservableObject {
     static let shared = StyledPhotoPickerViewModel()
     
 //    MARK: class methods
+    @MainActor
+    func clear() {
+        self.selectedImages = []
+        self.photoPickerItems = []
+        self.showingPhotoPicker = false
+    }
+    
 //    this is called whenever there is a change in the photoPickerItems
     @MainActor
     func loadPhotoPickerItems(oldValue: [PhotosPickerItem]) async {

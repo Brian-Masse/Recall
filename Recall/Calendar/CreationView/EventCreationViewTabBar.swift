@@ -11,27 +11,31 @@ import UIUniversals
 
 struct EventCreationViewTabBar: View {
     
-    @State private var link: URL? = nil
+    @Binding var link: URL?
     @State private var showingLinkField = false
     
+    @Binding var location: LocationResult?
     @State private var showingLocationPicker = false
-    @State private var location: LocationResult? = nil
     
     @ObservedObject private var viewModel = StyledPhotoPickerViewModel.shared
     
     @Namespace private var tabBarNamespace
     
     private func getPhotoPickerToggleWidth(in geo: GeometryProxy) -> Double {
-        if showingLinkField && location != nil { return .infinity }
+        if showingLinkField && location != nil { return geo.size.width }
         if showingLinkField || location != nil { return (geo.size.width * (2/3)) }
         return (geo.size.width / 2)
     }
     
     private var showToolBar: Bool {
-        !(showingLinkField && location != nil && !viewModel.selectedImages.isEmpty)
+        !(link != nil && location != nil && !viewModel.selectedImages.isEmpty)
     }
     
-//    MARK: Button
+    private var showPreviews: Bool {
+        link != nil || location != nil || !viewModel.selectedImages.isEmpty
+    }
+    
+    //    MARK: Button
     @ViewBuilder
     private func makeButton(_ icon: String, action: @escaping () -> Void ) -> some View {
         UniversalButton {
@@ -43,7 +47,7 @@ struct EventCreationViewTabBar: View {
             .rectangularBackground(style: .secondary)
             .transition(.blurReplace)
         } action: { action() }
-
+        
     }
     
     @ViewBuilder
@@ -57,7 +61,7 @@ struct EventCreationViewTabBar: View {
         .padding(.leading)
     }
     
-//    MARK: Ribbon
+    //    MARK: Ribbon
     @ViewBuilder
     private func makeToolRibbon() -> some View {
         GeometryReader { geo in
@@ -68,7 +72,7 @@ struct EventCreationViewTabBar: View {
                 StyledPhotoPickerToggles()
                     .frame(width: photoPickerToggleWidth)
                 
-                if !showingLinkField {
+                if link == nil && !showingLinkField {
                     makeButton("link") {
                         showingLinkField = true
                     }
@@ -84,11 +88,17 @@ struct EventCreationViewTabBar: View {
         .frame(height: 50)
     }
     
-//    MARK: Preview
+    //    MARK: Preview
     @ViewBuilder
     private func makeDataPreviews() -> some View {
-        if showingLinkField {
+        StyledPhotoPickerCarousel()
+        if !viewModel.selectedImages.isEmpty {
+            makeDataPreview(icon: "text.below.photo", data: "photos")
+        }
+        
+        if showingLinkField || link != nil {
             StyledURLField("", binding: $link, prompt: "Add an optional Link")
+                .padding(.leading, link == nil ? 0 : 15)
                 .transition(.blurReplace)
         }
         
@@ -96,16 +106,10 @@ struct EventCreationViewTabBar: View {
             UniversalButton {
                 makeDataPreview(icon: "location", data: location!.title)
             } action: { showingLocationPicker = true }
-                
         }
-        
-        if !viewModel.selectedImages.isEmpty {
-            makeDataPreview(icon: "text.below.photo", data: "photos")
-        }
-        StyledPhotoPickerCarousel()
     }
     
-//    MARK: Body
+    //    MARK: Body
     var body: some View {
         
         VStack(alignment: .leading, spacing: 10) {
@@ -114,7 +118,9 @@ struct EventCreationViewTabBar: View {
                 makeToolRibbon()
             }
 
-            makeDataPreviews()
+            if showPreviews {
+                makeDataPreviews()
+            }
         }
         .sheet(isPresented: $showingLocationPicker) {
             StyledLocationPicker($location, title: "select a location")
@@ -122,7 +128,7 @@ struct EventCreationViewTabBar: View {
     }
 }
 
-
 #Preview {
-    EventCreationViewTabBar()
+    EventCreationViewTabBar(link: .constant(nil),
+                            location: .constant(nil))
 }
