@@ -81,17 +81,21 @@ struct StyledPhotoPickerCarousel: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 10) {
-                ForEach( 0..<viewModel.photoPickerItems.count, id: \.self) { i in
-                    if i < viewModel.selectedImages.count {
-                        let image = viewModel.selectedImages[i]
-                        makePhotoPreview(image)
-                    } else {
-                        makePhotoLoadingPreview()
+            if !viewModel.photoPickerItems.isEmpty {
+                LazyHStack(spacing: 10) {
+                    ForEach( 0..<viewModel.photoPickerItems.count, id: \.self) { i in
+                        if i < viewModel.selectedImages.count {
+                            let image = viewModel.selectedImages[i]
+                            makePhotoPreview(image)
+                        } else {
+                            makePhotoLoadingPreview()
+                        }
                     }
                 }
+                .frame(height: imageHeight)
             }
         }
+        .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultTextSize))
         .photoPickerModifier()
     }
 }

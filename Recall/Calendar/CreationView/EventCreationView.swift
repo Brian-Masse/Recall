@@ -229,19 +229,6 @@ struct CalendarEventCreationView: View {
             makeRecallTypeSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: true)
         }
     }
-    
-//    MARK: TabBar
-    @ViewBuilder
-    private func makeTempButton(_ icon: String) -> some View {
-        HStack {
-            Spacer()
-            
-            RecallIcon(icon)
-            
-            Spacer()
-        }
-        .rectangularBackground(style: .secondary)
-    }
 
 //    MARK: OverviewQuestions
     @ViewBuilder
@@ -250,26 +237,7 @@ struct CalendarEventCreationView: View {
             StyledTextField(title: "", binding: $title, prompt: "title", clearable: true)
             StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
             
-            HStack {
-                
-//                makeTempButton("photo.on.rectangle")
-//                
-//                makeTempButton("camera")
-                
-                StyledPhotoPickerToggles()
-                
-                makeTempButton("link")
-                
-                makeTempButton("location")
-//                StyledURLField("", binding: $link, prompt: "Optional Link")
-//                
-//                RecallIcon("location")
-//                    .if( location != nil ) { view in view.foregroundStyle(.black) }
-//                    .rectangularBackground(style: location == nil ? .secondary : .accent)
-//                    .onTapGesture { showingLocationPicker = true }
-            }
-            
-            StyledPhotoPickerCarousel()
+            EventCreationViewTabBar()
             
             if location != nil {
                 UniversalText("\(location!.title)", size: Constants.UISmallTextSize + 3, font: Constants.mainFont)
