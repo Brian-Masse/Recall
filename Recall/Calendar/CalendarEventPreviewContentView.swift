@@ -76,7 +76,6 @@ struct CalendarEventPreviewContentView: View {
             HStack {Spacer()}
             
             makeTitle(in: geo)
-//                .border(.red)
             
             if geo.size.height > minHeight {
                 if let _ = event.getURL() {

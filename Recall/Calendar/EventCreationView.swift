@@ -66,7 +66,7 @@ struct CalendarEventCreationView: View {
     @Environment(\.colorScheme) var colorShcheme
     
     @ViewBuilder
-    static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, template: Bool = false, favorite: Bool = false) -> some View {
+    static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, favorite: Bool = false) -> some View {
         if !editing {
             let startTime = RecallModel.index.recallEventsAtEndOfLastRecall ? RecallModel.index.getMostRecentRecallEnd(on: currentDay) : .now
             
@@ -79,7 +79,6 @@ struct CalendarEventCreationView: View {
                                       day: currentDay,
                                       category: RecallCategory(),
                                       goalRatings: Dictionary(),
-                                      template: template,
                                       favorite: favorite)
         } else {
             CalendarEventCreationView(editing: true,
@@ -92,7 +91,6 @@ struct CalendarEventCreationView: View {
                                       day: event!.startTime,
                                       category: event!.category ?? RecallCategory(),
                                       goalRatings: RecallCalendarEvent.translateGoalRatingList(event!.goalRatings),
-                                      template: false,
                                       favorite: false)
         }
     }
@@ -117,8 +115,6 @@ struct CalendarEventCreationView: View {
     let editing: Bool
     let event: RecallCalendarEvent?
     
-    @State var templates: [RecallCalendarEvent] = []
-    
     @State var title: String
     @State var notes: String
     @State var link: URL?
@@ -133,8 +129,7 @@ struct CalendarEventCreationView: View {
     
     @State private var showingLocationPicker: Bool = false
     @State private var location: LocationResult? = nil
-    
-    let template: Bool
+
     let favorite: Bool
 
     @State var showingAllGoals: Bool = false
@@ -156,10 +151,6 @@ struct CalendarEventCreationView: View {
         endTime = Calendar.current.date(bySettingHour: endComps.hour!, minute: endComps.minute!, second: endComps.second!, of: day + ( requestingNewDay ? Constants.DayTime : 0  ) )!
     }
     
-    private func getTemplates(from events: [RecallCalendarEvent]) async  {
-        self.templates = events.filter { event in event.isTemplate }
-    }
-    
 //    MARK: Submit
     private func submit() {
         setDay()
@@ -179,7 +170,6 @@ struct CalendarEventCreationView: View {
                                             categoryID: category._id,
                                             goalRatings: goalRatings)
             RealmManager.addObject(event)
-            if template { event.toggleTemplate() }
             if favorite { event.toggleFavorite() }
         } else {
             event!.update(title: title,
@@ -206,7 +196,6 @@ struct CalendarEventCreationView: View {
     }
     
     private func fillInformation(from event: RecallCalendarEvent) {
-        self.activeTempalte = event
         self.title = event.title
         self.startTime = event.startTime
         self.endTime = event.endTime
@@ -224,7 +213,7 @@ struct CalendarEventCreationView: View {
                 RecallIcon(icon)
                     .padding(.bottom, 5)
                 UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
-            }.padding(.horizontal, 15)
+            }.padding(.horizontal, 20)
             
             Spacer()
         }
@@ -241,21 +230,46 @@ struct CalendarEventCreationView: View {
         }
     }
     
+//    MARK: TabBar
+    @ViewBuilder
+    private func makeTempButton(_ icon: String) -> some View {
+        HStack {
+            Spacer()
+            
+            RecallIcon(icon)
+            
+            Spacer()
+        }
+        .rectangularBackground(style: .secondary)
+    }
+
 //    MARK: OverviewQuestions
     @ViewBuilder
     private func makeOverviewQuestions() -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            StyledTextField(title: "Overview", binding: $title, prompt: "title", clearable: true)
+            StyledTextField(title: "", binding: $title, prompt: "title", clearable: true)
             StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
             
             HStack {
-                StyledURLField("", binding: $link, prompt: "Optional Link")
                 
-                RecallIcon("location")
-                    .if( location != nil ) { view in view.foregroundStyle(.black) }
-                    .rectangularBackground(style: location == nil ? .secondary : .accent)
-                    .onTapGesture { showingLocationPicker = true }
+//                makeTempButton("photo.on.rectangle")
+//                
+//                makeTempButton("camera")
+                
+                StyledPhotoPickerToggles()
+                
+                makeTempButton("link")
+                
+                makeTempButton("location")
+//                StyledURLField("", binding: $link, prompt: "Optional Link")
+//                
+//                RecallIcon("location")
+//                    .if( location != nil ) { view in view.foregroundStyle(.black) }
+//                    .rectangularBackground(style: location == nil ? .secondary : .accent)
+//                    .onTapGesture { showingLocationPicker = true }
             }
+            
+            StyledPhotoPickerCarousel()
             
             if location != nil {
                 UniversalText("\(location!.title)", size: Constants.UISmallTextSize + 3, font: Constants.mainFont)
@@ -389,7 +403,6 @@ struct CalendarEventCreationView: View {
     }
     
 
-    @State private var activeTempalte: RecallCalendarEvent? = nil
     @State private var showingError: Bool = false
     
     private enum EventCreationFormSection : Int, CreationFormEnumProtocol {
@@ -423,7 +436,6 @@ struct CalendarEventCreationView: View {
         .sheet(isPresented: $showingLocationPicker) {
             StyledLocationPicker($location, title: "Event Location")
         }
-        .task { await getTemplates(from: Array(events)) }
         .alert(alertTitle,
                isPresented: $showingAlert) {
             Button("dimiss", role: .cancel) { }

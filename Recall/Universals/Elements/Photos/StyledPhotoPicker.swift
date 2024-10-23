@@ -10,47 +10,43 @@ import SwiftUI
 import UIUniversals
 import PhotosUI
 
-struct StyledPhotoPicker: View {
+//MARK: PhotoPickerModifier
+private struct PhotoPickerModifier: ViewModifier {
     
-    @ObservedObject var photoManager = PhotoManager.shared
+    @ObservedObject var viewModel = StyledPhotoPickerViewModel.shared
     
-//    MARK: Vars
-    @State private var selectedImages: [UIImage] = []
-    @State private var photoPickerItems: [PhotosPickerItem] = []
-    
-    @State private var showingPhotoPicker: Bool = false
-    @State private var showingCamera: Bool = false
-    
-    private let imageCount: Int = 5
-    private let imageHeight: Double = 200
-    
-    
-//    MARK: LoadPhotos
-    private func loadPhotoPickerItems() async {
-        if !showingPhotoPicker { return }
+    func body(content: Content) -> some View {
+        content
+            .photosPicker(isPresented: $viewModel.showingPhotoPicker,
+                          selection: $viewModel.photoPickerItems,
+                          maxSelectionCount: viewModel.imageCount,
+                          selectionBehavior: .continuousAndOrdered,
+                          matching: .images)
         
-        self.selectedImages.removeAll()
-        
-        for item in photoPickerItems {
-            if let data = try? await item.loadTransferable(type: Data.self) {
-                if let uiImage = UIImage(data: data) {
-                    if !selectedImages.contains(uiImage) {
-                        selectedImages.append( uiImage )
-                    }
-                }
+            .onChange(of: viewModel.photoPickerItems) { oldVal, newVal in
+                if !viewModel.showingPhotoPicker { return }
+                Task { await viewModel.loadPhotoPickerItems(oldValue: oldVal) }
             }
-        }
+    }
+}
+
+private extension View {
+    func photoPickerModifier() -> some View {
+        modifier(PhotoPickerModifier())
+    }
+}
+
+//MARK: StyledPhotoPickerCarousel
+//This is just the carousel that shows the photos the user has selected
+//it is a seperate struct so if a view (calendarEventCreationView) wants to use the toggle and caoursel seperatley it can
+struct StyledPhotoPickerCarousel: View {
+    
+    @ObservedObject var viewModel = StyledPhotoPickerViewModel.shared
+    
+    private var imageHeight: Double {
+        viewModel.selectedImages.count == 1 ? 275 : 200
     }
     
-    private func removePhoto(_ image: UIImage) {
-        if let index = selectedImages.firstIndex(of: image) {
-            selectedImages.remove(at: index)
-        
-            photoPickerItems.remove(at: index)
-        }
-    }
-    
-//    MARK: PhotoPreview
     @ViewBuilder
     private func makePhotoPreview(_ image: UIImage) -> some View {
         ZStack(alignment: .topTrailing) {
@@ -62,29 +58,50 @@ struct StyledPhotoPicker: View {
             
             UniversalButton {
                 RecallIcon("xmark")
+                    .font(.callout)
                     .padding(7)
                     .background {
                         Circle().opacity(0.5).foregroundStyle(.background)
                     }
                     .padding(7)
-            } action: { removePhoto(image) }
+            } action: { viewModel.removePhoto(image) }
         }
+        .onTapGesture { viewModel.showingPhotoPicker = true }
         .transition(.blurReplace)
     }
     
-//    MARK: Carousel
     @ViewBuilder
-    private func makePhotoCarousel() -> some View {
-        ScrollView {
+    private func makePhotoLoadingPreview() -> some View {
+        RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+            .universalStyledBackgrond(.secondary, onForeground: true)
+            .overlay { ProgressView() }
+            .aspectRatio(2/3, contentMode: .fit)
+            .frame(height: imageHeight)
+    }
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 10) {
-                ForEach(selectedImages, id: \.self) { image in
-                    makePhotoPreview(image)
+                ForEach( 0..<viewModel.photoPickerItems.count, id: \.self) { i in
+                    if i < viewModel.selectedImages.count {
+                        let image = viewModel.selectedImages[i]
+                        makePhotoPreview(image)
+                    } else {
+                        makePhotoLoadingPreview()
+                    }
                 }
             }
         }
+        .photoPickerModifier()
     }
+}
 
-//    MARK: TabBar
+//MARK: StyledPhotoPickerToggle
+struct StyledPhotoPickerToggles: View {
+    
+    @ObservedObject private var viewModel = StyledPhotoPickerViewModel.shared
+    @State private var showingCamera = false
+    
     @ViewBuilder
     private func makeButton(icon: String, action: @escaping () -> Void) -> some View {
         UniversalButton {
@@ -103,12 +120,37 @@ struct StyledPhotoPicker: View {
     @ViewBuilder
     private func makeTabBar() -> some View {
         HStack {
-            makeButton(icon: "photo.on.rectangle") { showingPhotoPicker = true }
+            makeButton(icon: "photo.on.rectangle") { viewModel.showingPhotoPicker = true }
             
             makeButton(icon: "camera") { showingCamera = true }
         }
     }
     
+    var body: some View {
+        if viewModel.selectedImages.count == 0 {
+            makeTabBar()
+                .transition(.blurReplace)
+                .sheet(isPresented: $showingCamera) {
+                    ImagePickerView(sourceType: .camera) { uiImage in
+                        self.viewModel.selectedImages = [uiImage]
+                    }.ignoresSafeArea()
+                }
+        }
+    }
+}
+
+//MARK: StyledPhotoPicker
+struct StyledPhotoPicker: View {
+    
+    @ObservedObject var photoManager = PhotoManager.shared
+    @ObservedObject var viewModel = StyledPhotoPickerViewModel.shared
+    
+//    MARK: Vars
+    @State private var showingPhotoPicker: Bool = false
+    @State private var showingCamera: Bool = false
+    
+    private let imageHeight: Double = 200
+
     
 //    MARK: Body
     var body: some View {
@@ -117,32 +159,10 @@ struct StyledPhotoPicker: View {
             
             UniversalText( "Add Photos", size: Constants.formQuestionTitleSize, font: Constants.titleFont )
             
-            if selectedImages.count == 0 {
-                makeTabBar()
-                    .transition(.blurReplace)
-            }
+            StyledPhotoPickerToggles()
             
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach( selectedImages, id: \.self ) { uiImage in
-                        makePhotoPreview(uiImage)
-                    }
-                }
-            }
+            StyledPhotoPickerCarousel()
         }
-        .photosPicker(isPresented: $showingPhotoPicker,
-                      selection: $photoPickerItems,
-                      maxSelectionCount: imageCount,
-                      selectionBehavior: .continuousAndOrdered,
-                      matching: .images)
-        
-        .sheet(isPresented: $showingCamera) {
-            ImagePickerView(sourceType: .camera) { uiImage in
-                self.selectedImages = [uiImage]
-            }.ignoresSafeArea()
-        }
-        
-        .onChange(of: photoPickerItems) { Task { await loadPhotoPickerItems() } }
     }
 }
 
@@ -157,7 +177,6 @@ private struct TempView: View {
 }
 
 #Preview {
-    
     
     TempView()
 }

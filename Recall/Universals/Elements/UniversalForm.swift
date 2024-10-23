@@ -166,6 +166,7 @@ struct StyledTextField: View {
         self.multiLine = multiLine
         self.prompt = prompt
         self._isFocussed = isFocussed
+        self.focused = isFocussed.wrappedValue
     }
     
     @Environment(\.colorScheme) var colorScheme
