@@ -11,7 +11,7 @@ import UIUniversals
 import PhotosUI
 
 //MARK: PhotoPickerModifier
-private struct PhotoPickerModifier: ViewModifier {
+struct PhotoPickerModifier: ViewModifier {
     
     @ObservedObject var viewModel = StyledPhotoPickerViewModel.shared
     
@@ -22,16 +22,17 @@ private struct PhotoPickerModifier: ViewModifier {
                           maxSelectionCount: viewModel.imageCount,
                           selectionBehavior: .continuousAndOrdered,
                           matching: .images)
-        
             .onChange(of: viewModel.photoPickerItems) { oldVal, newVal in
                 if !viewModel.showingPhotoPicker { return }
                 Task { await viewModel.loadPhotoPickerItems(oldValue: oldVal) }
             }
-            .onDisappear { viewModel.clear() }
+            .onDisappear {
+                viewModel.clear()
+            }
     }
 }
 
-private extension View {
+extension View {
     func photoPickerModifier() -> some View {
         modifier(PhotoPickerModifier())
     }
@@ -105,7 +106,6 @@ struct StyledPhotoPickerCarousel: View {
             .frame(height: viewModel.photoPickerItems.count == 0 && viewModel.selectedImages.count == 0 ? 0 : imageHeight)
         }
         .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultTextSize))
-        .photoPickerModifier()
     }
 }
 

@@ -122,6 +122,7 @@ struct EventCreationViewTabBar: View {
                 makeDataPreviews()
             }
         }
+        .photoPickerModifier()
         .sheet(isPresented: $showingLocationPicker) {
             StyledLocationPicker($location, title: "select a location")
         }

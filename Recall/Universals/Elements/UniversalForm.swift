@@ -205,7 +205,7 @@ struct StyledTextField: View {
                 makeTextField()
                     .focused($focused)
                     .lineLimit(1...)
-                    .font(Font.custom(AndaleMono.shared.postScriptName, size: Constants.UIDefaultTextSize))
+                    .font(Font.custom(SyneMedium.shared.postScriptName, size: Constants.UIDefaultTextSize))
                     .frame(maxWidth: .infinity)
                     .tint(Colors.getAccent(from: colorScheme) )
                     .padding(.trailing, ( multiLine ? 0 : ( showingClearButton ? 25 : 0 ) ) + 5 )
