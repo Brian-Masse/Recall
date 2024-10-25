@@ -226,6 +226,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    This is used when loading the images on the CalendarEventView
     @Published private(set) var decodedImages: [UIImage] = []
     
+    @MainActor
     func decodeImages() async -> [UIImage] {
         for imageData in self.images {
             
