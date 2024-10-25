@@ -32,7 +32,7 @@ struct EventCreationViewTabBar: View {
     }
     
     private var showPreviews: Bool {
-        link != nil || location != nil || !viewModel.selectedImages.isEmpty
+        link != nil || showingLinkField || location != nil || !viewModel.selectedImages.isEmpty
     }
     
     //    MARK: Button
