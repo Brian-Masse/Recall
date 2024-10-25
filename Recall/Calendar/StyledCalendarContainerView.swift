@@ -58,7 +58,8 @@ struct StyledCalendarContainerView: View {
 //                CalendarView(day: currentDay, spacing: spacing, startHour: startHour, endHour: endHour)
                 
                 ForEach( filtered, id: \.self ) { event in
-                    CalendarEventPreviewContentView(event: event, events: filtered)
+//                    CalendarEventPreviewContentView(event: calendarViewModel.get, events: filtered)
+//                        .frame(width: 300)
 //                    CalendarEventPreviewView(event: event,
 //                                             events: filtered)
                 }
@@ -70,3 +71,6 @@ struct StyledCalendarContainerView: View {
     }
 }
 
+#Preview {
+//    StyledCalendarContainerView(at: .now, with: [], from: <#T##Int#>, to: <#T##Int#>, geo: <#T##GeometryProxy#>, scale: <#T##CGFloat#>)
+}

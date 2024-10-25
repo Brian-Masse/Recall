@@ -268,7 +268,7 @@ struct CalendarEventPreviewView: View {
                 .sheet(isPresented: $showingEditingScreen) {
                     CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
                 }
-                .sheet(isPresented: $showingEvent) { CalendarEventView(event: event, events: events) }
+
             
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
         }

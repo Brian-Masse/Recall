@@ -20,6 +20,9 @@ struct CalendarEventPreviewContentView: View {
     let events: [RecallCalendarEvent]
     let allowTapGesture: Bool
     
+    let showMetaData: Bool
+
+    
 //   These are all relativley arbitrary values, but they've been found to work across a number of device sizes and text scales
     let minWidth: CGFloat = 250
     private let minHeight: CGFloat = 65
@@ -28,11 +31,12 @@ struct CalendarEventPreviewContentView: View {
     
     @State var showingEvent: Bool = false
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], allowTapGesture: Bool = false, forDisplay: Bool = false) {
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], allowTapGesture: Bool = true, showMetaData: Bool = true) {
         
         self.event = event
         self.events = events
         self.allowTapGesture = allowTapGesture
+        self.showMetaData = showMetaData
     }
     
     private var isSelected: Bool {
@@ -56,12 +60,12 @@ struct CalendarEventPreviewContentView: View {
     
     
     @ViewBuilder
-    private func makeNode(icon: String, text: String) -> some View {
+    private func makeNode(icon: String, text: String, wrap: Bool = false) -> some View {
         HStack {
             RecallIcon(icon)
                 .font(.caption)
             
-            UniversalText( text, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: false )
+            UniversalText( text, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: wrap )
         }
         .opacity(0.65)
 
@@ -78,24 +82,34 @@ struct CalendarEventPreviewContentView: View {
             makeTitle(in: geo)
             
             if geo.size.height > minHeight {
-                if let _ = event.getURL() {
-                    makeNode(icon: "link", text: event.urlString)
+                if !event.notes.isEmpty {
+                    makeNode(icon: "text.justify.leading", text: event.notes, wrap: true)
+                        .padding(.bottom, 7)
                 }
                 
-                makeNode(icon: "clock", text: timeString)
-            
-                makeNode(icon: "tag", text: event.getTagLabel())
-                
+                if showMetaData {
+                    makeNode(icon: "clock", text: timeString)
+                    
+                    makeNode(icon: "tag", text: event.getTagLabel())
+                    
+                    if let url = event.getURL() {
+                        makeNode(icon: "link", text: url.relativePath)
+                    }
+                    
+                    if let location = event.getLocationResult() {
+                        makeNode(icon: "location", text: location.title)
+                    }
+                }
             }
             
             Spacer()
             
-            if geo.size.height > minHeightForDescription && /*index.showNotesOnPreview &&*/ !event.notes.isEmpty {
-                UniversalText( event.notes,
-                               size: Constants.UISmallTextSize,
-                               font: Constants.mainFont)
-                .opacity(0.75)
-            }
+//            if geo.size.height > minHeightForDescription && /*index.showNotesOnPreview &&*/ !event.notes.isEmpty {
+//                UniversalText( event.notes,
+//                               size: Constants.UISmallTextSize,
+//                               font: Constants.mainFont)
+//                .opacity(0.75)
+//            }
         }
         .foregroundStyle(event.getColor().safeMix(with: .black, by: colorScheme == .light ? 0.5 : 0) )
     }
@@ -134,7 +148,7 @@ struct CalendarEventPreviewContentView: View {
         .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))
         .if(allowTapGesture) { view in view.onTapGesture { showingEvent = true } }
         .sheet(isPresented: $showingEvent) {
-            CalendarEventView(event: event, events: events)
+            TestCalendarEventView(event: event, events: events )
         }
     }
 }

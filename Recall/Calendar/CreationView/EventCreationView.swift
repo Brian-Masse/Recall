@@ -28,6 +28,7 @@ struct GoalMultiplierSelector: View {
     
     let showToggle: Bool
     
+//    MARK: Body
     var body: some View {
         HStack {
             UniversalText(goal.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
@@ -56,15 +57,13 @@ struct GoalMultiplierSelector: View {
     }
 }
 
-//MARK: Creation View
+//MARK: CalendarEventcreationView
 struct CalendarEventCreationView: View {
     
-    struct LocalConstants {
-        static let questionTextSize: CGFloat = Constants.UISubHeaderTextSize
-    }
     
-    @Environment(\.colorScheme) var colorShcheme
-    
+//    MARK: makeEventCreationView
+//    This creates an instance of the calendarEventCreationView
+//    it automatically populates the information if you are editting an event
     @ViewBuilder
     static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, favorite: Bool = false) -> some View {
         if !editing {
@@ -72,17 +71,18 @@ struct CalendarEventCreationView: View {
             
             CalendarEventCreationView(editing: false,
                                       event: nil,
+                                      favorite: favorite,
                                       title: "",
                                       notes: "",
                                       startTime: startTime,
                                       endTime: startTime + RecallModel.index.defaultEventLength,
                                       day: currentDay,
                                       category: RecallCategory(),
-                                      goalRatings: Dictionary(),
-                                      favorite: favorite)
+                                      goalRatings: Dictionary())
         } else {
             CalendarEventCreationView(editing: true,
                                       event: event,
+                                      favorite: false,
                                       title: event!.title,
                                       notes: event!.notes,
                                       link: URL(string: event!.urlString),
@@ -91,13 +91,16 @@ struct CalendarEventCreationView: View {
                                       endTime: event!.endTime,
                                       day: event!.startTime,
                                       category: event!.category ?? RecallCategory(),
-                                      goalRatings: RecallCalendarEvent.translateGoalRatingList(event!.goalRatings),
-                                      favorite: false)
+                                      goalRatings: RecallCalendarEvent.translateGoalRatingList(event!.goalRatings))
         }
     }
     
+    
 //    MARK: Vars
+    @Environment(\.colorScheme) var colorShcheme
     @Environment(\.presentationMode) var presentationMode
+    
+    @ObservedObject private var viewModel = StyledPhotoPickerViewModel.shared
     
     @ObservedResults(RecallCalendarEvent.self,
                      where: { event in event.ownerID == RecallModel.ownerID }) var events
@@ -108,40 +111,47 @@ struct CalendarEventCreationView: View {
     
     @ObservedRealmObject var index = RecallModel.index
     
-    @State var showingAlert: Bool = false
-    @State var alertTitle: String = ""
-    @State var alertMessage: String = ""
-    @State var showingTagCreationView: Bool = false
+    @State private var showingAlert: Bool = false
+    @State private var showingError: Bool = false
+    @State private var alertTitle: String = ""
+    @State private var alertMessage: String = ""
+    @State private var showingTagCreationView: Bool = false
+    
+    @State private var showingAllGoals: Bool = false
+    @State private var recallByLength: Bool = !RecallModel.index.recallEventsWithEventTime
+    @State private var showingAllTags: Bool = false
     
     let editing: Bool
     let event: RecallCalendarEvent?
+    let favorite: Bool
     
-    @State var title: String
-    @State var notes: String
+//    MARK: Event Properties
+//    These are the vars that will be directly or indirectly stored in the event
+    @State private var title: String
+    @State private var notes: String
+    
     @State var link: URL?
-    
     @State private var showingLocationPicker: Bool = false
     @State var location: LocationResult?
     
-    @State var startTime: Date
-    @State var endTime: Date
-    @State var eventLength: Double = RecallModel.index.defaultEventLength
-    @State var day: Date
+    @State private var startTime: Date
+    @State private var endTime: Date
+    @State private var eventLength: Double = RecallModel.index.defaultEventLength
+    @State private var day: Date
     
-    @State var category: RecallCategory
-    @State var goalRatings: Dictionary<String, String>
-    
-    @ObservedObject private var viewModel = StyledPhotoPickerViewModel.shared
+    @State private var category: RecallCategory
+    @State private var goalRatings: Dictionary<String, String>
 
-    let favorite: Bool
+//    MARK: Init
+    @MainActor
+    private func onAppear() {
+        if self.editing {
+            Task { viewModel.selectedImages = await event!.decodeImages() }
+        }
+    }
 
-    @State var showingAllGoals: Bool = false
-    @State var recallByLength: Bool = !RecallModel.index.recallEventsWithEventTime
     
-    @State var showingAllTags: Bool = false
-    
-//    MARK: Helper Functions
-    
+//    MARK: SetDay
 //    Makes sure that the start and end times are specifed for the correct day
 //    If the end time bleeds into the next day, this handles that
     private func setDay() {
@@ -152,6 +162,19 @@ struct CalendarEventCreationView: View {
         
         startTime = Calendar.current.date(bySettingHour: startComps.hour!, minute: startComps.minute!, second: startComps.second!, of: day)!
         endTime = Calendar.current.date(bySettingHour: endComps.hour!, minute: endComps.minute!, second: endComps.second!, of: day + ( requestingNewDay ? Constants.DayTime : 0  ) )!
+    }
+    
+//    MARK: CheckCompletion
+//    Makes sure a user can't fill out the form until all fields are complete
+    private func checkCompletion() -> Bool {
+        if endTime < startTime {
+            endTime += Constants.DayTime
+        }
+        
+        self.alertTitle = "Incomplete Form"
+        self.alertMessage = "Please provide a title, start and end times, and a tag before creating the event"
+        
+        return !self.title.isEmpty && !self.category.label.isEmpty
     }
     
 //    MARK: Submit
@@ -189,17 +212,6 @@ struct CalendarEventCreationView: View {
         presentationMode.wrappedValue.dismiss()
     }
     
-    private func checkCompletion() -> Bool {
-        if endTime < startTime {
-            endTime += Constants.DayTime
-        }
-        
-        self.alertTitle = "Incomplete Form"
-        self.alertMessage = "Please provide a title, start and end times, and a tag before creating the event"
-        
-        return !self.title.isEmpty && !self.category.label.isEmpty
-    }
-    
     private func fillInformation(from event: RecallCalendarEvent) {
         self.title = event.title
         self.startTime = event.startTime
@@ -207,6 +219,18 @@ struct CalendarEventCreationView: View {
         self.category = event.category ?? RecallCategory()
         self.goalRatings = RecallCalendarEvent.translateGoalRatingList(event.goalRatings)
     }
+
+//    MARK: makeOvervieQuestions
+    @ViewBuilder
+    private func makeOverviewQuestions() -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            StyledTextField(title: "", binding: $title, prompt: "title", clearable: true)
+            StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
+            
+            EventCreationViewTabBar(link: $link, location: $location)
+        }.padding(.top)
+    }
+    
     
 //    MARK: RecallTypeSelector
     @ViewBuilder
@@ -234,18 +258,6 @@ struct CalendarEventCreationView: View {
             makeRecallTypeSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: true)
         }
     }
-
-//    MARK: OverviewQuestions
-    @ViewBuilder
-    private func makeOverviewQuestions() -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            StyledTextField(title: "", binding: $title, prompt: "title", clearable: true)
-            StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
-            
-            EventCreationViewTabBar(link: $link, location: $location)
-        }.padding(.top)
-    }
-    
     
 //    MARK: TimeSelector
     @ViewBuilder
@@ -369,8 +381,7 @@ struct CalendarEventCreationView: View {
     }
     
 
-    @State private var showingError: Bool = false
-    
+//    MARK: CreationFormSectionEnum
     private enum EventCreationFormSection : Int, CreationFormEnumProtocol {
         case overview
         case time
@@ -394,7 +405,7 @@ struct CalendarEventCreationView: View {
                 }
             }
         }
-         .task { if self.editing { viewModel.selectedImages = await event!.getImages() }}
+        .onAppear { onAppear() }
          .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
         .sheet(isPresented: $showingTagCreationView) {
             CategoryCreationView(editing: false,

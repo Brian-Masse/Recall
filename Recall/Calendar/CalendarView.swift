@@ -138,8 +138,7 @@ struct CalendarView: View {
     
 //    take the distance between two events and return a length in pixels
     private func getVerticalOffset(of event: RecallCalendarEvent, relativeTo startTime: Date) -> Double {
-        
-        let difference = event.startTime.timeIntervalSince(startTime)
+        let difference = event.startTime.timeIntervalSince(startTime) - (startHour * Constants.HourTime)
         return difference / viewModel.scale
         
     }
@@ -205,9 +204,17 @@ struct CalendarView: View {
     private let events: [RecallCalendarEvent]
     private let day: Date
     
-    init(events: [RecallCalendarEvent], on day: Date) {
+    private let startHour: Double
+    private let endHour: Int
+    
+//    TODO: When the app boots, this function call runs for every single day the user has ever recorded events for
+//    not sure why, but that should probably be fixed!
+//    This also gets run to update every single time the user scrolls on the main vertical calendar 
+    init(events: [RecallCalendarEvent], on day: Date, startHour: Double = 0, endHour: Int = 24) {
         self.day = day
         self.events = events
+        self.startHour = startHour
+        self.endHour = endHour
     }
     
 //    MARK: Body
@@ -219,16 +226,24 @@ struct CalendarView: View {
         GeometryReader { geo in
             ZStack(alignment: .top) {
                 
-                ForEach( 0..<records.count, id: \.self ) { i in
-                    makeEventCollection(from: records[i], in: geo)
-                        .alignmentGuide(VerticalAlignment.top) { _ in
-                            let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
-                                                           relativeTo: startOfDay)
-                            return -offset
-                        }
-                }
                 Rectangle()
                     .foregroundStyle(.clear)
+                
+                ForEach( 0..<records.count, id: \.self ) { i in
+                    let record = records[i]
+                    let event = events[record.forwardCollisions.lowerBound]
+                    let hour = Calendar.current.component(.hour, from: event.startTime)
+                    
+                    if hour >= Int(startHour) && hour <= endHour {
+                        
+                        makeEventCollection(from: records[i], in: geo)
+                            .alignmentGuide(VerticalAlignment.top) { _ in
+                                let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
+                                                               relativeTo: startOfDay)
+                                return -offset
+                            }
+                    }
+                }
             }
         }
     }

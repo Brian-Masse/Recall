@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import UIUniversals
+import MapKit
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
@@ -196,7 +197,152 @@ struct CalendarEventView: View {
     }
 }
 
+//MARK: TestCalendarEventView
+struct TestCalendarEventView: View {
+    
+    @ObservedObject private var calendarViewModel = RecallCalendarViewModel.shared
+    
+//    MARK: Vars
+    let event: RecallCalendarEvent
+    let events: [RecallCalendarEvent]
+    
+    @State private var position: MapCameraPosition
+    @Namespace private var mapNameSpace
+    
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent] = [] ) {
+        self.event = event
+        self.events = events
+        
+        if let location = event.getLocationResult() {
+            self.position = MapCameraPosition.camera(.init(centerCoordinate: location.location, distance: 1000))
+        } else {
+            self.position = MapCameraPosition.automatic
+        }
+    }
+    
+    private var timeLabel: String {
+        let formatter = Date.FormatStyle().hour().minute()
+        let str1 = event.startTime.formatted(formatter)
+        let str2 = event.startTime.formatted(formatter)
+        
+        return "\(str1) - \(str2)"
+    }
+    
+    private var dateLabel: String {
+        let formatter = Date.FormatStyle().month().day()
+        let str1 = event.startTime.formatted(formatter)
+        let str2 = timeLabel
+        
+        return "\(str2), \(str1)"
+        
+    }
+    
+//    MARK: SmallButton
+    @ViewBuilder
+    private func makeSmallButton(_ icon: String, action: @escaping () -> Void) -> some View {
+        UniversalButton {
+            RecallIcon(icon)
+                .rectangularBackground(style: .secondary)
+        } action: { action() }
+
+    }
+    
+    
+//    MARK: Header
+    @ViewBuilder
+    private func makeHeader() -> some View {
+        
+        HStack(spacing: 15) {
+            
+            makeSmallButton("chevron.left") { }
+            
+            VStack(alignment: .leading) {
+                UniversalText( event.title, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+                UniversalText( dateLabel, size: Constants.UISubHeaderTextSize, font: Constants.mainFont )
+                
+                UniversalText( "see more on \(dateLabel)", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                    .opacity(0.55)
+            }
+            
+            Spacer()
+        }
+    }
+    
+//    MARK: Map
+    @ViewBuilder
+    private func makeMap() -> some View {
+        if let location = event.getLocationResult() {
+            VStack(alignment: .leading) {
+                UniversalText( "Location", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                
+                Map(position: $position, scope: mapNameSpace) {
+                    Marker(coordinate: location.location) {
+                        Text(location.title)
+                    }
+                }
+                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+                .frame(height: 300)
+                
+                HStack {
+                    RecallIcon("location")
+                    
+                    UniversalText( "\(location.title)", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                }
+                .opacity(0.75)
+                .padding(.leading)
+            }
+        }
+    }
+    
+//    MARK: CalendarContainer
+    @ViewBuilder
+    private func makeCalendarContainer() -> some View {
+        let eventHour: Double = Double(Calendar.current.component(.hour, from: event.startTime))
+        let startHour: Double = eventHour
+        let endHour: Int = Int(eventHour + event.getLengthInHours()) + 1
+        
+        ZStack {
+            
+            EmptyCalendarView(startHour: Int(startHour), endHour: endHour, labelWidth: 20, includeCurrentTimeMark: false)
+            
+            CalendarView(events: calendarViewModel.getEvents(on: event.startTime),
+                         on: event.startTime,
+                         startHour: startHour,
+                         endHour: endHour)
+                .padding(.leading, 25 )
+                .task { await calendarViewModel.loadEvents(for: event.startTime, in: events) }
+        }
+//        .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+        .rectangularBackground(style: .secondary)
+    }
+    
+//    MARK: Photos
+    @ViewBuilder
+    private func makePhotos() -> some View {
+        
+        
+        
+        
+    }
+    
+//    MARK: Body
+    var body: some View {
+        VStack(alignment: .leading) {
+            makeHeader()
+            
+            ScrollView(.vertical) {
+                makeCalendarContainer()
+            }
+
+            Spacer()
+        }
+        .padding(7)
+        .universalBackground()
+    }
+}
+
 
 #Preview {
-    CalendarEventView(event: sampleEvent, events: [])
+    
+    TestCalendarEventView(event: sampleEvent)
 }

@@ -21,7 +21,7 @@ struct TemplatePageView: View {
         
         var body: some View {
             GeometryReader { geo in
-                CalendarEventPreviewContentView(event: template, events: events, forDisplay: true)
+                CalendarEventPreviewContentView(event: template, events: events)
                     .contextMenu {
                         ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
                             showingEditingScreen = true

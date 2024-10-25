@@ -16,9 +16,9 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) { }
 }
 
-struct CalendarContainer: View {
+//MARK: Calendar
+struct EmptyCalendarView: View {
     
-//    MARK: Calendar
     private func getCalendarMarkLabel(hour: Int) -> String {
         var components = DateComponents()
         components.hour = hour
@@ -46,24 +46,46 @@ struct CalendarContainer: View {
                 .opacity(opacity)
         }
         .alignmentGuide(VerticalAlignment.top) { _ in
-            let timeInterval = Double(hour) *  Constants.HourTime + Double(minute) * Constants.MinuteTime
+            let timeInterval = Double(hour) *  Constants.HourTime + Double(minute) * Constants.MinuteTime - (Double(startHour) * Constants.HourTime)
             return CGFloat(-(timeInterval) / viewModel.scale)
         }
     }
     
-    @ViewBuilder
-    private func makeCalendar() -> some View {
+    @ObservedObject private var viewModel = RecallCalendarViewModel.shared
+    
+    private let startHour: Int
+    private let endHour: Int
+    
+    private let calendarLabelWidth: Double
+    private let includeCurrentTimeMark: Bool
+    
+    init( startHour: Int, endHour: Int, labelWidth: Double, includeCurrentTimeMark: Bool = true ) {
+        self.startHour = startHour
+        self.endHour = endHour
+        self.calendarLabelWidth = labelWidth
+        self.includeCurrentTimeMark = includeCurrentTimeMark
+    }
+    
+    var body: some View {
         ZStack(alignment: .top) {
-            ForEach( 0...26, id: \.self ) { i in
+            ForEach( startHour...endHour, id: \.self ) { i in
                 makeCalendarMark(hour: i)
             }
             
             let currentComps = Calendar.current.dateComponents([.hour, .minute], from: .now)
             
-            makeCalendarMark(hour: currentComps.hour!, minute: currentComps.minute!, includeLabel: false, opacity: 1)
-                .foregroundStyle(.red)
+            if includeCurrentTimeMark {
+                makeCalendarMark(hour: currentComps.hour!, minute: currentComps.minute!, includeLabel: false, opacity: 1)
+                    .foregroundStyle(.red)
+            }
         }
     }
+    
+}
+
+
+//MARK: CalendarContainer
+struct CalendarContainer: View {
     
 //    MARK: Initialization
     @ObservedObject private var viewModel = RecallCalendarViewModel.shared
@@ -71,7 +93,7 @@ struct CalendarContainer: View {
     private let events: [RecallCalendarEvent]
     private let summaries: [RecallDailySummary]
     
-    private let calendarLabelWidth: Double = 20
+    private let calendarLabelWidth: Double = 25
     private let scrollDetectionPadding: Double = 200
     
     private let coordinateSpaceName = "CalendarContainerCoordinateSpace"
@@ -322,7 +344,7 @@ struct CalendarContainer: View {
                         ScrollView(.vertical, showsIndicators: false) {
                             
                             ZStack(alignment: .top) {
-                                makeCalendar()
+                                EmptyCalendarView(startHour: 0, endHour: 26, labelWidth: calendarLabelWidth)
                                 
                                 makeCalendarCarousel(in: geo)
                                 

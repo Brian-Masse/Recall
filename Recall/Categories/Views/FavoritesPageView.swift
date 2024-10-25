@@ -116,8 +116,8 @@ struct FavoritesPageView: View {
                     ForEach( groupedEvents ) { event in
                         CalendarEventPreviewContentView(event: event,
                                                         events: events,
-                                                        allowTapGesture: true,
-                                                        forDisplay: true)
+                                                        allowTapGesture: true)
+                        .frame(height: 120)
                         .contextMenu {
                             ContextMenuButton("unfavorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
                                 event.toggleFavorite()

@@ -12,6 +12,7 @@ import UIUniversals
 
 class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
+//    MARK: Vars
     @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var ownerID: String
     
@@ -36,7 +37,12 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     private var cachedGoalRatings: RealmSwift.List<GoalNode> = List()
     
-//    MARK: Main
+//    MARK: Convenience Vars
+    func identifier() -> String { ownerID + title + startTime.formatted() + endTime.formatted() }
+    
+    func getURL() -> URL? { URL(string: self.urlString) }
+    
+//    MARK: Init
     @MainActor
     convenience init(ownerID: String,
                      title: String,
@@ -65,7 +71,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             self.locationLatitude = location.location.latitude
         }
         
-        let imageData = getImageDataList(from: images)
+        let imageData = encodeImages(from: images)
         self.images = imageData
         
         if !previewEvent {
@@ -79,16 +85,19 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
 
+//    MARK: Override Init
     @MainActor
     override init() {
         super.init()
         self.cachedGoalRatings = self.goalRatings
     }
     
-    func identifier() -> String { ownerID + title + startTime.formatted() + endTime.formatted() }
+//    MARK: Update
+    private func updateRecentRecallEventEndTime(to time: Date) {
+        RecallModel.index.setMostRecentRecallEvent(to: time)
+    }
     
     @MainActor
-//    MARK: Updates
     func update( title: String,
                  notes: String,
                  urlString: String,
@@ -107,7 +116,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.startTime = startDate
             thawed.endTime = endDate
             
-            let imageData = getImageDataList(from: images)
+            let imageData = encodeImages(from: images)
             thawed.images = imageData
             
             if let location = location {
@@ -124,10 +133,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
         
         RecallModel.index.addEventToIndex(on: startDate)
-        
         checkUpdateEarliestEvent()
     }
     
+//    MARK: UpdateDate
     @MainActor
     func updateDate(startDate: Date? = nil, endDate: Date? = nil) {
         if let startDate {
@@ -146,6 +155,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         checkUpdateEarliestEvent()
     }
     
+//    MARK: UpdateDateComponent
 //    unlike updateDate, which sets the event's date to that new value, this only sets the date components
 //    preserving the time details
     @MainActor
@@ -175,6 +185,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
+//    MARK: UpdateGoalRatings
     @MainActor
     func updateGoalRatings(with ratings: Dictionary<String, String>) {
         let list = RecallCalendarEvent.translateGoalRatingDictionary(ratings)
@@ -186,7 +197,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
-//    MARK: Convenience Functions
+//    MARK: GetLocationResult
+//    checks if the event has any location data, and if it does, parses it into a locationResult and returns it
     func getLocationResult() -> LocationResult? {
         if self.locationTitle.isEmpty { return nil }
         
@@ -195,7 +207,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
               , title: self.locationTitle)
     }
     
-    private func getImageDataList(from images: [UIImage]) -> RealmSwift.List<Data> {
+//    MARK: encodeImages
+//    take a list of UIImages and return a RealmSwift list of Data
+//    used in the initialization / update process
+    private func encodeImages(from images: [UIImage]) -> RealmSwift.List<Data> {
         let list = RealmSwift.List<Data>()
         
         for image in images {
@@ -206,10 +221,25 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         return list
     }
     
-    func getURL() -> URL? {
-        URL(string: self.urlString)
+//    MARK: DecodeImages
+//    asyncrounously decodes images and stores them in a temp variable in the event
+//    This is used when loading the images on the CalendarEventView
+    @Published private(set) var decodedImages: [UIImage] = []
+    
+    func decodeImages() async -> [UIImage] {
+        for imageData in self.images {
+            
+            if let uiImage = PhotoManager.decodeUIImage(from: imageData) {
+                self.decodedImages.append(uiImage)
+            }
+        }
+        
+        return self.decodedImages
     }
     
+//    MARK: translateGoalRating
+//    converts the list of Goal nodes into a swift dictionary
+//    this is used in initialization and updating
     @MainActor
     func getRatingsDictionary() -> Dictionary<String,String> {
         RecallCalendarEvent.translateGoalRatingList(self.goalRatings)
@@ -223,27 +253,15 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         return list
     }
     
+//    convers a swift dictionary into a RealmSwift dictionary of goalNodes
     static func translateGoalRatingList( _ list: RealmSwift.List<GoalNode> ) -> Dictionary<String, String> {
         var dic = Dictionary<String, String>()
         for node in list { dic[node.key] = node.data }
         return dic
     }
     
-//    This can later be modified to ensure only a select number of events are pulled from the server onto the device
-    @MainActor
-    static func getEvents(where query: ( (RecallCalendarEvent) -> Bool )? = nil) -> [RecallCalendarEvent] {
-        RealmManager.retrieveObjects(where: query)
-    }
     
-    @MainActor
-    func getColor() -> Color {
-        category?.getColor() ?? Colors.defaultLightAccent
-    }
-    
-    func getTagLabel() -> String {
-        category?.label ?? "?"
-    }
-    
+//    MARK: ToggleTemplate
     @MainActor
     func toggleTemplate() {
         RealmManager.updateObject(self) { thawed in
@@ -251,6 +269,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
+//    MARK: ToggleFavorite
     @MainActor
     func toggleFavorite() {
         RealmManager.updateObject(self) { thawed in
@@ -258,6 +277,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
+    
+    
+//    MARK: GetProperties
 //    This is a list of all the goals this event's tag contributes to
     @MainActor
     func getGoals() -> [RecallGoal] {
@@ -271,25 +293,13 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
-//    MARK: Class Methods
-
-    private func updateRecentRecallEventEndTime(to time: Date) {
-        RecallModel.index.setMostRecentRecallEvent(to: time)
-    }
+    func getLengthInHours() -> Double { endTime.timeIntervalSince(startTime) / Constants.HourTime }
     
-    @MainActor
-    func getImages() async -> [UIImage] {
-        var images: [UIImage] = []
-        
-        for data in self.images {
-            if let image = PhotoManager.decodeUIImage(from: data) {
-                images.append(image)
-            }
-        }
-        
-        return images
-    }
+    func getColor() -> Color { category?.getColor() ?? Colors.defaultLightAccent }
     
+    func getTagLabel() -> String { category?.label ?? "?"}
+    
+//    MARK: Delete
     @MainActor
     func delete(preserveTemplate: Bool = false) {
         RecallModel.index.removeEventFromIndex(on: self.startTime)
@@ -300,7 +310,6 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
         
         else {
-//            toggleTemplate()
             var components = DateComponents()
             components.year = 2005
             components.month = 5
@@ -320,6 +329,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 
     }
     
+//    MARK: UpdateEarliestEvent
+//    When updating the date compnents for the event, check if it is the earliest event the user has
     private func checkUpdateEarliestEvent() {
         
         if Calendar.current.component(.year, from: self.startTime) == 2005 { return }
@@ -327,11 +338,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             RecallModel.realmManager.index.updateEarliestEventDate(with: self.startTime)
         }
     }
-
-    func getLengthInHours() -> Double {
-        endTime.timeIntervalSince(startTime) / Constants.HourTime
-    }
     
+//    MARK: GetGoalMultiplier
 //    This checks to see if this event has a multiplier for a specifc goal (ie. coding should have 'productive')
     @MainActor
     private func getGoalMultiplier(from goal: RecallGoal) -> Double {
@@ -340,6 +348,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         return Double(data) ?? 0
     }
     
+//    MARK: GetGoalProgress
     func getGoalPrgress(_ goal: RecallGoal) async -> Double {
         let multiplier = await getGoalMultiplier(from: goal)
         if RecallGoal.GoalType.getRawType(from: goal.type) == .hourly { return getLengthInHours() * multiplier }
@@ -347,6 +356,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         return 0
     }
     
+//    MARK: GetGoalProgressThreadsInvariant
 //    to avoid certain crashes the standard 'getGoalMultiplier' should mostly be run on the main thread
 //    however, there are certain cases where its technically difficult to do so, 
 //    but will not elicit a crash to run it on any thread
@@ -364,11 +374,18 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 
 
 //MARK: SampleEvent
+let uiImage1 = UIImage(named: "sampleImage1")!
+let uiImage2 = UIImage(named: "sampleImage2")!
+let uiImage3 = UIImage(named: "sampleImage3")!
+
 @MainActor
 let sampleEvent = RecallCalendarEvent(ownerID: "",
                                     title: "test event",
                                     notes: "Its been a long long time. A moment to shine, shine, shine, shine, shinnnnnnnnnneeeeee. Ooooh ohh",
                                     urlString: "https://github.com/Brian-Masse/Recall",
+                                    location: .init(location: .init(latitude: 42.5124232, longitude: -71.114742),
+                                                      title: "25 Indian Tree Ln, Reading, MA  01867, United States"),
+                                    images: [uiImage1, uiImage2, uiImage3],
                                     startTime: .now,
                                     endTime: .now + Constants.HourTime * 2,
                                           categoryID: ObjectId(),
