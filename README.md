@@ -45,6 +45,7 @@ ADDITIONS
 - Added recall button to tool bar
 - Added daily summaries
 - Added the ability to create events in between days
+- Added photo picker to events
 - Added location data to events
 
 CHANGES
