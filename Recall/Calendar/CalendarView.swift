@@ -232,9 +232,13 @@ struct CalendarView: View {
                 ForEach( 0..<records.count, id: \.self ) { i in
                     let record = records[i]
                     let event = events[record.forwardCollisions.lowerBound]
-                    let hour = Calendar.current.component(.hour, from: event.startTime)
+                    let eventStartHour = Calendar.current.component(.hour, from: event.startTime)
+                    let eventEndHour = Calendar.current.component(.hour, from: event.endTime)
                     
-                    if hour >= Int(startHour) && hour <= endHour {
+                    if eventEndHour >= Int(startHour) && eventStartHour <= endHour {
+
+                        let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
+                                                       relativeTo: startOfDay)
                         
                         makeEventCollection(from: records[i], in: geo)
                             .alignmentGuide(VerticalAlignment.top) { _ in
@@ -242,6 +246,12 @@ struct CalendarView: View {
                                                                relativeTo: startOfDay)
                                 return -offset
                             }
+                            .onTapGesture {
+                                print(offset
+                                )
+                            }
+
+                            
                     }
                 }
             }
