@@ -241,17 +241,14 @@ struct CalendarView: View {
                                                        relativeTo: startOfDay)
                         
                         makeEventCollection(from: records[i], in: geo)
-                            .alignmentGuide(VerticalAlignment.top) { _ in
-                                let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
-                                                               relativeTo: startOfDay)
-                                return -offset
-                            }
-                            .onTapGesture {
-                                print(offset
-                                )
-                            }
-
-                            
+//                            .alignmentGuide(VerticalAlignment.top) { _ in
+//                                let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
+//                                                               relativeTo: startOfDay)
+//                                
+//                                print(offset)
+//                                return -offset
+//                            }
+                            .offset(y: offset)
                     }
                 }
             }
