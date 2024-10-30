@@ -146,7 +146,7 @@ struct CalendarEventPreviewContentView: View {
         }
         .foregroundStyle(event.getColor() )
         .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))
-        .if(allowTapGesture) { view in view.onTapGesture { showingEvent = true } }
+        .if(allowTapGesture) { view in view.onTapGesture { showingEvent = true; print(event.id) } }
         .sheet(isPresented: $showingEvent) {
             TestCalendarEventView(event: event, events: events )
         }

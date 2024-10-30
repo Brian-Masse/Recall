@@ -234,7 +234,11 @@ struct TestCalendarEventView: View {
         let str2 = timeLabel
         
         return "\(str2), \(str1)"
-        
+    }
+    
+//    MARK: Init
+    private func onAppear() async {
+        let _ = await event.decodeImages()
     }
     
 //    MARK: SmallButton
@@ -312,17 +316,22 @@ struct TestCalendarEventView: View {
                 .padding(.leading, 25 )
                 .task { await calendarViewModel.loadEvents(for: event.startTime, in: events) }
         }
-//        .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
         .rectangularBackground(style: .secondary)
     }
     
 //    MARK: Photos
+    @MainActor
     @ViewBuilder
     private func makePhotos() -> some View {
-        
-        
-        
-        
+        if event.images.count != 0 {
+            
+            ForEach( event.decodedImages, id: \.self ) { image in
+                    
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+            }
+        }
     }
     
 //    MARK: Body
@@ -330,19 +339,24 @@ struct TestCalendarEventView: View {
         VStack(alignment: .leading) {
             makeHeader()
             
+            Text("\(event.id  )")
+            
             ScrollView(.vertical) {
                 makeCalendarContainer()
+                
+                makePhotos()
             }
 
             Spacer()
         }
         .padding(7)
         .universalBackground()
+        
+        .task { await onAppear() }
     }
 }
 
 
 #Preview {
-    
     TestCalendarEventView(event: sampleEvent)
 }

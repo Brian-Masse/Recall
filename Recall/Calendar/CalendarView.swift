@@ -176,6 +176,10 @@ struct CalendarView: View {
                     ForEach( collisionRecord.forwardCollisions, id: \.self ) { i in
                         
                         CalendarEventPreviewView(event: events[i], events: events)
+                            .overlay {
+                                Text("\( events[i].id )")
+                                    .background()
+                            }
                             .id(i)
                             .frame(height: getLength(of: events[i]))
                             .alignmentGuide(VerticalAlignment.top) { _ in
@@ -241,13 +245,6 @@ struct CalendarView: View {
                                                        relativeTo: startOfDay)
                         
                         makeEventCollection(from: records[i], in: geo)
-//                            .alignmentGuide(VerticalAlignment.top) { _ in
-//                                let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
-//                                                               relativeTo: startOfDay)
-//                                
-//                                print(offset)
-//                                return -offset
-//                            }
                             .offset(y: offset)
                     }
                 }

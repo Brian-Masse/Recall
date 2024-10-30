@@ -222,6 +222,7 @@ struct CalendarEventPreviewView: View {
             
                 .contextMenu {
                     ContextMenuButton("move", icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") {
+                        print("\(event.id)")
                         defaultContextMenuAction()
                         beginMoving()
                     }

@@ -225,6 +225,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    asyncrounously decodes images and stores them in a temp variable in the event
 //    This is used when loading the images on the CalendarEventView
     @Published private(set) var decodedImages: [UIImage] = []
+    @Published private(set) var hasDecodedImages: Bool = false
     
     @MainActor
     func decodeImages() async -> [UIImage] {
@@ -234,6 +235,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                 self.decodedImages.append(uiImage)
             }
         }
+        
+        print("finished decoding images: \(hasDecodedImages), \(identifier)")
+        self.hasDecodedImages = true
         
         return self.decodedImages
     }
