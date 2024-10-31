@@ -201,14 +201,18 @@ struct CalendarEventView: View {
 struct TestCalendarEventView: View {
     
     @ObservedObject private var calendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var imageStoreViewModel = RecallCalendarEventImageStore.shared
     
 //    MARK: Vars
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
     
+    @State private var decodedImages: [UIImage] = []
+    
     @State private var position: MapCameraPosition
     @Namespace private var mapNameSpace
     
+//    MARK: Init
     init( event: RecallCalendarEvent, events: [RecallCalendarEvent] = [] ) {
         self.event = event
         self.events = events
@@ -218,6 +222,10 @@ struct TestCalendarEventView: View {
         } else {
             self.position = MapCameraPosition.automatic
         }
+    }
+    
+    private func onAppear() async {
+        self.decodedImages = await imageStoreViewModel.decodeImages(for: event)
     }
     
     private var timeLabel: String {
@@ -234,11 +242,6 @@ struct TestCalendarEventView: View {
         let str2 = timeLabel
         
         return "\(str2), \(str1)"
-    }
-    
-//    MARK: Init
-    private func onAppear() async {
-        let _ = await event.decodeImages()
     }
     
 //    MARK: SmallButton
@@ -325,7 +328,7 @@ struct TestCalendarEventView: View {
     private func makePhotos() -> some View {
         if event.images.count != 0 {
             
-            ForEach( event.decodedImages, id: \.self ) { image in
+            ForEach( self.decodedImages, id: \.self ) { image in
                     
                 Image(uiImage: image)
                     .resizable()
@@ -335,12 +338,42 @@ struct TestCalendarEventView: View {
     }
     
 //    MARK: Body
+    
     var body: some View {
+        
+        if #available(iOS 18.0, *) {
+//            PhotoScrollerView {
+//                VStack {
+//                    
+//                    Text("hi there!")
+//                        .bold()
+//                        .font(.title)
+//                    
+//                    Spacer()
+//                }
+//                
+//            } bodyContent: {
+//                LazyVStack {
+//                    ForEach( 0...100, id: \.self ) { i in
+//                        
+//                        Rectangle()
+//                            .frame(height: 50)
+//                            .foregroundStyle(.red)
+//                            .opacity(Double(i) / 100)
+//                    }
+//                }
+//                
+//            }
+            
+//            TestScroller()
+        } else {
+            // Fallback on earlier versions
+        }
+
+        
         VStack(alignment: .leading) {
             makeHeader()
-            
-            Text("\(event.id  )")
-            
+
             ScrollView(.vertical) {
                 makeCalendarContainer()
                 

@@ -176,10 +176,6 @@ struct CalendarView: View {
                     ForEach( collisionRecord.forwardCollisions, id: \.self ) { i in
                         
                         CalendarEventPreviewView(event: events[i], events: events)
-                            .overlay {
-                                Text("\( events[i].id )")
-                                    .background()
-                            }
                             .id(i)
                             .frame(height: getLength(of: events[i]))
                             .alignmentGuide(VerticalAlignment.top) { _ in

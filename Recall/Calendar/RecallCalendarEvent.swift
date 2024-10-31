@@ -214,32 +214,11 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         let list = RealmSwift.List<Data>()
         
         for image in images {
-            let data = PhotoManager.encodeImage(image)
+            let data = PhotoManager.encodeImage(image, in: 1200)
             list.append(data)
         }
         
         return list
-    }
-    
-//    MARK: DecodeImages
-//    asyncrounously decodes images and stores them in a temp variable in the event
-//    This is used when loading the images on the CalendarEventView
-    @Published private(set) var decodedImages: [UIImage] = []
-    @Published private(set) var hasDecodedImages: Bool = false
-    
-    @MainActor
-    func decodeImages() async -> [UIImage] {
-        for imageData in self.images {
-            
-            if let uiImage = PhotoManager.decodeUIImage(from: imageData) {
-                self.decodedImages.append(uiImage)
-            }
-        }
-        
-        print("finished decoding images: \(hasDecodedImages), \(identifier)")
-        self.hasDecodedImages = true
-        
-        return self.decodedImages
     }
     
 //    MARK: translateGoalRating

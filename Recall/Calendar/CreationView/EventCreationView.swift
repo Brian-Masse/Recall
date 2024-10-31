@@ -146,7 +146,7 @@ struct CalendarEventCreationView: View {
     @MainActor
     private func onAppear() {
         if self.editing {
-            Task { viewModel.selectedImages = await event!.decodeImages() }
+            Task { viewModel.selectedImages = await RecallCalendarEventImageStore.shared.decodeImages(for: event!) }
         }
     }
 
