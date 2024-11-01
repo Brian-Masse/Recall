@@ -114,9 +114,7 @@ struct FavoritesPageView: View {
                 
                 if showingFullSection {
                     ForEach( groupedEvents ) { event in
-                        CalendarEventPreviewContentView(event: event,
-                                                        events: events,
-                                                        allowTapGesture: true)
+                        CalendarEventPreviewContentView(event: event, events: events)
                         .frame(height: 120)
                         .contextMenu {
                             ContextMenuButton("unfavorite", icon: "circle.rectangle.filled.pattern.diagonalline") {

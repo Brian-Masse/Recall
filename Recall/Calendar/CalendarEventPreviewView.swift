@@ -47,10 +47,13 @@ struct CalendarEventPreviewView: View {
     @ObservedRealmObject var index = RecallModel.index
     
     let events: [RecallCalendarEvent]
+    
+    let includeGestures: Bool
 
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent]) {
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], includeGestures: Bool = true) {
         self.event = event
         self.events = events
+        self.includeGestures = includeGestures
     }
     
     @State private var moveOffset: Double = 0
@@ -220,7 +223,7 @@ struct CalendarEventPreviewView: View {
                     }
                 }
             
-                .contextMenu {
+                .contextMenu { if includeGestures {
                     ContextMenuButton("move", icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") {
                         print("\(event.id)")
                         defaultContextMenuAction()
@@ -258,19 +261,21 @@ struct CalendarEventPreviewView: View {
                         if event.isTemplate { showingDeletionAlert = true }
                         else { event.delete() }
                     }
-                }
-                .onTapGesture { onTap() }
+                } }
+                .onTapGesture { if includeGestures { onTap() }}
             
                 .opacity(resizing || moving ? 0.5 : 1)
                 .padding(2)
-
-                .simultaneousGesture(drag)
+                .simultaneousGesture(drag, including: includeGestures ? .all : .none)
             
                 .sheet(isPresented: $showingEditingScreen) {
                     CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
                 }
-
             
+                .fullScreenCover(isPresented: $showingEvent) {
+                    TestCalendarEventView(event: event, events: events )
+                }
+
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
         }
         .zIndex( resizing || moving ? 5 : 0 )

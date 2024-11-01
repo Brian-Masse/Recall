@@ -203,6 +203,8 @@ struct TestCalendarEventView: View {
     @ObservedObject private var calendarViewModel = RecallCalendarViewModel.shared
     @ObservedObject private var imageStoreViewModel = RecallCalendarEventImageStore.shared
     
+    @Environment( \.dismiss ) var dismiss
+    
 //    MARK: Vars
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
@@ -225,7 +227,8 @@ struct TestCalendarEventView: View {
     }
     
     private func onAppear() async {
-        self.decodedImages = await imageStoreViewModel.decodeImages(for: event)
+        let decodedImages = await imageStoreViewModel.decodeImages(for: event)
+        withAnimation { self.decodedImages = decodedImages }
     }
     
     private var timeLabel: String {
@@ -260,9 +263,6 @@ struct TestCalendarEventView: View {
     private func makeHeader() -> some View {
         
         HStack(spacing: 15) {
-            
-            makeSmallButton("chevron.left") { }
-            
             VStack(alignment: .leading) {
                 UniversalText( event.title, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
                 UniversalText( dateLabel, size: Constants.UISubHeaderTextSize, font: Constants.mainFont )
@@ -272,6 +272,8 @@ struct TestCalendarEventView: View {
             }
             
             Spacer()
+            
+            makeSmallButton("chevron.down") { dismiss() }
         }
     }
     
@@ -315,10 +317,12 @@ struct TestCalendarEventView: View {
             CalendarView(events: calendarViewModel.getEvents(on: event.startTime),
                          on: event.startTime,
                          startHour: startHour,
-                         endHour: endHour)
+                         endHour: endHour,
+                         includeGestures: false)
                 .padding(.leading, 25 )
                 .task { await calendarViewModel.loadEvents(for: event.startTime, in: events) }
         }
+        .frame(height: 150)
         .rectangularBackground(style: .secondary)
     }
     
@@ -337,55 +341,73 @@ struct TestCalendarEventView: View {
         }
     }
     
+//    MARK: PhotoScroller
+    @available(iOS 18.0, *)
+    @ViewBuilder
+    private func makePhotoScroller() -> some View {
+        GeometryReader { geo in
+            
+            ZStack(alignment: .top) {
+                
+                Group {
+                    if let image = self.decodedImages.first {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else {
+                        Rectangle()
+                            .foregroundStyle(event.getColor())
+                    }
+                }
+                .ignoresSafeArea()
+                .frame(width: geo.size.width, height: geo.size.height * 0.8)
+                .contentShape(Rectangle())
+                
+                
+                PhotoScrollerView (startExpanded: event.images.isEmpty) {
+                    VStack {
+                        Spacer()
+                        makeHeader()
+                            .foregroundStyle(.white)
+                            .padding()
+                    }
+                    
+                } bodyContent: {
+                    VStack(alignment: .leading) {
+                        
+
+//                        ScrollView(.vertical) {
+                        makeCalendarContainer()
+                            
+//                            makePhotos()
+//                        }
+
+                        Spacer()
+                    }
+                    .universalBackground()
+                    .task { await onAppear() }
+                    
+                    .padding(7)
+                    .clipShape(RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius ))
+                    .background {
+                        RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius )
+                            .foregroundStyle(.background)
+                    }
+                }
+            }
+        }
+    }
+    
 //    MARK: Body
     
     var body: some View {
-        
         if #available(iOS 18.0, *) {
-//            PhotoScrollerView {
-//                VStack {
-//                    
-//                    Text("hi there!")
-//                        .bold()
-//                        .font(.title)
-//                    
-//                    Spacer()
-//                }
-//                
-//            } bodyContent: {
-//                LazyVStack {
-//                    ForEach( 0...100, id: \.self ) { i in
-//                        
-//                        Rectangle()
-//                            .frame(height: 50)
-//                            .foregroundStyle(.red)
-//                            .opacity(Double(i) / 100)
-//                    }
-//                }
-//                
-//            }
             
-//            TestScroller()
+            makePhotoScroller()
+            
         } else {
             // Fallback on earlier versions
         }
-
-        
-        VStack(alignment: .leading) {
-            makeHeader()
-
-            ScrollView(.vertical) {
-                makeCalendarContainer()
-                
-                makePhotos()
-            }
-
-            Spacer()
-        }
-        .padding(7)
-        .universalBackground()
-        
-        .task { await onAppear() }
     }
 }
 

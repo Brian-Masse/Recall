@@ -175,7 +175,7 @@ struct CalendarView: View {
                 if i == abs(indexToRender) || collisionRecord.backwardsCollisionIndicies.count == 0 {
                     ForEach( collisionRecord.forwardCollisions, id: \.self ) { i in
                         
-                        CalendarEventPreviewView(event: events[i], events: events)
+                        CalendarEventPreviewView(event: events[i], events: events, includeGestures: includeGestures)
                             .id(i)
                             .frame(height: getLength(of: events[i]))
                             .alignmentGuide(VerticalAlignment.top) { _ in
@@ -207,14 +207,17 @@ struct CalendarView: View {
     private let startHour: Double
     private let endHour: Int
     
+    private let includeGestures: Bool
+    
 //    TODO: When the app boots, this function call runs for every single day the user has ever recorded events for
 //    not sure why, but that should probably be fixed!
 //    This also gets run to update every single time the user scrolls on the main vertical calendar 
-    init(events: [RecallCalendarEvent], on day: Date, startHour: Double = 0, endHour: Int = 24) {
+    init(events: [RecallCalendarEvent], on day: Date, startHour: Double = 0, endHour: Int = 24, includeGestures: Bool = true) {
         self.day = day
         self.events = events
         self.startHour = startHour
         self.endHour = endHour
+        self.includeGestures = includeGestures
     }
     
 //    MARK: Body

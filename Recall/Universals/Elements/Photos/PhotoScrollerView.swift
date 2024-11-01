@@ -15,27 +15,34 @@ class PhotoScrollerViewModel {
     let restHeight: Double = 0.6
     let peekHeight: Double = 0.92
     
-    var isExpanded: Bool = true
+    var isExpanded: Bool
     
     var canPullUp: Bool = false
     var canPullDown: Bool = false
     
-    var progress: CGFloat = 1
+    var progress: CGFloat
     var mainOffset: CGFloat = 0
+    
+    init(startExpanded: Bool) {
+        self.isExpanded = !startExpanded
+        self.progress = startExpanded ? 0 : 1
+    }
 }
 
 //MARK: PhotoScrollerView
 @available(iOS 18.0, *)
 struct PhotoScrollerView<C1: View, C2: View>: View {
     
-    var sharedData = PhotoScrollerViewModel()
+    var sharedData: PhotoScrollerViewModel
     
     let headerContent: C1
     let bodyContent: C2
     
-    init( @ViewBuilder headerContent: () -> C1, @ViewBuilder bodyContent: () -> C2 ) {
+    init( startExpanded: Bool, @ViewBuilder headerContent: () -> C1, @ViewBuilder bodyContent: () -> C2 ) {
         self.headerContent = headerContent()
         self.bodyContent = bodyContent()
+        
+        self.sharedData = PhotoScrollerViewModel(startExpanded: startExpanded)
     }
     
 //    MARK: Gesture
@@ -107,6 +114,7 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                             .frame(width: geo.size.width)
                         
                         headerContent
+                            .gesture(DragGesture(), including: .none)
                     }
 
                     bodyContent
@@ -143,7 +151,7 @@ struct TestPhotoScrollerView: View {
                     .contentShape(Rectangle())
                 
                 
-                PhotoScrollerView {
+                PhotoScrollerView(startExpanded: false) {
                     Text("hi there")
                         .font(.largeTitle)
                         .bold()

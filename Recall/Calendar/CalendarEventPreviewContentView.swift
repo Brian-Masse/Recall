@@ -18,7 +18,6 @@ struct CalendarEventPreviewContentView: View {
     
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
-    let allowTapGesture: Bool
     
     let showMetaData: Bool
 
@@ -31,11 +30,10 @@ struct CalendarEventPreviewContentView: View {
     
     @State var showingEvent: Bool = false
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], allowTapGesture: Bool = true, showMetaData: Bool = true) {
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], showMetaData: Bool = true) {
         
         self.event = event
         self.events = events
-        self.allowTapGesture = allowTapGesture
         self.showMetaData = showMetaData
     }
     
@@ -146,9 +144,5 @@ struct CalendarEventPreviewContentView: View {
         }
         .foregroundStyle(event.getColor() )
         .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))
-        .if(allowTapGesture) { view in view.onTapGesture { showingEvent = true } }
-        .sheet(isPresented: $showingEvent) {
-            TestCalendarEventView(event: event, events: events )
-        }
     }
 }
