@@ -12,7 +12,8 @@ import UIUniversals
 //MARK: PhotoScrollViewModel
 @Observable
 class PhotoScrollerViewModel {
-    let peekHeight: Double = 0.9
+    let restHeight: Double = 0.6
+    let peekHeight: Double = 0.92
     
     var isExpanded: Bool = true
     
@@ -25,9 +26,17 @@ class PhotoScrollerViewModel {
 
 //MARK: PhotoScrollerView
 @available(iOS 18.0, *)
-struct PhotoScrollerView: View {
+struct PhotoScrollerView<C1: View, C2: View>: View {
     
     var sharedData = PhotoScrollerViewModel()
+    
+    let headerContent: C1
+    let bodyContent: C2
+    
+    init( @ViewBuilder headerContent: () -> C1, @ViewBuilder bodyContent: () -> C2 ) {
+        self.headerContent = headerContent()
+        self.bodyContent = bodyContent()
+    }
     
 //    MARK: Gesture
     private func makeGesture(minimisedHeight: Double) -> PhotoScrollerSimultaneousGesture {
@@ -72,11 +81,12 @@ struct PhotoScrollerView: View {
 //    MARK: TopSpacer
     @ViewBuilder
     private func makeTopSpacer(in screenHeight: Double) -> some View {
-        let minimisedHeight = screenHeight * sharedData.peekHeight
-        let height = screenHeight - (minimisedHeight - (minimisedHeight * sharedData.progress))
+        let fullHeight = screenHeight * sharedData.restHeight
+        let minimisedHeight: Double = screenHeight - screenHeight * sharedData.peekHeight
+        let height = minimisedHeight + ( fullHeight - minimisedHeight ) * sharedData.progress
         
         Rectangle()
-            .foregroundStyle(.red)
+            .foregroundStyle(.clear)
             .scrollClipDisabled()
             .frame(height: height, alignment: .bottom)
     }
@@ -87,22 +97,23 @@ struct PhotoScrollerView: View {
             
             let screenHeight = geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom
             let minimisedHeight = (geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom) * sharedData.peekHeight
-            let mainOffset = sharedData.mainOffset
+//            let mainOffset = sharedData.mainOffset
             
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 10) {
                     
-                    makeTopSpacer(in: screenHeight - 300)
-                        .frame(width: geo.size.width)
-
-                    VStack {
-                        Text("hi there")
+                    ZStack(alignment: .leading) {
+                        makeTopSpacer(in: screenHeight)
+                            .frame(width: geo.size.width)
                         
+                        headerContent
                     }
-                    .frame(minHeight: geo.size.height)
+
+                    bodyContent
+                        .frame(minWidth: geo.size.width, minHeight: geo.size.height)
                 }
-                .offset(y: sharedData.canPullDown ? 0 : mainOffset < 0 ? -mainOffset : 0)
-                .offset(y: mainOffset < 0 ? mainOffset : 0)
+//                .offset(y: sharedData.canPullDown ? 0 : mainOffset < 0 ? -mainOffset : 0)
+//                .offset(y: mainOffset < 0 ? mainOffset : 0)
             }
             .onScrollGeometryChange(for: CGFloat.self, of: { geo in geo.contentOffset.y }) { oldValue, newValue in
                 sharedData.mainOffset = newValue
@@ -112,12 +123,55 @@ struct PhotoScrollerView: View {
             .environment(sharedData)
             .gesture( makeGesture(minimisedHeight: minimisedHeight) )
         }
-        .ignoresSafeArea(edges: .top)
+        .ignoresSafeArea(edges: .bottom)
+    }
+}
+
+//MARK: test
+@available(iOS 18.0, *)
+struct TestPhotoScrollerView: View {
+    
+    var body: some View {
+        GeometryReader { geo in
+            
+            ZStack(alignment: .top) {
+                Image("sampleImage1")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .ignoresSafeArea()
+                    .frame(width: geo.size.width, height: geo.size.height * 0.8)
+                    .contentShape(Rectangle())
+                
+                
+                PhotoScrollerView {
+                    Text("hi there")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding()
+                    
+                } bodyContent: {
+                    VStack {
+                        ForEach( 0...20, id: \.self ) { i in
+                            Rectangle()
+                                .foregroundStyle(.green)
+                                .frame(height: 40)
+                        }
+                    }
+                    .padding()
+                    .clipShape(RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius ))
+                    .background {
+                        RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius )
+                            .foregroundStyle(.background)
+                    }
+                }
+            }
+        }
     }
 }
 
 //MARK: Preview
 @available(iOS 18.0, *)
 #Preview {
-    PhotoScrollerView()
+//    PhotoScrollerView()
+    TestPhotoScrollerView()
 }
