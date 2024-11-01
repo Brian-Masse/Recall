@@ -9,347 +9,115 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
-private struct ScrollOffsetPreferenceKey: PreferenceKey {
+//MARK: PhotoScrollViewModel
+@Observable
+class PhotoScrollerViewModel {
+    let peekHeight: Double = 0.9
     
-    static var defaultValue: CGPoint = .zero
+    var isExpanded: Bool = true
     
-    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) { }
+    var canPullUp: Bool = false
+    var canPullDown: Bool = false
+    
+    var progress: CGFloat = 1
+    var mainOffset: CGFloat = 0
 }
 
+//MARK: PhotoScrollerView
 @available(iOS 18.0, *)
-struct PhotoScrollerView<C1: View, C2: View>: View {
-
-    private let headerContent: C1
-    private let bodyContent: C2
+struct PhotoScrollerView: View {
     
-    init( @ViewBuilder headerContent: () -> C1, @ViewBuilder bodyContent: () -> C2 ) {
-        self.headerContent = headerContent()
-        self.bodyContent = bodyContent()
-    }
+    var sharedData = PhotoScrollerViewModel()
     
-    @State private var scrollPosition: ScrollPosition = ScrollPosition()
-    @State private var velocity: CGFloat = 0
-    @State private var scrollPhase: ScrollPhase = .idle
-    
-    @State private var offset: CGFloat = 0
-    
-    private let coordinateSpaceName: String = "photoScrollerCoordinateSpace"
-    private let headerName: String = "header"
-    
-    private func makeScrollSnapping(in geo: GeometryProxy, proxy: ScrollViewProxy) {
-        if offset > 100 /*&& offset < geo.size.height * 0.5*/ {
-//            scrollPosition.scrollTo(y: 400)
+//    MARK: Gesture
+    private func makeGesture(minimisedHeight: Double) -> PhotoScrollerSimultaneousGesture {
+        PhotoScrollerSimultaneousGesture(isEnabled: true) { gesture in
             
-////            proxy.scrollTo("body", anchor: .top)
-        } else if offset >= -100 {
-//            scrollPosition.scrollTo(id: headerName)
+            let state = gesture.state
+            let translation = gesture.translation(in: gesture.view).y
+            let isScrolling = state == .began || state == .changed
+            
+            if state == .began {
+                sharedData.canPullDown = translation > -10 && sharedData.mainOffset < 5
+                sharedData.canPullUp = translation < 10
+            }
+            
+            if isScrolling {
+                if sharedData.canPullDown && !sharedData.isExpanded {
+                    let progress = max(min(translation / minimisedHeight, 1), 0)
+                    sharedData.progress = progress
+                }
+                
+                if sharedData.canPullUp && sharedData.isExpanded {
+                    let progress = max(min(-translation / minimisedHeight, 1), 0)
+                    sharedData.progress = 1 - progress
+                }
+                
+            } else {
+                withAnimation(.smooth(duration: 0.3, extraBounce: 0)) {
+                    if sharedData.canPullDown && !sharedData.isExpanded && translation > 0 {
+                        sharedData.isExpanded = true
+                        sharedData.progress = 1
+                    }
+                    
+                    if sharedData.canPullUp && sharedData.isExpanded && translation < 0 {
+                        sharedData.isExpanded = false
+                        sharedData.progress = 0
+                    }
+                }
+            }
         }
     }
     
-//    MARK: Header
+//    MARK: TopSpacer
     @ViewBuilder
-    private func makeHeader(in geo: GeometryProxy) -> some View {
-        ZStack {
-            Image( "sampleImage1" )
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-//                .scaleEffect(1.2 + (max(scrollOfset.y - 100, 0) / 800), anchor: .top)
-            
-            headerContent
-        }
-        .frame(height: geo.size.height * (3/5))
-        .id(headerName)
-        .offset(y: offset)
+    private func makeTopSpacer(in screenHeight: Double) -> some View {
+        let minimisedHeight = screenHeight * sharedData.peekHeight
+        let height = screenHeight - (minimisedHeight - (minimisedHeight * sharedData.progress))
+        
+        Rectangle()
+            .foregroundStyle(.red)
+            .scrollClipDisabled()
+            .frame(height: height, alignment: .bottom)
     }
-    
-    private func scrollToContent() {
-        scrollPosition.scrollTo(y: scrollThreshold + 62)
-    }
-    
-    private func scrollToHeader() {
-        scrollPosition.scrollTo(edge: .top)
-    }
-    
-    private let velocityThreshold: Double = 40
-    private let scrollThreshold: Double = 400
     
 //    MARK: Body
     var body: some View {
-        
         GeometryReader { geo in
-            ScrollViewReader { proxy in
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        
-//                        makeHeader(in: geo)
-//                            .scrollTargetLayout()
-                        
-                        Rectangle()
-                            .foregroundStyle(.red)
-                            .frame(height: geo.size.height * (3/5))
-                            
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack { Spacer() }
-                            
-                            bodyContent
-                        }
-                        .padding()
-                        .frame(minHeight: geo.size.height + 100, alignment: .top)
-                        .background(alignment: .top) {
-                            UnevenRoundedRectangle(cornerRadii: .init(topLeading: Constants.UILargeCornerRadius,
-                                                                      topTrailing: Constants.UILargeCornerRadius) )
-                            .foregroundStyle(.blue)
-                        }
-                        .overlay(alignment: .bottom) {
-                            Rectangle()
-                                .foregroundStyle(.white)
-                                .frame(height: 200)
-                                .offset(y: 200)
-                        }
-                        .padding(.top)
-                        .id("body")
-                        .scrollTargetLayout()
-                    }
-                    .coordinateSpace(name: coordinateSpaceName)
-                    
-                    .onChange(of: offset) { oldVal, newVal in
-                        
-                        if offset > scrollThreshold { return }
-                        
-//                        if scrollPhase == .idle || scrollPhase == .decelerating {
-                            self.velocity = newVal - oldVal
-                            
-                            if velocity < -10 {
-                                scrollToHeader()
-                                print("to header")
-                            } else if velocity > 10 {
-                                scrollToContent()
-                                print("to content")
-                                
-                            }
-//                        }
-                        
-                    }
-
-                }
-                .scrollPosition($scrollPosition)
-                .animation(.linear(duration: 0), value: scrollPosition)
-                
-                .onScrollGeometryChange(for: CGPoint.self, of: { geo in geo.contentOffset }, action: { oldValue, newValue in
-                    self.offset = newValue.y
-                })
-                
-                
-                .overlay {
-                    VStack {
-                        Text("\(offset)")
-                        Text("\(velocity)")
-                        Text("\(geo.size.height * 0.2)")
-                    }
-                }
-                .onScrollPhaseChange { oldPhase, newPhase, context in
-
-                    self.scrollPhase = newPhase
-                    if oldPhase == .idle { return }
-                    if oldPhase == .interacting && newPhase == .animating { return }
-                    
-//                    if abs(self.velocity) > velocityThreshold {
-//                        self.velocity = 0
-//                        return
-//                    }
-                    
-//                    print( "running, \(offset), \(oldPhase), \(newPhase)" )
-                    
-                    if abs(velocity) < 40 && (newPhase == .idle || newPhase == .decelerating) {
-                    
-                    
-                        if offset > -50 && offset < scrollThreshold {
-                            scrollToContent()
-                            
-                        } else if offset < -60 {
-                            scrollToHeader()
-                        }
-//                        
-////                        withAnimation(.spring(duration: 0.1)) {
-////                            makeScrollSnapping(in: geo, proxy: proxy)
-////                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-@available(iOS 18.0, *)
-struct TestScroller: View, Animatable {
-    
-    private var dragGesture: some Gesture {
-        DragGesture()
-            .onChanged { value in
-                self.offset = value.translation.height
-                self.scrollPosition.scrollTo(y: -offset)
-                
-            }
-            .onEnded { value in
-                self.offset = finalOffset
-                withAnimation {
-                    self.scrollPosition.scrollTo(y: 340)
-                }
-            }
-    }
-    
-    @State private var inFullScreen: Bool = false
-    
-    @State private var offset: Double = 0
-    
-    @State private var scrollPosition: ScrollPosition = .init()
-    
-    @State private var flickingDownward: Bool = false
-    
-    @State private var scrollPhase: ScrollPhase = .idle
-    
-    private struct AnimatableTest: View {
-        @Binding var offset: Double
-        
-        var body: some View {
             
-            Text("\(offset)")
-        }
-        
-    }
-    
-    
-    private let finalOffset: Double = 340
-    
-    var body: some View {
-        
-        GeometryReader { geo in
-            ZStack(alignment: .top) {
-                
-                Rectangle()
-                    .foregroundStyle(.blue)
-                
-                
-                VStack {
-                    Rectangle()
-                        .foregroundStyle(.green)
-                        .frame(height: max(500 - offset, 0))
+            let screenHeight = geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom
+            let minimisedHeight = (geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom) * sharedData.peekHeight
+            let mainOffset = sharedData.mainOffset
+            
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 10) {
                     
-                    ScrollView(.vertical) {
+                    makeTopSpacer(in: screenHeight - 300)
+                        .frame(width: geo.size.width)
+
+                    VStack {
+                        Text("hi there")
                         
-                        VStack {
-                            
-                            //                        if offset <= 200 - 62 {
-                            //                        }
-//                            
-                            Rectangle()
-                                .foregroundStyle(.red)
-                                .frame(height: 500)
-                            
-                            
-                            
-                            ForEach(0..<20, id: \.self) { i in
-                                Rectangle()
-                                    .foregroundStyle(.purple)
-                                    .frame(height: 100)
-                                    .overlay {
-                                        Text("\(i)")
-                                    }
-                                    .offset(y: -500 + min(500, offset))
-                            }
-                        }
                     }
-                    .frame(height: geo.size.height)
-                    .scrollPosition($scrollPosition)
-                    
-                    //                .offset(y: )
-                    
-                    .onScrollGeometryChange(for: CGPoint.self, of: { geo in geo.contentOffset }, action: { oldValue, newValue in
-                        self.offset = newValue.y
-                        
-                        if newValue.y - oldValue.y < -30 && offset > 0 && scrollPhase != .interacting {
-                            print("scroll down")
-                            withAnimation(.easeOut(duration: 5)) {
-    //                            self.offset = 0
-                                scrollPosition.scrollTo(y: 0)
-                                
-                                self.flickingDownward = true
-                            }
-                        }
-                        
-                        if offset > 490 {
-                            self.inFullScreen = true
-                        } else {
-                            self.inFullScreen = false
-                        }
-                        
-                        if offset == 0 {
-                            self.flickingDownward = false
-                        }
-                    })
-                    .onScrollPhaseChange { oldPhase, newPhase in
-                        
-                        self.scrollPhase = newPhase
-                        
-                        if (newPhase == .decelerating || newPhase == .idle) && offset > 30 && !inFullScreen && !flickingDownward {
-                            print("scroll up!")
-//                            withAnimation {
-                                scrollPosition.scrollTo(y: 500)
-                            withAnimation(.easeOut(duration: 0.5)) {
-                                self.offset = 500
-                            }
-//                            }
-                        }
-                    }
-                    //                .defaultScrollAnchor(.init(x: 0.5, y: 0.5), for: .initialOffset)
-                    .border(.red)
-//                    .animation( .easeOut(duration: 0.2), value: offset )
-//                    .animation( .easeOut(duration: 0.5), value: scrollPosition )
-                    
+                    .frame(minHeight: geo.size.height)
                 }
-                
-                RecallIcon("text.document.fill")
-                    .background()
-                    .onTapGesture {
-                        withAnimation(.easeOut(duration: 5)) {
-//                            self.offset = 0
-                            scrollPosition.scrollTo(y: 0)
-                            
-//                            self.flickingDownward = true
-                        }
-                    }
+                .offset(y: sharedData.canPullDown ? 0 : mainOffset < 0 ? -mainOffset : 0)
+                .offset(y: mainOffset < 0 ? mainOffset : 0)
             }
+            .onScrollGeometryChange(for: CGFloat.self, of: { geo in geo.contentOffset.y }) { oldValue, newValue in
+                sharedData.mainOffset = newValue
+            }
+            
+            .scrollDisabled(sharedData.isExpanded)
+            .environment(sharedData)
+            .gesture( makeGesture(minimisedHeight: minimisedHeight) )
         }
-        .overlay(content: {
-            AnimatableTest(offset: $offset)
-        })
+        .ignoresSafeArea(edges: .top)
     }
 }
 
+//MARK: Preview
 @available(iOS 18.0, *)
 #Preview {
-    TestScroller()
-//    PhotoScrollerView {
-//        VStack {
-//            
-//            Text("hi there!")
-//                .bold()
-//                .font(.title)
-//            
-//            Spacer()
-//        }
-//        
-//    } bodyContent: {
-//        LazyVStack {
-//            ForEach( 0...50, id: \.self ) { i in
-//                
-//                Rectangle()
-//                    .frame(height: 50)
-//                    .foregroundStyle(.red)
-//                    .opacity(Double(i) / 50)
-//            }
-//        }
-//        
-//    }
+    PhotoScrollerView()
 }

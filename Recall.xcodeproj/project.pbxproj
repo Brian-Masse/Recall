@@ -50,6 +50,7 @@
 		C922849E2CC988E500280BFA /* EventCreationViewTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922849D2CC988E500280BFA /* EventCreationViewTabBar.swift */; };
 		C92284A02CD2D38700280BFA /* RecallCalendarEventImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922849F2CD2D38700280BFA /* RecallCalendarEventImageStore.swift */; };
 		C92284A22CD2D9EF00280BFA /* PhotoScrollerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92284A12CD2D9EF00280BFA /* PhotoScrollerView.swift */; };
+		C922852B2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922852A2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift */; };
 		C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923D51B2A8F119C00E432B9 /* RecallGoalDataModel.swift */; };
 		C928E15A2A7B546E00E981F1 /* EventsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E1592A7B546E00E981F1 /* EventsDataSection.swift */; };
 		C928E15C2A7C3B3300E981F1 /* GoalsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E15B2A7C3B3300E981F1 /* GoalsDataSection.swift */; };
@@ -183,6 +184,7 @@
 		C922849D2CC988E500280BFA /* EventCreationViewTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCreationViewTabBar.swift; sourceTree = "<group>"; };
 		C922849F2CD2D38700280BFA /* RecallCalendarEventImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCalendarEventImageStore.swift; sourceTree = "<group>"; };
 		C92284A12CD2D9EF00280BFA /* PhotoScrollerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoScrollerView.swift; sourceTree = "<group>"; };
+		C922852A2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoScrollerSimultaneousGesture.swift; sourceTree = "<group>"; };
 		C923D51B2A8F119C00E432B9 /* RecallGoalDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoalDataModel.swift; sourceTree = "<group>"; };
 		C928E1592A7B546E00E981F1 /* EventsDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsDataSection.swift; sourceTree = "<group>"; };
 		C928E15B2A7C3B3300E981F1 /* GoalsDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsDataSection.swift; sourceTree = "<group>"; };
@@ -408,6 +410,7 @@
 			children = (
 				C92284942CC85C8B00280BFA /* StyledPhotoPicker.swift */,
 				C92284A12CD2D9EF00280BFA /* PhotoScrollerView.swift */,
+				C922852A2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift */,
 				C922849A2CC97CE700280BFA /* StyledPhotoPickerViewModel.swift */,
 			);
 			path = Photos;
@@ -819,6 +822,7 @@
 				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
 				C92284A22CD2D9EF00280BFA /* PhotoScrollerView.swift in Sources */,
 				C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */,
+				C922852B2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift in Sources */,
 				C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */,
 				C98CEE112B00246800B75924 /* UpdateView.swift in Sources */,
 				C922849B2CC97CE700280BFA /* StyledPhotoPickerViewModel.swift in Sources */,
