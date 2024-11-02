@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+
 //MARK: InfiniteScroller
 struct InfiniteScroller<Content: View>: View {
     
@@ -51,15 +52,41 @@ struct InfiniteScroller<Content: View>: View {
     }
 }
 
-#Preview {
-    InfiniteScroller { i in
-        ZStack {
-            Rectangle()
-                .foregroundStyle(.red)
-                .frame(height: i == -1 ? 150 : Double.random(in: 200...200))
-            
-            Text("\(i)")
+//MARK: InfiniteScroller
+struct Temp<C: View>: View {
+    
+    @State private var lowerBound: Int = -12
+    @State private var upperBound: Int = 12
+    
+    let contentBuilder: (Int) -> C
+    
+    init( @ViewBuilder contentBuilder: @escaping (Int) -> C ) {
+        self.contentBuilder = contentBuilder
+    }
+    
+    var body: some View {
+        
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVStack() {
+                ForEach( lowerBound..<upperBound, id: \.self ) { i in
+                    contentBuilder(i)
+                        .onAppear {
+                            if i == lowerBound { self.lowerBound -= 1 }
+                            if i == upperBound - 1 { self.upperBound += 1 }
+                            
+                        }
+                }
+            }
         }
-        .padding(.vertical, 7)
+        .defaultScrollAnchor(.center)
+    }
+}
+
+//MARK: Preview
+#Preview {
+    Temp() { i in
+        Rectangle()
+            .frame(height: 50)
+            .foregroundStyle(.blue)
     }
 }

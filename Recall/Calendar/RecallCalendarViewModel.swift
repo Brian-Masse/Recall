@@ -32,7 +32,7 @@ class RecallCalendarViewModel: ObservableObject {
     @Published var selection: [ RecallCalendarEvent ] = []
     
     init() {
-        self.getScale(from: RecallModel.index.calendarDensity)
+//        self.getScale(from: RecallModel.index.calendarDensity)
     }
     
 //    MARK: Setters

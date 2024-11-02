@@ -364,7 +364,9 @@ struct TestCalendarEventView: View {
                 .contentShape(Rectangle())
                 
                 
-                PhotoScrollerView (startExpanded: event.images.isEmpty) {
+                let allowsScrolling = event.images.isEmpty
+                
+                PhotoScrollerView (startExpanded: allowsScrolling, allowsScrolling: allowsScrolling) {
                     VStack {
                         Spacer()
                         makeHeader()

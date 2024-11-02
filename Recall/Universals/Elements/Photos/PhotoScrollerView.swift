@@ -38,16 +38,21 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
     let headerContent: C1
     let bodyContent: C2
     
-    init( startExpanded: Bool, @ViewBuilder headerContent: () -> C1, @ViewBuilder bodyContent: () -> C2 ) {
+    let allowsScroll: Bool
+    
+    init( startExpanded: Bool, allowsScrolling: Bool = true, @ViewBuilder headerContent: () -> C1, @ViewBuilder bodyContent: () -> C2 ) {
         self.headerContent = headerContent()
         self.bodyContent = bodyContent()
         
+        self.allowsScroll = allowsScrolling
         self.sharedData = PhotoScrollerViewModel(startExpanded: startExpanded)
     }
     
 //    MARK: Gesture
     private func makeGesture(minimisedHeight: Double) -> PhotoScrollerSimultaneousGesture {
         PhotoScrollerSimultaneousGesture(isEnabled: true) { gesture in
+            
+            if !allowsScroll { return }
             
             let state = gesture.state
             let translation = gesture.translation(in: gesture.view).y
