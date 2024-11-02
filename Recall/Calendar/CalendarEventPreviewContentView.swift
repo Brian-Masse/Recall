@@ -80,7 +80,7 @@ struct CalendarEventPreviewContentView: View {
             makeTitle(in: geo)
             
             if geo.size.height > minHeight {
-                if !event.notes.isEmpty {
+                if !event.notes.isEmpty && RecallModel.index.showNotesOnPreview {
                     makeNode(icon: "text.justify.leading", text: event.notes, wrap: true)
                         .padding(.bottom, 7)
                 }
@@ -96,6 +96,10 @@ struct CalendarEventPreviewContentView: View {
                     
                     if let location = event.getLocationResult() {
                         makeNode(icon: "location", text: location.title)
+                    }
+                    
+                    if !event.images.isEmpty {
+                        makeNode(icon: "photo.on.rectangle", text: "has Photos")
                     }
                 }
             }

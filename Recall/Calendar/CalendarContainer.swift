@@ -115,7 +115,7 @@ struct CalendarContainer: View {
         let calendarWidth = abs(geo.size.width - calendarLabelWidth) / daysPerView
         let scrollDetectionPadding = calendarWidth / 2
         
-        let proposedIndex = Int(floor( (x + calendarLabelWidth + scrollDetectionPadding) / calendarWidth) )
+        let proposedIndex = Int(floor( (x + calendarLabelWidth + scrollDetectionPadding + calendarWidth) / calendarWidth) )
         let proposedDate = Date.now - (Double(dayCount - proposedIndex) * Constants.DayTime)
 
         if !viewModel.scrollingCalendar
@@ -267,7 +267,7 @@ struct CalendarContainer: View {
         
         HStack(spacing: 0) {
             ForEach(0..<viewModel.daysPerView, id: \.self) { i in
-                let day = viewModel.currentDay.addingTimeInterval(Double(i) * Constants.DayTime)
+                let day = viewModel.currentDay.addingTimeInterval(Double(i - 1) * Constants.DayTime)
 
                 let label = day.formatted(format)
                 
@@ -350,16 +350,14 @@ struct CalendarContainer: View {
                                 makeCalendarCarousel(in: geo)
                                 
                                 VStack {
-                                    Spacer()
+                                    Rectangle()
+                                        .frame(height: (9 * Constants.HourTime) / viewModel.scale)
                                     
                                     Rectangle()
-                                        .frame(height: 10)
-                                        .foregroundStyle(.clear)
-                                        .allowsHitTesting(false)
                                         .id("scrollTarget")
-                                    
-                                    Spacer()
                                 }
+                                .allowsHitTesting(false)
+                                .foregroundStyle(.clear)
                             }
 
                             .simultaneousGesture(createEventHoldGesture(in: geo))
@@ -371,7 +369,7 @@ struct CalendarContainer: View {
                         }
                         .simultaneousGesture(scaleGesture)
                         .scrollDisabled(viewModel.gestureInProgress)
-                        .onAppear { proxy.scrollTo("scrollTarget") }
+                        .onAppear { proxy.scrollTo("scrollTarget", anchor: .top) }
                         .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
                             makeCalendarLabels()
                                 .padding(.leading, calendarLabelWidth)
