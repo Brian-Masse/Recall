@@ -162,7 +162,7 @@ struct CalendarPageView: View {
         
         HStack {
             ForEach( 0..<7, id: \.self) { i in
-                let day = calendar.date(byAdding: .day, value: 6 - i, to: week)!
+                let day = calendar.date(byAdding: .day, value: i, to: week)!
                 let isCurrentDay = day.matches(viewModel.currentDay, to: .day)
                 
                 HStack {

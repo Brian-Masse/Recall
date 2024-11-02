@@ -106,7 +106,7 @@ struct CalendarContainer: View {
     }
     
 //    MARK: Struct Methods
-    private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy) {
+    private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy, dayCount: Int) {
 //        if scrollPosition.x > 0 { return }
         let x = abs(scrollPosition.x)
         
@@ -116,8 +116,8 @@ struct CalendarContainer: View {
         let scrollDetectionPadding = calendarWidth / 2
         
         let proposedIndex = Int(floor( (x + calendarLabelWidth + scrollDetectionPadding) / calendarWidth) )
-        let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
-        
+        let proposedDate = Date.now - (Double(dayCount - proposedIndex) * Constants.DayTime)
+
         if !viewModel.scrollingCalendar
 //            && !self.viewModel.currentDay.matches(proposedDate, to: .day)
         {
@@ -131,9 +131,11 @@ struct CalendarContainer: View {
         viewModel.setSubDayIndex(to: index)
     }
     
+//    MARK: ScrollToCurrentDay
     private func scrollToCurrentDay(proxy: ScrollViewProxy) {
+        let dayCount = RecallModel.index.daysSinceFirstEvent()
         let index = floor(Date.now.timeIntervalSince(viewModel.currentDay) / Constants.DayTime)
-        withAnimation { proxy.scrollTo(Int(index), anchor: .leading) }
+        withAnimation { proxy.scrollTo(dayCount - Int(index), anchor: .leading) }
     }
     
 //    MARK: ScaleGesture
@@ -261,11 +263,11 @@ struct CalendarContainer: View {
 //    MARK: CalendarLabels
     @ViewBuilder
     private func makeCalendarLabels() -> some View {
-        let format = Date.FormatStyle().weekday(.abbreviated).day()
+        let format = Date.FormatStyle().weekday(.abbreviated).month().day()
         
         HStack(spacing: 0) {
             ForEach(0..<viewModel.daysPerView, id: \.self) { i in
-                let day = viewModel.currentDay.addingTimeInterval(Double(i) * -Constants.DayTime)
+                let day = viewModel.currentDay.addingTimeInterval(Double(i) * Constants.DayTime)
 
                 let label = day.formatted(format)
                 
@@ -290,15 +292,15 @@ struct CalendarContainer: View {
     
     @ViewBuilder
     private func makeCalendarCarousel(in geo: GeometryProxy) -> some View {
+        let dayCount = RecallModel.index.daysSinceFirstEvent()
+        
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 0) {
                     
-                    let dayCount = RecallModel.index.daysSinceFirstEvent()
-                    
                     ForEach(0...dayCount, id: \.self) { i in
                         
-                        let day = .now.resetToStartOfDay() - (Double(i) * Constants.DayTime)
+                        let day = Date.now.resetToStartOfDay() + Double(i - dayCount) * Constants.DayTime
                         
                         ZStack(alignment: .top) {
                             CalendarView(events: viewModel.getEvents(on: day),
@@ -308,9 +310,9 @@ struct CalendarContainer: View {
                         .padding(.horizontal, 2)
                         .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
                         .task { await viewModel.loadEvents(for: day, in: events) }
-                        .id(i)
                     }
                 }
+                
                 .scrollTargetLayout()
                 .onChange(of: viewModel.shouldScrollCalendar) { scrollToCurrentDay(proxy: proxy) }
                 
@@ -319,13 +321,12 @@ struct CalendarContainer: View {
                         .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named(coordinateSpaceName)).origin)
                 })
                 
-                .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo) }
-                .onAppear { scrollToCurrentDay(proxy: proxy) }
-                
+                .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo, dayCount: dayCount) }
                 .onChange(of: events) { oldValue, newValue in
                     viewModel.invalidateEvents(newEvents: newValue)
                 }
             }
+            .defaultScrollAnchor(.trailing)
             .scrollTargetBehavior(.viewAligned)
             .scrollDisabled(viewModel.gestureInProgress)
             
