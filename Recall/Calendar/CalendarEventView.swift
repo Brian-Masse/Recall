@@ -50,10 +50,14 @@ struct TestCalendarEventView: View {
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
     
+    @State private var showEditView: Bool = false
+    
     @State private var decodedImages: [UIImage] = []
     
     @State private var position: MapCameraPosition
     @Namespace private var mapNameSpace
+    
+    private let largeCornerRadius: Double = 58
     
 //    MARK: Init
     init( event: RecallCalendarEvent, events: [RecallCalendarEvent] = [] ) {
@@ -120,6 +124,18 @@ struct TestCalendarEventView: View {
         .opacity(0.75)
     }
     
+    @ViewBuilder
+    private func makeSectionFiller(message: String) -> some View {
+        VStack {
+            HStack { Spacer() }
+            
+            RecallIcon( "plus" )
+            
+            UniversalText( message, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+        }
+        .rectangularBackground(style: .secondary)
+    }
+    
     
 //    MARK: Header
     @ViewBuilder
@@ -134,7 +150,7 @@ struct TestCalendarEventView: View {
             
             Spacer()
             
-            makeSmallButton("pencil", label: "edit") { dismiss() }
+            makeSmallButton("pencil", label: "edit") { showEditView = true }
             
             makeSmallButton("chevron.down") { dismiss() }
         }
@@ -157,8 +173,6 @@ struct TestCalendarEventView: View {
     @ViewBuilder
     private func makeMetaData() -> some View {
         VStack {
-            makeCalendarContainer()
-            
             HStack {
                 
                 makeMetaDataLabel(icon: "tag", title: "\(event.getTagLabel())")
@@ -168,7 +182,7 @@ struct TestCalendarEventView: View {
                 makeMetaDataLabel(icon: event.isFavorite ? "checkmark" : "plus", title: "Favorite")
             }
             
-            
+            makeCalendarContainer()
         }
     }
     
@@ -207,10 +221,10 @@ struct TestCalendarEventView: View {
     @MainActor
     @ViewBuilder
     private func makePhotoCarousel() -> some View {
-        if event.images.count != 0 {
-            VStack(alignment: .leading) {
-                makeSectionHeader("photo.on.rectangle", title: "photos")
-                
+        VStack(alignment: .leading) {
+            makeSectionHeader("photo.on.rectangle", title: "photos")
+            
+            if event.images.count != 0 {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack {
                         ForEach( self.decodedImages, id: \.self ) { image in
@@ -219,6 +233,9 @@ struct TestCalendarEventView: View {
                     }
                     .frame(height: 200)
                 }.clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+            } else {
+                
+                makeSectionFiller(message: "Add photos for this event")
             }
         }
     }
@@ -226,8 +243,9 @@ struct TestCalendarEventView: View {
 //    MARK: Map
     @ViewBuilder
     private func makeMap() -> some View {
-        if let location = event.getLocationResult() {
-            VStack(alignment: .leading) {
+        VStack(alignment: .leading) {
+            if let location = event.getLocationResult() {
+                
                 makeSectionHeader("location", title: "\(location.title)")
                 
                 Map(position: $position, scope: mapNameSpace) {
@@ -237,6 +255,11 @@ struct TestCalendarEventView: View {
                 }
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
                 .frame(height: 250)
+            } else {
+                
+                makeSectionHeader("location", title: "location")
+                
+                makeSectionFiller(message: "Add a location for this event")
             }
         }
     }
@@ -322,8 +345,10 @@ struct TestCalendarEventView: View {
                     } else {
                         Rectangle()
                             .foregroundStyle(event.getColor().gradient)
-                            .opacity(0.25)
                     }
+                }
+                .overlay {
+                    LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .init(x: 0.5, y: 0.1))
                 }
                 .ignoresSafeArea()
                 .frame(width: geo.size.width, height: geo.size.height * 0.8)
@@ -340,46 +365,45 @@ struct TestCalendarEventView: View {
                     }
                     
                 } bodyContent: {
-                    VStack(alignment: .leading) {
-                        
-                        makeTimeLabel()
-                            .padding(.bottom)
-                        
-                        makeNotes()
-                            .padding(.bottom)
-
-                        makeMetaData()
-                            .padding(.bottom)
-                        
-                        Divider()
-                            .padding(.bottom)
-                        
-                        makePhotoCarousel()
-                            .padding(.bottom)
-                        
-                        makeMap()
-                            .padding(.bottom)
-                        
-                        if !event.images.isEmpty || !event.locationTitle.isEmpty {
-                            Divider()
+                    VStack(spacing: 7) {
+                        VStack(alignment: .leading) {
+                            
+                            makeTimeLabel()
+                                .padding(.bottom)
+                            
+                            makeNotes()
+                                .padding(.bottom)
+                            
+                            makeMetaData()
                                 .padding(.bottom)
                         }
+                        .rectangularBackground(style: .primary)
+                        .clipShape(UnevenRoundedRectangle(topLeadingRadius: largeCornerRadius,
+                                                          topTrailingRadius: largeCornerRadius))
                         
-                        makeActionButtons()
-                            .padding(.top, 20)
-                            .padding(.bottom, 100)
+                        VStack {
+                            makePhotoCarousel()
+                                .padding(.bottom)
                             
-                        Spacer()
+                            makeMap()
+                                .padding(.bottom)
+                        }.rectangularBackground(style: .primary)
+                            
+                        VStack {
+                            makeActionButtons()
+                                .padding(.top, 20)
+                                .padding(.bottom, 100)
+                            
+                            Spacer()
+                        }
+                        .rectangularBackground(style: .primary)
+                        .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: largeCornerRadius,
+                                                          bottomTrailingRadius: largeCornerRadius))
                     }
-                    .padding(.vertical)
                     .task { await onAppear() }
-                    
-                    .padding(7)
-                    .clipShape(RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius ))
-                    .background {
-                        RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius )
-                            .foregroundStyle(.background)
-                    }
+                    .padding(.horizontal, 5)
+                    .padding(.bottom, 20)
+//                    .background( event.getColor().gradient )
                 }
             }
         }
@@ -388,12 +412,20 @@ struct TestCalendarEventView: View {
 //    MARK: Body
     
     var body: some View {
-        if #available(iOS 18.0, *) {
-            
-            makePhotoScroller()
-            
-        } else {
-            // Fallback on earlier versions
+        VStack {
+            if #available(iOS 18.0, *) {
+                
+                makePhotoScroller()
+                
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+        .background(.black)
+        .sheet(isPresented: $showEditView) {
+            CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime,
+                                                            editing: true,
+                                                            event: event)
         }
     }
 }

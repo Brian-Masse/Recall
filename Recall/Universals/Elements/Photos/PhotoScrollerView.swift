@@ -128,6 +128,7 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
 //                .offset(y: sharedData.canPullDown ? 0 : mainOffset < 0 ? -mainOffset : 0)
 //                .offset(y: mainOffset < 0 ? mainOffset : 0)
             }
+            .scrollClipDisabled()
             .onScrollGeometryChange(for: CGFloat.self, of: { geo in geo.contentOffset.y }) { oldValue, newValue in
                 sharedData.mainOffset = newValue
             }
@@ -170,6 +171,7 @@ struct TestPhotoScrollerView: View {
                                 .frame(height: 40)
                         }
                     }
+                    .offset(y: -40)
                     .padding()
                     .clipShape(RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius ))
                     .background {

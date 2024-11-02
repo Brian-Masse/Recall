@@ -174,7 +174,7 @@ struct CalendarContainer: View {
     }
     
     private func createEvent() {
-        let subDayOffset = Double(viewModel.subDayIndex) * Constants.DayTime
+        let subDayOffset = Double(1 - viewModel.subDayIndex) * Constants.DayTime
         
         let startTime = viewModel.getTime(from: newEventoffset, on: viewModel.currentDay) - subDayOffset
         let endTime = startTime + ( newEventResizeOffset * viewModel.scale )
@@ -305,7 +305,7 @@ struct CalendarContainer: View {
                         ZStack(alignment: .top) {
                             CalendarView(events: viewModel.getEvents(on: day),
                                              on: day)
-                            makeEventCreationPreview(on: calculateSubDayIndex(on: day))
+                            makeEventCreationPreview(on: 1 - calculateSubDayIndex(on: day))
                         }
                         .padding(.horizontal, 2)
                         .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
