@@ -339,6 +339,67 @@ struct TestCalendarEventView: View {
         .padding(.bottom, 50)
     }
     
+//    MARK: LargePhotoCarousel
+    @State private var photoCarouselIndex: Int = 0
+    
+    @available(iOS 18.0, *)
+    @ViewBuilder
+    private func makeLargePhotoCarousel(in geo: GeometryProxy) -> some View {
+        if self.decodedImages.count > 0 {
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 0) {
+                    ForEach( self.decodedImages, id: \.self ) { image in
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geo.size.width)
+                            .clipped()
+                    }
+                }.scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.viewAligned)
+            .onScrollGeometryChange(for: Double.self, of: { geo in geo.contentOffset.x }) { oldValue, newValue in
+                self.photoCarouselIndex = Int(floor((newValue - (geo.size.width / 2)) / geo.size.width)) + 1
+            }
+            .overlay(alignment: .top) {
+                makePhotoCarouselIndex()
+                    .padding(.top, 65)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func makePhotoCarouselIndex() -> some View {
+        if self.decodedImages.count > 1 {
+            HStack {
+                
+                ForEach( 0..<decodedImages.count, id: \.self ) { i in
+                    Group {
+                        if i != 0 {
+                            Circle()
+                                .frame(width: 7, height: 7)
+                        } else {
+                            RecallIcon( "square.grid.2x2.fill" )
+                                .font(.caption)
+                        }
+                    }
+                    .foregroundStyle(.white)
+                    .opacity( i == photoCarouselIndex ? 1 : 0.5 )
+                }
+            }
+        }
+    }
+    
+    private struct NullContentShape: Shape {
+        func path(in rect: CGRect) -> Path {
+            var rectCopy = rect
+            rectCopy.size.height = 0
+            
+            return Path(rectCopy)
+        }
+    }
+    
 //    MARK: Background
     @ViewBuilder
     private func makeBackground() -> some View {
@@ -347,9 +408,13 @@ struct TestCalendarEventView: View {
                 
                 Group {
                     if let image = self.decodedImages.first {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
+                        if #available(iOS 18, *) {
+                            makeLargePhotoCarousel(in: geo)
+                        } else {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        }
                     } else {
                         Rectangle()
                             .foregroundStyle(event.getColor().gradient)
@@ -357,6 +422,8 @@ struct TestCalendarEventView: View {
                 }
                 .overlay {
                     LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .init(x: 0.5, y: 0.7))
+                        .allowsHitTesting(false)
+                        .contentShape(NullContentShape())
                 }
                 .ignoresSafeArea()
                 .frame(width: geo.size.width, height: geo.size.height * 0.8)
@@ -400,7 +467,7 @@ struct TestCalendarEventView: View {
     }
     
 //    MARK: PhotoScroller
-    @available(iOS 18.0, *)
+    @available(iOS 18, *)
     @ViewBuilder
     private func makePhotoScroller() -> some View {
                 
@@ -433,7 +500,7 @@ struct TestCalendarEventView: View {
         ZStack(alignment: .top) {
             makeBackground()
             
-            if #available(iOS 18.0, *) {
+            if #available(iOS 18, *) {
                 makePhotoScroller()
             } else {
                 makeRegularLayout()
@@ -452,5 +519,5 @@ struct TestCalendarEventView: View {
 
 
 #Preview {
-    TestCalendarEventView(event: sampleEvent )
+    TestCalendarEventView(event: sampleEventNoPhotos )
 }

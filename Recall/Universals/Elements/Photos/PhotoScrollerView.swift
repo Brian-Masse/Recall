@@ -11,7 +11,7 @@ import UIUniversals
 
 //MARK: PhotoScrollViewModel
 @Observable
-class PhotoScrollerViewModel {
+final class PhotoScrollerViewModel: Sendable {
     let restHeight: Double = 0.6
     let peekHeight: Double = 0.92
     
@@ -103,6 +103,27 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
             .frame(height: height, alignment: .bottom)
     }
     
+//    MARK: ContentMask
+    private struct ContentMask: Shape {
+        let screenHeight: Double
+        var sharedData: PhotoScrollerViewModel
+        
+        func path(in rect: CGRect) -> Path {
+            let restHeight = rect.size.height - screenHeight * (sharedData.restHeight)
+            let fullheight = screenHeight * sharedData.peekHeight
+            let height = (!sharedData.isExpanded ? fullheight : restHeight) + 100
+            
+            let offset = rect.size.height - height
+            
+            let newRect = CGRect(x: 0,
+                              y: offset,
+                              width: rect.size.width,
+                              height: height)
+            
+            return Path(newRect)
+        }
+    }
+    
 //    MARK: Body
     var body: some View {
         GeometryReader { geo in
@@ -119,7 +140,6 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                             .frame(width: geo.size.width)
                         
                         headerContent
-                            .gesture(DragGesture(), including: .none)
                     }
 
                     bodyContent
@@ -128,13 +148,13 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
 //                .offset(y: sharedData.canPullDown ? 0 : mainOffset < 0 ? -mainOffset : 0)
 //                .offset(y: mainOffset < 0 ? mainOffset : 0)
             }
+            .contentShape(ContentMask (screenHeight: screenHeight, sharedData: sharedData) )
             .scrollClipDisabled()
             .onScrollGeometryChange(for: CGFloat.self, of: { geo in geo.contentOffset.y }) { oldValue, newValue in
                 sharedData.mainOffset = newValue
             }
-            
+
             .scrollDisabled(sharedData.isExpanded)
-            .environment(sharedData)
             .gesture( makeGesture(minimisedHeight: minimisedHeight) )
         }
         .ignoresSafeArea(edges: .bottom)
@@ -155,8 +175,10 @@ struct TestPhotoScrollerView: View {
                     .ignoresSafeArea()
                     .frame(width: geo.size.width, height: geo.size.height * 0.8)
                     .contentShape(Rectangle())
-                
-                
+                    .onTapGesture {
+                        print("hi there!")
+                    }
+//
                 PhotoScrollerView(startExpanded: false) {
                     Text("hi there")
                         .font(.largeTitle)
