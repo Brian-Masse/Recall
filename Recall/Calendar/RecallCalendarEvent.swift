@@ -375,3 +375,17 @@ let sampleEvent = RecallCalendarEvent(ownerID: "",
                                           categoryID: ObjectId(),
                                     goalRatings: [:],
                                     previewEvent: true)
+
+@MainActor
+let sampleEventNoPhotos = RecallCalendarEvent(ownerID: "",
+                                    title: "test event",
+                                    notes: "Its been a long long time. A moment to shine, shine, shine, shine, shinnnnnnnnnneeeeee. Ooooh ohh",
+                                    urlString: "https://github.com/Brian-Masse/Recall",
+                                    location: .init(location: .init(latitude: 42.5124232, longitude: -71.114742),
+                                                      title: "25 Indian Tree Ln, Reading, MA  01867, United States"),
+                                    images: [],
+                                    startTime: .now,
+                                    endTime: .now + Constants.HourTime * 2,
+                                          categoryID: ObjectId(),
+                                    goalRatings: [:],
+                                    previewEvent: true)
