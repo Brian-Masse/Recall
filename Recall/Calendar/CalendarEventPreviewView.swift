@@ -67,6 +67,8 @@ struct CalendarEventPreviewView: View {
     @State var showingEditingScreen: Bool = false
     @State var showingDeletionAlert: Bool = false
     
+    @State private var indexOfEventInEvents: Int = 0
+    
      
     
 //    MARK: Convenience Functions
@@ -83,6 +85,12 @@ struct CalendarEventPreviewView: View {
                                         goalRatings: RecallCalendarEvent.translateGoalRatingList(event.goalRatings))
         RealmManager.addObject(event)
         
+    }
+    
+    private func findEvent() async {
+        if let index = events.firstIndex(where: { $0.identifier() == event.identifier() } ) {
+            self.indexOfEventInEvents = index
+        }
     }
     
 //    MARK: Convenience vars
@@ -147,6 +155,8 @@ struct CalendarEventPreviewView: View {
     private func defaultContextMenuAction() { }
     
     private func onTap() {
+        Task { await findEvent() }
+        
         if viewModel.selecting { viewModel.selectEvent(event) }
         else { showingEvent = true }
     }
@@ -273,8 +283,11 @@ struct CalendarEventPreviewView: View {
                 }
             
                 .fullScreenCover(isPresented: $showingEvent) {
-                    TestCalendarEventView(event: event, events: events )
+//                    TestCalendarEventView(event: event, events: events )
+                    CalendarEventCarousel(events: events, startIndex: indexOfEventInEvents)
                 }
+            
+                .task { await findEvent() }
 
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
         }
