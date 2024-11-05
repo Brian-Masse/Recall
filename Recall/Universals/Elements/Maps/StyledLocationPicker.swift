@@ -18,9 +18,9 @@ struct StyledLocationPicker: View {
     @State private var searchResults = [LocationResult]()
     @Binding private var selectedLocation: LocationResult?
     
-    private let title: String
+    @State private var inSearchField: Bool = false
     
-    @State private var showingSearchView: Bool = false
+    private let title: String
     
     @State private var position = MapCameraPosition.automatic
     @Namespace private var mapNameSpace
@@ -60,9 +60,9 @@ struct StyledLocationPicker: View {
                 makeLocationTitle()
             }
             
-            makeMap()
+            if !inSearchField { makeMap() }
             
-            StyledLocationSearchView(searchResults: $searchResults)
+            StyledLocationSearchView(searchResults: $searchResults, inSearch: $inSearchField)
             
             if selectedLocation != nil {
                 UniversalButton {
@@ -81,8 +81,9 @@ struct StyledLocationPicker: View {
             }
 
         }
+        
+        
         .onChange(of: selectedLocation) {
-            showingSearchView = selectedLocation == nil
             if let selectedLocation {
                 position = .camera(.init(centerCoordinate: selectedLocation.location,
                                                           distance: 5000))
@@ -109,12 +110,12 @@ private struct StyledLocationSearchView: View {
     @State private var locationService = LocationService(completer: .init())
     @Binding var searchResults: [LocationResult]
     
-    @State private var inSearch: Bool = false
+    @Binding var inSearch: Bool
     @State private var showingSearchResults: Bool = false
     @State private var searchString = ""
     
     private var searchResultsHeight: Double {
-        inSearch ? 500 : ( showingSearchResults ? 300 : 0 )
+        inSearch ? .infinity : ( showingSearchResults ? 300 : 0 )
     }
     
     private func didTapOnCompletion(_ completion: SearchCompletions) {
@@ -123,6 +124,8 @@ private struct StyledLocationSearchView: View {
                 searchResults = [singleLocation]
             }
         }
+        
+        self.searchString = completion.title
         
         withAnimation {
             inSearch = false
@@ -174,12 +177,14 @@ private struct StyledLocationSearchView: View {
 
         
             if showingToggle {
-                UniversalButton { RecallIcon( showingSearchResults ? "chevron.down" : "chevron.up") }
+                UniversalButton {
+                    RecallIcon( showingSearchResults ? "chevron.down" : "chevron.up")
+                        .rectangularBackground(style: .primary)
+                }
                 action: {
                     if inSearch { inSearch = false }
                     else { showingSearchResults.toggle() }
                 }
-                    .padding(7)
             }
         }
     }
@@ -198,7 +203,7 @@ private struct StyledLocationSearchView: View {
             
         } else {
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 10) {
+                LazyVStack(spacing: 10) {
                     ForEach( locationService.completions ) { completion in
                         makeLocationItem(completion)
                         
@@ -222,7 +227,7 @@ private struct StyledLocationSearchView: View {
                         .transition(.blurReplace())
                         .padding(.top, 7)
                 }
-            }.frame(height: searchResultsHeight)
+            }.frame(maxHeight: searchResultsHeight)
         }
         .onChange(of: inSearch) { withAnimation {
             if inSearch { showingSearchResults = true }

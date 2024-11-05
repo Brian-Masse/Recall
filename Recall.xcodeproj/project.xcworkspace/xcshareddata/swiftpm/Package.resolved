@@ -1,5 +1,5 @@
 {
-  "originHash" : "2ab5dd9809ec54c91728a131bc087f0c0f6864df1d48809dcb6ff696fc02497d",
+  "originHash" : "c1b2d4fee033604b47a9a0593abf8985b39b4e07dc9466386233ba4f20502f7b",
   "pins" : [
     {
       "identity" : "flowgrid",
@@ -43,7 +43,7 @@
       "location" : "https://github.com/Brian-Masse/UIUniversals",
       "state" : {
         "branch" : "main",
-        "revision" : "f5d676d2f175f34ad2de403fefdabc9cae8d2411"
+        "revision" : "260362e9e882e9a0a002934386286a32a96059ee"
       }
     },
     {

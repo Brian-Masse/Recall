@@ -156,3 +156,27 @@ struct AndaleMono: UniversalFont {
     
     static var shared: UIUniversals.UniversalFont = AndaleMono()
 }
+
+struct SFMono: UniversalFont {
+    var postScriptName: String = "SF-Mono-Medium"
+    
+    var fontExtension: String = "otf"
+    
+    static var shared: UIUniversals.UniversalFont = SFMono()
+}
+
+struct SFPro: UniversalFont {
+    var postScriptName: String = "SF-Pro"
+    
+    var fontExtension: String = "ttf"
+    
+    static var shared: UIUniversals.UniversalFont = SFPro()
+}
+
+struct SyneMedium: UniversalFont {
+    var postScriptName: String = "Syne-Medium"
+    
+    var fontExtension: String = "ttf"
+    
+    static var shared: UIUniversals.UniversalFont = SyneMedium()
+}

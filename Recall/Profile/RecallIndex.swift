@@ -66,6 +66,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    MARK: OnAppear
     @MainActor
     func onAppear() {
         self.toggleNotifcations(to: self.notificationsEnabled, time: self.notificationsTime)
@@ -75,14 +76,22 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
-//    MARK: Class Methods
+//    MARK: UpdateEarliestEventData
     func updateEarliestEventDate(with date: Date) {
         self.earliestEventDate = date
     }
     
+//    MARK: Convenience Vars
     func daysSinceFirstEvent() -> Int {
         Int(Date.now.timeIntervalSince(earliestEventDate) / (Constants.DayTime))
     }
+    
+    func getFullName() -> String { "\(firstName) \(lastName)" }
+    
+//    when accessing the defaultDateSnapping variable somtimes it is conveinient to get the rawValue
+//    sometimes its conveinient to get the actual enum.
+    var dateSnapping: TimeRounding { TimeRounding(rawValue: defaultEventSnapping) ?? .quarter }
+    
     
 //    MARK: Update
     func update( firstName: String, lastName: String, email: String, phoneNumber: Int, dateOfBirth: Date ) {
@@ -124,7 +133,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
                 return time
             }
         }
-        
+
         return .now
     }
     
@@ -133,9 +142,9 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     }
     
     
-//    MARK: Notifications
-    @MainActor
+//    MARK: toggleNotifications
 //    if you are turning the notifications on, it will handle notification requests, as well as setting up the actual notifiations
+    @MainActor
     func toggleNotifcations(to enabled: Bool, time: Date) {
         
         if !enabled {
@@ -155,6 +164,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    MARK: setNotificationTime
     @MainActor
     private func setNotificationTime(to time: Date) {
         RealmManager.updateObject(self) { thawed in
@@ -164,8 +174,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
-//    MARK: Events
-    
+//    MARK: Events Settings
     @MainActor
     func setDefaultEventLength(to length: Double) {
         RealmManager.updateObject(self) { thawed in
@@ -237,21 +246,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         NotificationManager.shared.makeBirthdayNotificationRequest(from:  dateOfBirth )
     }
     
-//    MARK: Convenience Functions
-    
-    func getFullName() -> String {
-        "\(firstName) \(lastName)"
-    }
-    
-//    when accessing the defaultDateSnapping variable somtimes it is conveinient to get the rawValue
-//    sometimes its conveinient to get the actual enum.
-    var dateSnapping: TimeRounding {
-        TimeRounding(rawValue: defaultEventSnapping) ?? .quarter
-    }
-    
-    
-//    MARK: Indexing Functions
-    
+//    MARK: InitializeIndex
 //    this takes care of all the indexxing / constructing that needs to be done when a user first signs in.
 //    It can also be used as a reset, if a user needs to manually reindex their data
     @MainActor
@@ -263,13 +258,13 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         let startDate = earliestEventDate
         
 //       for every day since the user created an account, this computes whether or not all of the goals were met
-//       this is destructive in the sens that it will overrite all the current indecies
+//       this is destructive in the sense that it will overrite all the current indecies
 //       although the getProgress function on the goals can create these nodes if they are missing, this does it more optimatllt, storage wise
         await reindexGoalWasMetHistory(startDate: startDate, events: events, goals: goals)
         
     }
     
-    
+//    MARK: reindexGoalWasMetHistory
 //    This should be run as little as possible, since it is so computationally expensive.
     func reindexGoalWasMetHistory(startDate: Date, events: [RecallCalendarEvent], goals: [RecallGoal]) async {
         var iterator = startDate
@@ -292,6 +287,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    MARK: EraseGoalIndex
     @MainActor
     private func eraseGoalIndex(_ goal: RecallGoal) {
         RealmManager.updateObject(goal) { thawed in
@@ -312,6 +308,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
     
 //    MARK: EventsIndex
+//    This stores how many events were created on a given day, indexed by their date
     @Persisted private var eventsIndexUpToDate: Bool = false
     @Persisted var eventsIndex = Map<String, Int>()
     
@@ -325,6 +322,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    MARK: RemoveEventFromIndex
     @MainActor
     func removeEventFromIndex( on date: Date ) {
         let key = date.getDayKey()
@@ -337,12 +335,14 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    MARK: UpdateEventIndex
     @MainActor
     func updateEventsIndex( oldDate: Date, newDate: Date ) {
         removeEventFromIndex(on: oldDate)
         removeEventFromIndex(on: newDate)
     }
     
+//    MARK: IndexEvents
     @MainActor
     func indexEvents() async {
         if eventsIndexUpToDate { return }

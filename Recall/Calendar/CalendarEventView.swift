@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import UIUniversals
+import MapKit
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
@@ -30,167 +31,493 @@ private struct DeleteableCalendarEvent: ViewModifier {
 }
 
 extension View {
-    
     func deleteableCalendarEvent(deletionBool: Binding<Bool>, event: RecallCalendarEvent ) -> some View {
         modifier( DeleteableCalendarEvent(event: event, showingDeletionAlert: deletionBool) )
     }
-    
 }
 
 
-//MARK: CalendarEventView
-struct CalendarEventView: View {
-
+//MARK: TestCalendarEventView
+struct TestCalendarEventView: View {
     
-//    MARK: ViewBuilders
+    @ObservedObject private var calendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var imageStoreViewModel = RecallCalendarEventImageStore.shared
+    
+    @Environment( \.colorScheme ) var colorScheme
+    @Environment( \.dismiss ) var dismiss
+    
+//    MARK: Vars
+    @State var event: RecallCalendarEvent
+    let events: [RecallCalendarEvent]
+    
+    @State private var showEditView: Bool = false
+    @State private var showDeleteAlert: Bool = false
+    
+    @State private var decodedImages: [UIImage] = []
+    
+    @State private var position: MapCameraPosition
+    @Namespace private var mapNameSpace
+    
+    private let largeCornerRadius: Double = 58
+    
+//    MARK: Init
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent] = [] ) {
+        self.event = event
+        self.events = events
+        
+        if let location = event.getLocationResult() {
+            self.position = MapCameraPosition.camera(.init(centerCoordinate: location.location, distance: 1000))
+        } else {
+            self.position = MapCameraPosition.automatic
+        }
+    }
+    
+    private func onAppear() async {
+        let decodedImages = await imageStoreViewModel.decodeImages(for: event)
+        withAnimation { self.decodedImages = decodedImages }
+    }
+    
+//    MARK: Labels
+    private var timeLabel: String {
+        let formatter = Date.FormatStyle().hour().minute()
+        let str1 = event.startTime.formatted(formatter)
+        let str2 = event.endTime.formatted(formatter)
+        
+        return "\(str1) - \(str2)"
+    }
+    
+    private var dateLabel: String {
+        let formatter = Date.FormatStyle().month().day()
+        let str1 = event.startTime.formatted(formatter)
+        let str2 = timeLabel
+        
+        return "\(str2), \(str1)"
+    }
+    
+//    MARK: SmallButton
     @ViewBuilder
-    private static func makeOverviewMetadataLabel(title: String, icon: String) -> some View {
-        HStack {
-            Spacer()
-            
-            VStack {
+    private func makeSmallButton(_ icon: String, label: String = "", action: @escaping () -> Void) -> some View {
+        UniversalButton {
+            HStack {
                 RecallIcon(icon)
-                    .padding(5)
-                UniversalText(title, size: Constants.UISmallTextSize, font: Constants.mainFont)
+                    .frame(width: 10)
+            
+                if !label.isEmpty {
+                    UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+                }
             }
-            .padding(7)
+            .frame(height: 10)
+            .font(.callout)
+            .rectangularBackground(12, style: .transparent)
+        } action: { action() }
+
+    }
+    
+//    MARK: sectionHeader
+    @ViewBuilder
+    private func makeSectionHeader(_ icon: String, title: String) -> some View {
+        HStack {
+            RecallIcon(icon)
+            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
             
             Spacer()
         }
+        .padding(.leading)
+        .opacity(0.75)
+    }
+    
+    @ViewBuilder
+    private func makeSectionFiller(message: String) -> some View {
+        UniversalButton {
+            VStack {
+                HStack { Spacer() }
+                
+                RecallIcon( "plus" )
+                
+                UniversalText( message, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+            }
+            .rectangularBackground(style: .secondary)
+            
+        } action: { showEditView = true }
+    }
+    
+    
+//    MARK: Header
+    @ViewBuilder
+    private func makeHeader() -> some View {
+        
+        let titleColor = event.getColor().safeMix(with: .black, by: 0.6)
+        
+        HStack(spacing: 10) {
+            VStack(alignment: .leading) {
+                UniversalText( event.title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, lineLimit: 2 )
+            }
+            
+            Spacer()
+            
+            makeSmallButton("pencil", label: "edit") { showEditView = true }
+            
+            makeSmallButton("chevron.down") { dismiss() }
+        }.foregroundStyle( event.images.isEmpty ? titleColor : .white )
+    }
+    
+//    MARK: MetaDataLabel
+    @ViewBuilder
+    private func makeMetaDataLabel(icon: String, title: String) -> some View {
+        VStack {
+            HStack { Spacer() }
+            
+            RecallIcon(icon)
+            
+            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+        }
+        .frame(height: 30)
         .rectangularBackground(style: .secondary)
     }
     
-    @State var templateDeletionAlert: Bool = false
-    
     @ViewBuilder
-    private static func makeOverviewView(from event: RecallCalendarEvent, in events: [RecallCalendarEvent]) -> some View {
-        VStack(alignment: .leading) {
+    private func makeMetaData() -> some View {
+        VStack {
             HStack {
-                makeOverviewMetadataLabel(title: "\( event.getLengthInHours().round(to: 2) ) HRs", icon: "deskclock")
-                if event.isTemplate { makeOverviewMetadataLabel(title: "Tempalte", icon: "doc.plaintext") }
-                makeOverviewMetadataLabel(title: "\(event.category?.label ?? "No Tag")", icon: "tag")
-            }.padding(.bottom, 5)
-            
-            if !event.notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                UniversalText("Notes", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                    .padding(.bottom, 5)
                 
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack {
-                        UniversalText( event.notes, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                            .padding(.trailing)
+                makeMetaDataLabel(icon: "tag", title: "\(event.getTagLabel())")
+                
+                makeMetaDataLabel(icon: "deskclock", title: "\(Int(event.getLengthInHours())) hr")
+                
+                makeMetaDataLabel(icon: event.isFavorite ? "checkmark" : "plus", title: "Favorite")
+            }
+            
+            makeCalendarContainer()
+        }
+    }
+    
+//    MARK: CalendarContainer
+    @ViewBuilder
+    private func makeCalendarContainer() -> some View {
+        let eventHour: Double = Double(Calendar.current.component(.hour, from: event.startTime))
+        let startHour: Double = eventHour
+        let endHour: Int = Int(eventHour + event.getLengthInHours()) + 1
+        
+        ZStack {
+            
+            EmptyCalendarView(startHour: Int(startHour), endHour: endHour, labelWidth: 20, includeCurrentTimeMark: false)
+            
+            CalendarView(events: calendarViewModel.getEvents(on: event.startTime),
+                         on: event.startTime,
+                         startHour: startHour,
+                         endHour: endHour,
+                         includeGestures: false)
+                .padding(.leading, 25 )
+                .task { await calendarViewModel.loadEvents(for: event.startTime, in: events) }
+        }
+        .frame(height: 150)
+        .rectangularBackground(style: .secondary)
+    }
+    
+//    MARK: PhotoCarousel
+    @ViewBuilder
+    private func makePhoto(uiImage: UIImage) -> some View {
+        Image(uiImage: uiImage)
+            .resizable()
+            .scaledToFit()
+            .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+    }
+    
+    @MainActor
+    @ViewBuilder
+    private func makePhotoCarousel() -> some View {
+        VStack(alignment: .leading) {
+            makeSectionHeader("photo.on.rectangle", title: "photos")
+            
+            if event.images.count != 0 {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack {
+                        ForEach( self.decodedImages, id: \.self ) { image in
+                            makePhoto(uiImage: image)
+                        }
+                    }
+                    .frame(height: 200)
+                }.clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+            } else {
+                
+                makeSectionFiller(message: "Add photos for this event")
+            }
+        }
+    }
+    
+//    MARK: Map
+    @ViewBuilder
+    private func makeMap() -> some View {
+        VStack(alignment: .leading) {
+            if let location = event.getLocationResult() {
+                
+                makeSectionHeader("location", title: "\(location.title)")
+                
+                Map(position: $position, scope: mapNameSpace) {
+                    Marker(coordinate: location.location) {
+                        Text(location.title)
                     }
                 }
-//                .frame(maxHeight: 250)
+                .allowsHitTesting(false)
+                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+                .frame(height: 200)
+                
+            } else {
+                makeSectionHeader("location", title: "location")
+                
+                makeSectionFiller(message: "Add a location for this event")
             }
         }
     }
     
+//    MARK: Notes
     @ViewBuilder
-    private func makePageHeader() -> some View {
-        let fullDate = event.startTime.formatted(date: .complete, time: .omitted)
-        let times = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
-        
-        HStack {
-            UniversalText( event.title, size: Constants.UIMainHeaderTextSize, font: Constants.titleFont ).padding(.bottom, 3)
-            Spacer()
-            LargeRoundedButton("", icon: "arrow.down", color: event.getColor()) { presentationMode.wrappedValue.dismiss() }
-        }
-        UniversalText( fullDate, size: Constants.UIDefaultTextSize, font: Constants.mainFont ).padding(.bottom, 2)
-        UniversalText( times, size: Constants.UIDefaultTextSize, font: Constants.mainFont ).padding(.bottom, 2)
-            .padding([.bottom, .trailing])
-
-        if let url = URL(string: event.urlString) {
-            Link(url.absoluteString, destination: url)
-        }
-    }
-    
-    @ViewBuilder
-    private func makeOverview() -> some View {
-        
-        UniversalText("Overview", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-        VStack(alignment : .leading) {
-
-            UniversalText("Info", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-            CalendarEventView.makeOverviewView(from: event, in: events)
-                .padding(.bottom)
-            
-            if event.goalRatings.count != 0 {
-                UniversalText("Goal Progress", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-//                TODO: This may be the same view as is present on the Tags, so you can possibly recycle that code
-//                GoalTags(goalRatings: Array(event.goalRatings), events: events)
+    private func makeNotes() -> some View {
+        if !event.notes.isEmpty {
+            VStack(alignment: .leading) {
+                makeSectionHeader("text.justify.leading", title: event.notes)
             }
-        }.rectangularBackground(7, style: .primary, stroke: true)
-    }
-    
-    @ViewBuilder
-    private func makeQuickActions() -> some View {
-        UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-        ScrollView(.horizontal, showsIndicators: false) {
+        }
+        
+        if let url = event.getURL() {
             HStack {
-                LargeRoundedButton("edit", icon: "arrow.up.forward", color: event.getColor())                { showingEditingScreen = true }
-                LargeRoundedButton("favorite", icon: "arrow.up.forward", color: event.getColor())       { event.toggleFavorite() }
-                LargeRoundedButton("template", icon: "arrow.up.forward", color: event.getColor())       { event.toggleTemplate() }
-                LargeRoundedButton("delete", icon: "arrow.up.forward", color: event.getColor())         {
-                    if event.isTemplate { templateDeletionAlert = true }
+                RecallIcon("link")
+                Link(event.urlString, destination: url)
+            }
+            .foregroundStyle(.blue)
+            .padding(.leading)
+            .opacity(0.75)
+        }
+        
+    }
+    
+//    MARK: TimeLabel
+    @ViewBuilder
+    private func makeTimeLabel() -> some View {
+        HStack {
+            RecallIcon("clock")
+            
+            VStack(alignment: .leading) {
+                
+                UniversalText( dateLabel, size: Constants.UISubHeaderTextSize, font: Constants.mainFont )
+                
+                UniversalText( "see more on \(dateLabel)", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                    .opacity(0.55)
+            }
+        }
+        .padding(.leading)
+    }
+    
+//    MARK: ActionButtons
+    @ViewBuilder
+    private func makeActionButton( icon: String, label: String, action: @escaping () -> Void ) -> some View {
+        UniversalButton {
+            HStack {
+                Spacer()
+                
+                RecallIcon( icon )
+                UniversalText( label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                
+                Spacer()
+            } .rectangularBackground(style: .secondary)
+        } action: { action() }
+    }
+    
+    @ViewBuilder
+    private func makeActionButtons() -> some View {
+        VStack(alignment: .leading) {
+            
+            makeSectionHeader("calendar.day.timeline.left", title: "Event Actions")
+            
+            makeActionButton(icon: "circle.rectangle.filled.pattern.diagonalline", label: "favorite") { }
+            
+            makeActionButton(icon: "pencil", label: "edit") { showEditView = true }
+            
+            makeActionButton(icon: "trash", label: "delete") { showDeleteAlert = true }
+                .foregroundStyle(.red)
+        }
+        .padding(.bottom, 50)
+    }
+    
+//    MARK: LargePhotoCarousel
+    @State private var photoCarouselIndex: Int = 0
+    
+    @available(iOS 18.0, *)
+    @ViewBuilder
+    private func makeLargePhotoCarousel(in geo: GeometryProxy) -> some View {
+        if self.decodedImages.count > 0 {
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 0) {
+                    ForEach( self.decodedImages, id: \.self ) { image in
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geo.size.width)
+                            .clipped()
+                    }
+                }.scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.viewAligned)
+            .onScrollGeometryChange(for: Double.self, of: { geo in geo.contentOffset.x }) { oldValue, newValue in
+                self.photoCarouselIndex = Int(floor((newValue - (geo.size.width / 2)) / geo.size.width)) + 1
+            }
+            .overlay(alignment: .top) {
+                makePhotoCarouselIndex()
+                    .padding(.top, 65)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func makePhotoCarouselIndex() -> some View {
+        if self.decodedImages.count > 1 {
+            HStack {
+                
+                ForEach( 0..<decodedImages.count, id: \.self ) { i in
+                    Group {
+                        if i != 0 {
+                            Circle()
+                                .frame(width: 7, height: 7)
+                        } else {
+                            RecallIcon( "square.grid.2x2.fill" )
+                                .font(.caption)
+                        }
+                    }
+                    .foregroundStyle(.white)
+                    .opacity( i == photoCarouselIndex ? 1 : 0.5 )
                 }
             }
         }
-        .rectangularBackground(7, style: .secondary)
     }
     
+    private struct NullContentShape: Shape {
+        func path(in rect: CGRect) -> Path {
+            var rectCopy = rect
+            rectCopy.size.height = 0
+            
+            return Path(rectCopy)
+        }
+    }
+    
+//    MARK: Background
     @ViewBuilder
-    private func makeCalendarPreview() -> some View {
-        let startHour = event.startTime.getHoursFromStartOfDay()
-        let endHour = min(startHour + event.getLengthInHours() + 2, 24)
-        
+    private func makeBackground() -> some View {
         GeometryReader { geo in
-            StyledCalendarContainerView(at: event.startTime,
-                                        with: [event],
-                                        from: Int(startHour),
-                                        to: Int(endHour),
-                                        geo: geo,
-                                        scale: 1)
-        }.frame(height: 200)
+            ZStack(alignment: .top) {
+                
+                Group {
+                    if let image = self.decodedImages.first {
+                        if #available(iOS 18, *) {
+                            makeLargePhotoCarousel(in: geo)
+                        } else {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        }
+                    } else {
+                        Rectangle()
+                            .foregroundStyle(event.getColor().gradient)
+                    }
+                }
+                .overlay {
+                    LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .init(x: 0.5, y: 0.7))
+                        .allowsHitTesting(false)
+                        .contentShape(NullContentShape())
+                }
+                .ignoresSafeArea()
+                .frame(width: geo.size.width, height: geo.size.height * 0.8)
+                .contentShape(Rectangle())
+            }
+        }
     }
     
-//    MARK: Vars
+//    MARK: Content
+    @ViewBuilder
+    private func makeContent() -> some View {
+        VStack(spacing: 7) {
+            VStack(alignment: .leading) {
+                makeTimeLabel()
+                    .padding(.bottom)
+                
+                makeNotes()
+                    .padding(.bottom)
+                
+                makeMetaData()
+                    .padding(.bottom)
+            }.rectangularBackground(style: .primary)
+            
+            VStack {
+                makePhotoCarousel()
+                    .padding(.bottom)
+                
+                makeMap()
+                    .padding(.bottom)
+            }.rectangularBackground(style: .primary)
+                
+            VStack {
+                makeActionButtons()
+                
+                Spacer()
+            }.rectangularBackground(style: .primary)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: largeCornerRadius))
+        .padding(.horizontal, 5)
+        .padding(.bottom, 20)
+    }
     
-    @Environment( \.presentationMode ) var presentationMode
-    @Environment(\.colorScheme) var colorScheme
+//    MARK: PhotoScroller
+    @available(iOS 18, *)
+    @ViewBuilder
+    private func makePhotoScroller() -> some View {
+                
+        let allowsScrolling = !event.images.isEmpty
+        
+        PhotoScrollerView (startExpanded: !allowsScrolling, allowsScrolling: allowsScrolling) {
+            VStack {
+                Spacer()
+                makeHeader()
+                    .padding()
+            }
+            
+        } bodyContent: { makeContent() }
+    }
     
-    @ObservedRealmObject var event: RecallCalendarEvent
-    let events: [RecallCalendarEvent]
- 
-    @State var showingEditingScreen: Bool = false
+//    MARK: RegularLayout
+    @ViewBuilder
+    private func makeRegularLayout() -> some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            makeHeader()
+                .frame(height: 450, alignment: .bottom)
+            
+            makeContent()
+        }
+    }
+    
     
 //    MARK: Body
     var body: some View {
-        
-        VStack(alignment: .leading) {
+        ZStack(alignment: .top) {
+            makeBackground()
             
-            makePageHeader()
-            
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading) {
-                    
-                    makeQuickActions()
-                        .padding(.bottom, 7)
-                    
-                    makeOverview()
-                        .padding(.bottom, 7)
-                    
-                    makeCalendarPreview()
-                        .padding(.bottom, Constants.UIBottomOfPagePadding)
-                    
-                }
+            if #available(iOS 18, *) {
+                makePhotoScroller()
+            } else {
+                makeRegularLayout()
             }
         }
-        .padding(7)
-        .sheet(isPresented: $showingEditingScreen) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
+        .task { await onAppear() }
+        .background(.black)
+        .deleteableCalendarEvent(deletionBool: $showDeleteAlert, event: event)
+        .sheet(isPresented: $showEditView) {
+            CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime,
+                                                            editing: true,
+                                                            event: event)
         }
-        .deleteableCalendarEvent(deletionBool: $templateDeletionAlert, event: event)
-        .universalBackground()
     }
+}
+
+
+#Preview {
+    TestCalendarEventView(event: sampleEventNoPhotos )
 }

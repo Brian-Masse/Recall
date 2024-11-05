@@ -124,7 +124,7 @@ struct CategoriesPageView: View {
                                  goalRatings: Dictionary())
         }
         .sheet(isPresented: $showingCreateEventView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: .now, template: true)
+            CalendarEventCreationView.makeEventCreationView(currentDay: .now)
         }
         .sheet(isPresented: $showingCreateFavoriteEventView) {
             CalendarEventCreationView.makeEventCreationView(currentDay: .now, favorite: true)

@@ -40,6 +40,17 @@
 		C91E1CFB2AFC789E00029F43 /* FavoritesPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91E1CFA2AFC789E00029F43 /* FavoritesPageView.swift */; };
 		C922848A2CC055B700280BFA /* RecallDailySummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92284892CC055B700280BFA /* RecallDailySummary.swift */; };
 		C922848C2CC0DC1D00280BFA /* RecallDailySummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922848B2CC0DC1D00280BFA /* RecallDailySummaryView.swift */; };
+		C922848E2CC7730900280BFA /* SF-Mono-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = C922848D2CC7730900280BFA /* SF-Mono-Medium.otf */; };
+		C92284902CC7747100280BFA /* SF-Pro.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C922848F2CC7747100280BFA /* SF-Pro.ttf */; };
+		C92284922CC7755700280BFA /* Syne-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C92284912CC7755700280BFA /* Syne-Medium.ttf */; };
+		C92284952CC85C8B00280BFA /* StyledPhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92284942CC85C8B00280BFA /* StyledPhotoPicker.swift */; };
+		C92284972CC85CB700280BFA /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92284962CC85CB700280BFA /* PhotoManager.swift */; };
+		C92284992CC97AE700280BFA /* StyledPickerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92284982CC97AE700280BFA /* StyledPickerWrapper.swift */; };
+		C922849B2CC97CE700280BFA /* StyledPhotoPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922849A2CC97CE700280BFA /* StyledPhotoPickerViewModel.swift */; };
+		C922849E2CC988E500280BFA /* EventCreationViewTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922849D2CC988E500280BFA /* EventCreationViewTabBar.swift */; };
+		C92284A02CD2D38700280BFA /* RecallCalendarEventImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922849F2CD2D38700280BFA /* RecallCalendarEventImageStore.swift */; };
+		C92284A22CD2D9EF00280BFA /* PhotoScrollerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92284A12CD2D9EF00280BFA /* PhotoScrollerView.swift */; };
+		C922852B2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922852A2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift */; };
 		C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923D51B2A8F119C00E432B9 /* RecallGoalDataModel.swift */; };
 		C928E15A2A7B546E00E981F1 /* EventsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E1592A7B546E00E981F1 /* EventsDataSection.swift */; };
 		C928E15C2A7C3B3300E981F1 /* GoalsDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E15B2A7C3B3300E981F1 /* GoalsDataSection.swift */; };
@@ -75,6 +86,7 @@
 		C9BF38C12C9B56CA00AA8C3F /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38C02C9B56CA00AA8C3F /* UIUniversals */; };
 		C9BF38C32C9E4E2400AA8C3F /* CalendarPageToolBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BF38C22C9E4E2400AA8C3F /* CalendarPageToolBarView.swift */; };
 		C9BFBC932CB4D6FF00ADC110 /* InfiniteScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BFBC922CB4D6FF00ADC110 /* InfiniteScroller.swift */; };
+		C9C470C92CD71BB2004AB489 /* CalendarEventCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C470C82CD71BB2004AB489 /* CalendarEventCarousel.swift */; };
 		C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */; };
 		C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */; };
 		C9D24AA72C62C65800A7F279 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C9D24AA62C62C65800A7F279 /* RealmSwift */; };
@@ -163,6 +175,17 @@
 		C91E1CFA2AFC789E00029F43 /* FavoritesPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesPageView.swift; sourceTree = "<group>"; };
 		C92284892CC055B700280BFA /* RecallDailySummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallDailySummary.swift; sourceTree = "<group>"; };
 		C922848B2CC0DC1D00280BFA /* RecallDailySummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallDailySummaryView.swift; sourceTree = "<group>"; };
+		C922848D2CC7730900280BFA /* SF-Mono-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Mono-Medium.otf"; sourceTree = "<group>"; };
+		C922848F2CC7747100280BFA /* SF-Pro.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro.ttf"; sourceTree = "<group>"; };
+		C92284912CC7755700280BFA /* Syne-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Syne-Medium.ttf"; sourceTree = "<group>"; };
+		C92284942CC85C8B00280BFA /* StyledPhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledPhotoPicker.swift; sourceTree = "<group>"; };
+		C92284962CC85CB700280BFA /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
+		C92284982CC97AE700280BFA /* StyledPickerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledPickerWrapper.swift; sourceTree = "<group>"; };
+		C922849A2CC97CE700280BFA /* StyledPhotoPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledPhotoPickerViewModel.swift; sourceTree = "<group>"; };
+		C922849D2CC988E500280BFA /* EventCreationViewTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCreationViewTabBar.swift; sourceTree = "<group>"; };
+		C922849F2CD2D38700280BFA /* RecallCalendarEventImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCalendarEventImageStore.swift; sourceTree = "<group>"; };
+		C92284A12CD2D9EF00280BFA /* PhotoScrollerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoScrollerView.swift; sourceTree = "<group>"; };
+		C922852A2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoScrollerSimultaneousGesture.swift; sourceTree = "<group>"; };
 		C923D51B2A8F119C00E432B9 /* RecallGoalDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoalDataModel.swift; sourceTree = "<group>"; };
 		C928E1592A7B546E00E981F1 /* EventsDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsDataSection.swift; sourceTree = "<group>"; };
 		C928E15B2A7C3B3300E981F1 /* GoalsDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsDataSection.swift; sourceTree = "<group>"; };
@@ -195,6 +218,7 @@
 		C9BF38B92C9A0EA200AA8C3F /* light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = light.png; sourceTree = "<group>"; };
 		C9BF38C22C9E4E2400AA8C3F /* CalendarPageToolBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageToolBarView.swift; sourceTree = "<group>"; };
 		C9BFBC922CB4D6FF00ADC110 /* InfiniteScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteScroller.swift; sourceTree = "<group>"; };
+		C9C470C82CD71BB2004AB489 /* CalendarEventCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventCarousel.swift; sourceTree = "<group>"; };
 		C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCreationScene.swift; sourceTree = "<group>"; };
 		C9D299E52CACB83200814965 /* StyledLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledLocationPicker.swift; sourceTree = "<group>"; };
@@ -247,6 +271,7 @@
 			children = (
 				C91BCF3D2A6209B9003C6DD6 /* CalendarEventPreviewView.swift */,
 				C910FFBF2A75FEFE007213EB /* CalendarEventView.swift */,
+				C9C470C82CD71BB2004AB489 /* CalendarEventCarousel.swift */,
 				C910FFBD2A75FD39007213EB /* CalendarEventPreviewContentView.swift */,
 			);
 			name = CalendarEvent;
@@ -362,6 +387,7 @@
 				C91A81292C76807400EFF561 /* RecallCalendarViewModel.swift */,
 				C91BCF382A61E0EB003C6DD6 /* RecallCalendarEvent.swift */,
 				C92284892CC055B700280BFA /* RecallDailySummary.swift */,
+				C922849F2CD2D38700280BFA /* RecallCalendarEventImageStore.swift */,
 				C91BCF3F2A6209C3003C6DD6 /* Views */,
 			);
 			path = Calendar;
@@ -373,13 +399,33 @@
 				C94B1F152A6891E9007E8537 /* CalendarPageView.swift */,
 				C922848B2CC0DC1D00280BFA /* RecallDailySummaryView.swift */,
 				C9BF38C22C9E4E2400AA8C3F /* CalendarPageToolBarView.swift */,
-				C915A00A2A672586009F6C84 /* EventCreationView.swift */,
 				C9EE07E42C63114C00BE4ED3 /* MonthlyCalendarView.swift */,
 				C98198D92AE9E46D0039AF9C /* EventSelectionEditorView.swift */,
+				C922849C2CC988CD00280BFA /* CreationView */,
 				C98E3B912A76037B0005F30F /* CalendarContainer */,
 				C910FFBC2A75FD26007213EB /* CalendarEvent */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		C92284932CC85C7F00280BFA /* Photos */ = {
+			isa = PBXGroup;
+			children = (
+				C92284942CC85C8B00280BFA /* StyledPhotoPicker.swift */,
+				C92284A12CD2D9EF00280BFA /* PhotoScrollerView.swift */,
+				C922852A2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift */,
+				C922849A2CC97CE700280BFA /* StyledPhotoPickerViewModel.swift */,
+			);
+			path = Photos;
+			sourceTree = "<group>";
+		};
+		C922849C2CC988CD00280BFA /* CreationView */ = {
+			isa = PBXGroup;
+			children = (
+				C915A00A2A672586009F6C84 /* EventCreationView.swift */,
+				C922849D2CC988E500280BFA /* EventCreationViewTabBar.swift */,
+			);
+			path = CreationView;
 			sourceTree = "<group>";
 		};
 		C928E1582A7B545B00E981F1 /* DataSections */ = {
@@ -487,6 +533,7 @@
 		C9B8DF632C69076F00B11A38 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				C92284962CC85CB700280BFA /* PhotoManager.swift */,
 				C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */,
 				C9F829272CB0C783002342B7 /* LocationManager.swift */,
 				C91BCF212A61C374003C6DD6 /* RealmManager.swift */,
@@ -503,6 +550,8 @@
 				C94B1F102A688855007E8537 /* UniversalForm.swift */,
 				C9E3E02E2C9207B5000E0911 /* CactusTimeDial.swift */,
 				C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */,
+				C92284982CC97AE700280BFA /* StyledPickerWrapper.swift */,
+				C92284932CC85C7F00280BFA /* Photos */,
 				C9D299E42CACB81400814965 /* Maps */,
 			);
 			path = Elements;
@@ -550,6 +599,9 @@
 			isa = PBXGroup;
 			children = (
 				C98573432B8936AE001D9895 /* AndaleMono.ttf */,
+				C92284912CC7755700280BFA /* Syne-Medium.ttf */,
+				C922848F2CC7747100280BFA /* SF-Pro.ttf */,
+				C922848D2CC7730900280BFA /* SF-Mono-Medium.otf */,
 				C91BCEF52A618437003C6DD6 /* Assets.xcassets */,
 				C989732E2B8C1FB60014AA78 /* Icons */,
 			);
@@ -676,8 +728,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C92284922CC7755700280BFA /* Syne-Medium.ttf in Resources */,
+				C922848E2CC7730900280BFA /* SF-Mono-Medium.otf in Resources */,
 				C91BCEFA2A618437003C6DD6 /* Preview Assets.xcassets in Resources */,
 				C9BF38BA2C9A0EA200AA8C3F /* dark.png in Resources */,
+				C92284902CC7747100280BFA /* SF-Pro.ttf in Resources */,
 				C9BF38BB2C9A0EA200AA8C3F /* light.png in Resources */,
 				C98573442B8936AE001D9895 /* AndaleMono.ttf in Resources */,
 				C91BCEF62A618437003C6DD6 /* Assets.xcassets in Resources */,
@@ -732,6 +787,7 @@
 				C91BCF332A61DE55003C6DD6 /* Extensions.swift in Sources */,
 				C91A812A2C76807400EFF561 /* RecallCalendarViewModel.swift in Sources */,
 				C94F06762A6AD9F200C99EA0 /* GoalPreviewView.swift in Sources */,
+				C92284A02CD2D38700280BFA /* RecallCalendarEventImageStore.swift in Sources */,
 				C91BCF372A61DED5003C6DD6 /* UniversalButtons.swift in Sources */,
 				C91BCF392A61E0EB003C6DD6 /* RecallCalendarEvent.swift in Sources */,
 				C985EB5D2CACBDE6003186BD /* LocationService.swift in Sources */,
@@ -749,6 +805,7 @@
 				C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */,
 				C91E1CF72AFC788800029F43 /* TemplatesPagView.swift in Sources */,
 				C91A812E2C77DB6F00EFF561 /* TabBar.swift in Sources */,
+				C92284972CC85CB700280BFA /* PhotoManager.swift in Sources */,
 				C98F2F2E2A9D336200E92B30 /* GoalsCreationScene.swift in Sources */,
 				C9E3E01E2C91F099000E0911 /* CreationFormView.swift in Sources */,
 				C98F2F302A9D3F3300E92B30 /* TagsCreationScene.swift in Sources */,
@@ -762,16 +819,21 @@
 				C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */,
 				C915A00B2A672586009F6C84 /* EventCreationView.swift in Sources */,
 				C98F2F2B2A9D216700E92B30 /* TutorialViews.swift in Sources */,
+				C92284992CC97AE700280BFA /* StyledPickerWrapper.swift in Sources */,
 				C910FFBE2A75FD39007213EB /* CalendarEventPreviewContentView.swift in Sources */,
 				C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */,
 				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
+				C92284A22CD2D9EF00280BFA /* PhotoScrollerView.swift in Sources */,
 				C91BCF2C2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift in Sources */,
+				C922852B2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift in Sources */,
 				C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */,
 				C98CEE112B00246800B75924 /* UpdateView.swift in Sources */,
+				C922849B2CC97CE700280BFA /* StyledPhotoPickerViewModel.swift in Sources */,
 				C91E1CF92AFC789300029F43 /* TagsPageView.swift in Sources */,
 				C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */,
 				C91BCF3E2A6209B9003C6DD6 /* CalendarEventPreviewView.swift in Sources */,
 				C928E15A2A7B546E00E981F1 /* EventsDataSection.swift in Sources */,
+				C92284952CC85C8B00280BFA /* StyledPhotoPicker.swift in Sources */,
 				C9186A982A78A2EE00398BF8 /* Charts.swift in Sources */,
 				C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */,
 				C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */,
@@ -782,6 +844,7 @@
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,
 				C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */,
 				C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */,
+				C9C470C92CD71BB2004AB489 /* CalendarEventCarousel.swift in Sources */,
 				C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */,
 				C98F2F272A945B7400E92B30 /* ProfileView.swift in Sources */,
 				C908FFFC2A8D461100E3BBEA /* OverviewDataSection.swift in Sources */,
@@ -795,6 +858,7 @@
 				C91BCF312A61DDBA003C6DD6 /* Constants.swift in Sources */,
 				C98198DA2AE9E46D0039AF9C /* EventSelectionEditorView.swift in Sources */,
 				C9186A9A2A78AE6900398BF8 /* DataSummaries.swift in Sources */,
+				C922849E2CC988E500280BFA /* EventCreationViewTabBar.swift in Sources */,
 				C922848A2CC055B700280BFA /* RecallDailySummary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

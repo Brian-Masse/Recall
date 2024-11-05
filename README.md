@@ -38,25 +38,33 @@ Recall is a calendar based app designed around recording daily events to be able
 
 ### **Version 2.2.1**
 
-ADDITIONS
+**ADDITIONS**
+
+**Calendar Page**
 
 - Added controls for calendar density
 - Added split screen for primary calendar
 - Added recall button to tool bar
 - Added daily summaries
 - Added the ability to create events in between days
-- Added photo picker to events
-- Added location data to events
 
-CHANGES
+**Events**
+
+- Added location data to events
+- Added hyperlinks to events
+- Added photo carousel to events
+- Added a rich event view
+
+**CHANGES**
 
 - Redesigned all Forms
 - Redesigned Goals Page
 - Redesigned Date Selector
 - Redesigned tab bar
 - Redesigned text fields
+- Changed main font across app
 
-BUG FIXES
+**BUG FIXES**
 
 - Improved performance throughout the app
 - Fixed a bug that prevented event charts from loading on appear

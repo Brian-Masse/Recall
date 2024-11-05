@@ -12,97 +12,29 @@ import UIUniversals
 
 struct CalendarEventPreviewContentView: View {
     
-//    MARK: View Builders
-    @ViewBuilder
-    private func makeMetadataTag(label: String, icon: String) -> some View {
-        HStack {
-            if icon != "" { RecallIcon(icon, bold: false).font(.callout) }
-            if label != "" { UniversalText(label, size: Constants.UISmallTextSize, font: Constants.titleFont, scale: true) }
-        }
-        .foregroundColor(.black)
-    }
-    
-    @ViewBuilder
-    private func makeMetadata(addHorizontalSpacing: Bool) -> some View {
-        let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
-        
-        if event.isTemplate {
-            makeMetadataTag(label: "", icon: "doc.plaintext")
-            if addHorizontalSpacing { Spacer() }
-        }
-        makeMetadataTag(label: "\(event.category?.label ?? "no tag")", icon: "tag")
-        if addHorizontalSpacing { Spacer() }
-        makeMetadataTag(label: timeString, icon: "")
-    }
-
-    @ViewBuilder
-    private func makeBody() -> some View {
-        UniversalText( event.title,
-                       size: Constants.UISubHeaderTextSize,
-                       font: Constants.titleFont,
-                       scale: true,
-                       minimumScaleFactor: 0.5)
-
-        if height > minHeightForDescription && index.showNotesOnPreview && !event.notes.isEmpty {
-            UniversalText( event.notes,
-                           size: Constants.UISmallTextSize,
-                           font: Constants.mainFont )
-            .opacity(0.8)
-        }
-    }
-    
-//    MARK: Layouts
-    @ViewBuilder
-    private func makeFullLayout() -> some View {
-        VStack(alignment: .leading) {
-            makeBody()
-            
-            Spacer()
-            
-            if width < minWidth { makeMetadata(addHorizontalSpacing: false) }
-            else { HStack { makeMetadata(addHorizontalSpacing: true) } }
-        }
-        .padding(.bottom, 5)
-        .padding(.top, 2)
-    }
-    
-    @ViewBuilder
-    private func makeShortLayout() -> some View {
-        Spacer()
-        UniversalText( event.title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont, scale: true, minimumScaleFactor: 0.1)
-            .padding(.vertical, -3)
-        Spacer()
-    }
-    
 //    MARK: Vars
-    
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
-    let width: CGFloat  //measured in pixels
-    let height: CGFloat //measured in pixels
-    let allowTapGesture: Bool
-    let forDisplay: Bool // describes whether it is an interactable event or a display
     
-    @ObservedRealmObject var index = RecallModel.index
+    let showMetaData: Bool
+
     
 //   These are all relativley arbitrary values, but they've been found to work across a number of device sizes and text scales
     let minWidth: CGFloat = 250
     private let minHeight: CGFloat = 65
-    private let minHeightForDescription: CGFloat = 75
+    private let minHeightForDescription: CGFloat = 110
+    private let minHeightForTitle: Double = 15
     
     @State var showingEvent: Bool = false
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], width: CGFloat, height: CGFloat, allowTapGesture: Bool = false, forDisplay: Bool = false) {
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], showMetaData: Bool = true) {
         
         self.event = event
         self.events = events
-        self.width = width
-        self.height = height
-        self.allowTapGesture = allowTapGesture
-        self.forDisplay = forDisplay
+        self.showMetaData = showMetaData
     }
     
     private var isSelected: Bool {
@@ -110,42 +42,111 @@ struct CalendarEventPreviewContentView: View {
         return index != nil
     }
     
+//    MARK: Title
+    @ViewBuilder
+    private func makeTitle(in geo: GeometryProxy) -> some View {
+        if geo.size.height > minHeightForTitle {
+            let shouldScale = geo.size.height < Constants.UISubHeaderTextSize + 5
+            
+            UniversalText( event.title,
+                           size: Constants.UISubHeaderTextSize,
+                           font: Constants.titleFont,
+                           scale: shouldScale,
+                           minimumScaleFactor: 0.1)
+        }
+    }
+    
+    
+    @ViewBuilder
+    private func makeNode(icon: String, text: String, wrap: Bool = false) -> some View {
+        HStack {
+            RecallIcon(icon)
+                .font(.caption)
+            
+            UniversalText( text, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: wrap )
+        }
+        .opacity(0.65)
+
+    }
+    
+//    MARK: content
+    @ViewBuilder
+    private func makeBody(in geo: GeometryProxy) -> some View {
+        let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
+        
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {Spacer()}
+            
+            makeTitle(in: geo)
+            
+            if geo.size.height > minHeight {
+                if !event.notes.isEmpty && RecallModel.index.showNotesOnPreview {
+                    makeNode(icon: "text.justify.leading", text: event.notes, wrap: true)
+                        .padding(.bottom, 7)
+                }
+                
+                if showMetaData {
+                    makeNode(icon: "clock", text: timeString)
+                    
+                    makeNode(icon: "tag", text: event.getTagLabel())
+                    
+                    if let url = event.getURL() {
+                        makeNode(icon: "link", text: url.relativePath)
+                    }
+                    
+                    if let location = event.getLocationResult() {
+                        makeNode(icon: "location", text: location.title)
+                    }
+                    
+                    if !event.images.isEmpty {
+                        makeNode(icon: "photo.on.rectangle", text: "has Photos")
+                    }
+                }
+            }
+            
+            Spacer()
+            
+//            if geo.size.height > minHeightForDescription && /*index.showNotesOnPreview &&*/ !event.notes.isEmpty {
+//                UniversalText( event.notes,
+//                               size: Constants.UISmallTextSize,
+//                               font: Constants.mainFont)
+//                .opacity(0.75)
+//            }
+        }
+        .foregroundStyle(event.getColor().safeMix(with: .black, by: colorScheme == .light ? 0.5 : 0) )
+    }
+    
+    private func verticalPadding(in geo: GeometryProxy) -> Double {
+        min( 12, (geo.size.height - Constants.UISubHeaderTextSize) / 2 )
+    }
+    
 //    MARK: Body
     var body: some View {
         
-        ZStack {
-            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+        GeometryReader { geo in
+            Rectangle()
                 .foregroundStyle(.background)
             
-            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                .foregroundColor(event.getColor())
+            Rectangle()
+                .opacity(0.25)
                 .opacity(viewModel.selecting && !isSelected ? 0.3 : 1)
             
-            VStack(alignment: .leading) {
-                HStack {Spacer()}
-                
-                if height < minHeight { makeShortLayout() }
-                else { makeFullLayout() }
-                
-            }
-            .padding(.horizontal)
+            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5)
+                .stroke(style: .init(lineWidth: 2))
+                .opacity(0.5)
             
-//            if !forDisplay {
-//                if containerModel.selecting && !selected() {
-//                    Rectangle()
-//                        .foregroundStyle(colorScheme == .dark ? .black : .white)
-//                        .opacity(0.7)
-//                        .cornerRadius(Constants.UIDefaultCornerRadius)
-//                }
-//            }
+            makeBody(in: geo)
+                .overlay(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                        .foregroundColor(event.getColor())
+                        .frame(width: 5)
+                        .offset(x: -15)
+                }
+                .padding(.leading, 10)
+                .padding(.horizontal, 12)
+                .padding(.vertical, verticalPadding(in: geo))
         }
-        .foregroundColor(.black)
-//        .padding(.vertical, 2)
-        .if(allowTapGesture) { view in view.onTapGesture { showingEvent = true } }
-//        .frame(height: height)
-        .sheet(isPresented: $showingEvent) {
-            CalendarEventView(event: event, events: events)
-        }
-        
+        .foregroundStyle(event.getColor() )
+        .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))
     }
 }

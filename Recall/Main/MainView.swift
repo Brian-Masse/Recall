@@ -95,8 +95,6 @@ struct MainView: View {
             RecallModel.dataModel.storeData( events: arrEvents, goals: arrGoals )
         }
         .onChange(of: events) { RecallModel.dataModel.storeData( events: Array(events)) }
-        
-
         .universalBackground()
     }
 }

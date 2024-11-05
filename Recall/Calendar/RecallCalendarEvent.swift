@@ -12,6 +12,7 @@ import UIUniversals
 
 class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
+//    MARK: Vars
     @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var ownerID: String
     
@@ -22,6 +23,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @Persisted var locationLongitude: Double = 0
     @Persisted var locationLatitude: Double = 0
     @Persisted var locationTitle: String = ""
+    
+    @Persisted var images: RealmSwift.List< Data > = List()
     
     @Persisted var isTemplate: Bool = false
     @Persisted var isFavorite: Bool = false
@@ -34,17 +37,24 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     private var cachedGoalRatings: RealmSwift.List<GoalNode> = List()
     
-//    MARK: Main
+//    MARK: Convenience Vars
+    func identifier() -> String { ownerID + title + startTime.formatted() + endTime.formatted() }
+    
+    func getURL() -> URL? { URL(string: self.urlString) }
+    
+//    MARK: Init
     @MainActor
     convenience init(ownerID: String,
                      title: String,
                      notes: String,
                      urlString: String,
                      location: LocationResult? = nil,
+                     images: [UIImage] = [],
                      startTime: Date,
                      endTime: Date,
                      categoryID: ObjectId,
-                     goalRatings: Dictionary<String, String>) {
+                     goalRatings: Dictionary<String, String>,
+                     previewEvent: Bool = false) {
         self.init()
         self.ownerID = ownerID
         
@@ -61,31 +71,40 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             self.locationLatitude = location.location.latitude
         }
         
-        if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) { self.category = retrievedCategory }
-        self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+        let imageData = encodeImages(from: images)
+        self.images = imageData
         
-        checkUpdateEarliestEvent()
+        if !previewEvent {
+            if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) { self.category = retrievedCategory }
+            self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
         
-        RecallModel.shared.updateEvent(self)
-        updateRecentRecallEventEndTime(to: endTime)
+            checkUpdateEarliestEvent()
+            
+            RecallModel.shared.updateEvent(self)
+            updateRecentRecallEventEndTime(to: endTime)
+        }
     }
 
+//    MARK: Override Init
     @MainActor
     override init() {
         super.init()
         self.cachedGoalRatings = self.goalRatings
     }
     
-    func identifier() -> String { ownerID + title + startTime.formatted() + endTime.formatted() }
+//    MARK: Update
+    private func updateRecentRecallEventEndTime(to time: Date) {
+        RecallModel.index.setMostRecentRecallEvent(to: time)
+    }
     
     @MainActor
-//    MARK: Updates
     func update( title: String,
                  notes: String,
                  urlString: String,
                  startDate: Date,
                  endDate: Date,
                  location: LocationResult? = nil,
+                 images: [UIImage],
                  tagID: ObjectId,
                  goalRatings: Dictionary<String, String> ) {
         if !self.startTime.matches(startDate, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: startDate) }
@@ -96,6 +115,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.urlString = urlString
             thawed.startTime = startDate
             thawed.endTime = endDate
+            
+            let imageData = encodeImages(from: images)
+            thawed.images = imageData
             
             if let location = location {
                 thawed.locationTitle = location.title
@@ -111,10 +133,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
         
         RecallModel.index.addEventToIndex(on: startDate)
-        
         checkUpdateEarliestEvent()
     }
     
+//    MARK: UpdateDate
     @MainActor
     func updateDate(startDate: Date? = nil, endDate: Date? = nil) {
         if let startDate {
@@ -133,6 +155,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         checkUpdateEarliestEvent()
     }
     
+//    MARK: UpdateDateComponent
 //    unlike updateDate, which sets the event's date to that new value, this only sets the date components
 //    preserving the time details
     @MainActor
@@ -162,6 +185,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
+//    MARK: UpdateGoalRatings
     @MainActor
     func updateGoalRatings(with ratings: Dictionary<String, String>) {
         let list = RecallCalendarEvent.translateGoalRatingDictionary(ratings)
@@ -173,7 +197,33 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
-//    MARK: Convenience Functions
+//    MARK: GetLocationResult
+//    checks if the event has any location data, and if it does, parses it into a locationResult and returns it
+    func getLocationResult() -> LocationResult? {
+        if self.locationTitle.isEmpty { return nil }
+        
+        return .init(location: .init(latitude: self.locationLatitude,
+                              longitude: self.locationLongitude)
+              , title: self.locationTitle)
+    }
+    
+//    MARK: encodeImages
+//    take a list of UIImages and return a RealmSwift list of Data
+//    used in the initialization / update process
+    private func encodeImages(from images: [UIImage]) -> RealmSwift.List<Data> {
+        let list = RealmSwift.List<Data>()
+        
+        for image in images {
+            let data = PhotoManager.encodeImage(image, in: 800)
+            list.append(data)
+        }
+        
+        return list
+    }
+    
+//    MARK: translateGoalRating
+//    converts the list of Goal nodes into a swift dictionary
+//    this is used in initialization and updating
     @MainActor
     func getRatingsDictionary() -> Dictionary<String,String> {
         RecallCalendarEvent.translateGoalRatingList(self.goalRatings)
@@ -187,27 +237,15 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         return list
     }
     
+//    convers a swift dictionary into a RealmSwift dictionary of goalNodes
     static func translateGoalRatingList( _ list: RealmSwift.List<GoalNode> ) -> Dictionary<String, String> {
         var dic = Dictionary<String, String>()
         for node in list { dic[node.key] = node.data }
         return dic
     }
     
-//    This can later be modified to ensure only a select number of events are pulled from the server onto the device
-    @MainActor
-    static func getEvents(where query: ( (RecallCalendarEvent) -> Bool )? = nil) -> [RecallCalendarEvent] {
-        RealmManager.retrieveObjects(where: query)
-    }
     
-    @MainActor
-    func getColor() -> Color {
-        category?.getColor() ?? Colors.defaultLightAccent
-    }
-    
-    func getTagLabel() -> String {
-        category?.label ?? "?"
-    }
-    
+//    MARK: ToggleTemplate
     @MainActor
     func toggleTemplate() {
         RealmManager.updateObject(self) { thawed in
@@ -215,6 +253,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
+//    MARK: ToggleFavorite
     @MainActor
     func toggleFavorite() {
         RealmManager.updateObject(self) { thawed in
@@ -222,6 +261,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
+    
+    
+//    MARK: GetProperties
 //    This is a list of all the goals this event's tag contributes to
     @MainActor
     func getGoals() -> [RecallGoal] {
@@ -235,12 +277,13 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
-//    MARK: Class Methods
-
-    private func updateRecentRecallEventEndTime(to time: Date) {
-        RecallModel.index.setMostRecentRecallEvent(to: time)
-    }
+    func getLengthInHours() -> Double { endTime.timeIntervalSince(startTime) / Constants.HourTime }
     
+    func getColor() -> Color { category?.getColor() ?? Colors.defaultLightAccent }
+    
+    func getTagLabel() -> String { category?.label ?? "?"}
+    
+//    MARK: Delete
     @MainActor
     func delete(preserveTemplate: Bool = false) {
         RecallModel.index.removeEventFromIndex(on: self.startTime)
@@ -251,7 +294,6 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
         
         else {
-//            toggleTemplate()
             var components = DateComponents()
             components.year = 2005
             components.month = 5
@@ -271,6 +313,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 
     }
     
+//    MARK: UpdateEarliestEvent
+//    When updating the date compnents for the event, check if it is the earliest event the user has
     private func checkUpdateEarliestEvent() {
         
         if Calendar.current.component(.year, from: self.startTime) == 2005 { return }
@@ -278,11 +322,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             RecallModel.realmManager.index.updateEarliestEventDate(with: self.startTime)
         }
     }
-
-    func getLengthInHours() -> Double {
-        endTime.timeIntervalSince(startTime) / Constants.HourTime
-    }
     
+//    MARK: GetGoalMultiplier
 //    This checks to see if this event has a multiplier for a specifc goal (ie. coding should have 'productive')
     @MainActor
     private func getGoalMultiplier(from goal: RecallGoal) -> Double {
@@ -291,6 +332,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         return Double(data) ?? 0
     }
     
+//    MARK: GetGoalProgress
     func getGoalPrgress(_ goal: RecallGoal) async -> Double {
         let multiplier = await getGoalMultiplier(from: goal)
         if RecallGoal.GoalType.getRawType(from: goal.type) == .hourly { return getLengthInHours() * multiplier }
@@ -298,6 +340,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         return 0
     }
     
+//    MARK: GetGoalProgressThreadsInvariant
 //    to avoid certain crashes the standard 'getGoalMultiplier' should mostly be run on the main thread
 //    however, there are certain cases where its technically difficult to do so, 
 //    but will not elicit a crash to run it on any thread
@@ -311,78 +354,38 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         else if goal.targetTag?.label ?? "" == self.category?.label ?? "-" { return 1 }
         return 0
     }
-
-//    MARK: Layout functions
-//    When calendar events are layed out on top of each other, this function detects that so they can resize their width appropriatley
-//    All of the below functions handle layering and overlaps
-    private func getOverlapNodes(from events: [RecallCalendarEvent]) -> [RecallCalendarEvent] {
-        func checkFirstOverlap( with event: RecallCalendarEvent ) -> Bool {
-            (event.startTime > self.startTime && event.startTime < self.endTime) || (event.endTime) > self.startTime && event.endTime < self.endTime
-        }
-        func checkSecondOverlap(with event: RecallCalendarEvent) -> Bool {
-            (self.startTime > event.startTime && self.startTime < event.endTime) || (self.endTime) > event.startTime && self.endTime < event.endTime
-        }
-        
-        return events.filter { event in
-            event.startTime.matches(self.startTime, to: .day) && ( checkFirstOverlap(with: event) || checkSecondOverlap(with: event) )
-        }
-    }
-    
-    private func getWidth(from overlapData: [RecallCalendarEvent], in fullWidth: CGFloat, from events: [RecallCalendarEvent]) -> CGFloat {
-        
-        let overlapCount = overlapData.count
-        
-        var sortedOverlapCounts = overlapData.compactMap { event in event.getOverlapNodes(from: events).count }
-        sortedOverlapCounts.append(overlapCount)
-        sortedOverlapCounts.sort { i1, i2 in i1 > i2 }
-        
-        if overlapCount < sortedOverlapCounts.first ?? -1 {
-            if let eventWithMaxOverlaps = overlapData.first(where: { event in event.getOverlapNodes(from: events).count == sortedOverlapCounts.first ?? 0 }) {
-                return eventWithMaxOverlaps.getWidth(from: eventWithMaxOverlaps.getOverlapNodes(from: events), in: fullWidth, from: events)
-            }
-            return 0
-            
-        }else {
-            let firstMatchingCount = sortedOverlapCounts.first { i in sortedOverlapCounts.countAll { f in f == i } > 1 }
-            return (fullWidth - 50) / CGFloat((firstMatchingCount ?? 0) + 1)
-        }
-    }
-    
-    func getOverlapData(in fullWidth: CGFloat, from events: [RecallCalendarEvent]) -> OverlapData {
-        
-        let overlaps = getOverlapNodes(from: events)
-        let count = overlaps.count
-        let width = getWidth(from: overlaps, in: fullWidth, from: events)
-
-        var offset: CGFloat = 0
-
-        for event in overlaps {
-            let overlapNodes = event.getOverlapNodes(from: events)
-            if overlapNodes.count >= count {
-                let eventWidth = event.getWidth(from: overlapNodes, in: fullWidth, from: events) + 5
-
-                if overlapNodes.count == count {
-                    offset += takesPriority(self, and: event) ? eventWidth : 0
-                }
-                else { offset += eventWidth }
-            }
-        }
-
-//        return .init(width: fullWidth, offset: 0)
-        
-        return OverlapData(width: width, offset: offset)
-        
-        func takesPriority(_ thisEvent: RecallCalendarEvent, and otherEvent: RecallCalendarEvent) -> Bool {
-            if otherEvent.startTime == thisEvent.startTime { return thisEvent.title > otherEvent.title }
-            else { return thisEvent.startTime > otherEvent.startTime }
-        }
-    }
-    
-    
-    
-    struct OverlapData {
-        let width: CGFloat
-        let offset: CGFloat
-    }
-    
 }
+
+
+//MARK: SampleEvent
+let uiImage1 = UIImage(named: "sampleImage1")!
+let uiImage2 = UIImage(named: "sampleImage2")!
+let uiImage3 = UIImage(named: "sampleImage3")!
+
+@MainActor
+let sampleEvent = RecallCalendarEvent(ownerID: "",
+                                    title: "test event",
+                                    notes: "Its been a long long time. A moment to shine, shine, shine, shine, shinnnnnnnnnneeeeee. Ooooh ohh",
+                                    urlString: "https://github.com/Brian-Masse/Recall",
+                                    location: .init(location: .init(latitude: 42.5124232, longitude: -71.114742),
+                                                      title: "25 Indian Tree Ln, Reading, MA  01867, United States"),
+                                    images: [uiImage1, uiImage2, uiImage3],
+                                    startTime: .now,
+                                    endTime: .now + Constants.HourTime * 2,
+                                          categoryID: ObjectId(),
+                                    goalRatings: [:],
+                                    previewEvent: true)
+
+@MainActor
+let sampleEventNoPhotos = RecallCalendarEvent(ownerID: "",
+                                    title: "test event",
+                                    notes: "Its been a long long time. A moment to shine, shine, shine, shine, shinnnnnnnnnneeeeee. Ooooh ohh",
+                                    urlString: "https://github.com/Brian-Masse/Recall",
+                                    location: .init(location: .init(latitude: 42.5124232, longitude: -71.114742),
+                                                      title: "25 Indian Tree Ln, Reading, MA  01867, United States"),
+                                    images: [],
+                                    startTime: .now,
+                                    endTime: .now + Constants.HourTime * 2,
+                                          categoryID: ObjectId(),
+                                    goalRatings: [:],
+                                    previewEvent: true)

@@ -4,6 +4,8 @@
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Recall needs your location to provide location information for your events</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Recal would like to access your camera to provide images for your events</string>
 	<key>CFBundleIcons</key>
 	<dict>
 		<key>CFBundleAlternateIcons</key>
@@ -29,6 +31,9 @@
 		<string>RenoMono.otf</string>
 		<string>Syne-VariableFont_wght.ttf</string>
 		<string>AndaleMono.ttf</string>
+		<string>SF-Mono-Medium.otf</string>
+		<string>SF-Pro.ttf</string>
+		<string>Syne-Medium.ttf</string>
 	</array>
 </dict>
 </plist>

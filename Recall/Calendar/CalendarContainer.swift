@@ -16,9 +16,9 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) { }
 }
 
-struct CalendarContainer: View {
+//MARK: Calendar
+struct EmptyCalendarView: View {
     
-//    MARK: Calendar
     private func getCalendarMarkLabel(hour: Int) -> String {
         var components = DateComponents()
         components.hour = hour
@@ -46,24 +46,46 @@ struct CalendarContainer: View {
                 .opacity(opacity)
         }
         .alignmentGuide(VerticalAlignment.top) { _ in
-            let timeInterval = Double(hour) *  Constants.HourTime + Double(minute) * Constants.MinuteTime
+            let timeInterval = Double(hour) *  Constants.HourTime + Double(minute) * Constants.MinuteTime - (Double(startHour) * Constants.HourTime)
             return CGFloat(-(timeInterval) / viewModel.scale)
         }
     }
     
-    @ViewBuilder
-    private func makeCalendar() -> some View {
+    @ObservedObject private var viewModel = RecallCalendarViewModel.shared
+    
+    private let startHour: Int
+    private let endHour: Int
+    
+    private let calendarLabelWidth: Double
+    private let includeCurrentTimeMark: Bool
+    
+    init( startHour: Int, endHour: Int, labelWidth: Double, includeCurrentTimeMark: Bool = true ) {
+        self.startHour = startHour
+        self.endHour = endHour
+        self.calendarLabelWidth = labelWidth
+        self.includeCurrentTimeMark = includeCurrentTimeMark
+    }
+    
+    var body: some View {
         ZStack(alignment: .top) {
-            ForEach( 0...26, id: \.self ) { i in
+            ForEach( startHour...endHour, id: \.self ) { i in
                 makeCalendarMark(hour: i)
             }
             
             let currentComps = Calendar.current.dateComponents([.hour, .minute], from: .now)
             
-            makeCalendarMark(hour: currentComps.hour!, minute: currentComps.minute!, includeLabel: false, opacity: 1)
-                .foregroundStyle(.red)
+            if includeCurrentTimeMark {
+                makeCalendarMark(hour: currentComps.hour!, minute: currentComps.minute!, includeLabel: false, opacity: 1)
+                    .foregroundStyle(.red)
+            }
         }
     }
+    
+}
+
+
+//MARK: CalendarContainer
+struct CalendarContainer: View {
     
 //    MARK: Initialization
     @ObservedObject private var viewModel = RecallCalendarViewModel.shared
@@ -71,7 +93,7 @@ struct CalendarContainer: View {
     private let events: [RecallCalendarEvent]
     private let summaries: [RecallDailySummary]
     
-    private let calendarLabelWidth: Double = 20
+    private let calendarLabelWidth: Double = 25
     private let scrollDetectionPadding: Double = 200
     
     private let coordinateSpaceName = "CalendarContainerCoordinateSpace"
@@ -84,7 +106,7 @@ struct CalendarContainer: View {
     }
     
 //    MARK: Struct Methods
-    private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy) {
+    private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy, dayCount: Int) {
 //        if scrollPosition.x > 0 { return }
         let x = abs(scrollPosition.x)
         
@@ -93,9 +115,9 @@ struct CalendarContainer: View {
         let calendarWidth = abs(geo.size.width - calendarLabelWidth) / daysPerView
         let scrollDetectionPadding = calendarWidth / 2
         
-        let proposedIndex = Int(floor( (x + calendarLabelWidth + scrollDetectionPadding) / calendarWidth) )
-        let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
-        
+        let proposedIndex = Int(floor( (x + calendarLabelWidth + scrollDetectionPadding + calendarWidth) / calendarWidth) )
+        let proposedDate = Date.now - (Double(dayCount - proposedIndex) * Constants.DayTime)
+
         if !viewModel.scrollingCalendar
 //            && !self.viewModel.currentDay.matches(proposedDate, to: .day)
         {
@@ -109,9 +131,11 @@ struct CalendarContainer: View {
         viewModel.setSubDayIndex(to: index)
     }
     
+//    MARK: ScrollToCurrentDay
     private func scrollToCurrentDay(proxy: ScrollViewProxy) {
+        let dayCount = RecallModel.index.daysSinceFirstEvent()
         let index = floor(Date.now.timeIntervalSince(viewModel.currentDay) / Constants.DayTime)
-        withAnimation { proxy.scrollTo(Int(index), anchor: .leading) }
+        withAnimation { proxy.scrollTo(dayCount - Int(index), anchor: .leading) }
     }
     
 //    MARK: ScaleGesture
@@ -150,7 +174,7 @@ struct CalendarContainer: View {
     }
     
     private func createEvent() {
-        let subDayOffset = Double(viewModel.subDayIndex) * Constants.DayTime
+        let subDayOffset = Double(1 - viewModel.subDayIndex) * Constants.DayTime
         
         let startTime = viewModel.getTime(from: newEventoffset, on: viewModel.currentDay) - subDayOffset
         let endTime = startTime + ( newEventResizeOffset * viewModel.scale )
@@ -239,11 +263,11 @@ struct CalendarContainer: View {
 //    MARK: CalendarLabels
     @ViewBuilder
     private func makeCalendarLabels() -> some View {
-        let format = Date.FormatStyle().weekday(.abbreviated).day()
+        let format = Date.FormatStyle().weekday(.abbreviated).month().day()
         
         HStack(spacing: 0) {
             ForEach(0..<viewModel.daysPerView, id: \.self) { i in
-                let day = viewModel.currentDay.addingTimeInterval(Double(i) * -Constants.DayTime)
+                let day = viewModel.currentDay.addingTimeInterval(Double(i - 1) * Constants.DayTime)
 
                 let label = day.formatted(format)
                 
@@ -268,27 +292,27 @@ struct CalendarContainer: View {
     
     @ViewBuilder
     private func makeCalendarCarousel(in geo: GeometryProxy) -> some View {
+        let dayCount = RecallModel.index.daysSinceFirstEvent()
+        
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 0) {
                     
-                    let dayCount = RecallModel.index.daysSinceFirstEvent()
-                    
                     ForEach(0...dayCount, id: \.self) { i in
                         
-                        let day = .now.resetToStartOfDay() - (Double(i) * Constants.DayTime)
+                        let day = Date.now.resetToStartOfDay() + Double(i - dayCount) * Constants.DayTime
                         
                         ZStack(alignment: .top) {
                             CalendarView(events: viewModel.getEvents(on: day),
                                              on: day)
-                            makeEventCreationPreview(on: calculateSubDayIndex(on: day))
+                            makeEventCreationPreview(on: 1 - calculateSubDayIndex(on: day))
                         }
                         .padding(.horizontal, 2)
                         .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
                         .task { await viewModel.loadEvents(for: day, in: events) }
-                        .id(i)
                     }
                 }
+                
                 .scrollTargetLayout()
                 .onChange(of: viewModel.shouldScrollCalendar) { scrollToCurrentDay(proxy: proxy) }
                 
@@ -297,13 +321,12 @@ struct CalendarContainer: View {
                         .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named(coordinateSpaceName)).origin)
                 })
                 
-                .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo) }
-                .onAppear { scrollToCurrentDay(proxy: proxy) }
-                
+                .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo, dayCount: dayCount) }
                 .onChange(of: events) { oldValue, newValue in
                     viewModel.invalidateEvents(newEvents: newValue)
                 }
             }
+            .defaultScrollAnchor(.trailing)
             .scrollTargetBehavior(.viewAligned)
             .scrollDisabled(viewModel.gestureInProgress)
             
@@ -322,21 +345,19 @@ struct CalendarContainer: View {
                         ScrollView(.vertical, showsIndicators: false) {
                             
                             ZStack(alignment: .top) {
-                                makeCalendar()
+                                EmptyCalendarView(startHour: 0, endHour: 26, labelWidth: calendarLabelWidth)
                                 
                                 makeCalendarCarousel(in: geo)
                                 
                                 VStack {
-                                    Spacer()
+                                    Rectangle()
+                                        .frame(height: (9 * Constants.HourTime) / viewModel.scale)
                                     
                                     Rectangle()
-                                        .frame(height: 10)
-                                        .foregroundStyle(.clear)
-                                        .allowsHitTesting(false)
                                         .id("scrollTarget")
-                                    
-                                    Spacer()
                                 }
+                                .allowsHitTesting(false)
+                                .foregroundStyle(.clear)
                             }
 
                             .simultaneousGesture(createEventHoldGesture(in: geo))
@@ -348,7 +369,7 @@ struct CalendarContainer: View {
                         }
                         .simultaneousGesture(scaleGesture)
                         .scrollDisabled(viewModel.gestureInProgress)
-                        .onAppear { proxy.scrollTo("scrollTarget") }
+                        .onAppear { proxy.scrollTo("scrollTarget", anchor: .top) }
                         .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
                             makeCalendarLabels()
                                 .padding(.leading, calendarLabelWidth)

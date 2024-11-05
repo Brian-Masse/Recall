@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+
 //MARK: InfiniteScroller
 struct InfiniteScroller<Content: View>: View {
     
@@ -48,18 +49,5 @@ struct InfiniteScroller<Content: View>: View {
                 .offset(y: -offset * 0.5)
             }
         }
-    }
-}
-
-#Preview {
-    InfiniteScroller { i in
-        ZStack {
-            Rectangle()
-                .foregroundStyle(.red)
-                .frame(height: i == -1 ? 150 : Double.random(in: 200...200))
-            
-            Text("\(i)")
-        }
-        .padding(.vertical, 7)
     }
 }

@@ -36,7 +36,7 @@ struct RecallApp: App {
 //        This registers all the fonts provided by UIUniversals
         FontProvider.registerFonts()
         Constants.titleFont = FontProvider[.syneHeavy]
-        Constants.mainFont = FontProvider[.renoMono]
+        Constants.mainFont = SyneMedium.shared
         
         UITabBar.appearance().isHidden = true
     }

@@ -84,7 +84,7 @@ struct StyledURLField: View {
     let title: String
     let prompt: String
     
-    @State private var text: String = ""
+    @State private var text: String
     @Binding private var url: URL?
     
     @State private var isFocussed: Bool = false
@@ -93,6 +93,7 @@ struct StyledURLField: View {
     init( _ title: String, binding: Binding<URL?>, prompt: String = "" ) {
         self.title = title
         self._url = binding
+        self.text = binding.wrappedValue?.absoluteString ?? ""
         self.prompt = prompt
     }
     
@@ -108,11 +109,9 @@ struct StyledURLField: View {
     }
     
     var body: some View {
-        
-        
         HStack {
             if !showingURL || url == nil {
-                StyledTextField(title: title, binding: $text, prompt: prompt, clearable: true, isFocussed: $isFocussed)
+                StyledTextField(title: title, binding: $text, prompt: prompt, clearable: true, isFocussed: $isFocussed, shouldFocusOnAppear: true)
                 
                 if showingCompleteButton {
                     UniversalButton {
@@ -124,21 +123,27 @@ struct StyledURLField: View {
                 }
                 
             } else {
-                HStack {
-                    Link(self.url!.absoluteString, destination: self.url!)
-                        .lineLimit(1)
-                    Spacer()
-                }.rectangularBackground(style: .secondary)
-                
                 UniversalButton {
-                    RecallIcon("pencil")
-                        .rectangularBackground(style: .secondary)
+                    HStack {
+                        RecallIcon("link")
+                        
+                        Link(self.url!.lastPathComponent, destination: self.url!)
+                            .font(.custom( SyneMedium.shared.postScriptName, size: Constants.UIDefaultTextSize))
+                            .lineLimit(1)
+                            .foregroundStyle(.foreground)
+                        Spacer()
+                        
+                    }
+                    .opacity(0.75)
                 } action: {
                     self.showingURL = false
                     self.isFocussed = true
                 }
+                .transition(.blurReplace)
             }
         }
+        .onAppear { showingURL = !self.text.isEmpty }
+        
         .animation(.easeInOut, value: self.isFocussed)
         .animation(.easeInOut, value: self.text)
         
@@ -157,15 +162,18 @@ struct StyledTextField: View {
     let clearable: Bool
     let multiLine: Bool
     
+    let shouldFocusOnAppear: Bool
+    
     @Binding var isFocussed: Bool
     
-    init( title: String, binding: Binding<String>, prompt: String = "", clearable: Bool = false, multiLine: Bool = false, isFocussed: Binding<Bool> = .constant(false) ) {
+    init( title: String, binding: Binding<String>, prompt: String = "", clearable: Bool = false, multiLine: Bool = false, isFocussed: Binding<Bool> = .constant(false), shouldFocusOnAppear: Bool = false ) {
         self.title = title
         self.binding = binding
         self.clearable = clearable
         self.multiLine = multiLine
         self.prompt = prompt
         self._isFocussed = isFocussed
+        self.shouldFocusOnAppear = shouldFocusOnAppear
     }
     
     @Environment(\.colorScheme) var colorScheme
@@ -192,12 +200,12 @@ struct StyledTextField: View {
                               font: Constants.titleFont)
                 .padding(.trailing)
             }
-                
+            
             ZStack(alignment: .topTrailing) {
                 makeTextField()
                     .focused($focused)
                     .lineLimit(1...)
-                    .font(Font.custom(AndaleMono.shared.postScriptName, size: Constants.UIDefaultTextSize))
+                    .font(Font.custom(SyneMedium.shared.postScriptName, size: Constants.UIDefaultTextSize))
                     .frame(maxWidth: .infinity)
                     .tint(Colors.getAccent(from: colorScheme) )
                     .padding(.trailing, ( multiLine ? 0 : ( showingClearButton ? 25 : 0 ) ) + 5 )
@@ -205,10 +213,10 @@ struct StyledTextField: View {
                     .rectangularBackground(style: .secondary)
                     .onChange(of: self.focused) {
                         self.updateClearButton()
-                        self.isFocussed = self.focused
+                        withAnimation { self.isFocussed = self.focused }
                     }
                     .onChange(of: binding.wrappedValue) { self.updateClearButton() }
-                    .onChange(of: self.isFocussed) { self.focused = self.isFocussed }
+                    .onChange(of: self.isFocussed) { withAnimation { self.focused = self.isFocussed }}
                     .zIndex(0)
                 
                 if showingClearButton  {
@@ -221,6 +229,9 @@ struct StyledTextField: View {
                         .transition(.blurReplace)
                 }
             }
+            .onAppear { if shouldFocusOnAppear {
+                self.focused = true
+            }}
         }
     }
 }
