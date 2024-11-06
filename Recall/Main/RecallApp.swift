@@ -28,8 +28,8 @@ struct RecallApp: App {
         Constants.setFontSizes(UILargeTextSize: 90,
                                UITitleTextSize: 45,
                                UIMainHeaderTextSize: 35,
-                               UIHeaderTextSize: 30,
-                               UISubHeaderTextSize: 20,
+                               UIHeaderTextSize: 25,
+                               UISubHeaderTextSize: 16,
                                UIDefeaultTextSize: 15,
                                UISmallTextSize: 11)
         
