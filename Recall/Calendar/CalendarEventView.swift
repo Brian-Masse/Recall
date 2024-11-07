@@ -88,10 +88,7 @@ struct TestCalendarEventView: View {
     
     private var dateLabel: String {
         let formatter = Date.FormatStyle().month().day()
-        let str1 = event.startTime.formatted(formatter)
-        let str2 = timeLabel
-        
-        return "\(str2), \(str1)"
+        return event.startTime.formatted(formatter)
     }
     
 //    MARK: SmallButton
@@ -115,27 +112,35 @@ struct TestCalendarEventView: View {
     
 //    MARK: sectionHeader
     @ViewBuilder
-    private func makeSectionHeader(_ icon: String, title: String) -> some View {
-        HStack {
-            RecallIcon(icon)
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            
-            Spacer()
+    private func makeSectionHeader(_ icon: String, title: String, fillerMessage: String = "", isActive: Bool = true) -> some View {
+        if isActive {
+            HStack {
+                RecallIcon(icon)
+                UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                
+                Spacer()
+            }
+            .padding(.leading)
+            .opacity(0.75)
+        } else {
+            makeSectionFiller(icon: icon, message: fillerMessage)
         }
-        .padding(.leading)
-        .opacity(0.75)
     }
     
+//    MARK: makeSectionFiller
     @ViewBuilder
-    private func makeSectionFiller(message: String) -> some View {
+    private func makeSectionFiller(icon: String, message: String) -> some View {
         UniversalButton {
             VStack {
                 HStack { Spacer() }
                 
-                RecallIcon( "plus" )
+                RecallIcon( icon )
+                    .padding(.bottom, 5)
                 
-                UniversalText( message, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                UniversalText( message, size: Constants.UIDefaultTextSize, font: Constants.mainFont, textAlignment: .center )
+                    .opacity(0.75)
             }
+            .opacity(0.75)
             .rectangularBackground(style: .secondary)
             
         } action: { showEditView = true }
@@ -145,7 +150,6 @@ struct TestCalendarEventView: View {
 //    MARK: Header
     @ViewBuilder
     private func makeHeader() -> some View {
-        
         let titleColor = event.getColor().safeMix(with: .black, by: 0.6)
         
         HStack(spacing: 10) {
@@ -158,7 +162,8 @@ struct TestCalendarEventView: View {
             makeSmallButton("pencil", label: "edit") { showEditView = true }
             
             makeSmallButton("chevron.down") { dismiss() }
-        }.foregroundStyle( event.images.isEmpty ? titleColor : .white )
+        }
+        .foregroundStyle( event.images.isEmpty ? titleColor : .white )
     }
     
 //    MARK: MetaDataLabel
@@ -172,6 +177,7 @@ struct TestCalendarEventView: View {
             UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
         }
         .frame(height: 30)
+        .opacity(0.65)
         .rectangularBackground(style: .secondary)
     }
     
@@ -206,12 +212,13 @@ struct TestCalendarEventView: View {
                          on: event.startTime,
                          startHour: startHour,
                          endHour: endHour,
-                         includeGestures: false)
+                         includeGestures: false,
+                         highlightEvent: event)
                 .padding(.leading, 25 )
                 .task { await calendarViewModel.loadEvents(for: event.startTime, in: events) }
         }
         .frame(height: 150)
-        .rectangularBackground(style: .secondary)
+        .rectangularBackground(style: .secondary, stroke: true)
     }
     
 //    MARK: PhotoCarousel
@@ -227,7 +234,10 @@ struct TestCalendarEventView: View {
     @ViewBuilder
     private func makePhotoCarousel() -> some View {
         VStack(alignment: .leading) {
-            makeSectionHeader("photo.on.rectangle", title: "photos")
+            makeSectionHeader("photo.on.rectangle",
+                              title: "photos",
+                              fillerMessage: "Add photos",
+                              isActive: event.images.count != 0)
             
             if event.images.count != 0 {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -236,11 +246,10 @@ struct TestCalendarEventView: View {
                             makePhoto(uiImage: image)
                         }
                     }
-                    .frame(height: 200)
-                }.clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
-            } else {
-                
-                makeSectionFiller(message: "Add photos for this event")
+                    .frame(height: event.images.count == 1 ? 300 : 200)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+                .padding(.bottom)
             }
         }
     }
@@ -249,9 +258,12 @@ struct TestCalendarEventView: View {
     @ViewBuilder
     private func makeMap() -> some View {
         VStack(alignment: .leading) {
+            makeSectionHeader("location",
+                              title: event.locationTitle,
+                              fillerMessage: "Add a location",
+                              isActive: !event.locationTitle.isEmpty)
+            
             if let location = event.getLocationResult() {
-                
-                makeSectionHeader("location", title: "\(location.title)")
                 
                 Map(position: $position, scope: mapNameSpace) {
                     Marker(coordinate: location.location) {
@@ -261,11 +273,7 @@ struct TestCalendarEventView: View {
                 .allowsHitTesting(false)
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
                 .frame(height: 200)
-                
-            } else {
-                makeSectionHeader("location", title: "location")
-                
-                makeSectionFiller(message: "Add a location for this event")
+                .padding(.bottom)
             }
         }
     }
@@ -299,12 +307,15 @@ struct TestCalendarEventView: View {
             
             VStack(alignment: .leading) {
                 
-                UniversalText( dateLabel, size: Constants.UISubHeaderTextSize, font: Constants.mainFont )
+                UniversalText( timeLabel, size: Constants.UISubHeaderTextSize, font: Constants.mainFont )
                 
                 UniversalText( "see more on \(dateLabel)", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                     .opacity(0.55)
             }
+            
+            Spacer()
         }
+        .padding(.top)
         .padding(.leading)
     }
     
@@ -426,7 +437,7 @@ struct TestCalendarEventView: View {
                         .contentShape(NullContentShape())
                 }
                 .ignoresSafeArea()
-                .frame(width: geo.size.width, height: geo.size.height * 0.8)
+                .frame(width: geo.size.width, height: geo.size.height * 0.9)
                 .contentShape(Rectangle())
             }
         }
@@ -445,16 +456,10 @@ struct TestCalendarEventView: View {
                 
                 makeMetaData()
                     .padding(.bottom)
+                
+                makeRichDataSection()
             }.rectangularBackground(style: .primary)
             
-            VStack {
-                makePhotoCarousel()
-                    .padding(.bottom)
-                
-                makeMap()
-                    .padding(.bottom)
-            }.rectangularBackground(style: .primary)
-                
             VStack {
                 makeActionButtons()
                 
@@ -464,6 +469,26 @@ struct TestCalendarEventView: View {
         .clipShape(RoundedRectangle(cornerRadius: largeCornerRadius))
         .padding(.horizontal, 5)
         .padding(.bottom, 20)
+    }
+    
+    @ViewBuilder
+    private func makeRichDataSection() -> some View {
+        VStack(alignment: .leading) {
+            if !event.images.isEmpty || !event.locationTitle.isEmpty {
+                makePhotoCarousel()
+                
+                makeMap()
+            } else {
+                
+                makeSectionHeader("grid", title: "Additional Information")
+                    .padding(.top)
+                
+                HStack {
+                    makePhotoCarousel()
+                    makeMap()
+                }
+            }
+        }
     }
     
 //    MARK: PhotoScroller
