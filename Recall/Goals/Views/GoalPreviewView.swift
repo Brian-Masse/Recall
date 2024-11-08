@@ -134,7 +134,7 @@ struct GoalPreviewView: View {
                 LoadingView(height: 220)
             }
         }
-//        .task { await dataModel.makeData(for: goal, with: events) }
+        .task { await dataModel.makeData(for: goal, with: events) }
         .fullScreenCover(isPresented: $showingGoalView) {
             GoalView(goal: goal, events: events)
                 .environmentObject(dataModel)
