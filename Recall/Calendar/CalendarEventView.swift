@@ -47,7 +47,7 @@ struct TestCalendarEventView: View {
     @Environment( \.dismiss ) var dismiss
     
 //    MARK: Vars
-    @State var event: RecallCalendarEvent
+    @ObservedRealmObject var event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
     
     @State private var showEditView: Bool = false
@@ -73,7 +73,7 @@ struct TestCalendarEventView: View {
     }
     
     private func onAppear() async {
-        let decodedImages = await imageStoreViewModel.decodeImages(for: event)
+        let decodedImages = await imageStoreViewModel.decodeImages(for: event, expectedCount: event.images.count)
         withAnimation { self.decodedImages = decodedImages }
     }
     
@@ -309,8 +309,17 @@ struct TestCalendarEventView: View {
                 
                 UniversalText( timeLabel, size: Constants.UISubHeaderTextSize, font: Constants.mainFont )
                 
-                UniversalText( "see more on \(dateLabel)", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                    .opacity(0.55)
+                HStack {
+                    
+                    RecallIcon("chevron.left")
+                        .font(.caption)
+                    
+                    UniversalText( "see more on \(dateLabel)", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                    
+                    RecallIcon("chevron.right")
+                        .font(.caption)
+                }
+                .opacity(0.55)
             }
             
             Spacer()
@@ -531,6 +540,7 @@ struct TestCalendarEventView: View {
                 makeRegularLayout()
             }
         }
+        .onChange(of: event.images) { Task { await onAppear() } }
         .task { await onAppear() }
         .background(.black)
         .deleteableCalendarEvent(deletionBool: $showDeleteAlert, event: event)

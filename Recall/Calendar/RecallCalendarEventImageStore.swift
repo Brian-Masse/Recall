@@ -10,9 +10,8 @@ import SwiftUI
 
 class RecallCalendarEventImageStore: ObservableObject {
     
-    private var imageIndexTable: Dictionary<String, Int> = [:]
-    
-    @Published private(set) var imageStore: [[ UIImage ]] = []
+    private var imageStoreSize: Int = 0
+    @Published private(set) var imageStore: Dictionary<String, [ UIImage ]> = [:]
     
     private let maxStoreSize: Int = 10
     
@@ -22,28 +21,34 @@ class RecallCalendarEventImageStore: ObservableObject {
 //    asyncrounously decodes images and stores them in the store
 //    This is used when loading the images on the CalendarEventView
     @MainActor
-    func decodeImages(for event: RecallCalendarEvent) async -> [UIImage] {
+    func decodeImages(for event: RecallCalendarEvent, expectedCount: Int ) async -> [UIImage] {
         
-        if let index = self.imageIndexTable[event.identifier()] {
-            return imageStore[index]
-        } else {
-            
-            var images: [UIImage] = []
-            
-            for imageData in event.images {
-                if let uiImage = PhotoManager.decodeUIImage(from: imageData) {
-                    images.append(uiImage)
-                }
-            }
-            
-            if imageStore.count >= maxStoreSize {
-                imageStore.removeFirst()
-            }
-            
-            imageStore.append(images)
-            imageIndexTable[event.identifier()] = imageStore.count - 1
-            
-            return images
+        let id = event.identifier()
+        
+        if event.images.isEmpty { return [] }
+        
+//        check to see if the images have already been decoded
+//        if they have, retrieve them and avoid the decode process
+        if let images = self.imageStore[id] {
+            if images.count == expectedCount { return images }
         }
+        
+//        decode the images
+        var images: [UIImage] = []
+        for imageData in event.images {
+            if let uiImage = PhotoManager.decodeUIImage(from: imageData) {
+                images.append(uiImage)
+            }
+        }
+        
+        if imageStoreSize >= maxStoreSize {
+            imageStore[id] = nil
+            imageStoreSize -= 1
+        }
+        
+        imageStore[id] = images
+        imageStoreSize += 1
+        
+        return images
     }
 }

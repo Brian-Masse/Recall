@@ -26,9 +26,8 @@ struct PhotoPickerModifier: ViewModifier {
                 if !viewModel.showingPhotoPicker { return }
                 Task { await viewModel.loadPhotoPickerItems(oldValue: oldVal) }
             }
-            .onDisappear {
-                viewModel.clear()
-            }
+            .onAppear { viewModel.clear() }
+            .onDisappear { viewModel.clear() }
     }
 }
 
