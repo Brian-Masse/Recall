@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CalendarEventCarousel: View {
     
-    let events: [RecallCalendarEvent]
+    @State var events: [RecallCalendarEvent]
     let startIndex: Int
     
     var body: some View {

@@ -168,17 +168,21 @@ struct TestCalendarEventView: View {
     
 //    MARK: MetaDataLabel
     @ViewBuilder
-    private func makeMetaDataLabel(icon: String, title: String) -> some View {
-        VStack {
-            HStack { Spacer() }
-            
-            RecallIcon(icon)
-            
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+    private func makeMetaDataLabel(icon: String, title: String, action: (() -> Void)? = nil) -> some View {
+        UniversalButton {
+            VStack {
+                HStack { Spacer() }
+                
+                RecallIcon(icon)
+                
+                UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            }
+            .frame(height: 30)
+            .opacity(0.65)
+            .rectangularBackground(style: .secondary)
+        } action: {
+            if let action { action() }
         }
-        .frame(height: 30)
-        .opacity(0.65)
-        .rectangularBackground(style: .secondary)
     }
     
     @ViewBuilder
@@ -190,7 +194,9 @@ struct TestCalendarEventView: View {
                 
                 makeMetaDataLabel(icon: "deskclock", title: "\(Int(event.getLengthInHours())) hr")
                 
-                makeMetaDataLabel(icon: event.isFavorite ? "checkmark" : "plus", title: "Favorite")
+                makeMetaDataLabel(icon: event.isFavorite ? "checkmark" : "plus", title: "Favorite") {
+                    event.toggleFavorite()
+                }
             }
             
             makeCalendarContainer()
@@ -349,7 +355,7 @@ struct TestCalendarEventView: View {
             
             makeSectionHeader("calendar.day.timeline.left", title: "Event Actions")
             
-            makeActionButton(icon: "circle.rectangle.filled.pattern.diagonalline", label: "favorite") { }
+            makeActionButton(icon: "circle.rectangle.filled.pattern.diagonalline", label: "favorite") { event.toggleFavorite() }
             
             makeActionButton(icon: "pencil", label: "edit") { showEditView = true }
             

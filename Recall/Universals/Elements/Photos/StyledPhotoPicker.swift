@@ -98,7 +98,7 @@ struct StyledPhotoPickerCarousel: View {
                 } else {
                     
                     ForEach( viewModel.selectedImages, id: \.self ) { image in
-                        makePhotoPreview(image, allowsRemoval: false)
+                        makePhotoPreview(image, allowsRemoval: true)
                     }
                 }
             }

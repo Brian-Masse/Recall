@@ -214,7 +214,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         let list = RealmSwift.List<Data>()
         
         for image in images {
-            let data = PhotoManager.encodeImage(image, in: 800)
+            let data = PhotoManager.encodeImage(image, compressionQuality: 0.75, in: 600)
             list.append(data)
         }
         

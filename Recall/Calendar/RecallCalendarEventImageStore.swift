@@ -13,7 +13,7 @@ class RecallCalendarEventImageStore: ObservableObject {
     private var imageStoreSize: Int = 0
     @Published private(set) var imageStore: Dictionary<String, [ UIImage ]> = [:]
     
-    private let maxStoreSize: Int = 10
+    private let maxStoreSize: Int = 3
     
     static let shared = RecallCalendarEventImageStore()
     
