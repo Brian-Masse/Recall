@@ -136,12 +136,13 @@ struct CalendarPageView: View {
             
             
             RecallIcon("calendar")
-                .rectangularBackground(style: .secondary)
                 .padding(.leading)
+                .contentShape(Rectangle())
                 .onTapGesture { showingCalendarView = true }
             
             RecallIcon("person")
-                .rectangularBackground(style: .secondary)
+                .padding(.horizontal)
+                .contentShape(Rectangle())
                 .onTapGesture { showingProfileView = true }
         }
         
