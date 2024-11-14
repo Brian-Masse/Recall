@@ -14,11 +14,17 @@ New Ways to Browse:
 - Ability to Uplaod images with events
 - Ability to search through events
 - Locations + links for events
+- Photos Galleries for Events
+- Event Caoursel on the main Calendar Page
+- Redesigned Calendar Page + Tool Bar
+- Redesigned Monthly Calendar View
+- Redesigned Data page
 
 New Ways to Customize:
 
 - Home Screen Widgets
 - Personalized Color Pallets
+- More Event, Goal, and Data settings
 
 ## **Package Dependencies**
 
