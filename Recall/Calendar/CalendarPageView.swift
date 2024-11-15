@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import UIUniversals
-import UniversalDonationPackage
 
 struct CalendarPageView: View {
     

@@ -26,6 +26,7 @@ struct ProfileView: View {
     @State var madeNotificationChanges: Bool = false
     @State var madeDefaultEventLengthChanges: Bool = false
     
+//    MARK: Temporary Settings
 //    temporary settings: change these before committing them to the index when users hit save
     @ObservedRealmObject var index = RecallModel.index
     
@@ -65,16 +66,44 @@ struct ProfileView: View {
         static var notificationsDisabledWarning = "Notifications are disabled, enable them in settings"
         static var notificationTimeSelectionLabel = "When would you like to be reminded?"
         
-//        extra
         static var deletionWarning = "Are you sure you want to delete your profile?"
     }
     
+//    MARK: Bindings
+    private var showingNotesOnPreviewBinding: Binding<Bool> {
+        Binding { index.showNotesOnPreview }
+        set: { newValue in index.setShowNotesOnPreview(to: newValue) }
+    }
     
-//    MARK: Overview
+    private var fineTimeSelectorIsDefault: Binding<Bool> {
+        Binding { index.defaultFineTimeSelector }
+        set: { newValue in index.setDefaultFineTimeSelector(to: newValue) }
+    }
     
+    private var recallAtTheEndOfLastEventBinding: Binding<Bool> {
+        Binding { index.recallEventsAtEndOfLastRecall }
+        set: { newValue in index.setRecallAtEndOfLastEvent(to: newValue) }
+    }
     
+//    MARK: makeNotificationMessage
+    private func makeNotificationMessage() async -> String {
+        let settings = await NotificationManager.shared.getNotificationStatus()
+        switch settings {
+        case .denied:   return ""
+        default: return ""
+        }
+    }
     
-//    MARK: OverviewViewBuilders
+//    MARK: checkNotificationStatus
+//    gets the current notification status from the notification manager
+    @MainActor
+    private func checkNotificationStatus() async {
+        let status = await NotificationManager.shared.getNotificationStatus()
+        showingNotificationToggle = (status != .denied)
+    }
+
+    
+//    MARK: makeContactLabel
 //    these are the indivudal nodes that make up the contact section
     @ViewBuilder
     private func makeContactLabel( title: String, content: String ) -> some View {
@@ -88,6 +117,7 @@ struct ProfileView: View {
         .padding(.vertical, 5)
     }
     
+//    MARK: makeDemographicLabel
 //    these are the big blocks that describe birthday and date joined
     @ViewBuilder
     private func makeDemographicLabel(mainText: String, secondaryText: String, tertiaryText: String) -> some View {
@@ -107,7 +137,7 @@ struct ProfileView: View {
         }
     }
 
-//    MARK: OverviewBody
+//    MARK: makeDemographicInfo
     @ViewBuilder
     private func makeDemographicInfo() -> some View {
         
@@ -143,20 +173,8 @@ struct ProfileView: View {
             .rectangularBackground(7, style: .secondary, stroke: true, strokeWidth: 1)
         }
     }
-    
-//    MARK: settings
-    
-    
-    
-//    MARK: Settings ViewBuilders
-    @ViewBuilder
-    private func makeSettingsDivider() -> some View {
-        Rectangle()
-            .frame(height: 1)
-            .universalTextStyle()
-            .opacity(0.6)
-    }
-    
+
+//    MARK: makeSettingsDescription
 //    if a certain setting needs to be described more, use this description block
     private func makeSettingsDescription(_ text: String) -> some View {
         UniversalText( text, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
@@ -195,12 +213,10 @@ struct ProfileView: View {
             
             makePageFooter()
                 .padding(.bottom)
-                
         }
     }
     
-//    MARK: Event Settings ViewBuilders
-
+//    MARK: makeDefaultEventLengthSelector
     @ViewBuilder
     private func makeDefaultEventLengthSelector() -> some View {
         LengthSelector("Default Event Length",
@@ -216,21 +232,7 @@ struct ProfileView: View {
         }
     }
     
-    private var showingNotesOnPreviewBinding: Binding<Bool> {
-        Binding { index.showNotesOnPreview }
-        set: { newValue in index.setShowNotesOnPreview(to: newValue) }
-    }
-    
-    private var fineTimeSelectorIsDefault: Binding<Bool> {
-        Binding { index.defaultFineTimeSelector }
-        set: { newValue in index.setDefaultFineTimeSelector(to: newValue) }
-    }
-    
-    private var recallAtTheEndOfLastEventBinding: Binding<Bool> {
-        Binding { index.recallEventsAtEndOfLastRecall }
-        set: { newValue in index.setRecallAtEndOfLastEvent(to: newValue) }
-    }
-    
+//    MARK: makeTimeSnappingSelector
     @ViewBuilder
     private func makeTimeSnappingSelector(title: String, option: TimeRounding) -> some View {
         VStack(spacing: 0) {
@@ -247,6 +249,7 @@ struct ProfileView: View {
             .onTapGesture { withAnimation { index.setDefaultTimeSnapping(to: option) } }
     }
     
+//    MARK: makeDefaultTimeSnappingSelector =
     @ViewBuilder
     private func makeDefaultTimeSnappingSelector() -> some View {
         UniversalText(SettingsConstants.defaultTimeSnappingLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
@@ -257,6 +260,7 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: makeDefaultRecallStyleSelector
     private func makeDefaultRecallStyleSelectorOption(_ label: String, icon: String, option: Bool) -> some View {
         HStack {
             Spacer()
@@ -284,6 +288,7 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: makeCalendarDensityOption
     @ViewBuilder
     private func makeCalendarDensityOption(_ option: Int, caption: String) -> some View {
         
@@ -309,6 +314,7 @@ struct ProfileView: View {
             } }
     }
     
+//    MARK: makeCalendarDensitySelector
     @ViewBuilder
     private func makeCalendarDensitySelector() -> some View {
         VStack(alignment: .leading) {
@@ -323,7 +329,7 @@ struct ProfileView: View {
     }
     
     
-//    MARK: Event Settings Body
+//    MARK: makeEventSettings
     @ViewBuilder
     private func makeEventSettings() -> some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -333,11 +339,11 @@ struct ProfileView: View {
                     else { madeDefaultEventLengthChanges = false }
                 }
             
-            makeSettingsDivider()
+            Divider()
             
             makeCalendarDensitySelector()
             
-            makeSettingsDivider()
+            Divider()
             
 //        toggles
             StyledToggle(showingNotesOnPreviewBinding) {
@@ -353,7 +359,7 @@ struct ProfileView: View {
             }
             makeSettingsDescription(SettingsConstants.recallAtEndOfLastEventDescription)
             
-            makeSettingsDivider()
+            Divider()
             
             makeDefaultRecallStyleSelector()
             
@@ -362,22 +368,7 @@ struct ProfileView: View {
         }
     }
     
-    
-//    MARK: Notification Settings
-    private func makeNotificationMessage() async -> String {
-        let settings = await NotificationManager.shared.getNotificationStatus()
-        switch settings {
-        case .denied:   return ""
-        default: return ""
-        }
-    }
-     
-    @MainActor
-    private func checkStatus() async {
-        let status = await NotificationManager.shared.getNotificationStatus()
-        showingNotificationToggle = (status != .denied)
-    }
-    
+//    MARK: makeReminderSettings
     @ViewBuilder
     private func makeReminderSettings() -> some View {
         
@@ -385,14 +376,14 @@ struct ProfileView: View {
             StyledToggle($notificationsEnabled) {
                 UniversalText( "Daily reminder", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
-            .onAppear { Task { await checkStatus() } }
+            .onAppear { Task { await checkNotificationStatus() } }
             .onChange(of: notificationsEnabled) {
                 
                 if notificationsEnabled {
                     Task {
                         let results = await NotificationManager.shared.requestNotifcationPermissions()
                         notificationsEnabled = results
-                        await checkStatus()
+                        await checkNotificationStatus()
                     }
                 }
                 
@@ -429,6 +420,7 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: makeAccentColorOption
     @ViewBuilder
     private func makeAccentColorOption(_ accentColor: Colors.AccentColor, index: Int) -> some View {
         VStack {
@@ -452,6 +444,7 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: makeAccentColorPicker
     @ViewBuilder
     private func makeAccentColorPicker() -> some View {
         GeometryReader { geo in
