@@ -60,25 +60,27 @@ struct MainView: View {
     
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                TabView(selection: $currentPage) {
-                    CalendarPageView(events: arrEvents, goals: arrGoals, dailySummaries: arrSummaries)
-                        .halfPageScreenReceiver(showing: $showingHalfPage)
-                        .tag( MainPage.calendar )
-                    
-                    GoalsPageView(goals: arrGoals, events: arrEvents, tags: arrTags )
-                        .tag( MainPage.goals )
-                    
-                    CategoriesPageView(events: arrEvents, categories: arrTags )
-                        .tag( MainPage.categories )
-                    
-                    DataPageView(events: arrEvents,
-                                 goals: arrGoals,
-                                 tags: arrTags,
-                                 mainViewPage: $currentPage,
-                                 currentDay: $currentDay)
-                    .tag( MainPage.data )
-                }
-                .animation(.easeInOut, value: currentPage)
+//                TabView(selection: $currentPage) {
+//                    CalendarPageView(events: arrEvents, goals: arrGoals, dailySummaries: arrSummaries)
+//                        .halfPageScreenReceiver(showing: $showingHalfPage)
+//                        .tag( MainPage.calendar )
+//                    
+//                    GoalsPageView(goals: arrGoals, events: arrEvents, tags: arrTags )
+//                        .tag( MainPage.goals )
+//                    
+//                    CategoriesPageView(events: arrEvents, categories: arrTags )
+//                        .tag( MainPage.categories )
+//                    
+//                    DataPageView(events: arrEvents,
+//                                 goals: arrGoals,
+//                                 tags: arrTags,
+//                                 mainViewPage: $currentPage,
+//                                 currentDay: $currentDay)
+//                    .tag( MainPage.data )
+//                }
+//                .animation(.easeInOut, value: currentPage)
+                
+                CoordinatorView()
 
                 if !showingHalfPage {
                     TabBar(pageSelection: $currentPage)

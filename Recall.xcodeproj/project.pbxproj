@@ -86,6 +86,9 @@
 		C9C470C92CD71BB2004AB489 /* CalendarEventCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C470C82CD71BB2004AB489 /* CalendarEventCarousel.swift */; };
 		C9C470CE2CE6EC84004AB489 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9C470CD2CE6EC84004AB489 /* UIUniversals */; };
 		C9C470D12CE6ECA1004AB489 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C9C470D02CE6ECA1004AB489 /* RealmSwift */; };
+		C9C470D72CE8550D004AB489 /* NavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C470D62CE8550D004AB489 /* NavigationCoordinator.swift */; };
+		C9C470D92CE85578004AB489 /* NavgiationStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C470D82CE85578004AB489 /* NavgiationStyle.swift */; };
+		C9C470DB2CE858B1004AB489 /* NavigationCoordinatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C470DA2CE858B1004AB489 /* NavigationCoordinatorView.swift */; };
 		C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */; };
 		C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */; };
 		C9D299E62CACB83200814965 /* StyledLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D299E52CACB83200814965 /* StyledLocationPicker.swift */; };
@@ -214,6 +217,9 @@
 		C9BF38B92C9A0EA200AA8C3F /* light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = light.png; sourceTree = "<group>"; };
 		C9BFBC922CB4D6FF00ADC110 /* InfiniteScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteScroller.swift; sourceTree = "<group>"; };
 		C9C470C82CD71BB2004AB489 /* CalendarEventCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventCarousel.swift; sourceTree = "<group>"; };
+		C9C470D62CE8550D004AB489 /* NavigationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinator.swift; sourceTree = "<group>"; };
+		C9C470D82CE85578004AB489 /* NavgiationStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavgiationStyle.swift; sourceTree = "<group>"; };
+		C9C470DA2CE858B1004AB489 /* NavigationCoordinatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinatorView.swift; sourceTree = "<group>"; };
 		C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCreationScene.swift; sourceTree = "<group>"; };
 		C9D299E52CACB83200814965 /* StyledLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledLocationPicker.swift; sourceTree = "<group>"; };
@@ -352,6 +358,7 @@
 		C91BCF232A61C380003C6DD6 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				C9C470D22CE854EC004AB489 /* Navigation */,
 				C91BCEF12A618435003C6DD6 /* RecallApp.swift */,
 				C91BCEF32A618435003C6DD6 /* RecallView.swift */,
 				C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */,
@@ -548,6 +555,16 @@
 				C9D299E42CACB81400814965 /* Maps */,
 			);
 			path = Elements;
+			sourceTree = "<group>";
+		};
+		C9C470D22CE854EC004AB489 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				C9C470D62CE8550D004AB489 /* NavigationCoordinator.swift */,
+				C9C470DA2CE858B1004AB489 /* NavigationCoordinatorView.swift */,
+				C9C470D82CE85578004AB489 /* NavgiationStyle.swift */,
+			);
+			path = Navigation;
 			sourceTree = "<group>";
 		};
 		C9D299E42CACB81400814965 /* Maps */ = {
@@ -825,9 +842,11 @@
 				C92284952CC85C8B00280BFA /* StyledPhotoPicker.swift in Sources */,
 				C9186A982A78A2EE00398BF8 /* Charts.swift in Sources */,
 				C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */,
+				C9C470D92CE85578004AB489 /* NavgiationStyle.swift in Sources */,
 				C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */,
 				C98F2F252A94435600E92B30 /* SplashScreen.swift in Sources */,
 				C910FFC02A75FEFE007213EB /* CalendarEventView.swift in Sources */,
+				C9C470D72CE8550D004AB489 /* NavigationCoordinator.swift in Sources */,
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
 				C9F829282CB0C783002342B7 /* LocationManager.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,
@@ -841,6 +860,7 @@
 				C9BFBC932CB4D6FF00ADC110 /* InfiniteScroller.swift in Sources */,
 				C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */,
 				C9186A962A789B9B00398BF8 /* DataPageView.swift in Sources */,
+				C9C470DB2CE858B1004AB489 /* NavigationCoordinatorView.swift in Sources */,
 				C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */,
 				C9E0B17D2B03E5F000318508 /* RecallUpdate.swift in Sources */,
 				C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */,

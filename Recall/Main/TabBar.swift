@@ -13,8 +13,9 @@ import UIUniversals
 //    MARK: Tabbar
 struct TabBar: View {
     @Environment(\.colorScheme) var colorScheme
-    
-    @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+
+    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var coordinator = ReccallNavigationCoordinator.shared
     
     @Namespace private var tabBarNamespace
     @Binding var pageSelection: MainView.MainPage
@@ -29,12 +30,12 @@ struct TabBar: View {
     
 //    MARK: TabBarButton
     @ViewBuilder
-    private func makeTabBarButton(page: MainView.MainPage, icon: String) -> some View {
-        let isActivePage = page == pageSelection
+    private func makeTabBarButton(page: RecallNavigationTab, icon: String) -> some View {
+        let isActivePage = page == coordinator.tab
         
         UniversalButton {
             ZStack {
-                if page == pageSelection {
+                if isActivePage {
                     RoundedRectangle(cornerRadius: 100)
                         .transition(.scale.combined(with: .blurReplace()))
                         .matchedGeometryEffect(id: "highlight", in: tabBarNamespace)
@@ -50,7 +51,7 @@ struct TabBar: View {
             }
             
         } action: {
-            pageSelection = page
+            coordinator.goTo(page)
             
             if page == .calendar {
                 if showingRecallButton { showingCreateEventScreen = true }
@@ -78,7 +79,7 @@ struct TabBar: View {
             
             HStack(spacing: 0) {
                 makeTabBarButton(page: .goals, icon: "flag.checkered")
-                makeTabBarButton(page: .categories, icon: "tag")
+                makeTabBarButton(page: .tags, icon: "tag")
                 makeTabBarButton(page: .data, icon: "chart.bar")
             }
             .padding(surroundingPadding)
