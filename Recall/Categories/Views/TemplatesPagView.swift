@@ -16,7 +16,8 @@ struct TemplatePageView: View {
         let events: [RecallCalendarEvent]
         let template: RecallCalendarEvent
         
-        @State var showingEditingScreen: Bool = false
+        @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+        
         @State var showingDeletionAlert: Bool = false
         
         var body: some View {
@@ -24,7 +25,7 @@ struct TemplatePageView: View {
                 CalendarEventPreviewContentView(event: template, events: events)
                     .contextMenu {
                         ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
-                            showingEditingScreen = true
+                            coordinator.presentSheet(.eventEdittingView(event: template))
                         }
                         
                         ContextMenuButton("untemplate", icon: "viewfinder.rectangular") {
@@ -35,9 +36,6 @@ struct TemplatePageView: View {
                             showingDeletionAlert = true
                         }
                         
-                    }
-                    .sheet(isPresented: $showingEditingScreen) {
-                        CalendarEventCreationView.makeEventCreationView(currentDay: template.startTime, editing: true, event: template)
                     }
             }
             .frame(height: 100)

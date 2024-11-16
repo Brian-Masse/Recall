@@ -116,6 +116,8 @@ struct AverageActivityByTag: View {
 //MARK: ActivitesPerDay
 struct ActivitiesPerDay: View {
     
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+    
     @ViewBuilder
     private func makeChart() -> some View {
         
@@ -152,7 +154,7 @@ struct ActivitiesPerDay: View {
                     .contentShape(Rectangle())
                     .onTapGesture(perform: { point in
                         if let date: Date = proxy.value(atX: point.x) {
-                            page = .calendar
+                            coordinator.goTo(.calendar)
                             currentDay = date
                         }
                         
@@ -212,16 +214,14 @@ struct ActivitiesPerDay: View {
     let data: [DataNode]
     let scrollable: Bool
     
-    @Binding var page: MainView.MainPage
     @Binding var currentDay: Date
     
     @State var loadedDataCount: Int = initialLoadedDataCount
     
-    init( _ title: String, data: [DataNode], scrollable: Bool = false, page: Binding<MainView.MainPage>, currentDay: Binding<Date>) {
+    init( _ title: String, data: [DataNode], scrollable: Bool = false, currentDay: Binding<Date>) {
         self.title = title
         self.data = data
         self.scrollable = scrollable
-        self._page = page
         self._currentDay = currentDay
     }
     

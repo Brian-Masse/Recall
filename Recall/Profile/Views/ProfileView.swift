@@ -16,10 +16,11 @@ struct ProfileView: View {
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     @Namespace var profileNamespace
+    
     @ObservedObject private var colors = Colors.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @State var showingDataTransfer: Bool = false
-    @State var showingEditingView: Bool = false
     @State var ownerID: String = ""
     
 //    When changing items in settings, set these to true to display a save button. This makes edditing settings more seamless.
@@ -469,14 +470,14 @@ struct ProfileView: View {
 //    MARK: Header/Footers
     @ViewBuilder
     private func makePageHeader() -> some View {
-        UniversalText(index.getFullName(), size: Constants.UITitleTextSize, font: Constants.titleFont)
+        UniversalText(index.getFullName(), size: Constants.UIHeaderTextSize, font: Constants.titleFont)
     }
     
     @ViewBuilder
     private func makePageFooter() -> some View {
         VStack {
             HStack {
-                IconButton("pencil", label: "Edit", fullWidth: true) { showingEditingView = true }
+                IconButton("pencil", label: "Edit", fullWidth: true) { coordinator.presentSheet(.indexEditingView(index: index)) }
                 IconButton("arrow.down", label: "Signout", fullWidth: true) {
                     RecallModel.realmManager.logoutUser()
                     RecallModel.realmManager.setState(.splashScreen)
@@ -544,14 +545,6 @@ struct ProfileView: View {
                 }
             } label: { Text( "delete profile" ) }
         }
-        .sheet(isPresented: $showingEditingView) {
-            ProfileEditorView(email: index.email,
-                              phoneNumber: index.phoneNumber,
-                              dateOfBirth: index.dateOfBirth,
-                              firstName: index.firstName,
-                              lastName: index.lastName)
-        }
-        
     }
     
 }

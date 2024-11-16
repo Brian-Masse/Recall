@@ -32,10 +32,7 @@ struct CategoriesPageView: View {
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     
-    @State var showingCreateTagView: Bool = false
-    @State var showingCreateEventView: Bool = false
-    @State var showingCreateFavoriteEventView: Bool = false
-    
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @State var activePage: TagPage = .tags
     
@@ -79,9 +76,9 @@ struct CategoriesPageView: View {
                 Spacer()
                 
                 IconButton("plus", label: activePage.getAddButtonName()) {
-                    if activePage == .tags { showingCreateTagView = true }
-                    if activePage == .templates { showingCreateEventView = true }
-                    if activePage == .favorites { showingCreateFavoriteEventView = true }
+                    if activePage == .tags { coordinator.presentSheet( .tagCreationView(editting: false) ) }
+                    if activePage == .templates { coordinator.presentSheet( .eventCreationView() ) }
+                    if activePage == .favorites { coordinator.presentSheet( .eventCreationView(favorite: true)) }
                 }
             }
             
@@ -117,17 +114,5 @@ struct CategoriesPageView: View {
             }
         }
         .universalBackground()
-        .sheet(isPresented: $showingCreateTagView) {
-            CategoryCreationView(editing: false,
-                                 tag: nil,
-                                 label: "",
-                                 goalRatings: Dictionary())
-        }
-        .sheet(isPresented: $showingCreateEventView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: .now)
-        }
-        .sheet(isPresented: $showingCreateFavoriteEventView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: .now, favorite: true)
-        }
     }
 }

@@ -89,6 +89,7 @@ struct CalendarContainer: View {
     
 //    MARK: Initialization
     @ObservedObject private var viewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     private let events: [RecallCalendarEvent]
     private let summaries: [RecallDailySummary]
@@ -158,7 +159,6 @@ struct CalendarContainer: View {
 //    MARK: EventCreationGesture
     @State private var newEvent: RecallCalendarEvent? = nil
     @State private var creatingEvent: Bool = false
-    @State private var showingEventCreationView: Bool = false
     
     @State private var newEventoffset: Double = 0
     @State private var newEventResizeOffset: Double = 0
@@ -233,14 +233,17 @@ struct CalendarContainer: View {
             .onEnded { _ in withAnimation {
                 if !creatingEvent { return }
                 
+                cleanEvent()
+                
                 creatingEvent = false
                 viewModel.gestureInProgress = false
                 
                 if self.newEventResizeOffset != 0 {
                     self.createEvent()
-                    self.showingEventCreationView = true
+                    coordinator.presentSheet(.eventEdittingView(event: newEvent!))
                 }
             } }
+            
     }
     
 //    MARK: EventCreationPreview
@@ -379,12 +382,6 @@ struct CalendarContainer: View {
                         } }
                     }
                 }
-            }
-            .onChange(of: showingEventCreationView) { if !showingEventCreationView { cleanEvent() } }
-            .sheet(isPresented: $showingEventCreationView) {
-                CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay,
-                                                                editing: true,
-                                                                event: newEvent)
             }
             .halfPageScreen("Select Events", presenting: $viewModel.selecting) {
                 EventSelectionEditorView()

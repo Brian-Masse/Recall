@@ -65,9 +65,9 @@ struct CalendarEventCreationView: View {
 //    This creates an instance of the calendarEventCreationView
 //    it automatically populates the information if you are editting an event
     @ViewBuilder
-    static func makeEventCreationView(currentDay: Date, editing: Bool = false, event: RecallCalendarEvent? = nil, favorite: Bool = false) -> some View {
+    static func makeEventCreationView(editing: Bool = false, event: RecallCalendarEvent? = nil, favorite: Bool = false) -> some View {
         if !editing {
-            let startTime = RecallModel.index.recallEventsAtEndOfLastRecall ? RecallModel.index.getMostRecentRecallEnd(on: currentDay) : .now
+            let startTime = RecallModel.index.recallEventsAtEndOfLastRecall ? RecallModel.index.getMostRecentRecallEnd(on: .now) : .now
             
             CalendarEventCreationView(editing: false,
                                       event: nil,
@@ -76,7 +76,7 @@ struct CalendarEventCreationView: View {
                                       notes: "",
                                       startTime: startTime,
                                       endTime: startTime + RecallModel.index.defaultEventLength,
-                                      day: currentDay,
+                                      day: .now,
                                       category: RecallCategory(),
                                       goalRatings: Dictionary())
         } else {
@@ -101,6 +101,7 @@ struct CalendarEventCreationView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject private var viewModel = StyledPhotoPickerViewModel.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @ObservedResults(RecallCalendarEvent.self,
                      where: { event in event.ownerID == RecallModel.ownerID }) var events
@@ -115,7 +116,6 @@ struct CalendarEventCreationView: View {
     @State private var showingError: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
-    @State private var showingTagCreationView: Bool = false
     
     @State private var showingAllGoals: Bool = false
     @State private var recallByLength: Bool = !RecallModel.index.recallEventsWithEventTime
@@ -131,7 +131,6 @@ struct CalendarEventCreationView: View {
     @State private var notes: String
     
     @State var link: URL?
-    @State private var showingLocationPicker: Bool = false
     @State var location: LocationResult?
     
     @State private var startTime: Date
@@ -338,7 +337,7 @@ struct CalendarEventCreationView: View {
         
         if showingAllTags {
             makeTagList(allTags)
-            LargeRoundedButton("create another tag", icon: "arrow.up", wide: true, foregroundColor: nil, style: .secondary) { showingTagCreationView = true }
+            LargeRoundedButton("create another tag", icon: "arrow.up", wide: true, foregroundColor: nil, style: .secondary) { coordinator.presentSheet(.tagCreationView(editting: false)) }
         }
         
         makeGoalSelector()
@@ -407,16 +406,7 @@ struct CalendarEventCreationView: View {
             }
         }
         .onAppear { onAppear() }
-         .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
-        .sheet(isPresented: $showingTagCreationView) {
-            CategoryCreationView(editing: false,
-                                 tag: nil,
-                                 label: "",
-                                 goalRatings: Dictionary())
-        }
-        .sheet(isPresented: $showingLocationPicker) {
-            StyledLocationPicker($location, title: "Event Location")
-        }
+        .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
         .alert(alertTitle,
                isPresented: $showingAlert) {
             Button("dimiss", role: .cancel) { }

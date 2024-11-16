@@ -18,10 +18,7 @@ struct TabBar: View {
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @Namespace private var tabBarNamespace
-    @Binding var pageSelection: MainView.MainPage
-    
     @State private var showingRecallButton: Bool = true
-    @State private var showingCreateEventScreen: Bool = false
     
     private let buttonPadding: Double = 15
 //
@@ -54,7 +51,7 @@ struct TabBar: View {
             coordinator.goTo(page)
             
             if page == .calendar {
-                if showingRecallButton { showingCreateEventScreen = true }
+                if showingRecallButton { coordinator.presentSheet(.eventCreationView())  }
                 showingRecallButton = true
             }
             else { showingRecallButton = false }
@@ -90,8 +87,5 @@ struct TabBar: View {
             }
         }
         .frame(height: (buttonRadius * 2) + (surroundingPadding * 2) )
-        .sheet(isPresented: $showingCreateEventScreen) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay)
-        }
     }
 }

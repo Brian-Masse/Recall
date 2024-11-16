@@ -11,7 +11,12 @@ import SwiftUI
 //MARK: Screen
 enum RecallNavigationScreen: Identifiable, Hashable {
     case home
-    case recallCalendarEventView( indexOfEvent: Int, events: [RecallCalendarEvent], namespace: Namespace.ID )
+    
+    case recallCalendarEventView( id: Int, events: [RecallCalendarEvent], namespace: Namespace.ID )
+    case recallGoalEventView( goal: RecallGoal, id: String, Namespace: Namespace.ID )
+    
+    case profileView(namespace: Namespace.ID)
+    case monthlyCalendarView(namespace: Namespace.ID)
 
     var id: Self { return self }
 }
@@ -28,20 +33,21 @@ enum RecallNavigationTab: Identifiable, Hashable, CaseIterable {
 
 //MARK: Sheet
 enum RecallNavigationSheet: Identifiable, Hashable {
-    case eventCreationView
+    case eventCreationView( favorite: Bool = false )
     case eventEdittingView( event: RecallCalendarEvent )
     
-    case profileView
-    case monthlyCalendarView
+    case goalCreationView( editting: Bool, goal: RecallGoal? = nil )
+    case tagCreationView( editting: Bool, tag: RecallCategory? = nil)
+    case indexEditingView( index: RecallIndex )
 
     var id: Self { return self }
 }
 
 //MARK: FullScreenCover
 enum RecallFullScreenCover: Identifiable, Hashable {
-    
-    case recallGoalEventView( goal: RecallGoal )
 
+    case none
+    
     var id: Self { return self }
 }
 

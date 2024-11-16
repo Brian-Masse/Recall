@@ -18,7 +18,7 @@ extension TutorialViews {
         @ObservedResults(RecallGoal.self,
                          where: { goal in goal.ownerID == RecallModel.ownerID }) var goals
         
-        @State var showingGoalCreationView: Bool = false
+        @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
         
         @State var name: String = ""
         @State var description: String = ""
@@ -181,12 +181,9 @@ extension TutorialViews {
                     }
                 }
                 
-                LargeRoundedButton("add anohter goal", icon: "arrow.up", wide: true) { showingGoalCreationView = true }
+                LargeRoundedButton("add anohter goal", icon: "arrow.up", wide: true) { coordinator.presentSheet(.goalCreationView(editting: false)) }
             }
             .slideTransition()
-            .sheet(isPresented: $showingGoalCreationView) {
-                GoalCreationView.makeGoalCreationView(editing: false)
-            }
             .onAppear {
                 nextButtonIsActive = true
                 

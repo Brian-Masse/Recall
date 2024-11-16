@@ -42,6 +42,7 @@ struct TestCalendarEventView: View {
     
     @ObservedObject private var calendarViewModel = RecallCalendarViewModel.shared
     @ObservedObject private var imageStoreViewModel = RecallCalendarEventImageStore.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @Environment( \.colorScheme ) var colorScheme
     @Environment( \.dismiss ) var dismiss
@@ -550,10 +551,9 @@ struct TestCalendarEventView: View {
         .task { await onAppear() }
         .background(.black)
         .deleteableCalendarEvent(deletionBool: $showDeleteAlert, event: event)
-        .sheet(isPresented: $showEditView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime,
-                                                            editing: true,
-                                                            event: event)
+        .onChange(of: showEditView) {
+            if showEditView { coordinator.presentSheet(.eventEdittingView(event: event)) }
+            showEditView = false
         }
     }
 }

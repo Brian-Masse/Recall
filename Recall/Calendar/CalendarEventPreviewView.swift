@@ -43,7 +43,8 @@ struct CalendarEventPreviewView: View {
     @Namespace private var namespace
     
     @Environment(\.colorScheme) var colorScheme
-    @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @ObservedRealmObject var event: RecallCalendarEvent
     @ObservedRealmObject var index = RecallModel.index
@@ -62,16 +63,12 @@ struct CalendarEventPreviewView: View {
     @State private var resizeOffset: Double = 0
     @State private var resizeDirection: ResizeDirection = .up
     
-    @State var moving: Bool = false //local variables
-    @State var resizing: Bool = false //used to block the movement gesture while resizing
-    
-    @State var showingEvent: Bool = false
-    @State var showingEditingScreen: Bool = false
-    @State var showingDeletionAlert: Bool = false
-    
+    @State private var moving: Bool = false //local variables
+    @State private var resizing: Bool = false //used to block the movement gesture while resizing
+
+    @State private var showingDeletionAlert: Bool = false
     @State private var indexOfEventInEvents: Int = 0
     
-     
     
 //    MARK: Convenience Functions
     
@@ -150,8 +147,6 @@ struct CalendarEventPreviewView: View {
             }
     }
     
-    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
-    
 //    MARK: Input Response
 //    this function runs anyitme a user selects any option from the context menu
 //    its meant to disable any features that may be incmpatible with the currently performered action
@@ -162,7 +157,7 @@ struct CalendarEventPreviewView: View {
         Task { await findEvent() }
         
         if viewModel.selecting { viewModel.selectEvent(event) }
-        else { coordinator.push(.recallCalendarEventView(indexOfEvent: indexOfEventInEvents, events: events, namespace: namespace)) }
+        else { coordinator.push(.recallCalendarEventView(id: indexOfEventInEvents, events: events, namespace: namespace)) }
     }
 
     
@@ -251,7 +246,7 @@ struct CalendarEventPreviewView: View {
                     
                     ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
                         defaultContextMenuAction()
-                        showingEditingScreen = true
+                        coordinator.presentSheet( .eventEdittingView(event: event) )
                     }
                     
                     ContextMenuButton("duplicate", icon: "rectangle.on.rectangle") {
@@ -281,17 +276,7 @@ struct CalendarEventPreviewView: View {
                 .opacity(resizing || moving ? 0.5 : 1)
                 .padding(2)
                 .simultaneousGesture(drag, including: includeGestures ? .all : .none)
-            
-                .sheet(isPresented: $showingEditingScreen) {
-                    CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
-                }
                 .matchedTransitionSource(id: indexOfEventInEvents, in: namespace)
-            
-//                .fullScreenCover(isPresented: $showingEvent) {
-////                    TestCalendarEventView(event: event, events: events )
-//                    CalendarEventCarousel(events: events, startIndex: indexOfEventInEvents)
-//                }
-            
                 .task { await findEvent() }
 
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)

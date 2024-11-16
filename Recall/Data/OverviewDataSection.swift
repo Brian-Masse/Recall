@@ -15,8 +15,6 @@ struct OverviewDataSection: View {
     @EnvironmentObject var data: RecallDataModel
     
     @Binding var currentDay: Date
-    @Binding var page: MainView.MainPage
-
     
 //    MARK: Body
     var body: some View {
@@ -28,7 +26,6 @@ struct OverviewDataSection: View {
             ActivitiesPerDay("Daily Recalls",
                              data: data.getHourlData(from: .allTime),
                              scrollable: true,
-                             page: $page,
                              currentDay: $currentDay
             )
             EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: .allTime), unit: "HR")

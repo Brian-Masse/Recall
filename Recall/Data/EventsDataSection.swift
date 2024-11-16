@@ -15,7 +15,6 @@ struct EventsDataSection: View {
 //    MARK: Vars
     @EnvironmentObject var data: RecallDataModel
     
-    @Binding var page: MainView.MainPage
     @Binding var currentDay: Date
     
     @State var timePeriod: RecallDataModel.TimePeriod = .allTime
@@ -77,7 +76,6 @@ struct EventsDataSection: View {
                 ActivitiesPerDay("Daily Recalls",
                                  data: data.getHourlData(from: timePeriod),
                                  scrollable: timePeriod == .allTime,
-                                 page: $page,
                                  currentDay: $currentDay)
                 EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: timePeriod), unit: "HR")
                 EventsDataSummaries.ActivityPerTag(data:        data.getCompressedHourlData(from: timePeriod), unit: "HR")
@@ -97,7 +95,6 @@ struct EventsDataSection: View {
                 ActivitiesPerDay("Daily Recalls, by tag",
                                  data: data.`getTagData`(from: timePeriod),
                                  scrollable: timePeriod == .allTime,
-                                 page: $page,
                                  currentDay: $currentDay )
                 EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedTagData(from: timePeriod), unit: "")
                 EventsDataSummaries.ActivityPerTag(data:        data.getCompressedTagData(from: timePeriod), unit: "")

@@ -9,6 +9,10 @@ import Foundation
 import SwiftUI
 
 
+struct RecallnavigationMatchKeys {
+    static let profileView = "profileView"
+    static let monthlyCalendarView = "monthlyCalendarView"
+}
 
 //MARK: RecallNavigationCoordinatorProtocol
 protocol RecallNavigationCoordinatorProtocol: ObservableObject {
@@ -39,13 +43,13 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
 //    MARK: - Navigation methods
     func goTo(_ tab: RecallNavigationTab ) { self.tab = tab }
     
-    func push(_ screen: RecallNavigationScreen) { path.append(screen) }
+    func push(_ screen: RecallNavigationScreen) { withAnimation { path.append(screen) }}
     
     func presentSheet(_ sheet: RecallNavigationSheet) { self.sheet = sheet }
     
     func presentFullScreenCover(_ fullScreenCover: RecallFullScreenCover) { self.fullScreenCover = fullScreenCover }
     
-    func pop() { path.removeLast() }
+    func pop() { withAnimation { path.removeLast() } }
     
     func popToRoot() { path.removeLast(path.count) }
     
@@ -60,23 +64,42 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
         let data: MainView.RecallData
         
         var body: some View {
-            TabView(selection: $coordinator.tab) {
-                ForEach( RecallNavigationTab.allCases ) { tab in
-                    coordinator.build(tab, data: data)
+            ZStack(alignment: .bottom) {
+                TabView(selection: $coordinator.tab) {
+                    ForEach( RecallNavigationTab.allCases ) { tab in
+                        coordinator.build(tab, data: data)
+                    }
                 }
+                
+                TabBar()
+                    .padding(.bottom, 35)
+                    .ignoresSafeArea(.keyboard)
             }
         }
     }
     
+    @MainActor
     @ViewBuilder
     func build(_ screen: RecallNavigationScreen, data: MainView.RecallData) -> some View {
         switch screen {
         case .home:
             MainTabView(data: data)
             
-        case .recallCalendarEventView(indexOfEvent: let index, events: let events, namespace: let namespace):
-            CalendarEventCarousel(events: events, startIndex: index)
-                .navigationTransition(.zoom(sourceID: index, in: namespace))
+        case .recallCalendarEventView(id: let id, events: let events, namespace: let namespace):
+            CalendarEventCarousel(events: events, startIndex: id)
+                .navigationTransition(.zoom(sourceID: id, in: namespace))
+            
+        case .recallGoalEventView(let goal, let id, let namespace):
+            GoalView(goal: goal, events: data.events)
+                .navigationTransition(.zoom(sourceID: id, in: namespace))
+            
+        case .profileView(namespace: let namespace):
+            ProfileView()
+                .navigationTransition(.zoom(sourceID: RecallnavigationMatchKeys.profileView, in: namespace))
+            
+        case .monthlyCalendarView(namespace: let namespace):
+            CalendarPage()
+                .navigationTransition(.zoom(sourceID: RecallnavigationMatchKeys.monthlyCalendarView, in: namespace))
         }
     }
     
@@ -102,7 +125,6 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
             DataPageView(events: data.events,
                          goals: data.goals,
                          tags: data.tags,
-                         mainViewPage: .constant(.calendar),
                          currentDay: .constant(.now))
         }
     }
@@ -112,26 +134,29 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     @ViewBuilder
     func build(_ sheet: RecallNavigationSheet, data: MainView.RecallData) -> some View {
         switch sheet {
-        case .eventCreationView:
-            CalendarEventCreationView.makeEventCreationView(currentDay: .now)
+        case .eventCreationView(let favorite):
+            CalendarEventCreationView.makeEventCreationView(favorite: favorite)
             
         case .eventEdittingView(let event):
-            CalendarEventCreationView.makeEventCreationView(currentDay: .now, editing: true, event: event)
+            CalendarEventCreationView.makeEventCreationView(editing: true, event: event)
             
-        case .profileView:
-            ProfileView()
+        case .goalCreationView(let editing, let goal):
+            if editing { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
+            else { GoalCreationView.makeGoalCreationView(editing: false) }
             
-        case .monthlyCalendarView:
-            CalendarPage()
+        case .tagCreationView(let editing, let tag):
+            if editing { CategoryCreationView.makeCateogryCreationView(editing: true, tag: tag) }
+            else { CategoryCreationView.makeCateogryCreationView(editing: false) }
+            
+        case .indexEditingView(let index):
+            ProfileEditorView.makeProfileEditorView(from: index)
+            
         }
     }
     
 //    MARK: fullScreenCover Provider
     @ViewBuilder
     func build(_ fullScreenCover: RecallFullScreenCover, data: MainView.RecallData) -> some View {
-        switch fullScreenCover {
-        case .recallGoalEventView(let goal):
-            GoalView(goal: goal, events: [])
-        }
+        EmptyView()
     }
 }

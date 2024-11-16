@@ -12,26 +12,12 @@ import UIUniversals
 
 //MARK: MainView
 struct MainView: View {
-    
-//    These are the pages in the main part of the app
-    enum MainPage: Int, Identifiable {
-        case calendar
-        case goals
-        case categories
-        case data
-        
-        var id: Int {
-            self.rawValue
-        }
-    }
-
     struct RecallData {
         let events: [RecallCalendarEvent]
         let goals: [RecallGoal]
         let tags:  [RecallCategory]
         let summaries: [RecallDailySummary]
     }
-    
     
     //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
@@ -43,9 +29,7 @@ struct MainView: View {
     @ObservedResults( RecallCategory.self,
                       where: { tag in tag.ownerID == RecallModel.ownerID } ) var tags
     @ObservedResults( RecallDailySummary.self ) var summaries
-    
-    @State var currentPage: MainPage = .calendar
-    
+
     @State private var showingHalfPage: Bool = false
     
     //    MARK: Body
@@ -54,17 +38,9 @@ struct MainView: View {
         let data = RecallData(events: Array(events), goals: Array(goals), tags: Array(tags), summaries: Array(summaries))
     
         GeometryReader { geo in
-            ZStack(alignment: .bottom) {
-                CoordinatorView(data: data)
-
-                if !showingHalfPage {
-                    TabBar(pageSelection: $currentPage)
-                        .padding(.bottom, 55)
-                        .ignoresSafeArea(.keyboard)
-                }
-                
-                UpdateView()
-            }
+            CoordinatorView(data: data)
+            
+//            UpdateView()
         }
         .ignoresSafeArea(.keyboard)
         .task {

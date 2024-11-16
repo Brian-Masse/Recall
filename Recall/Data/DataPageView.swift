@@ -61,7 +61,6 @@ struct DataPageView: View {
     
     @ObservedObject private var dataModel: RecallDataModel = RecallModel.dataModel
     
-    @Binding var mainViewPage: MainView.MainPage
     @Binding var currentDay: Date
     @State var currentPage: DataPage = .Overview
     
@@ -79,7 +78,7 @@ struct DataPageView: View {
                 .padding(.horizontal, 7)
             
             TabView(selection: $currentPage) {
-                OverviewDataSection(goals: arrGoals, currentDay: $currentDay, page: $mainViewPage)
+                OverviewDataSection(goals: arrGoals, currentDay: $currentDay)
                     .tag(DataPage.Overview)
                     .environmentObject(dataModel )
                     .padding(7)
@@ -91,7 +90,7 @@ struct DataPageView: View {
                     .padding(7)
                     .ignoresSafeArea()
                 
-                EventsDataSection(page: $mainViewPage, currentDay: $currentDay)
+                EventsDataSection(currentDay: $currentDay)
                     .tag(DataPage.Events)
                     .environmentObject(dataModel )
                     .padding(7)

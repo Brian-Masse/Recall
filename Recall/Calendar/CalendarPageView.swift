@@ -26,12 +26,9 @@ struct CalendarPageView: View {
     let dailySummaries: [RecallDailySummary]
     
     @Environment(\.colorScheme) private var colorScheme
-    @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
-    @State var showingCreateEventView: Bool = false
-    @State var showingProfileView: Bool = false
-    @State var showingDonationView: Bool = false
-    @State var showingCalendarView: Bool = false
+    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @State var slideDirection: AnyTransition.SlideDirection = .right
     
@@ -135,14 +132,14 @@ struct CalendarPageView: View {
             
             
             RecallIcon("calendar")
-                .padding(.leading)
-                .contentShape(Rectangle())
-                .onTapGesture { showingCalendarView = true }
+                .rectangularBackground(style: .secondary)
+                .matchedTransitionSource(id: RecallnavigationMatchKeys.monthlyCalendarView, in: calendarPageViewNameSpace)
+                .onTapGesture { coordinator.push(.monthlyCalendarView(namespace: calendarPageViewNameSpace)) }
             
             RecallIcon("person")
-                .padding(.horizontal)
-                .contentShape(Rectangle())
-                .onTapGesture { showingProfileView = true }
+                .rectangularBackground(style: .secondary)
+                .matchedTransitionSource(id: RecallnavigationMatchKeys.profileView, in: calendarPageViewNameSpace)
+                .onTapGesture { coordinator.push(.profileView(namespace: calendarPageViewNameSpace)) }
         }
         
         
@@ -301,15 +298,6 @@ struct CalendarPageView: View {
             CalendarContainer(events: Array(events), summaries: dailySummaries)
         }
         .padding(7)
-        .sheet(isPresented: $showingCreateEventView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: viewModel.currentDay)
-        }
-        .sheet(isPresented: $showingProfileView) {
-            ProfileView()
-        }
-        .sheet(isPresented: $showingCalendarView) {
-            CalendarPage()
-        }
         .universalBackground()
         
     }
