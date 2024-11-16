@@ -15,7 +15,7 @@ struct TabBar: View {
     @Environment(\.colorScheme) var colorScheme
 
     @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
-    @ObservedObject private var coordinator = ReccallNavigationCoordinator.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @Namespace private var tabBarNamespace
     @Binding var pageSelection: MainView.MainPage

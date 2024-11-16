@@ -40,6 +40,8 @@ struct CalendarEventPreviewView: View {
     }
     
 //    MARK: Vars
+    @Namespace private var namespace
+    
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
     
@@ -148,6 +150,8 @@ struct CalendarEventPreviewView: View {
             }
     }
     
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+    
 //    MARK: Input Response
 //    this function runs anyitme a user selects any option from the context menu
 //    its meant to disable any features that may be incmpatible with the currently performered action
@@ -158,7 +162,7 @@ struct CalendarEventPreviewView: View {
         Task { await findEvent() }
         
         if viewModel.selecting { viewModel.selectEvent(event) }
-        else { showingEvent = true }
+        else { coordinator.push(.recallCalendarEventView(indexOfEvent: indexOfEventInEvents, events: events, namespace: namespace)) }
     }
 
     
@@ -281,11 +285,12 @@ struct CalendarEventPreviewView: View {
                 .sheet(isPresented: $showingEditingScreen) {
                     CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime, editing: true, event: event)
                 }
+                .matchedTransitionSource(id: indexOfEventInEvents, in: namespace)
             
-                .fullScreenCover(isPresented: $showingEvent) {
-//                    TestCalendarEventView(event: event, events: events )
-                    CalendarEventCarousel(events: events, startIndex: indexOfEventInEvents)
-                }
+//                .fullScreenCover(isPresented: $showingEvent) {
+////                    TestCalendarEventView(event: event, events: events )
+//                    CalendarEventCarousel(events: events, startIndex: indexOfEventInEvents)
+//                }
             
                 .task { await findEvent() }
 

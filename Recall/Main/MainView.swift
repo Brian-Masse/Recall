@@ -25,6 +25,12 @@ struct MainView: View {
         }
     }
 
+    struct RecallData {
+        let events: [RecallCalendarEvent]
+        let goals: [RecallGoal]
+        let tags:  [RecallCategory]
+        let summaries: [RecallDailySummary]
+    }
     
     
     //    MARK: Vars
@@ -39,48 +45,17 @@ struct MainView: View {
     @ObservedResults( RecallDailySummary.self ) var summaries
     
     @State var currentPage: MainPage = .calendar
-    @State var shouldRefreshData: Bool = false
-    @State var currentDay: Date = .now
     
     @State private var showingHalfPage: Bool = false
     
-    @State var canDrag = false
-    
-    @State var uiTabarController: UITabBarController?
-    
     //    MARK: Body
-    @State private var location: LocationResult? = nil
-    
     var body: some View {
         
-        let arrEvents = Array(events)
-        let arrGoals = Array(goals)
-        let arrTags = Array(tags)
-        let arrSummaries = Array(summaries)
+        let data = RecallData(events: Array(events), goals: Array(goals), tags: Array(tags), summaries: Array(summaries))
     
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-//                TabView(selection: $currentPage) {
-//                    CalendarPageView(events: arrEvents, goals: arrGoals, dailySummaries: arrSummaries)
-//                        .halfPageScreenReceiver(showing: $showingHalfPage)
-//                        .tag( MainPage.calendar )
-//                    
-//                    GoalsPageView(goals: arrGoals, events: arrEvents, tags: arrTags )
-//                        .tag( MainPage.goals )
-//                    
-//                    CategoriesPageView(events: arrEvents, categories: arrTags )
-//                        .tag( MainPage.categories )
-//                    
-//                    DataPageView(events: arrEvents,
-//                                 goals: arrGoals,
-//                                 tags: arrTags,
-//                                 mainViewPage: $currentPage,
-//                                 currentDay: $currentDay)
-//                    .tag( MainPage.data )
-//                }
-//                .animation(.easeInOut, value: currentPage)
-                
-                CoordinatorView()
+                CoordinatorView(data: data)
 
                 if !showingHalfPage {
                     TabBar(pageSelection: $currentPage)
@@ -94,7 +69,7 @@ struct MainView: View {
         .ignoresSafeArea(.keyboard)
         .task {
             Constants.setupConstants()
-            RecallModel.dataModel.storeData( events: arrEvents, goals: arrGoals )
+            RecallModel.dataModel.storeData( events: data.events, goals: data.goals )
         }
         .onChange(of: events) { RecallModel.dataModel.storeData( events: Array(events)) }
         .universalBackground()

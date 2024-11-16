@@ -112,22 +112,20 @@ class RecallCalendarViewModel: ObservableObject {
     }}
     
 //    MARK: Event Filtering
-    static func dateKey(from date: Date) -> String { date.formatted(date: .complete, time: .omitted) }
-    
     func loadEvents( for day: Date, in events: [RecallCalendarEvent] ) async {
         
         if abs(currentDay.timeIntervalSince(day) / Constants.DayTime) > 4 { return }
         
-        let key = RecallCalendarViewModel.dateKey(from: day)
+        let key = day.getDayKey()
         if filteredEvents[key] != nil { return }
         
         let filteredEvents = events.filter { event in
-            let startKey = RecallCalendarViewModel.dateKey(from: event.startTime)
+            let startKey = event.startTime.getDayKey()
             return key == startKey
         }.sorted { event1, event2 in
             event1.startTime < event2.startTime
         }
-
+        
         DispatchQueue.main.sync {
             withAnimation {
                 self.filteredEvents[key] = filteredEvents
@@ -137,7 +135,7 @@ class RecallCalendarViewModel: ObservableObject {
     }
     
     func getEvents(on day: Date) -> [RecallCalendarEvent] {
-        let key = RecallCalendarViewModel.dateKey(from: day)
+        let key = day.getDayKey()
         
         if let events = filteredEvents[key] {
             return events
@@ -149,7 +147,6 @@ class RecallCalendarViewModel: ObservableObject {
 //    called when the events refresh remotely from the server
     func invalidateEvents(newEvents: [RecallCalendarEvent]) {
         self.filteredEvents = [:]
-        
         Task {
 //            render the day to the left
             await loadEvents(for: currentDay + Constants.DayTime, in: newEvents )

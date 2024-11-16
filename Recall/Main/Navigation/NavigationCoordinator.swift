@@ -27,15 +27,16 @@ protocol RecallNavigationCoordinatorProtocol: ObservableObject {
 
 
 // MARK: AppCoordinator
-class ReccallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
+class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     
     @Published var path: NavigationPath = NavigationPath()
     @Published var tab: RecallNavigationTab = .calendar
     @Published var sheet: RecallNavigationSheet?
     @Published var fullScreenCover: RecallFullScreenCover?
     
-    static var shared: ReccallNavigationCoordinator = ReccallNavigationCoordinator()
+    static var shared: RecallNavigationCoordinator = RecallNavigationCoordinator()
     
+//    MARK: - Navigation methods
     func goTo(_ tab: RecallNavigationTab ) { self.tab = tab }
     
     func push(_ screen: RecallNavigationScreen) { path.append(screen) }
@@ -54,50 +55,62 @@ class ReccallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     
 //    MARK: - Screen Provider
     private struct MainTabView: View {
-        @ObservedObject private var coordinator = ReccallNavigationCoordinator.shared
+        @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+        
+        let data: MainView.RecallData
         
         var body: some View {
             TabView(selection: $coordinator.tab) {
                 ForEach( RecallNavigationTab.allCases ) { tab in
-                    coordinator.build(tab)
+                    coordinator.build(tab, data: data)
                 }
             }
         }
     }
     
     @ViewBuilder
-    func build(_ screen: RecallNavigationScreen) -> some View {
+    func build(_ screen: RecallNavigationScreen, data: MainView.RecallData) -> some View {
         switch screen {
         case .home:
-            MainTabView()
+            MainTabView(data: data)
             
-        case .recallCalendarEventView(event: let event):
-            TestCalendarEventView(event: event, events: [])
+        case .recallCalendarEventView(indexOfEvent: let index, events: let events, namespace: let namespace):
+            CalendarEventCarousel(events: events, startIndex: index)
+                .navigationTransition(.zoom(sourceID: index, in: namespace))
         }
     }
     
 //    MARK: Tab Provider 
     @ViewBuilder
-    private func build(_ tab: RecallNavigationTab ) -> some View {
+    private func build(_ tab: RecallNavigationTab, data: MainView.RecallData ) -> some View {
         switch tab {
         case .calendar:
-            CalendarPageView(events: [], goals: [], dailySummaries: [])
+            CalendarPageView(events: data.events,
+                             goals: data.goals,
+                             dailySummaries: data.summaries)
             
         case .goals:
-            GoalsPageView(goals: [], events: [], tags: [])
+            GoalsPageView(goals: data.goals,
+                          events: data.events,
+                          tags: data.tags)
             
         case .tags:
-            CategoriesPageView(events: [], categories: [])
+            CategoriesPageView(events: data.events,
+                               categories: data.tags)
             
         case .data:
-            DataPageView(events: [], goals: [], tags: [], mainViewPage: .constant(.calendar), currentDay: .constant(.now))
+            DataPageView(events: data.events,
+                         goals: data.goals,
+                         tags: data.tags,
+                         mainViewPage: .constant(.calendar),
+                         currentDay: .constant(.now))
         }
     }
     
 //    MARK: Sheet Provider
     @MainActor
     @ViewBuilder
-    func build(_ sheet: RecallNavigationSheet) -> some View {
+    func build(_ sheet: RecallNavigationSheet, data: MainView.RecallData) -> some View {
         switch sheet {
         case .eventCreationView:
             CalendarEventCreationView.makeEventCreationView(currentDay: .now)
@@ -115,7 +128,7 @@ class ReccallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     
 //    MARK: fullScreenCover Provider
     @ViewBuilder
-    func build(_ fullScreenCover: RecallFullScreenCover) -> some View {
+    func build(_ fullScreenCover: RecallFullScreenCover, data: MainView.RecallData) -> some View {
         switch fullScreenCover {
         case .recallGoalEventView(let goal):
             GoalView(goal: goal, events: [])

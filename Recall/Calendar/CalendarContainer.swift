@@ -303,6 +303,9 @@ struct CalendarContainer: View {
                         let day = Date.now.resetToStartOfDay() + Double(i - dayCount) * Constants.DayTime
                         
                         ZStack(alignment: .top) {
+                            
+                            
+                            
                             CalendarView(events: viewModel.getEvents(on: day),
                                              on: day)
                             makeEventCreationPreview(on: 1 - calculateSubDayIndex(on: day))

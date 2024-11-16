@@ -11,7 +11,7 @@ import SwiftUI
 //MARK: Screen
 enum RecallNavigationScreen: Identifiable, Hashable {
     case home
-    case recallCalendarEventView( event: RecallCalendarEvent )
+    case recallCalendarEventView( indexOfEvent: Int, events: [RecallCalendarEvent], namespace: Namespace.ID )
 
     var id: Self { return self }
 }
