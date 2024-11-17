@@ -13,7 +13,7 @@ import MapKit
 
 //TODO: Fix the Gesture Overlap for dismissing / swiping
 //TODO: Fix the fact that multiple sheets cannot be overlayed ontop of one another
-//TODO: Fix the start height of the calendarpage
+//TODO: Reorganize ViewModels
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {

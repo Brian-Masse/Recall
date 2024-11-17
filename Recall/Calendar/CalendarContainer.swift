@@ -375,7 +375,7 @@ struct CalendarContainer: View {
                         }
                         .simultaneousGesture(scaleGesture)
                         .scrollDisabled(viewModel.gestureInProgress)
-                        .onAppear { proxy.scrollTo("scrollTarget", anchor: .top) }
+                        .onAppear { DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { proxy.scrollTo("scrollTarget", anchor: .top) } }
                         .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
                             makeCalendarLabels()
                                 .padding(.leading, calendarLabelWidth)
