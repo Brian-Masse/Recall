@@ -8,6 +8,9 @@
 import Foundation
 import SwiftUI
 
+//this stores a limitted number of the decoded image data from events
+//it is written whe opening the calendarCreationView and CalendarEventView
+//it is read to save time on the decoding process
 class RecallCalendarEventImageStore: ObservableObject {
     
     private var imageStoreSize: Int = 0

@@ -223,7 +223,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
             withAnimation { thawed.calendarDensity = value }
         }
         
-        RecallCalendarViewModel.shared.getScale(from: value)
+        RecallCalendarContainerViewModel.shared.getScale(from: value)
     }
     
     @MainActor

@@ -12,7 +12,6 @@ import UIUniversals
 import MapKit
 
 //TODO: Fix the Gesture Overlap for dismissing / swiping
-//TODO: Reorganize ViewModels
 //TODO: Rework the selection editor
 //TODO: Rework the tags page view
 
@@ -45,7 +44,7 @@ extension View {
 //MARK: RecallCalendarEventView
 struct RecallCalendarEventView: View {
     
-    @ObservedObject private var calendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var calendarViewModel = RecallCalendarContainerViewModel.shared
     @ObservedObject private var imageStoreViewModel = RecallCalendarEventImageStore.shared
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     

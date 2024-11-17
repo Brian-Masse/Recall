@@ -51,7 +51,7 @@ struct EmptyCalendarView: View {
         }
     }
     
-    @ObservedObject private var viewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     
     private let startHour: Int
     private let endHour: Int
@@ -88,7 +88,7 @@ struct EmptyCalendarView: View {
 struct CalendarContainer: View {
     
 //    MARK: Initialization
-    @ObservedObject private var viewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     private let events: [RecallCalendarEvent]

@@ -200,7 +200,7 @@ struct CalendarView: View {
     }
     
 //    MARK: Initialization
-    @ObservedObject private var viewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     
     private let events: [RecallCalendarEvent]
     private let day: Date

@@ -142,7 +142,7 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
                 .safeZoomTransition(id: RecallnavigationMatchKeys.profileView, namespace: namespace)
             
         case .monthlyCalendarView(namespace: let namespace):
-            CalendarPage()
+            MonthlyCalendarView()
                 .safeZoomTransition(id: RecallnavigationMatchKeys.monthlyCalendarView, namespace: namespace)
         }
     }

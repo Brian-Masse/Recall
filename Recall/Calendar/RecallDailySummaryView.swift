@@ -14,7 +14,7 @@ struct RecallDailySummaryView: View {
 //    MARK: Vars
     let summaries: [RecallDailySummary]
     
-    @ObservedObject private var viewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     
     @State private var dailySummary: RecallDailySummary? = nil
     

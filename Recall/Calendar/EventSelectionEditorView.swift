@@ -20,7 +20,7 @@ struct EventSelectionEditorView: View {
 //    
 //    @Binding var selection: [ RecallCalendarEvent ]
     
-    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
     
     @State private var date: Date = Date.now
     

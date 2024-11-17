@@ -1,5 +1,5 @@
 //
-//  CalendarPage.swift
+//  MonthlyCalendarView.swift
 //  Recall
 //
 //  Created by Brian Masse on 8/6/24.
@@ -10,76 +10,7 @@ import SwiftUI
 import UIUniversals
 import RealmSwift
 
-//MARK: CalendarPageViewModel
-class CalendarPageViewModel: ObservableObject {
-    
-    static let shared: CalendarPageViewModel = CalendarPageViewModel()
-    
-    var rendered: Bool = false
-    
-    var recallLog: [String: Bool] = [:]
-    private var renderedMonths: [String: Bool] = [:]
-    
-    
-    private func getStartOfMonth(for date: Date) -> Date {
-        Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Calendar.current.startOfDay(for: date)))!
-    }
-    
-    @MainActor
-    func recallWasCompleted(on date: Date) -> Bool { recallLog[ date.getDayKey() ] ?? false }
-    
-    @MainActor
-    func recallWasCompleted(key: String) -> Bool { recallLog[ key ] ?? false }
-        
-    @MainActor
-    func renderCalendar( events: [RecallCalendarEvent] ) {
-        if events.isEmpty { return }
-        if self.rendered { return }
-        
-        var currentKey = events[0].startTime.getDayKey()
-        for event in events {
-            
-            let key = event.startTime.getDayKey()
-            if key != currentKey {
-                self.recallLog[ currentKey ] = true
-                currentKey = key
-            }
-        }
-        
-        print("done!")
-        self.rendered = true
-        self.objectWillChange.send()
-    }
-    
-    func renderMonth(_ month: Date, events: [RecallCalendarEvent]) async {
-        if self.renderedMonths[ month.getMonthKey() ] ?? false { return }
-        
-        let startOfMonth = getStartOfMonth(for: month)
-        let endOfMonth = Calendar.current.date(byAdding: .month, value: 1, to: startOfMonth)!
-        
-        let events = events.filter { event in
-            event.startTime > startOfMonth && event.startTime < endOfMonth
-        }
-        
-        var currentDay = -1
-        
-        for event in events {
-            let dayNum = Calendar.current.component(.day, from: event.startTime)
-            
-            if dayNum > 0 {
-                self.recallLog[event.startTime.getDayKey()] = true
-                currentDay += 1
-            }
-        }
-        self.renderedMonths[ month.getMonthKey() ] = true
-        
-//        DispatchQueue.main.sync {
-//            self.objectWillChange.send()
-//        }
-    }
-}
-
-struct CalendarPage: View {
+struct MonthlyCalendarView: View {
 //    MARK: LocalConstants
     private struct LocalConstants {
         static let gridSpacing: Double = 5
@@ -92,7 +23,7 @@ struct CalendarPage: View {
     @Environment(\.colorScheme) var colorScheme
     
     @ObservedObject var viewModel = CalendarPageViewModel.shared
-    @ObservedObject var calendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject var calendarViewModel = RecallCalendarContainerViewModel.shared
     
     @ObservedResults(RecallCalendarEvent.self) var events
     
@@ -181,7 +112,7 @@ struct CalendarPage: View {
         @Environment(\.dismiss) var dismiss
         
         private let viewModel = CalendarPageViewModel.shared
-        private let calendarViewModel = RecallCalendarViewModel.shared
+        private let calendarViewModel = RecallCalendarContainerViewModel.shared
         
         @State private var date: Date = .now
         @State private var recallWasCompleted: Bool = false
@@ -191,7 +122,7 @@ struct CalendarPage: View {
         let startOfMonth: Date
         let width: Double
         
-        private func getDate() async -> Date { startOfMonth + (Constants.DayTime * Double(day - 1)) }
+        private func getDate() async -> Date { startOfMonth + (Constants.DayTime * Double(day)) }
         
         private func checkCompletion() async -> Bool { viewModel.recallWasCompleted(on: date) }
         
@@ -246,9 +177,6 @@ struct CalendarPage: View {
                 let month = Calendar.current.date(byAdding: .month, value: i, to: .now)!
                 
                 makeMonth(month, in: width)
-//                    .task {
-//                        await viewModel.renderMonth(month, events: arrEvents)
-//                    }
             }
         }
     }
@@ -320,6 +248,6 @@ struct CalendarPage: View {
 
 #Preview {
     
-    CalendarPage()
+    MonthlyCalendarView()
     
 }

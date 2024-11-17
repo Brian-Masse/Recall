@@ -27,7 +27,7 @@ struct CalendarPageView: View {
     
     @Environment(\.colorScheme) private var colorScheme
     
-    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @State var slideDirection: AnyTransition.SlideDirection = .right

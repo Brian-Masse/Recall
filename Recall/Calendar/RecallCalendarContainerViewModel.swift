@@ -1,5 +1,5 @@
 //
-//  RecallCalendarViewModel.swift
+//  RecallCalendarContainerViewModel.swift
 //  Recall
 //
 //  Created by Brian Masse on 8/21/24.
@@ -9,9 +9,10 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
-class RecallCalendarViewModel: ObservableObject {
+// handles the events, currentDay, and selections of the calendarContainer
+class RecallCalendarContainerViewModel: ObservableObject {
     
-    static let shared = RecallCalendarViewModel()
+    static let shared = RecallCalendarContainerViewModel()
     
     //    MARK: Vars
     var filteredEvents: [String:[RecallCalendarEvent]] = [:]

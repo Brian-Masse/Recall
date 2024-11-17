@@ -43,7 +43,7 @@ struct CalendarEventPreviewView: View {
     @Namespace private var namespace
     
     @Environment(\.colorScheme) var colorScheme
-    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @ObservedRealmObject var event: RecallCalendarEvent

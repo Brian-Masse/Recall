@@ -14,7 +14,7 @@ import UIUniversals
 struct TabBar: View {
     @Environment(\.colorScheme) var colorScheme
 
-    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @Namespace private var tabBarNamespace

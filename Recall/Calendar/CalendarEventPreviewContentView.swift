@@ -14,7 +14,7 @@ struct CalendarEventPreviewContentView: View {
     
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
-    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
     
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
