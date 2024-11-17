@@ -241,7 +241,7 @@ struct CalendarView: View {
                     let eventStartHour = Calendar.current.component(.hour, from: event.startTime)
                     let eventEndHour = Calendar.current.component(.hour, from: event.endTime)
                     
-                    if eventEndHour >= Int(startHour) && eventStartHour <= endHour {
+                    if max(eventEndHour, eventStartHour) >= Int(startHour) && min(eventStartHour, eventEndHour) <= endHour {
 
                         let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
                                                        relativeTo: startOfDay)

@@ -13,7 +13,6 @@ import MapKit
 
 //TODO: Fix the Gesture Overlap for dismissing / swiping
 //TODO: Rework the tags page view
-//TODO: Events that go between days on the preview
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {

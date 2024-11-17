@@ -101,6 +101,8 @@ struct CalendarContainer: View {
     
     @State private var showingSummaryView: Bool = false
     
+    @State private var scrolledToEvents: Bool = false
+    
     init(events: [RecallCalendarEvent], summaries: [RecallDailySummary]) {
         self.events = events
         self.summaries = summaries
@@ -375,7 +377,11 @@ struct CalendarContainer: View {
                         }
                         .simultaneousGesture(scaleGesture)
                         .scrollDisabled(viewModel.gestureInProgress)
-                        .onAppear { DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { proxy.scrollTo("scrollTarget", anchor: .top) } }
+                        .onAppear { if !scrolledToEvents {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                proxy.scrollTo("scrollTarget", anchor: .top) }
+                                scrolledToEvents = true
+                        } }
                         .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
                             makeCalendarLabels()
                                 .padding(.leading, calendarLabelWidth)

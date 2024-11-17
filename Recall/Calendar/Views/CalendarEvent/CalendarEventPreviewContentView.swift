@@ -129,7 +129,6 @@ struct CalendarEventPreviewContentView: View {
             
             Rectangle()
                 .opacity(0.25)
-                .opacity(viewModel.selecting && !isSelected ? 0.3 : 1)
             
             RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5)
                 .stroke(style: .init(lineWidth: 2))
@@ -145,6 +144,13 @@ struct CalendarEventPreviewContentView: View {
                 .padding(.leading, 10)
                 .padding(.horizontal, 12)
                 .padding(.vertical, verticalPadding(in: geo))
+            
+            
+            if viewModel.selecting && !isSelected {
+                Rectangle()
+                    .opacity(0.25)
+                    .foregroundStyle(colorScheme == .light ? .white : .black)
+            }
         }
         .foregroundStyle(event.getColor() )
         .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))
