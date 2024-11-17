@@ -383,9 +383,6 @@ struct CalendarContainer: View {
                     }
                 }
             }
-            .halfPageScreen("Select Events", presenting: $viewModel.selecting) {
-                EventSelectionEditorView()
-            }
         }
     }
 }

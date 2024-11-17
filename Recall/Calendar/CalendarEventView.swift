@@ -12,10 +12,7 @@ import UIUniversals
 import MapKit
 
 //TODO: Fix the Gesture Overlap for dismissing / swiping
-//TODO: Rework the selection editor
 //TODO: Rework the tags page view
-//TODO: Better duration label
-//TODO: Full Title
 //TODO: Events that go between days on the preview
 
 //MARK: DeletableCalendarEvent

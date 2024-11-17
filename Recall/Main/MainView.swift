@@ -29,25 +29,19 @@ struct MainView: View {
     @ObservedResults( RecallCategory.self,
                       where: { tag in tag.ownerID == RecallModel.ownerID } ) var tags
     @ObservedResults( RecallDailySummary.self ) var summaries
-
-    @State private var showingHalfPage: Bool = false
     
     //    MARK: Body
     var body: some View {
         
         let data = RecallData(events: Array(events), goals: Array(goals), tags: Array(tags), summaries: Array(summaries))
     
-        GeometryReader { geo in
-            CoordinatorView(data: data)
-            
-//            UpdateView()
-        }
-        .ignoresSafeArea(.keyboard)
-        .task {
-            Constants.setupConstants()
-            RecallModel.dataModel.storeData( events: data.events, goals: data.goals )
-        }
-        .onChange(of: events) { RecallModel.dataModel.storeData( events: Array(events)) }
-        .universalBackground()
+        CoordinatorView(data: data)
+            .ignoresSafeArea(.keyboard)
+            .task {
+                Constants.setupConstants()
+                RecallModel.dataModel.storeData( events: data.events, goals: data.goals )
+            }
+            .onChange(of: events) { RecallModel.dataModel.storeData( events: Array(events)) }
+            .universalBackground()
     }
 }

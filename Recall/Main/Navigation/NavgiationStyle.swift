@@ -43,6 +43,13 @@ enum RecallNavigationSheet: Identifiable, Hashable {
     var id: Self { return self }
 }
 
+//MARK: HalfScreenSheet
+enum RecallNavigationHalfScreenSheet: Identifiable, Hashable {
+    case selectionView
+
+    var id: Self { return self }
+}
+
 //MARK: FullScreenCover
 enum RecallFullScreenCover: Identifiable, Hashable {
 

@@ -112,6 +112,11 @@ class RecallCalendarContainerViewModel: ObservableObject {
         }
     }}
     
+    func stopSelecting() { withAnimation {
+        self.selection = []
+        self.selecting = false
+    } }
+    
 //    MARK: Event Filtering
     func loadEvents( for day: Date, in events: [RecallCalendarEvent] ) async {
         

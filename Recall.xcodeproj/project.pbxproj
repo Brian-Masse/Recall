@@ -61,7 +61,6 @@
 		C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F067D2A6B215400C99EA0 /* GoalView.swift */; };
 		C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C954AAD02A76FA4E00897BCE /* Animations.swift */; };
 		C98198DA2AE9E46D0039AF9C /* EventSelectionEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98198D92AE9E46D0039AF9C /* EventSelectionEditorView.swift */; };
-		C98198DC2AE9ECC90039AF9C /* HalfPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98198DB2AE9ECC90039AF9C /* HalfPageView.swift */; };
 		C98573442B8936AE001D9895 /* AndaleMono.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C98573432B8936AE001D9895 /* AndaleMono.ttf */; };
 		C98573462B8A7A13001D9895 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98573452B8A7A13001D9895 /* CalendarView.swift */; };
 		C98573482B8A7A58001D9895 /* StyledCalendarContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98573472B8A7A58001D9895 /* StyledCalendarContainerView.swift */; };
@@ -199,7 +198,6 @@
 		C94F067D2A6B215400C99EA0 /* GoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalView.swift; sourceTree = "<group>"; };
 		C954AAD02A76FA4E00897BCE /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
 		C98198D92AE9E46D0039AF9C /* EventSelectionEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSelectionEditorView.swift; sourceTree = "<group>"; };
-		C98198DB2AE9ECC90039AF9C /* HalfPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfPageView.swift; sourceTree = "<group>"; };
 		C98573432B8936AE001D9895 /* AndaleMono.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AndaleMono.ttf; sourceTree = "<group>"; };
 		C98573452B8A7A13001D9895 /* CalendarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		C98573472B8A7A58001D9895 /* StyledCalendarContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledCalendarContainerView.swift; sourceTree = "<group>"; };
@@ -368,7 +366,6 @@
 				C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */,
 				C91A812D2C77DB6F00EFF561 /* TabBar.swift */,
 				C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */,
-				C98198DB2AE9ECC90039AF9C /* HalfPageView.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -822,7 +819,6 @@
 				C98F2F302A9D3F3300E92B30 /* TagsCreationScene.swift in Sources */,
 				C91BCF3C2A61E3EE003C6DD6 /* MainView.swift in Sources */,
 				C9E3E0182C8A9DFB000E0911 /* CalendarContainer.swift in Sources */,
-				C98198DC2AE9ECC90039AF9C /* HalfPageView.swift in Sources */,
 				C9EA0EE52A6B48F200E36EF1 /* CategoriesPageView.swift in Sources */,
 				C9E3E02F2C9207B5000E0911 /* CactusTimeDial.swift in Sources */,
 				C94B1F162A6891E9007E8537 /* CalendarPageView.swift in Sources */,

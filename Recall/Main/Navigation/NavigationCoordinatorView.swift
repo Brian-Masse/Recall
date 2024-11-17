@@ -26,12 +26,20 @@ struct CoordinatorView: View {
                         .navigationBarBackButtonHidden(true)
                         .navigationBarHidden(true)
                 }
+                .sheet( item: $appCoordinator.halfScreenSheet, onDismiss: { if let dismiss = appCoordinator.halfScreenSheetDismiss {
+                    dismiss()
+                } } ) { sheet in
+                    appCoordinator.build(sheet, data: data)
+                        .presentationDetents([ .fraction(0.25), .large ])
+                        .presentationBackgroundInteraction(.enabled)
+                }
             
                 .sheet(item: $appCoordinator.sheet) { sheet in
                     appCoordinator.build(sheet, data: data)
                         .navigationTitle("")
                         .navigationBarBackButtonHidden(true)
                         .navigationBarHidden(true)
+                    
                         .sheet(item: $appCoordinator.sheet2) { sheet in
                             appCoordinator.build(sheet, data: data)
                                 .navigationTitle("")

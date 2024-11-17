@@ -77,6 +77,10 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     @Published var tab: RecallNavigationTab = .calendar
     @Published var sheet: RecallNavigationSheet?
     @Published var sheet2: RecallNavigationSheet?
+    
+    @Published var halfScreenSheet: RecallNavigationHalfScreenSheet?
+    @Published var halfScreenSheetDismiss: (() -> Void)?
+    
     @Published var fullScreenCover: RecallFullScreenCover?
     
     static var shared: RecallNavigationCoordinator = RecallNavigationCoordinator()
@@ -89,6 +93,11 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     func presentSheet(_ sheet: RecallNavigationSheet) {
         if self.sheet == nil { self.sheet = sheet }
         else { self.sheet2 = sheet }
+    }
+    
+    func presentSheet(_ sheet: RecallNavigationHalfScreenSheet, onDismiss: (() -> Void)? = nil) {
+        self.halfScreenSheet = sheet
+        self.halfScreenSheetDismiss = onDismiss
     }
     
     func presentFullScreenCover(_ fullScreenCover: RecallFullScreenCover) { self.fullScreenCover = fullScreenCover }
@@ -195,6 +204,14 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
         case .indexEditingView(let index):
             ProfileEditorView.makeProfileEditorView(from: index)
             
+        }
+    }
+    
+    @ViewBuilder
+    func build(_ sheet: RecallNavigationHalfScreenSheet, data: MainView.RecallData) -> some View {
+        switch sheet {
+        case .selectionView:
+            EventSelectionEditorView()
         }
     }
     
