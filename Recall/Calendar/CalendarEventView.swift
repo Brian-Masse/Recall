@@ -11,6 +11,10 @@ import RealmSwift
 import UIUniversals
 import MapKit
 
+//TODO: Fix the Gesture Overlap for dismissing / swiping
+//TODO: Fix the fact that multiple sheets cannot be overlayed ontop of one another
+//TODO: Fix the start height of the calendarpage
+
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
     
@@ -37,15 +41,14 @@ extension View {
 }
 
 
-//MARK: TestCalendarEventView
-struct TestCalendarEventView: View {
+//MARK: RecallCalendarEventView
+struct RecallCalendarEventView: View {
     
     @ObservedObject private var calendarViewModel = RecallCalendarViewModel.shared
     @ObservedObject private var imageStoreViewModel = RecallCalendarEventImageStore.shared
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @Environment( \.colorScheme ) var colorScheme
-    @Environment( \.dismiss ) var dismiss
     
 //    MARK: Vars
     @ObservedRealmObject var event: RecallCalendarEvent
@@ -162,7 +165,7 @@ struct TestCalendarEventView: View {
             
             makeSmallButton("pencil", label: "edit") { showEditView = true }
             
-            makeSmallButton("chevron.down") { dismiss() }
+            DismissButton()
         }
         .foregroundStyle( event.images.isEmpty ? titleColor : .white )
     }
@@ -560,5 +563,5 @@ struct TestCalendarEventView: View {
 
 
 #Preview {
-    TestCalendarEventView(event: sampleEventNoPhotos )
+    RecallCalendarEventView(event: sampleEventNoPhotos )
 }

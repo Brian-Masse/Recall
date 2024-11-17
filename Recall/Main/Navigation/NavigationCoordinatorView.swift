@@ -26,6 +26,7 @@ struct CoordinatorView: View {
                         .navigationBarBackButtonHidden(true)
                         .navigationBarHidden(true)
                 }
+            
                 .sheet(item: $appCoordinator.sheet) { sheet in
                     appCoordinator.build(sheet, data: data)
                         .navigationTitle("")

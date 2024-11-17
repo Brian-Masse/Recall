@@ -256,14 +256,20 @@ struct CalendarPage: View {
 //    MARK: makeHeader
     @ViewBuilder
     private func makeHeader() -> some View {
-        VStack(alignment: .leading) {
-            UniversalText("Calendar",
-                          size: Constants.UIHeaderTextSize,
-                          font: Constants.titleFont)
+        HStack {
+            VStack(alignment: .leading) {
+                UniversalText("Calendar",
+                              size: Constants.UIHeaderTextSize,
+                              font: Constants.titleFont)
+                
+                UniversalText("\(Date.now.formatted(date: .complete, time: .omitted))",
+                              size: Constants.UIDefaultTextSize,
+                              font: Constants.mainFont)
+            }
             
-            UniversalText("\(Date.now.formatted(date: .complete, time: .omitted))",
-                          size: Constants.UIDefaultTextSize,
-                          font: Constants.mainFont)
+            Spacer()
+            
+            DismissButton()
         }
     }
     

@@ -276,7 +276,7 @@ struct CalendarEventPreviewView: View {
                 .opacity(resizing || moving ? 0.5 : 1)
                 .padding(2)
                 .simultaneousGesture(drag, including: includeGestures ? .all : .none)
-                .matchedTransitionSource(id: indexOfEventInEvents, in: namespace)
+                .safeZoomMatch(id: indexOfEventInEvents, namespace: namespace)
                 .task { await findEvent() }
 
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)

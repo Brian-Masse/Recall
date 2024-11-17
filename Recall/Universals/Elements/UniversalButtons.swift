@@ -82,3 +82,30 @@ struct IconButton: View {
         } action: { action() }
     }
 }
+
+//MARK: DissmissButton
+struct DismissButton: View {
+    
+    @Environment( \.dismiss ) var dismiss
+    
+    private var icon: String {
+        if #available(iOS 18.0, *) {
+            return "chevron.down"
+        } else {
+            return "chevron.left"
+        }
+    }
+    
+    var body: some View {
+        UniversalButton {
+            HStack {
+                RecallIcon( icon )
+                    .frame(width: 10)
+            }
+            .frame(height: 10)
+            .font(.callout)
+            .rectangularBackground(12, style: .transparent)
+        } action: { dismiss() }
+    }
+    
+}

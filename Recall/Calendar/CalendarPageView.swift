@@ -133,12 +133,12 @@ struct CalendarPageView: View {
             
             RecallIcon("calendar")
                 .rectangularBackground(style: .secondary)
-                .matchedTransitionSource(id: RecallnavigationMatchKeys.monthlyCalendarView, in: calendarPageViewNameSpace)
+                .safeZoomMatch(id: RecallnavigationMatchKeys.monthlyCalendarView, namespace: calendarPageViewNameSpace)
                 .onTapGesture { coordinator.push(.monthlyCalendarView(namespace: calendarPageViewNameSpace)) }
             
             RecallIcon("person")
                 .rectangularBackground(style: .secondary)
-                .matchedTransitionSource(id: RecallnavigationMatchKeys.profileView, in: calendarPageViewNameSpace)
+                .safeZoomMatch(id: RecallnavigationMatchKeys.profileView, namespace: calendarPageViewNameSpace)
                 .onTapGesture { coordinator.push(.profileView(namespace: calendarPageViewNameSpace)) }
         }
         

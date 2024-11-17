@@ -470,7 +470,12 @@ struct ProfileView: View {
 //    MARK: Header/Footers
     @ViewBuilder
     private func makePageHeader() -> some View {
-        UniversalText(index.getFullName(), size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+        HStack {
+            UniversalText(index.getFullName(), size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+            Spacer()
+            
+            DismissButton()
+        }
     }
     
     @ViewBuilder

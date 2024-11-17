@@ -8,7 +8,47 @@
 import Foundation
 import SwiftUI
 
+//MARK: matchNavigationEffectExtension
+private struct NavigationZoomTransitionViewModifer<ID: Hashable>: ViewModifier {
+    let id: ID
+    let namespace: Namespace.ID
+    
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, *) {
+            content
+                .navigationTransition(.zoom(sourceID: id, in: namespace))
+        } else {
+            content
+        }
+    }
+}
 
+private struct NavigationZoomMatchViewModifier<ID: Hashable>: ViewModifier {
+    
+    let id: ID
+    let namespace: Namespace.ID
+    
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, *) {
+            content
+                .matchedTransitionSource(id: id, in: namespace)
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func safeZoomTransition<ID: Hashable>(id: ID, namespace: Namespace.ID) -> some View {
+        modifier(NavigationZoomTransitionViewModifer(id: id, namespace: namespace))
+    }
+    
+    func safeZoomMatch<ID: Hashable>(id: ID, namespace: Namespace.ID) -> some View {
+        modifier(NavigationZoomMatchViewModifier(id: id, namespace: namespace))
+    }
+}
+
+//MARK: RecallNavigationMatchKeys
 struct RecallnavigationMatchKeys {
     static let profileView = "profileView"
     static let monthlyCalendarView = "monthlyCalendarView"
@@ -87,19 +127,19 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
             
         case .recallCalendarEventView(id: let id, events: let events, namespace: let namespace):
             CalendarEventCarousel(events: events, startIndex: id)
-                .navigationTransition(.zoom(sourceID: id, in: namespace))
+                .safeZoomTransition(id: id, namespace: namespace)
             
         case .recallGoalEventView(let goal, let id, let namespace):
             GoalView(goal: goal, events: data.events)
-                .navigationTransition(.zoom(sourceID: id, in: namespace))
+                .safeZoomTransition(id: id, namespace: namespace)
             
         case .profileView(namespace: let namespace):
             ProfileView()
-                .navigationTransition(.zoom(sourceID: RecallnavigationMatchKeys.profileView, in: namespace))
+                .safeZoomTransition(id: RecallnavigationMatchKeys.profileView, namespace: namespace)
             
         case .monthlyCalendarView(namespace: let namespace):
             CalendarPage()
-                .navigationTransition(.zoom(sourceID: RecallnavigationMatchKeys.monthlyCalendarView, in: namespace))
+                .safeZoomTransition(id: RecallnavigationMatchKeys.monthlyCalendarView, namespace: namespace)
         }
     }
     
