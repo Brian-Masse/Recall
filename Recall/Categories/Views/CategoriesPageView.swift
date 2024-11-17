@@ -14,7 +14,6 @@ struct CategoriesPageView: View {
     
     enum TagPage: String, Identifiable, CaseIterable {
         case tags = "Tags"
-        case templates = "Templates"
         case favorites = "Favorites"
         
         var id: String { self.rawValue }
@@ -23,7 +22,6 @@ struct CategoriesPageView: View {
         func getAddButtonName() -> String {
             switch self {
             case .tags: return "Create Tag"
-            case .templates: return "Template"
             case .favorites: return "Favorite"
             }
         }
@@ -60,7 +58,6 @@ struct CategoriesPageView: View {
     private func makePagePicker(geo: GeometryProxy) -> some View {
         HStack {
             makePagePickerOption(page: .tags, icon: "tag")
-            makePagePickerOption(page: .templates, icon: "viewfinder.rectangular")
             makePagePickerOption(page: .favorites, icon: "circle.rectangle.filled.pattern.diagonalline")
         }
         .padding(.bottom, 5)
@@ -77,7 +74,6 @@ struct CategoriesPageView: View {
                 
                 IconButton("plus", label: activePage.getAddButtonName()) {
                     if activePage == .tags { coordinator.presentSheet( .tagCreationView(editting: false) ) }
-                    if activePage == .templates { coordinator.presentSheet( .eventCreationView() ) }
                     if activePage == .favorites { coordinator.presentSheet( .eventCreationView(favorite: true)) }
                 }
             }
@@ -98,12 +94,7 @@ struct CategoriesPageView: View {
                         .ignoresSafeArea()
                         .padding(.horizontal, 7)
                         .tag( TagPage.tags )
-                    
-                    TemplatePageView(events: events)
-                        .ignoresSafeArea()
-                        .padding(.horizontal, 7)
-                        .tag( TagPage.templates )
-                    
+
                     FavoritesPageView(events: events)
                         .ignoresSafeArea()
                         .padding(.horizontal, 7)
