@@ -14,6 +14,8 @@ import MapKit
 //TODO: Fix the Gesture Overlap for dismissing / swiping
 //TODO: Rework the selection editor
 //TODO: Rework the tags page view
+//TODO: Better duration label
+//TODO: Full Title
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
@@ -550,14 +552,18 @@ struct RecallCalendarEventView: View {
                 makeRegularLayout()
             }
         }
-        .onChange(of: event.images) { Task { await onAppear() } }
-        .task { await onAppear() }
         .background(.black)
-        .deleteableCalendarEvent(deletionBool: $showDeleteAlert, event: event)
+        .task { await onAppear() }
+        
+        .onChange(of: event.images) { Task { await onAppear() } }
         .onChange(of: showEditView) {
             if showEditView { coordinator.presentSheet(.eventEdittingView(event: event)) }
             showEditView = false
         }
+        
+        .deleteableCalendarEvent(deletionBool: $showDeleteAlert, event: event)
+        
+        .animation(.easeInOut, value: event)
     }
 }
 

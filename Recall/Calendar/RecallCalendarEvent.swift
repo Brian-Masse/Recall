@@ -258,7 +258,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @MainActor
     func toggleFavorite() {
         RealmManager.updateObject(self) { thawed in
-            thawed.isFavorite = !self.isFavorite
+            thawed.isFavorite = !self.isFavorite 
         }
     }
     
