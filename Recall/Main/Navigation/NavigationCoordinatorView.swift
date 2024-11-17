@@ -32,7 +32,14 @@ struct CoordinatorView: View {
                         .navigationTitle("")
                         .navigationBarBackButtonHidden(true)
                         .navigationBarHidden(true)
+                        .sheet(item: $appCoordinator.sheet2) { sheet in
+                            appCoordinator.build(sheet, data: data)
+                                .navigationTitle("")
+                                .navigationBarBackButtonHidden(true)
+                                .navigationBarHidden(true)
+                        }
                 }
+            
                 .fullScreenCover(item: $appCoordinator.fullScreenCover) { fullScreenCover in
                     appCoordinator.build(fullScreenCover, data: data)
                         .navigationTitle("")

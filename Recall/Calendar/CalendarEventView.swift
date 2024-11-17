@@ -12,8 +12,9 @@ import UIUniversals
 import MapKit
 
 //TODO: Fix the Gesture Overlap for dismissing / swiping
-//TODO: Fix the fact that multiple sheets cannot be overlayed ontop of one another
 //TODO: Reorganize ViewModels
+//TODO: Rework the selection editor
+//TODO: Rework the tags page view
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {

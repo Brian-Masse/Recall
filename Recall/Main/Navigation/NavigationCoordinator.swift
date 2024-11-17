@@ -76,6 +76,7 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     @Published var path: NavigationPath = NavigationPath()
     @Published var tab: RecallNavigationTab = .calendar
     @Published var sheet: RecallNavigationSheet?
+    @Published var sheet2: RecallNavigationSheet?
     @Published var fullScreenCover: RecallFullScreenCover?
     
     static var shared: RecallNavigationCoordinator = RecallNavigationCoordinator()
@@ -85,7 +86,10 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     
     func push(_ screen: RecallNavigationScreen) { withAnimation { path.append(screen) }}
     
-    func presentSheet(_ sheet: RecallNavigationSheet) { self.sheet = sheet }
+    func presentSheet(_ sheet: RecallNavigationSheet) {
+        if self.sheet == nil { self.sheet = sheet }
+        else { self.sheet2 = sheet }
+    }
     
     func presentFullScreenCover(_ fullScreenCover: RecallFullScreenCover) { self.fullScreenCover = fullScreenCover }
     
