@@ -16,6 +16,7 @@ import MapKit
 //TODO: Rework the tags page view
 //TODO: Better duration label
 //TODO: Full Title
+//TODO: Events that go between days on the preview
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
@@ -198,7 +199,7 @@ struct RecallCalendarEventView: View {
                 
                 makeMetaDataLabel(icon: "tag", title: "\(event.getTagLabel())")
                 
-                makeMetaDataLabel(icon: "deskclock", title: "\(Int(event.getLengthInHours())) hr")
+                makeMetaDataLabel(icon: "deskclock", title: event.getDurationString())
                 
                 makeMetaDataLabel(icon: event.isFavorite ? "checkmark" : "plus", title: "Favorite") {
                     event.toggleFavorite()
@@ -316,6 +317,7 @@ struct RecallCalendarEventView: View {
     private func makeTimeLabel() -> some View {
         HStack {
             RecallIcon("clock")
+                .opacity(0.75)
             
             VStack(alignment: .leading) {
                 
@@ -336,7 +338,6 @@ struct RecallCalendarEventView: View {
             
             Spacer()
         }
-        .padding(.top)
         .padding(.leading)
     }
     
@@ -469,6 +470,11 @@ struct RecallCalendarEventView: View {
     private func makeContent() -> some View {
         VStack(spacing: 7) {
             VStack(alignment: .leading) {
+                if event.title.count > 32 {
+                    makeSectionHeader("widget.small", title: event.title)
+                        .padding(.bottom)
+                }
+                
                 makeTimeLabel()
                     .padding(.bottom)
                 
@@ -479,7 +485,9 @@ struct RecallCalendarEventView: View {
                     .padding(.bottom)
                 
                 makeRichDataSection()
-            }.rectangularBackground(style: .primary)
+            }
+            .padding(.top)
+            .rectangularBackground(style: .primary)
             
             VStack {
                 makeActionButtons()

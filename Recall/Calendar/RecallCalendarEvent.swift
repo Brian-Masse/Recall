@@ -280,6 +280,17 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     
     func getLengthInHours() -> Double { endTime.timeIntervalSince(startTime) / Constants.HourTime }
     
+    func getDurationString() -> String {
+        let hours = endTime.timeIntervalSince(startTime) / Constants.HourTime
+        let roundedHours = floor(hours)
+        let minutes = (hours - roundedHours) * 60
+        
+        let hourString = "\(Int(roundedHours)) hr "
+        let minuteString = "\(Int(minutes))"
+        
+        return (Int(roundedHours) == 0 ? "" : hourString) + ( Int(minutes) == 0 ? "" : minuteString ) + (Int(roundedHours) == 0 ? " mins" : "")
+    }
+    
     func getColor() -> Color { category?.getColor() ?? Colors.defaultLightAccent }
     
     func getTagLabel() -> String { category?.label ?? "?"}
