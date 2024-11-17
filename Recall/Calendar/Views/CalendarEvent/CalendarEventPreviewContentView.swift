@@ -30,11 +30,14 @@ struct CalendarEventPreviewContentView: View {
     
     @State var showingEvent: Bool = false
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], showMetaData: Bool = true) {
+    let height: Double
+    
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], showMetaData: Bool = true, height: Double = .infinity) {
         
         self.event = event
         self.events = events
         self.showMetaData = showMetaData
+        self.height = height
     }
     
     private var isSelected: Bool {
@@ -44,9 +47,9 @@ struct CalendarEventPreviewContentView: View {
     
 //    MARK: Title
     @ViewBuilder
-    private func makeTitle(in geo: GeometryProxy) -> some View {
-        if geo.size.height > minHeightForTitle {
-            let shouldScale = geo.size.height < Constants.UISubHeaderTextSize + 5
+    private func makeTitle() -> some View {
+        if height > minHeightForTitle {
+            let shouldScale = height < Constants.UISubHeaderTextSize + 5
             
             UniversalText( event.title,
                            size: Constants.UISubHeaderTextSize,
@@ -71,15 +74,15 @@ struct CalendarEventPreviewContentView: View {
     
 //    MARK: content
     @ViewBuilder
-    private func makeBody(in geo: GeometryProxy) -> some View {
+    private func makeBody() -> some View {
         let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
         
         VStack(alignment: .leading, spacing: 0) {
             HStack {Spacer()}
             
-            makeTitle(in: geo)
+            makeTitle()
             
-            if geo.size.height > minHeight {
+            if height > minHeight {
                 if !event.notes.isEmpty && RecallModel.index.showNotesOnPreview {
                     makeNode(icon: "text.justify.leading", text: event.notes, wrap: true)
                         .padding(.bottom, 7)
@@ -105,25 +108,19 @@ struct CalendarEventPreviewContentView: View {
             }
             
             Spacer()
-            
-//            if geo.size.height > minHeightForDescription && /*index.showNotesOnPreview &&*/ !event.notes.isEmpty {
-//                UniversalText( event.notes,
-//                               size: Constants.UISmallTextSize,
-//                               font: Constants.mainFont)
-//                .opacity(0.75)
-//            }
         }
         .foregroundStyle(event.getColor().safeMix(with: .black, by: colorScheme == .light ? 0.5 : 0) )
     }
     
-    private func verticalPadding(in geo: GeometryProxy) -> Double {
-        min( 12, (geo.size.height - Constants.UISubHeaderTextSize) / 2 )
+    private func verticalPadding() -> Double {
+        min( 12, (height - Constants.UISubHeaderTextSize) / 2 )
     }
     
 //    MARK: Body
     var body: some View {
         
-        GeometryReader { geo in
+//        GeometryReader { geo in
+        ZStack {
             Rectangle()
                 .foregroundStyle(.background)
             
@@ -134,7 +131,7 @@ struct CalendarEventPreviewContentView: View {
                 .stroke(style: .init(lineWidth: 2))
                 .opacity(0.5)
             
-            makeBody(in: geo)
+            makeBody()
                 .overlay(alignment: .leading) {
                     RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                         .foregroundColor(event.getColor())
@@ -143,15 +140,16 @@ struct CalendarEventPreviewContentView: View {
                 }
                 .padding(.leading, 10)
                 .padding(.horizontal, 12)
-                .padding(.vertical, verticalPadding(in: geo))
-            
+                .padding(.vertical, verticalPadding())
             
             if viewModel.selecting && !isSelected {
                 Rectangle()
                     .opacity(0.25)
                     .foregroundStyle(colorScheme == .light ? .white : .black)
             }
+                
         }
+        .frame(maxHeight: height)
         .foregroundStyle(event.getColor() )
         .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))
     }

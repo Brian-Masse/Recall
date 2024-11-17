@@ -137,8 +137,12 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
         switch screen {
         case .home:
             MainTabView(data: data)
+        
+        case .recallEventView(id: let id, event: let event, events: let events, Namespace: let namespace):
+            RecallCalendarEventView(event: event, events: events)
+                .safeZoomTransition(id: id, namespace: namespace)
             
-        case .recallCalendarEventView(id: let id, events: let events, namespace: let namespace):
+        case .recallEventCarousel(id: let id, events: let events, namespace: let namespace):
             CalendarEventCarousel(events: events, startIndex: id)
                 .safeZoomTransition(id: id, namespace: namespace)
             

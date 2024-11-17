@@ -12,7 +12,6 @@ import UIUniversals
 import MapKit
 
 //TODO: Fix the Gesture Overlap for dismissing / swiping
-//TODO: Rework the tags page view
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {

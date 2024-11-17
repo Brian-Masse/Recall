@@ -12,7 +12,8 @@ import SwiftUI
 enum RecallNavigationScreen: Identifiable, Hashable {
     case home
     
-    case recallCalendarEventView( id: Int, events: [RecallCalendarEvent], namespace: Namespace.ID )
+    case recallEventView( id: String, event: RecallCalendarEvent, events: [RecallCalendarEvent], Namespace: Namespace.ID )
+    case recallEventCarousel( id: Int, events: [RecallCalendarEvent], namespace: Namespace.ID )
     case recallGoalEventView( goal: RecallGoal, id: String, Namespace: Namespace.ID )
     
     case profileView(namespace: Namespace.ID)

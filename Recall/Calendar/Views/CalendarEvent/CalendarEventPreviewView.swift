@@ -157,7 +157,7 @@ struct CalendarEventPreviewView: View {
         Task { await findEvent() }
         
         if viewModel.selecting { viewModel.selectEvent(event) }
-        else { coordinator.push(.recallCalendarEventView(id: indexOfEventInEvents, events: events, namespace: namespace)) }
+        else { coordinator.push(.recallEventCarousel(id: indexOfEventInEvents, events: events, namespace: namespace)) }
     }
 
     
@@ -214,7 +214,7 @@ struct CalendarEventPreviewView: View {
     var body: some View {
         GeometryReader { geo in
             
-            CalendarEventPreviewContentView(event: event, events: events)
+            CalendarEventPreviewContentView(event: event, events: events, height: geo.size.height - 4)
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
                         ZStack {
