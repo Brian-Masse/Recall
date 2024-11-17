@@ -184,11 +184,13 @@ extension TutorialViews {
         private func makeCalendarView() -> some View {
             VStack {
                 GeometryReader { geo in
-                    StyledCalendarContainerView(at: .now,
-                                                with: Array(events),
-                                                from: 0, to: 24,
-                                                geo: geo,
-                                                scale: 2)
+                    
+                    
+//                    StyledCalendarContainerView(at: .now,
+//                                                with: Array(events),
+//                                                from: 0, to: 24,
+//                                                geo: geo,
+//                                                scale: 2)
                 }
                 LargeRoundedButton("Recall", icon: "arrow.up", wide: true) { coordinator.presentSheet(.eventCreationView()) }
             }
