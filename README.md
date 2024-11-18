@@ -8,13 +8,15 @@ Recall is a calendar based app designed around recording daily events to be able
 
 ## **Upcoming Features**
 
+New Features:
+- Locations + links for events
+- Photos Galleries for Events
+- Automatic Daily Log + image Generation
+
 New Ways to Browse:
 
 - Puts photo gallery, search, favorites, and templates on the same page
-- Ability to Uplaod images with events
 - Ability to search through events
-- Locations + links for events
-- Photos Galleries for Events
 - Event Caoursel on the main Calendar Page
 - Redesigned Calendar Page + Tool Bar
 - Redesigned Monthly Calendar View
