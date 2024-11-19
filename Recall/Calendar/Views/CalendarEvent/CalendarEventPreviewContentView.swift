@@ -119,7 +119,6 @@ struct CalendarEventPreviewContentView: View {
 //    MARK: Body
     var body: some View {
         
-//        GeometryReader { geo in
         ZStack {
             Rectangle()
                 .foregroundStyle(.background)

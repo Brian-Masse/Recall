@@ -12,6 +12,9 @@ import UIUniversals
 import MapKit
 
 //TODO: Fix the Gesture Overlap for dismissing / swiping
+//TODO: Map automatically adds location
+
+
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {

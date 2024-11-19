@@ -69,7 +69,7 @@ struct IconButton: View {
                 if full { Spacer() }
                 
                 if !title.isEmpty {
-                    UniversalText( title, size: Constants.UIDefaultTextSize + 2, font: AndaleMono.shared )
+                    UniversalText( title, size: Constants.UIDefaultTextSize + 2, font: Constants.mainFont )
                         .padding(.trailing, 5)
                 }
                 
