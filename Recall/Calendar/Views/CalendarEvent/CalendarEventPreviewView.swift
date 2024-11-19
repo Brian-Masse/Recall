@@ -215,6 +215,7 @@ struct CalendarEventPreviewView: View {
         GeometryReader { geo in
             
             CalendarEventPreviewContentView(event: event, events: events, height: geo.size.height - 4)
+                .safeZoomMatch(id: indexOfEventInEvents, namespace: namespace)
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
                         ZStack {
@@ -277,7 +278,6 @@ struct CalendarEventPreviewView: View {
                 .opacity(resizing || moving ? 0.5 : 1)
                 .padding(2)
                 .simultaneousGesture(drag, including: includeGestures ? .all : .none)
-                .safeZoomMatch(id: indexOfEventInEvents, namespace: namespace)
                 .task { await findEvent() }
 
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)

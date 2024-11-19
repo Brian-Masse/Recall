@@ -8,6 +8,9 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import UIKit
+
+
 
 //MARK: - CoordinatorView
 struct CoordinatorView: View {
@@ -25,6 +28,7 @@ struct CoordinatorView: View {
                         .navigationTitle("")
                         .navigationBarBackButtonHidden(true)
                         .navigationBarHidden(true)
+                        .interactiveDismissDisabled(true)
                 }
                 .sheet( item: $appCoordinator.halfScreenSheet, onDismiss: { if let dismiss = appCoordinator.halfScreenSheetDismiss {
                     dismiss()
@@ -53,7 +57,7 @@ struct CoordinatorView: View {
                         .navigationTitle("")
                         .navigationBarBackButtonHidden(true)
                         .navigationBarHidden(true)
-                }
+            }
         }
     }
 }

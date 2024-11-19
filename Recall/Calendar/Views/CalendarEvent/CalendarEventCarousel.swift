@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+
 struct CalendarEventCarousel: View {
     
     @State var events: [RecallCalendarEvent]

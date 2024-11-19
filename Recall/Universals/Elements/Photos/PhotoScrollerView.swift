@@ -22,6 +22,7 @@ final class PhotoScrollerViewModel: Sendable {
     
     var progress: CGFloat
     var mainOffset: CGFloat = 0
+    var translation: CGFloat = 0
     
     init(startExpanded: Bool) {
         self.isExpanded = !startExpanded
@@ -58,6 +59,8 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
             let translation = gesture.translation(in: gesture.view).y
             let isScrolling = state == .began || state == .changed
             
+            sharedData.translation = translation
+            
             if state == .began {
                 sharedData.canPullDown = translation > -10 && sharedData.mainOffset < 5
                 sharedData.canPullUp = translation < 10
@@ -86,6 +89,8 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                         sharedData.progress = 0
                     }
                 }
+                
+                sharedData.translation = 0
             }
         }
     }
@@ -143,11 +148,25 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                     }
 
                     bodyContent
+//                        .border(.red)
                         .frame(minWidth: geo.size.width, minHeight: geo.size.height)
+//                        .highPriorityGesture( LongPressGesture(minimumDuration: 0) )
+                        
                 }
 //                .offset(y: sharedData.canPullDown ? 0 : mainOffset < 0 ? -mainOffset : 0)
 //                .offset(y: mainOffset < 0 ? mainOffset : 0)
             }
+//            .overlay {
+//                VStack {
+//                    Text( "\( sharedData.translation )" )
+//                    Text( "\( sharedData.progress )" )
+//                    Text( "\( sharedData.mainOffset )" )
+//                    
+//                }
+//                
+//            }
+            
+//            .border(.blue)
             .contentShape(ContentMask (screenHeight: screenHeight, sharedData: sharedData) )
             .scrollClipDisabled()
             .onScrollGeometryChange(for: CGFloat.self, of: { geo in geo.contentOffset.y }) { oldValue, newValue in

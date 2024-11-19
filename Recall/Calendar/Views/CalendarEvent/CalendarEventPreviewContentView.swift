@@ -141,6 +141,7 @@ struct CalendarEventPreviewContentView: View {
                 .padding(.leading, 10)
                 .padding(.horizontal, 12)
                 .padding(.vertical, verticalPadding())
+                .frame(maxHeight: height)
             
             if viewModel.selecting && !isSelected {
                 Rectangle()
@@ -149,7 +150,6 @@ struct CalendarEventPreviewContentView: View {
             }
                 
         }
-        .frame(maxHeight: height)
         .foregroundStyle(event.getColor() )
         .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))
     }
