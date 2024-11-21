@@ -21,8 +21,8 @@ final class PhotoScrollerViewModel: Sendable {
     var canPullDown: Bool = false
     
     var progress: CGFloat
+    var previousOffset: CGFloat = 0
     var mainOffset: CGFloat = 0
-    var translation: CGFloat = 0
     
     init(startExpanded: Bool) {
         self.isExpanded = !startExpanded
@@ -59,8 +59,6 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
             let translation = gesture.translation(in: gesture.view).y
             let isScrolling = state == .began || state == .changed
             
-            sharedData.translation = translation
-            
             if state == .began {
                 sharedData.canPullDown = translation > -10 && sharedData.mainOffset < 5
                 sharedData.canPullUp = translation < 10
@@ -87,10 +85,12 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                     if sharedData.canPullUp && sharedData.isExpanded && translation < 0 {
                         sharedData.isExpanded = false
                         sharedData.progress = 0
+                        
+                        scrollPosition.scrollTo(y: 15)
                     }
                 }
                 
-                sharedData.translation = 0
+                sharedData.previousOffset = sharedData.mainOffset
             }
         }
     }
@@ -128,6 +128,8 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
             return Path(newRect)
         }
     }
+
+    @State private var scrollPosition = ScrollPosition()
     
 //    MARK: Body
     var body: some View {
@@ -135,10 +137,18 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
             
             let screenHeight = geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom
             let minimisedHeight = (geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom) * sharedData.peekHeight
-//            let mainOffset = sharedData.mainOffset
             
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 10) {
+                    
+//                        This adds a minor scroll ontop of the main scroll, so when pulling down it overrides any other gestures
+//                        namely the navigation(.zoom) swipe transition
+                    if allowsScroll && !sharedData.isExpanded && sharedData.mainOffset <= -40 {
+                        Rectangle()
+                            .frame(height: 10)
+                            .foregroundStyle(.clear)
+                            .onAppear { withAnimation { scrollPosition.scrollTo(y: 15) }}
+                    }
                     
                     ZStack(alignment: .leading) {
                         makeTopSpacer(in: screenHeight)
@@ -146,33 +156,17 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                         
                         headerContent
                     }
-
+                    
                     bodyContent
-//                        .border(.red)
                         .frame(minWidth: geo.size.width, minHeight: geo.size.height)
-//                        .highPriorityGesture( LongPressGesture(minimumDuration: 0) )
-                        
                 }
-//                .offset(y: sharedData.canPullDown ? 0 : mainOffset < 0 ? -mainOffset : 0)
-//                .offset(y: mainOffset < 0 ? mainOffset : 0)
             }
-//            .overlay {
-//                VStack {
-//                    Text( "\( sharedData.translation )" )
-//                    Text( "\( sharedData.progress )" )
-//                    Text( "\( sharedData.mainOffset )" )
-//                    
-//                }
-//                
-//            }
-            
-//            .border(.blue)
+            .scrollPosition($scrollPosition)
             .contentShape(ContentMask (screenHeight: screenHeight, sharedData: sharedData) )
             .scrollClipDisabled()
             .onScrollGeometryChange(for: CGFloat.self, of: { geo in geo.contentOffset.y }) { oldValue, newValue in
                 sharedData.mainOffset = newValue
             }
-
             .scrollDisabled(sharedData.isExpanded)
             .gesture( makeGesture(minimisedHeight: minimisedHeight) )
         }
@@ -205,14 +199,17 @@ struct TestPhotoScrollerView: View {
                         .padding()
                     
                 } bodyContent: {
-                    VStack {
+                    VStack(spacing: 10) {
                         ForEach( 0...20, id: \.self ) { i in
                             Rectangle()
                                 .foregroundStyle(.green)
                                 .frame(height: 40)
+                                .overlay {
+                                    Text( "\(geo.size.height)" )
+                                }
                         }
                     }
-                    .offset(y: -40)
+//                    .offset(y: -40)
                     .padding()
                     .clipShape(RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius ))
                     .background {
