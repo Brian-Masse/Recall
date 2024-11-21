@@ -228,9 +228,15 @@ struct CalendarEventCreationView: View {
             StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
             
             EventCreationViewTabBar(link: $link, location: $location)
+                .task { await getCurrentLocation() }
         }.padding(.top)
     }
     
+    private func getCurrentLocation() async {
+        if let locationResult = await LocationManager.shared.getLocationInformation() {
+            self.location = locationResult
+        }
+    }
     
 //    MARK: RecallTypeSelector
     @ViewBuilder

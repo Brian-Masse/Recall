@@ -11,71 +11,8 @@ import RealmSwift
 import UIUniversals
 import MapKit
 
-//TODO: Fix the Gesture Overlap for dismissing / swiping
 //TODO: Map automatically adds location
-
-class testController: UIViewController {
-    
-    var scrollView: UIScrollView!
-    var imageView: UIImageView!
-    
-    override func viewDidLoad() {
-        
-        super.viewDidLoad()
-        
-        imageView = UIImageView(image: UIImage(named: "sampleImage2"))
-                
-        scrollView = UIScrollView(frame: view.bounds)
-        scrollView.contentSize = imageView.bounds.size
-        scrollView.isDirectionalLockEnabled = true
-        
-//        scrollView.autoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight
-            
-        scrollView.addSubview(imageView)
-        view.addSubview(scrollView)
-        
-    }
-    
-}
-
-class SwiftUIViewController: UIHostingController<Text> {
-    required init?(coder: NSCoder) {
-        let v = Text("hi there!")
-        
-        super.init(coder: coder, rootView: v )
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-}
-
-private struct testRepresntable: UIViewControllerRepresentable {
-    let vc = testController()
-    
-    func makeUIViewController(context: Context) -> testController {
-        vc
-    }
-    
-    func updateUIViewController(_ uiViewController: testController, context: Context) {
-        
-    }
-    
-    typealias UIViewControllerType = testController
-}
-
-
-#Preview {
-    
-    testRepresntable()
-        .highPriorityGesture(DragGesture().onChanged({ _ in
-            print("running!")
-        })  )
-    
-}
-
-
-
+//TODO: Update Preferneces
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
