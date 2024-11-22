@@ -23,7 +23,9 @@ struct CalendarEventPreviewContentView: View {
 
     
 //   These are all relativley arbitrary values, but they've been found to work across a number of device sizes and text scales
-    let minWidth: CGFloat = 250
+    private let minHeight: CGFloat = 65
+    private let minHeightForDescription: CGFloat = 110
+    private let minHeightForTitle: Double = 15
     
     @State var showingEvent: Bool = false
     
@@ -42,107 +44,62 @@ struct CalendarEventPreviewContentView: View {
         return index != nil
     }
     
-//    MARK: ContentBody
-    private struct ContentBody: View {
-        
-        @Environment( \.colorScheme ) var colorScheme
-        
-        let event: RecallCalendarEvent
-        let height: Double
-        let showMetaData: Bool
-        
-        @State private var timeString: String = ""
-        @State private var tagLabel: String = ""
-        @State private var urlString: String = ""
-        @State private var locationTitle: String = ""
-        @State private var hasPhotos: Bool = false
-        
-        @State private var loadedProperties = false
-        
-        private let minHeight: CGFloat = 65
-        private let minHeightForDescription: CGFloat = 110
-        private let minHeightForTitle: Double = 15
-        
-        @ViewBuilder
-        private func makeTitle() -> some View {
-            if height > minHeightForTitle {
-                UniversalText( event.title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-            }
+    
+    @ViewBuilder
+    private func makeTitle() -> some View {
+        if height > minHeightForTitle {
+            UniversalText( event.title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
         }
-        
-        @ViewBuilder
-        private func makeNode(icon: String, text: String, wrap: Bool = false) -> some View {
-            HStack {
-                RecallIcon(icon)
-                    .font(.caption)
-                
-                UniversalText( text, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: wrap )
-            }
-            .opacity(0.65)
-        }
-        
-        private func loadProperties() async {
-            let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
-            let tagLabel = event.getTagLabel()
-            let urlString = event.urlString
-            let locationTitle = event.getLocationResult()?.title ?? ""
-            let hasPhotos = !event.images.isEmpty
+    }
+    
+    @ViewBuilder
+    private func makeNode(icon: String, text: String, wrap: Bool = false) -> some View {
+        HStack {
+            RecallIcon(icon)
+                .font(.caption)
             
-            self.timeString = timeString
-            self.tagLabel = tagLabel
-            self.urlString = urlString
-            self.locationTitle = locationTitle
-            self.hasPhotos = hasPhotos
-            
-            withAnimation {
-                self.loadedProperties = true
-            }
+            UniversalText( text, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: wrap )
         }
-        
-//        MARK: ContentBodyBody
-        var body: some View {
-            
-            VStack(alignment: .leading, spacing: 0) {
-                HStack {Spacer()}
-                
-                makeTitle()
-                
-                if loadedProperties && height > minHeight {
-                    if !event.notes.isEmpty && RecallModel.index.showNotesOnPreview {
-                        makeNode(icon: "text.justify.leading", text: event.notes, wrap: true)
-                            .padding(.bottom, 7)
-                    }
-                    
-                    if showMetaData {
-                        makeNode(icon: "clock", text: timeString)
-    
-                        makeNode(icon: "tag", text: tagLabel)
-    
-                        if !urlString.isEmpty {
-                            makeNode(icon: "link", text: urlString)
-                        }
-    
-                        if !locationTitle.isEmpty {
-                            makeNode(icon: "location", text: locationTitle)
-                        }
-    
-                        if hasPhotos {
-                            makeNode(icon: "photo.on.rectangle", text: "has Photos")
-                        }
-                    }
-                }
-                Spacer()
-            }
-            .foregroundStyle(event.getColor().safeMix(with: .black, by: colorScheme == .light ? 0.5 : 0) )
-            .task { await loadProperties() }
-        }
-        
+        .opacity(0.65)
     }
     
 //    MARK: content
     @ViewBuilder
     private func makeBody() -> some View {
-        ContentBody(event: event, height: height, showMetaData: showMetaData)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {Spacer()}
+            
+            makeTitle()
+            
+            if height > minHeight {
+                if !event.notes.isEmpty && RecallModel.index.showNotesOnPreview {
+                    makeNode(icon: "text.justify.leading", text: event.notes, wrap: true)
+                        .padding(.bottom, 7)
+                }
+                
+                if showMetaData {
+                    let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
+                    
+                    makeNode(icon: "clock", text: timeString)
+
+                    makeNode(icon: "tag", text: event.getTagLabel())
+
+                    if let urlString = event.getURL()?.relativePath {
+                        makeNode(icon: "link", text: urlString)
+                    }
+
+                    if let locationTitle = event.getLocationResult()?.title {
+                        makeNode(icon: "location", text: locationTitle)
+                    }
+
+                    if !event.images.isEmpty {
+                        makeNode(icon: "photo.on.rectangle", text: "has Photos")
+                    }
+                }
+            }
+            Spacer()
+        }
+        .foregroundStyle(event.getColor().safeMix(with: .black, by: colorScheme == .light ? 0.5 : 0) )
     }
     
     private func verticalPadding() -> Double {
@@ -171,7 +128,7 @@ struct CalendarEventPreviewContentView: View {
                 .padding(.leading, 10)
                 .padding(.horizontal, 12)
                 .padding(.vertical, verticalPadding())
-                .frame(maxHeight: height)
+                .frame(maxHeight: height, alignment: .top)
             
             if viewModel.selecting && !isSelected {
                 Rectangle()

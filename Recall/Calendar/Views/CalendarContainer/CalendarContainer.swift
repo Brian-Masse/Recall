@@ -310,7 +310,7 @@ struct CalendarContainer: View {
         let dayCount = RecallModel.index.daysSinceFirstEvent()
         
         ScrollViewReader { proxy in
-            ScrollView(.horizontal, showsIndicators: true) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 0) {
                     
                     ForEach(0...dayCount, id: \.self) { i in
@@ -336,6 +336,9 @@ struct CalendarContainer: View {
                 })
                 
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo, dayCount: dayCount) }
+                .onChange(of: events) { oldValue, newValue in
+                    viewModel.invalidateEvents(newEvents: newValue)
+                }
             }
             .defaultScrollAnchor(.trailing)
             .scrollTargetBehavior(.viewAligned)
