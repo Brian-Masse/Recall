@@ -10,149 +10,17 @@ import SwiftUI
 import RealmSwift
 import UIUniversals
 
-struct CalendarPageView: View {
-    
-//    MARK: Convenience Functions
-    private func setCurrentDay(with date: Date) {
-        if date > viewModel.currentDay { slideDirection = .right }
-        else { slideDirection = .left }
-        
-        withAnimation { viewModel.setCurrentDay(to: date) }
-    }
-    
-//   MARK: vars
-    let events: [RecallCalendarEvent]
-    let goals: [RecallGoal]
-    let dailySummaries: [RecallDailySummary]
+//MARK: CalendarPageDateTape
+private struct CalendarPageDateTape: View {
     
     @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     
-    @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
-    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
-    
-    @State var slideDirection: AnyTransition.SlideDirection = .right
-    
-    @Namespace private var calendarPageViewNameSpace
-    
-    private func formatDate(_ date: Date) -> String {
-        date.formatted(.dateTime.weekday().month().day())
-    }
-    
-//    MARK: ViewBuilders
-    
-    @ViewBuilder
-    private func makeDateLabel() -> some View {
-        let matches = viewModel.currentDay.matches(.now, to: .day)
-        
-        HStack {
-            let currentLabel    = formatDate(viewModel.currentDay)
-            let nowLabel        = formatDate(.now)
-            
-            if !matches {
-                UniversalText(currentLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                RecallIcon("arrow.forward")
-                    .opacity(0.8)
-            }
-            
-            UniversalText(nowLabel, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                .onTapGesture { setCurrentDay(with: .now) }
-        }
-    }
-    
-//    MARK: DateSelector
-    @ViewBuilder
-    private func makeDateSelector(from date: Date) -> some View {
-        
-        let dayString = date.formatted(.dateTime.day(.twoDigits))
-        let monthString = date.formatted(.dateTime.month(.abbreviated)).lowercased()
-        let isCurrentDay = date.matches(viewModel.currentDay, to: .day)
-    
-        VStack {
-            UniversalText(dayString,
-                          size: Constants.UIDefaultTextSize,
-                          font: Constants.titleFont,
-                          wrap: false, scale: true)
-            .opacity(isCurrentDay ? 1 : 0.75)
-            
-            if isCurrentDay {
-                UniversalText(monthString,
-                              size: Constants.UIDefaultTextSize,
-                              font: Constants.titleFont,
-                              wrap: false, scale: true )
-            }
-        }
-        .padding(.vertical)
-        .padding(.horizontal, isCurrentDay ? 15 : 5)
-        .background {
-            if isCurrentDay {
-                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                    .matchedGeometryEffect(id: "currentDaySelector", in: calendarPageViewNameSpace)
-                    .universalStyledBackgrond(.secondary, onForeground: true)
-            }
-        }
-        .onTapGesture { setCurrentDay(with: date) }
-    }
-
-    
-    @ViewBuilder
-    private func makeDateSelectors() -> some View {
-        ScrollViewReader { reader in
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(alignment: .center, spacing: 0) {
-                    
-                    let dayCount = RecallModel.index.daysSinceFirstEvent()
-                    
-                    ForEach(0..<dayCount, id: \.self) { i in
-                        let date: Date = (Date.now) - (Double(i) * Constants.DayTime)
-                        makeDateSelector(from: date)
-                            .id(i)
-                    }
-                }
-                .frame(height: 75)
-                .onChange(of: viewModel.currentDay) {
-                    let proposedIndex = floor(Date.now.timeIntervalSince(viewModel.currentDay) / Constants.DayTime)
-                    reader.scrollTo(Int(proposedIndex))
-                }
-            }
-        }
-    }
-    
-//    MARK: Headers
-    @ViewBuilder
-    private func makeHeader() -> some View {
-        HStack {
-            UniversalButton {
-                UniversalText( "Recall",
-                               size: Constants.UIHeaderTextSize,
-                               font: Constants.titleFont,
-                               wrap: false, scale: true )
-            } action: { setCurrentDay(with: .now) }
-
-            Spacer()
-            
-            
-            RecallIcon("calendar")
-                .rectangularBackground(style: .secondary)
-                .safeZoomMatch(id: RecallnavigationMatchKeys.monthlyCalendarView, namespace: calendarPageViewNameSpace)
-                .onTapGesture { coordinator.push(.monthlyCalendarView(namespace: calendarPageViewNameSpace)) }
-            
-            RecallIcon("person")
-                .rectangularBackground(style: .secondary)
-                .safeZoomMatch(id: RecallnavigationMatchKeys.profileView, namespace: calendarPageViewNameSpace)
-                .onTapGesture { coordinator.push(.profileView(namespace: calendarPageViewNameSpace)) }
-        }
-        
-        
-//        makeDateLabel()
-    }
-    
-//    MARK: DateTape
-    @ViewBuilder
-    private func makeDateTape(on day: Date) -> some View {
+    var body: some View {
         let calendar = Calendar(identifier: .gregorian)
         
-        let comps = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: day)
-        let week = calendar.date(from: comps) ?? day + Constants.WeekTime
+        let comps = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: viewModel.currentDay )
+        let week = calendar.date(from: comps) ?? viewModel.currentDay + Constants.WeekTime
         
         let dayFormat = Date.FormatStyle().day(.twoDigits)
         let dayOfWeekFormat = Date.FormatStyle().weekday(.narrow)
@@ -182,8 +50,54 @@ struct CalendarPageView: View {
                     Spacer()
                 }
                 .contentShape(Rectangle())
-                .onTapGesture { setCurrentDay(with: day) }
+                .onTapGesture { viewModel.setCurrentDay(to: day) }
             }
+        }
+    }
+}
+
+//MARK: CalendarPageView
+struct CalendarPageView: View {
+    
+//   MARK: vars
+    let events: [RecallCalendarEvent]
+    let goals: [RecallGoal]
+    let dailySummaries: [RecallDailySummary]
+    
+    @Environment(\.colorScheme) private var colorScheme
+    
+    private let viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+    
+    @Namespace private var calendarPageViewNameSpace
+    
+    private func formatDate(_ date: Date) -> String {
+        date.formatted(.dateTime.weekday().month().day())
+    }
+    
+//    MARK: Headers
+    @ViewBuilder
+    private func makeHeader() -> some View {
+        HStack {
+            UniversalButton {
+                UniversalText( "Recall",
+                               size: Constants.UIHeaderTextSize,
+                               font: Constants.titleFont,
+                               wrap: false, scale: true )
+            } action: { viewModel.setCurrentDay(to: .now) }
+
+            Spacer()
+            
+            
+            RecallIcon("calendar")
+                .rectangularBackground(style: .secondary)
+                .safeZoomMatch(id: RecallnavigationMatchKeys.monthlyCalendarView, namespace: calendarPageViewNameSpace)
+                .onTapGesture { coordinator.push(.monthlyCalendarView(namespace: calendarPageViewNameSpace)) }
+            
+            RecallIcon("person")
+                .rectangularBackground(style: .secondary)
+                .safeZoomMatch(id: RecallnavigationMatchKeys.profileView, namespace: calendarPageViewNameSpace)
+                .onTapGesture { coordinator.push(.profileView(namespace: calendarPageViewNameSpace)) }
         }
     }
     
@@ -211,9 +125,9 @@ struct CalendarPageView: View {
     private func makeToolBar() -> some View {
         ZStack(alignment: .leading) {
             HStack(spacing: 0) {
-                makeCalendarLayoutButton(icon: "rectangle", count: 1, activeValue: viewModel.daysPerView)           { count in viewModel.setDaysPerView(to: count)}
-                makeCalendarLayoutButton(icon: "rectangle.split.2x1", count: 2, activeValue: viewModel.daysPerView) { count in viewModel.setDaysPerView(to: count)}
-                makeCalendarLayoutButton(icon: "rectangle.split.3x1", count: 7, activeValue: viewModel.daysPerView) { count in viewModel.setDaysPerView(to: count)}
+                makeCalendarLayoutButton(icon: "rectangle", count: 1, activeValue: viewModel.daysPerView)           { count in RecallModel.index.setCalendarColoumnCount(to: count)}
+                makeCalendarLayoutButton(icon: "rectangle.split.2x1", count: 2, activeValue: viewModel.daysPerView) { count in RecallModel.index.setCalendarColoumnCount(to: count)}
+                makeCalendarLayoutButton(icon: "rectangle.split.3x1", count: 7, activeValue: viewModel.daysPerView) { count in RecallModel.index.setCalendarColoumnCount(to: count)}
             }
             
             HStack(spacing: 0) {
@@ -240,7 +154,7 @@ struct CalendarPageView: View {
                         .combined(with: .opacity)
                     )
             } else {
-                makeDateTape(on: viewModel.currentDay)
+                CalendarPageDateTape()
                     .frame(height: 50)
                     .transition(
                         .modifier(active: ToolBarTransition(offset: 50), identity: ToolBarTransition(offset: 0))

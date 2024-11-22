@@ -9,6 +9,23 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
+//MARK: RecallCategoryStore
+
+class RecallCategoryStore {
+    static let shared = RecallCategoryStore()
+    
+    private var tagColors: [String: Color] = [:]
+    
+    func getColor( for tag: RecallCategory ) -> Color {
+        if let color = tagColors[tag.label] { return color }
+        let color = Color(red: tag.r, green: tag.g, blue: tag.b)
+        
+        self.tagColors[tag.label] = color
+        return color
+    }
+}
+
+//MARK: RecallCategory
 class RecallCategory: Object, Identifiable, OwnedRealmObject {
     
     @Persisted(primaryKey: true) var _id: ObjectId
@@ -130,8 +147,10 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
         self.b = comps.blue
     }
     
+    var color: Color? = nil
+    
     func getColor() -> Color {
-        Color(red: r, green: g, blue: b)
+        RecallCategoryStore.shared.getColor(for: self)
     }
     
     @MainActor

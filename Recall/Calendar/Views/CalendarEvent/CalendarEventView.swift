@@ -11,7 +11,6 @@ import RealmSwift
 import UIUniversals
 import MapKit
 
-//TODO: Map automatically adds location
 //TODO: Update Preferneces
 
 //MARK: DeletableCalendarEvent
@@ -218,8 +217,7 @@ struct RecallCalendarEventView: View {
             
             EmptyCalendarView(startHour: Int(startHour), endHour: endHour, labelWidth: 20, includeCurrentTimeMark: false)
             
-            CalendarView(events: calendarViewModel.getEvents(on: event.startTime),
-                         on: event.startTime,
+            CalendarView(events: [], on: event.startTime,
                          startHour: startHour,
                          endHour: endHour,
                          includeGestures: false,

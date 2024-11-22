@@ -50,7 +50,6 @@ struct CalendarView: View {
 //        this happens when they belong to a forwards collision group
         var i = 0
         while i < events.count {
-            
             let currentEvent = events[i]
             
 //            get backwardCollisionRecord
@@ -215,8 +214,8 @@ struct CalendarView: View {
 //    not sure why, but that should probably be fixed!
 //    This also gets run to update every single time the user scrolls on the main vertical calendar 
     init(events: [RecallCalendarEvent], on day: Date, startHour: Double = 0, endHour: Int = 24, includeGestures: Bool = true, highlightEvent: RecallCalendarEvent? = nil) {
-        self.day = day
         self.events = events
+        self.day = day
         self.startHour = startHour
         self.endHour = endHour
         self.includeGestures = includeGestures
@@ -225,16 +224,15 @@ struct CalendarView: View {
     
 //    MARK: Body
     var body: some View {
-        
-        let records = mapEvents()
-        let startOfDay = day.resetToStartOfDay()
-        
         GeometryReader { geo in
             ZStack(alignment: .top) {
                 
                 Rectangle()
                     .foregroundStyle(.clear)
                 
+                let records = mapEvents()
+                let startOfDay = day.resetToStartOfDay()
+
                 ForEach( 0..<records.count, id: \.self ) { i in
                     let record = records[i]
                     let event = events[record.forwardCollisions.lowerBound]
@@ -242,7 +240,7 @@ struct CalendarView: View {
                     let eventEndHour = Calendar.current.component(.hour, from: event.endTime)
                     
                     if max(eventEndHour, eventStartHour) >= Int(startHour) && min(eventStartHour, eventEndHour) <= endHour {
-
+                        
                         let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
                                                        relativeTo: startOfDay)
                         

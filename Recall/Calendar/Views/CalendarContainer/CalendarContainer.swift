@@ -106,24 +106,33 @@ struct CalendarContainer: View {
     init(events: [RecallCalendarEvent], summaries: [RecallDailySummary]) {
         self.events = events
         self.summaries = summaries
+        
+        print( "running!" )
     }
     
 //    MARK: Struct Methods
     private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy, dayCount: Int) {
-//        if scrollPosition.x > 0 { return }
-        let x = abs(scrollPosition.x)
-        
+
+        let initialDaysPerView = Double(viewModel.initialDaysPerView)
         let daysPerView =  Double(viewModel.daysPerView)
         
-        let calendarWidth = abs(geo.size.width - calendarLabelWidth) / daysPerView
-        let scrollDetectionPadding = calendarWidth / 2
+        let geoWidth = geo.size.width - calendarLabelWidth
+        let calendarWidth = geoWidth / daysPerView
+        let initialWidth: Double = (geoWidth / initialDaysPerView) * Double(dayCount)
+        let currentWidth: Double = (calendarWidth) * Double(dayCount)
         
-        let proposedIndex = Int(floor( (x + calendarLabelWidth + scrollDetectionPadding + calendarWidth) / calendarWidth) )
+        let offset = initialWidth - currentWidth
+        let x = abs(scrollPosition.x) - offset
+        
+        let scrollDetectionPadding = calendarWidth / 2
+        let proposedIndex = Int(floor( (x + calendarLabelWidth - scrollDetectionPadding + calendarWidth) / calendarWidth) )
         let proposedDate = Date.now - (Double(dayCount - proposedIndex) * Constants.DayTime)
-
-        if !viewModel.scrollingCalendar
-//            && !self.viewModel.currentDay.matches(proposedDate, to: .day)
-        {
+        
+//        print( scrollPosition.x, proposedIndex, dayCount, proposedDate.formatted(date: .numeric, time: .omitted) )
+        
+        if proposedDate.matches(viewModel.currentDay, to: .day) { return }
+        
+        if !viewModel.scrollingCalendar {
             self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
         }
     }
@@ -294,13 +303,13 @@ struct CalendarContainer: View {
         let proposedIndex = Int(floor( difference / Constants.DayTime ))
         return proposedIndex % viewModel.daysPerView
     }
-    
+
     @ViewBuilder
     private func makeCalendarCarousel(in geo: GeometryProxy) -> some View {
         let dayCount = RecallModel.index.daysSinceFirstEvent()
         
         ScrollViewReader { proxy in
-            ScrollView(.horizontal, showsIndicators: false) {
+            ScrollView(.horizontal, showsIndicators: true) {
                 LazyHStack(spacing: 0) {
                     
                     ForEach(0...dayCount, id: \.self) { i in
@@ -308,19 +317,16 @@ struct CalendarContainer: View {
                         let day = Date.now.resetToStartOfDay() + Double(i - dayCount) * Constants.DayTime
                         
                         ZStack(alignment: .top) {
+                            CalendarView(events: viewModel.getEvents(on: day), on: day)
                             
-                            
-                            
-                            CalendarView(events: viewModel.getEvents(on: day),
-                                             on: day)
                             makeEventCreationPreview(on: 1 - calculateSubDayIndex(on: day))
                         }
+
                         .padding(.horizontal, 2)
                         .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
                         .task { await viewModel.loadEvents(for: day, in: events) }
                     }
                 }
-                
                 .scrollTargetLayout()
                 .onChange(of: viewModel.shouldScrollCalendar) { scrollToCurrentDay(proxy: proxy) }
                 
@@ -330,9 +336,6 @@ struct CalendarContainer: View {
                 })
                 
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo, dayCount: dayCount) }
-                .onChange(of: events) { oldValue, newValue in
-                    viewModel.invalidateEvents(newEvents: newValue)
-                }
             }
             .defaultScrollAnchor(.trailing)
             .scrollTargetBehavior(.viewAligned)

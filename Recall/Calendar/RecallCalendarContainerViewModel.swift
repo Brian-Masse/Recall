@@ -26,6 +26,8 @@ class RecallCalendarContainerViewModel: ObservableObject {
     @Published private(set) var subDayIndex: Int = 0
     @Published private(set) var daysPerView: Int = 2
     
+    var initialDaysPerView: Int = 2
+    
     @Published var scale: Double = 100
     @Published var gestureInProgress: Bool = false
     
@@ -34,6 +36,8 @@ class RecallCalendarContainerViewModel: ObservableObject {
     
     init() {
         self.getScale(from: RecallModel.index.calendarDensity)
+        self.daysPerView = RecallModel.index.calendarColoumnCount
+        self.initialDaysPerView = daysPerView
     }
     
 //    MARK: Setters
@@ -53,11 +57,14 @@ class RecallCalendarContainerViewModel: ObservableObject {
     
     func setDaysPerView(to count: Int) { withAnimation {
         self.daysPerView = count
+        self.subDayIndex = 0
     }}
     
     func setSubDayIndex(to index: Int) {
         self.subDayIndex = index
     }
+    
+//    func setWidth( _ width: Double = Date )
     
     func setScale(to scale: Double) {
         let scale = min( 200, max( 40, scale ) )
@@ -119,8 +126,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
     
 //    MARK: Event Filtering
     func loadEvents( for day: Date, in events: [RecallCalendarEvent] ) async {
-        
-        if abs(currentDay.timeIntervalSince(day) / Constants.DayTime) > 4 { return }
+//        if abs(currentDay.timeIntervalSince(day) / Constants.DayTime) > 4 { return }
         
         let key = day.getDayKey()
         if filteredEvents[key] != nil { return }
@@ -146,7 +152,17 @@ class RecallCalendarContainerViewModel: ObservableObject {
         if let events = filteredEvents[key] {
             return events
         }
+        
         return []
+    }
+    
+    func getEvents(on day: Date, in events: [RecallCalendarEvent]) async -> [RecallCalendarEvent] {
+        let key = day.getDayKey()
+        
+        if let events = filteredEvents[key] { return events }
+        
+        await loadEvents(for: day, in: events)
+        return getEvents(on: day)
     }
     
     

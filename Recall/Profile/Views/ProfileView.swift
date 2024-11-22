@@ -54,8 +54,6 @@ struct ProfileView: View {
 //        events
         static var showNotesOnPreviewLabel = "Show event notes on preview"
         
-        static var universalFineSelectionLabel = "Universal precise time selection"
-        
         static var defaultTimeSnappingLabel = "Default event snapping"
         
         static var recallAtEndOfLastEvent = "Moving Recall"
@@ -189,6 +187,13 @@ struct ProfileView: View {
         
         VStack(alignment: .leading) {
             
+            UniversalText( "Calendar Display Options", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            
+            makeCalendarDisplayOptions()
+                .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
+                .padding(.bottom, 20)
+                
+            
             UniversalText( "Event Settings", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             
             makeEventSettings()
@@ -214,6 +219,94 @@ struct ProfileView: View {
             
             makePageFooter()
                 .padding(.bottom)
+        }
+    }
+    
+//    MARK: makeDefaultTimeSnappingSelector =
+    @ViewBuilder
+    private func makeDefaultTimeSnappingSelector() -> some View {
+        UniversalText(SettingsConstants.defaultTimeSnappingLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+        HStack {
+            ForEach( TimeRounding.allCases ) { content in
+                makeTimeSnappingSelector(title: content.getTitle(), option: content)
+            }
+        }
+    }
+    
+//    MARK: makeCalendarDensityOption
+    @ViewBuilder
+    private func makeCalendarDensityOption(_ option: Int, caption: String) -> some View {
+        
+        VStack {
+            let colorScheme = colorScheme == .dark ? "dark" : "light"
+            
+            Image("\(colorScheme)-calendar-desnity-\(option)")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .clipped()
+                .padding(.bottom, 5)
+            
+            UniversalText(caption, size: Constants.UISmallTextSize, font: Constants.titleFont)
+                .if( index.calendarDensity == option ) { view in view.foregroundStyle(.black) }
+        }
+            .padding(10)
+            .background {
+                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                    .foregroundStyle( index.calendarDensity == option ? Colors.getAccent(from: colorScheme) : .clear )
+            }
+            .onTapGesture { withAnimation {
+                index.setCalendarDensity(to: option)
+            } }
+    }
+    
+//    MARK: makeCalendarDensitySelector
+    @ViewBuilder
+    private func makeCalendarDensitySelector() -> some View {
+        VStack(alignment: .leading) {
+            UniversalText( "Calendar Density", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            
+            HStack(spacing: 0) {
+                makeCalendarDensityOption(0, caption: "compact")
+                makeCalendarDensityOption(1, caption: "regular")
+                makeCalendarDensityOption(2, caption: "roomy")
+            }
+        }
+    }
+    
+//    MARK: CalendarColoumnCountSelector
+    @ViewBuilder
+    private func makeCalendarColoumnCountOption(_ option: Int, icon: String) -> some View {
+        UniversalButton {
+            HStack {
+                Spacer()
+                RecallIcon( icon )
+                Spacer()
+            }.rectangularBackground(style: index.calendarColoumnCount == option ? .accent : .primary)
+            
+        } action: { index.setCalendarColoumnCount(to: option) }
+        
+    }
+    
+    @ViewBuilder
+    private func makeCalendarColoumnCountSelector() -> some View {
+        VStack(alignment: .leading) {
+            UniversalText( "Coloumns", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            
+            HStack(spacing: 10) {
+                makeCalendarColoumnCountOption(1, icon: "rectangle")
+                makeCalendarColoumnCountOption(2, icon: "rectangle.split.2x1")
+                makeCalendarColoumnCountOption(3, icon: "rectangle.split.3x1")
+            }
+        }
+    }
+    
+//    MARK: - makeCalendarDisplayOptions
+    @ViewBuilder
+    private func makeCalendarDisplayOptions() -> some View {
+        VStack(alignment: .leading, spacing: 20) {
+            makeCalendarDensitySelector()
+            
+            makeCalendarColoumnCountSelector()
         }
     }
     
@@ -250,86 +343,6 @@ struct ProfileView: View {
             .onTapGesture { withAnimation { index.setDefaultTimeSnapping(to: option) } }
     }
     
-//    MARK: makeDefaultTimeSnappingSelector =
-    @ViewBuilder
-    private func makeDefaultTimeSnappingSelector() -> some View {
-        UniversalText(SettingsConstants.defaultTimeSnappingLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-        HStack {
-            ForEach( TimeRounding.allCases ) { content in
-                makeTimeSnappingSelector(title: content.getTitle(), option: content)
-            }
-        }
-    }
-    
-//    MARK: makeDefaultRecallStyleSelector
-    private func makeDefaultRecallStyleSelectorOption(_ label: String, icon: String, option: Bool) -> some View {
-        HStack {
-            Spacer()
-            VStack {
-                RecallIcon(icon)
-                    .padding(.bottom, 5)
-                UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
-            }
-            Spacer()
-        }
-        .if( option == index.recallEventsWithEventTime ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
-        .if( option != index.recallEventsWithEventTime ) { view in view.rectangularBackground(style: .primary) }
-        .onTapGesture { withAnimation { index.setDefaultRecallStyle(to: option) } }
-    }
-    
-    private func makeDefaultRecallStyleSelector() -> some View {
-        
-        VStack(alignment: .leading) {
-            UniversalText( SettingsConstants.recallStyleLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-               HStack {
-                makeDefaultRecallStyleSelectorOption("Recall with event time", icon: "calendar", option: true)
-                makeDefaultRecallStyleSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: false)
-            }
-            .padding(.bottom, 5)
-        }
-    }
-    
-//    MARK: makeCalendarDensityOption
-    @ViewBuilder
-    private func makeCalendarDensityOption(_ option: Int, caption: String) -> some View {
-        
-        VStack {
-            let colorScheme = colorScheme == .dark ? "dark" : "light"
-            
-            Image("\(colorScheme)-calendar-desnity-\(option)")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .clipped()
-                .padding(.bottom, 5)
-            
-            UniversalText(caption, size: Constants.UISmallTextSize, font: Constants.titleFont)
-                .if( index.calendarDensity == option ) { view in view.foregroundStyle(.black) }
-        }
-            .padding(10)
-            .background {
-                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                    .foregroundStyle( index.calendarDensity == option ? Colors.getAccent(from: colorScheme) : .clear )
-            }
-            .onTapGesture { withAnimation {
-                index.setCalendarDensity(to: option)
-            } }
-    }
-    
-//    MARK: makeCalendarDensitySelector
-    @ViewBuilder
-    private func makeCalendarDensitySelector() -> some View {
-        VStack(alignment: .leading) {
-            UniversalText( "Calendar Size", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-            
-            HStack(spacing: 0) {
-                makeCalendarDensityOption(0, caption: "compact")
-                makeCalendarDensityOption(1, caption: "regular")
-                makeCalendarDensityOption(2, caption: "roomy")
-            }
-        }
-    }
-    
-    
 //    MARK: makeEventSettings
     @ViewBuilder
     private func makeEventSettings() -> some View {
@@ -342,17 +355,9 @@ struct ProfileView: View {
             
             Divider()
             
-            makeCalendarDensitySelector()
-            
-            Divider()
-            
 //        toggles
             StyledToggle(showingNotesOnPreviewBinding) {
                 UniversalText( SettingsConstants.showNotesOnPreviewLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-            }
-            
-            StyledToggle(fineTimeSelectorIsDefault) {
-                UniversalText(SettingsConstants.universalFineSelectionLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
             
             StyledToggle(recallAtTheEndOfLastEventBinding) {
@@ -361,8 +366,6 @@ struct ProfileView: View {
             makeSettingsDescription(SettingsConstants.recallAtEndOfLastEventDescription)
             
             Divider()
-            
-            makeDefaultRecallStyleSelector()
             
             makeDefaultTimeSnappingSelector()
             
@@ -534,6 +537,8 @@ struct ProfileView: View {
                 }
             }
         }
+        .animation(.easeInOut, value: index)
+        
         .padding(7)
         .universalBackground()
         .alert("OwnerID", isPresented: $showingDataTransfer) {

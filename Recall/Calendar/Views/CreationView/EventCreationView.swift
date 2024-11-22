@@ -238,33 +238,6 @@ struct CalendarEventCreationView: View {
         }
     }
     
-//    MARK: RecallTypeSelector
-    @ViewBuilder
-    private func makeRecallTypeSelectorOption( _ label: String, icon: String, option: Bool ) -> some View {
-        
-        HStack {
-            Spacer()
-            VStack {
-                RecallIcon(icon)
-                    .padding(.bottom, 5)
-                UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
-            }.padding(.horizontal, 20)
-            
-            Spacer()
-        }
-        .if( recallByLength == option ) { view in view.rectangularBackground(7, style: .accent, foregroundColor: .black) }
-        .if( recallByLength != option ) { view in view.rectangularBackground(7, style: .secondary) }
-        .onTapGesture { withAnimation { recallByLength = option } }
-    }
-    
-    @ViewBuilder
-    private func makeRecallTypeSelector() -> some View {
-        HStack {
-            makeRecallTypeSelectorOption("Recall with event time", icon: "calendar", option: false)
-            makeRecallTypeSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: true)
-        }
-    }
-    
 //    MARK: TimeSelector
     @ViewBuilder
     private func makeTimeSelector() -> some View {
@@ -282,8 +255,6 @@ struct CalendarEventCreationView: View {
             CactusTimeDial(time: $startTime, title: "Event start time")
             CactusTimeDial(time: $endTime, title: "Event end time")
         }
-        
-        makeRecallTypeSelector()
     }
     
 //    MARK: TagSelector
