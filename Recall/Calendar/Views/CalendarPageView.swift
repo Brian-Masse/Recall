@@ -56,6 +56,117 @@ private struct CalendarPageDateTape: View {
     }
 }
 
+//MARK: CalendarPageToolBar
+private struct CalendarPageToolBar: View {
+    
+    @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
+    
+//    MARK: ToolBar
+    @State private var showingToolBar: Bool = false
+    @State private var toggledToolBarInGesture: Bool = false
+    
+    @ViewBuilder
+    private func makeCalendarLayoutButton(icon: String, count: Int, activeValue: Int, action: @escaping (Int) -> Void) -> some View {
+        let isCurrent = activeValue == count
+        
+        RecallIcon(icon)
+            .padding(.horizontal, isCurrent ? 15 : 7)
+            .padding(.vertical)
+            .contentShape(Rectangle())
+            .background { if isCurrent {
+                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                    .universalStyledBackgrond(.secondary, onForeground: true)
+            } }
+            .onTapGesture { withAnimation { action(count) }}
+    }
+   
+    
+    @ViewBuilder
+    private func makeToolBar() -> some View {
+        ZStack(alignment: .leading) {
+            HStack(spacing: 0) {
+                makeCalendarLayoutButton(icon: "rectangle", count: 1, activeValue: viewModel.daysPerView)           { count in RecallModel.index.setCalendarColoumnCount(to: count)}
+                makeCalendarLayoutButton(icon: "rectangle.split.2x1", count: 2, activeValue: viewModel.daysPerView) { count in RecallModel.index.setCalendarColoumnCount(to: count)}
+                makeCalendarLayoutButton(icon: "rectangle.split.3x1", count: 3, activeValue: viewModel.daysPerView) { count in RecallModel.index.setCalendarColoumnCount(to: count)}
+            }
+            
+            HStack(spacing: 0) {
+                Spacer()
+                
+                let density = viewModel.getDensity()
+                
+                makeCalendarLayoutButton(icon: "widget.medium", count: 0, activeValue: density)       { count in RecallModel.index.setCalendarDensity(to: count) }
+                makeCalendarLayoutButton(icon: "widget.large", count: 1, activeValue: density)        { count in RecallModel.index.setCalendarDensity(to: count) }
+                makeCalendarLayoutButton(icon: "widget.extralarge", count: 2, activeValue: density)   { count in RecallModel.index.setCalendarDensity(to: count) }
+            }
+        }
+    }
+    
+//    MARK: ToolRibbon
+    @ViewBuilder
+    private func makeToolRibbon() -> some View {
+        VStack(spacing: 0) {
+            if showingToolBar {
+                makeToolBar()
+                    .frame(height: 50)
+                    .transition(
+                        .modifier(active: ToolBarTransition(offset: 50), identity: ToolBarTransition(offset: 0))
+                        .combined(with: .opacity)
+                    )
+            } else {
+                CalendarPageDateTape()
+                    .frame(height: 50)
+                    .transition(
+                        .modifier(active: ToolBarTransition(offset: 50), identity: ToolBarTransition(offset: 0))
+                        .combined(with: .opacity)
+                    )
+            }
+//
+            HStack {
+                Spacer()
+                
+                RecallIcon(showingToolBar ? "chevron.up" : "chevron.down")
+                    .padding(.vertical, 5)
+                    .opacity(0.65)
+                
+                Spacer()
+            }
+            .contentShape(Rectangle())
+            .onTapGesture { withAnimation { showingToolBar.toggle() } }
+        }.contentShape(Rectangle())
+    }
+    
+//    MARK: ToolBarTransition
+    private struct ToolBarTransition: ViewModifier, Animatable {
+        let offset: Double
+
+        func body(content: Content) -> some View {
+            content
+                .offset(y: -offset)
+                .blur(radius: abs(offset) / 10)
+        }
+    }
+    
+//    MARK: Toolbar Gesture
+    private var toolBarGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                if !toggledToolBarInGesture && abs(value.translation.height) > 25 {
+                    withAnimation { showingToolBar.toggle() }
+                    self.toggledToolBarInGesture = true
+                }
+            }
+            .onEnded { _ in self.toggledToolBarInGesture = false }
+    }
+    
+    
+    var body: some View {
+        makeToolRibbon()
+            .gesture(toolBarGesture)
+    }
+    
+}
+
 //MARK: CalendarPageView
 struct CalendarPageView: View {
     
@@ -101,113 +212,14 @@ struct CalendarPageView: View {
         }
     }
     
-//    MARK: ToolBar
-    @State private var showingToolBar: Bool = false
-    @State private var toggledToolBarInGesture: Bool = false
-    
-    @ViewBuilder
-    private func makeCalendarLayoutButton(icon: String, count: Int, activeValue: Int, action: @escaping (Int) -> Void) -> some View {
-        let isCurrent = activeValue == count
-        
-        RecallIcon(icon)
-            .padding(.horizontal, isCurrent ? 15 : 7)
-            .padding(.vertical)
-            .contentShape(Rectangle())
-            .background { if isCurrent {
-                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                    .universalStyledBackgrond(.secondary, onForeground: true)
-            } }
-            .onTapGesture { withAnimation { action(count) }}
-    }
-   
-    
-    @ViewBuilder
-    private func makeToolBar() -> some View {
-        ZStack(alignment: .leading) {
-            HStack(spacing: 0) {
-                makeCalendarLayoutButton(icon: "rectangle", count: 1, activeValue: viewModel.daysPerView)           { count in RecallModel.index.setCalendarColoumnCount(to: count)}
-                makeCalendarLayoutButton(icon: "rectangle.split.2x1", count: 2, activeValue: viewModel.daysPerView) { count in RecallModel.index.setCalendarColoumnCount(to: count)}
-                makeCalendarLayoutButton(icon: "rectangle.split.3x1", count: 3, activeValue: viewModel.daysPerView) { count in RecallModel.index.setCalendarColoumnCount(to: count)}
-            }
-            
-            HStack(spacing: 0) {
-                Spacer()
-                
-                let density = viewModel.getDensity()
-                
-                makeCalendarLayoutButton(icon: "widget.medium", count: 0, activeValue: density)       { count in viewModel.getScale(from: count) }
-                makeCalendarLayoutButton(icon: "widget.large", count: 1, activeValue: density)        { count in viewModel.getScale(from: count) }
-                makeCalendarLayoutButton(icon: "widget.extralarge", count: 2, activeValue: density)   { count in viewModel.getScale(from: count) }
-            }
-        }
-    }
-    
-//    MARK: ToolRibbon
-    @ViewBuilder
-    private func makeToolRibbon() -> some View {
-        VStack(spacing: 0) {
-            if showingToolBar {
-                makeToolBar()
-                    .frame(height: 50)
-                    .transition(
-                        .modifier(active: ToolBarTransition(offset: 50), identity: ToolBarTransition(offset: 0))
-                        .combined(with: .opacity)
-                    )
-            } else {
-                CalendarPageDateTape()
-                    .frame(height: 50)
-                    .transition(
-                        .modifier(active: ToolBarTransition(offset: 50), identity: ToolBarTransition(offset: 0))
-                        .combined(with: .opacity)
-                    )
-            }
-//            
-            HStack {
-                Spacer()
-                
-                RecallIcon(showingToolBar ? "chevron.up" : "chevron.down")
-                    .padding(.vertical, 5)
-                    .opacity(0.65)
-                
-                Spacer()
-            }
-            .contentShape(Rectangle())
-            .onTapGesture { withAnimation { showingToolBar.toggle() } }
-        }.contentShape(Rectangle())
-    }
-    
-//    MARK: ToolBarTransition
-    private struct ToolBarTransition: ViewModifier, Animatable {
-        let offset: Double
-
-        func body(content: Content) -> some View {
-            content
-                .offset(y: -offset)
-                .blur(radius: abs(offset) / 10)
-        }
-    }
-    
-//    MARK: Toolbar Gesture
-    private var toolBarGesture: some Gesture {
-        DragGesture()
-            .onChanged { value in
-                if !toggledToolBarInGesture && abs(value.translation.height) > 25 {
-                    withAnimation { showingToolBar.toggle() }
-                    self.toggledToolBarInGesture = true
-                }
-            }
-            .onEnded { _ in self.toggledToolBarInGesture = false }
-    }
-    
-    
 //    MARK: Body
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             makeHeader()
                 .padding(.horizontal, 7)
             
-            makeToolRibbon()
-                .gesture(toolBarGesture)
+            CalendarPageToolBar()
+                
             
             CalendarContainer(events: Array(events), summaries: dailySummaries)
         }

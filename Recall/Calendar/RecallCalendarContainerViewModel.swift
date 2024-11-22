@@ -68,7 +68,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
     
     func setDaysPerView(to count: Int) { withAnimation {
         let dayOffset = count - daysPerView
-        self.currentDay += Double(dayOffset) * Constants.DayTime
+//        self.currentDay += Double(dayOffset) * Constants.DayTime
         
         self.daysPerView = count
         self.subDayIndex = 0
