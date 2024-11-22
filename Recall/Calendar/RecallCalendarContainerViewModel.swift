@@ -28,6 +28,16 @@ class RecallCalendarContainerViewModel: ObservableObject {
     
     var initialDaysPerView: Int = 2
     
+//    This is the scrollPosition when a user changes the daysPerView variable
+//    It allows the offset / index calculation to work regardless of when the user switched to the new layout
+    var baseCalendarOffset: Double = 0
+    var baseCalendarIndex: Int = 0
+    
+//    This is the initialWidth of the calendarContainer
+//    it is subtracted from all offsets to effectivly 0 it. Its not really necessary, but makes the offset code more readable
+    var initialCalendarWidth: Double = 0
+    var initialCalendarWidthSet: Bool = false
+    
     @Published var scale: Double = 100
     @Published var gestureInProgress: Bool = false
     
@@ -44,6 +54,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
     func setCurrentDay(to day: Date, scrollToDay: Bool = true) {
     
         withAnimation { self.currentDay = day }
+        objectWillChange.send()
         
         if scrollToDay {
             shouldScrollCalendar.toggle()
@@ -56,15 +67,29 @@ class RecallCalendarContainerViewModel: ObservableObject {
     }
     
     func setDaysPerView(to count: Int) { withAnimation {
+        let dayOffset = count - daysPerView
+        self.currentDay += Double(dayOffset) * Constants.DayTime
+        
         self.daysPerView = count
         self.subDayIndex = 0
     }}
-    
+
     func setSubDayIndex(to index: Int) {
         self.subDayIndex = index
     }
     
-//    func setWidth( _ width: Double = Date )
+    func setBaseCalendarOffset(to offset: Double) {
+        let index = Int( floor( Date.now.timeIntervalSince(currentDay) ) / Constants.DayTime  )
+        let dayOffset = daysPerView - initialDaysPerView
+        self.baseCalendarIndex = index - dayOffset
+        self.baseCalendarOffset = offset
+    }
+    
+    func setInitialWidth( _ width: Double ) {
+        if self.initialCalendarWidthSet { return }
+        self.initialCalendarWidth = width
+        self.initialCalendarWidthSet = true
+    }
     
     func setScale(to scale: Double) {
         let scale = min( 200, max( 40, scale ) )

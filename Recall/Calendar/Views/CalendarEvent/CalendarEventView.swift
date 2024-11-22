@@ -217,7 +217,8 @@ struct RecallCalendarEventView: View {
             
             EmptyCalendarView(startHour: Int(startHour), endHour: endHour, labelWidth: 20, includeCurrentTimeMark: false)
             
-            CalendarView(events: [], on: event.startTime,
+            CalendarView(events: calendarViewModel.getEvents(on: event.startTime),
+                         on: event.startTime,
                          startHour: startHour,
                          endHour: endHour,
                          includeGestures: false,

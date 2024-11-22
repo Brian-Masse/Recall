@@ -127,7 +127,7 @@ struct CalendarPageView: View {
             HStack(spacing: 0) {
                 makeCalendarLayoutButton(icon: "rectangle", count: 1, activeValue: viewModel.daysPerView)           { count in RecallModel.index.setCalendarColoumnCount(to: count)}
                 makeCalendarLayoutButton(icon: "rectangle.split.2x1", count: 2, activeValue: viewModel.daysPerView) { count in RecallModel.index.setCalendarColoumnCount(to: count)}
-                makeCalendarLayoutButton(icon: "rectangle.split.3x1", count: 7, activeValue: viewModel.daysPerView) { count in RecallModel.index.setCalendarColoumnCount(to: count)}
+                makeCalendarLayoutButton(icon: "rectangle.split.3x1", count: 3, activeValue: viewModel.daysPerView) { count in RecallModel.index.setCalendarColoumnCount(to: count)}
             }
             
             HStack(spacing: 0) {

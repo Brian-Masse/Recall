@@ -45,6 +45,8 @@ struct CalendarEventPreviewContentView: View {
 //    MARK: ContentBody
     private struct ContentBody: View {
         
+        @Environment( \.colorScheme ) var colorScheme
+        
         let event: RecallCalendarEvent
         let height: Double
         let showMetaData: Bool
@@ -130,7 +132,9 @@ struct CalendarEventPreviewContentView: View {
                     }
                 }
                 Spacer()
-            }.task { await loadProperties() }
+            }
+            .foregroundStyle(event.getColor().safeMix(with: .black, by: colorScheme == .light ? 0.5 : 0) )
+            .task { await loadProperties() }
         }
         
     }
@@ -139,8 +143,6 @@ struct CalendarEventPreviewContentView: View {
     @ViewBuilder
     private func makeBody() -> some View {
         ContentBody(event: event, height: height, showMetaData: showMetaData)
-        
-//        .foregroundStyle(event.getColor().safeMix(with: .black, by: colorScheme == .light ? 0.5 : 0) )
     }
     
     private func verticalPadding() -> Double {
