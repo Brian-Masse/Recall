@@ -12,6 +12,7 @@ import UIUniversals
 import MapKit
 
 //TODO: Update Preferneces
+//TODO: Fix Favorites Page
 
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
@@ -41,7 +42,7 @@ extension View {
 
 //MARK: RecallCalendarEventView
 struct RecallCalendarEventView: View {
-    
+     
     @ObservedObject private var calendarViewModel = RecallCalendarContainerViewModel.shared
     @ObservedObject private var imageStoreViewModel = RecallCalendarEventImageStore.shared
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared

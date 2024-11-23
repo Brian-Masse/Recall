@@ -233,6 +233,7 @@ struct CalendarEventCreationView: View {
     }
     
     private func getCurrentLocation() async {
+        if !index.automaticLocation { return }
         if let locationResult = await LocationManager.shared.getLocationInformation() {
             self.location = locationResult
         }

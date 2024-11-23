@@ -59,6 +59,9 @@ struct ProfileView: View {
         static var recallAtEndOfLastEvent = "Moving Recall"
         static var recallAtEndOfLastEventDescription = "When enabled, each Recall starts at the end of the last event."
         
+        static var automaticLocation = "Automatic Location"
+        static var automaticLocationdescription = "When enabled, events will automatically save your current location."
+        
         static var recallStyleLabel = "Default Recall Style"
         
 //        notifications
@@ -82,6 +85,11 @@ struct ProfileView: View {
     private var recallAtTheEndOfLastEventBinding: Binding<Bool> {
         Binding { index.recallEventsAtEndOfLastRecall }
         set: { newValue in index.setRecallAtEndOfLastEvent(to: newValue) }
+    }
+    
+    private var automaticLocationBinding: Binding<Bool> {
+        Binding { index.automaticLocation }
+        set: { newValue in index.setAutomaticLocation(to: newValue) }
     }
     
 //    MARK: makeNotificationMessage
@@ -364,6 +372,11 @@ struct ProfileView: View {
                 UniversalText( SettingsConstants.recallAtEndOfLastEvent, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
             }
             makeSettingsDescription(SettingsConstants.recallAtEndOfLastEventDescription)
+            
+            StyledToggle(automaticLocationBinding) {
+                UniversalText( SettingsConstants.automaticLocation, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            }
+            makeSettingsDescription(SettingsConstants.automaticLocationdescription)
             
             Divider()
             

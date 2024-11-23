@@ -44,6 +44,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var defaultEventSnapping: Int = TimeRounding.quarter.rawValue
     @Persisted var recallEventsAtEndOfLastRecall: Bool = true
     @Persisted var recallEventsWithEventTime: Bool = true
+    @Persisted var automaticLocation: Bool = true
     
     @Persisted var calendarColoumnCount: Int = 1
     @Persisted var calendarDensity: Int = 0
@@ -217,6 +218,13 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     func setDefaultRecallStyle(to value: Bool) {
         RealmManager.updateObject(self) { thawed in
             thawed.recallEventsWithEventTime = value
+        }
+    }
+    
+    @MainActor
+    func setAutomaticLocation(to value: Bool) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.automaticLocation = value
         }
     }
     
