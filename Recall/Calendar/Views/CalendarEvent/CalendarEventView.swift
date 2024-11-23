@@ -11,7 +11,6 @@ import RealmSwift
 import UIUniversals
 import MapKit
 
-//TODO: Update Preferneces
 //TODO: Fix Favorites Page
 
 //MARK: DeletableCalendarEvent

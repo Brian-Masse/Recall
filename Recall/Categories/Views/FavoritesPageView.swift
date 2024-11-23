@@ -31,8 +31,7 @@ struct FavoritesPageView: View {
 //    ie. collecting al favorite events that happened in the same month
 //    this should always be done asyncrounously
     private func updateGrouping() async {
-        if self.dataLoaded { return }
-        self.dataLoaded = false
+        withAnimation { self.dataLoaded = false } 
         
         let filteredAndSortedEvents = await filterEvents()
         
