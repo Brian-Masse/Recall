@@ -44,7 +44,9 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var defaultEventSnapping: Int = TimeRounding.quarter.rawValue
     @Persisted var recallEventsAtEndOfLastRecall: Bool = true
     @Persisted var recallEventsWithEventTime: Bool = true
+    @Persisted var automaticLocation: Bool = true
     
+    @Persisted var calendarColoumnCount: Int = 1
     @Persisted var calendarDensity: Int = 0
     @Persisted var recallAccentColorIndex: Int = 0
     
@@ -189,6 +191,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    deprecated
     @MainActor
     func setDefaultFineTimeSelector(to value: Bool) {
         RealmManager.updateObject(self) { thawed in
@@ -210,10 +213,18 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    deprecated
     @MainActor
     func setDefaultRecallStyle(to value: Bool) {
         RealmManager.updateObject(self) { thawed in
             thawed.recallEventsWithEventTime = value
+        }
+    }
+    
+    @MainActor
+    func setAutomaticLocation(to value: Bool) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.automaticLocation = value
         }
     }
     
@@ -223,7 +234,15 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
             withAnimation { thawed.calendarDensity = value }
         }
         
-        RecallCalendarViewModel.shared.getScale(from: value)
+        RecallCalendarContainerViewModel.shared.getScale(from: value)
+    }
+    
+    func setCalendarColoumnCount(to value: Int) {
+        RealmManager.updateObject(self) { thawed in
+            withAnimation { thawed.calendarColoumnCount = value }
+        }
+        
+        RecallCalendarContainerViewModel.shared.setDaysPerView(to: value)
     }
     
     @MainActor

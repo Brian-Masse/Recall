@@ -347,6 +347,7 @@ struct CactusTimeDial: View {
     private func makeTimePreviewText(_ text: String, action: @escaping () -> Void) -> some View {
         UniversalButton {
             UniversalText( text, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                .frame(width: 25)
                 .rectangularBackground(style: .secondary)
             
         } action: { action() }

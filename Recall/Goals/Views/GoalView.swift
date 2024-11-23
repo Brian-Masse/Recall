@@ -177,7 +177,7 @@ struct GoalView: View {
         }
         .padding(7)
         .universalBackground()
-        .sheet(isPresented: $showingEditingScreen) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
+//        .sheet(isPresented: $showingEditingScreen) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
 //        .onAppear { dataModel.makeData(for: goal, with: events) }
         .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
             Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }

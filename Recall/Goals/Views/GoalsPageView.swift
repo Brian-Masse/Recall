@@ -17,7 +17,7 @@ struct GoalsPageView: View {
     let events: [RecallCalendarEvent]
     let tags: [RecallCategory]
     
-    @State var showingGoalCreationView: Bool = false
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @State var scrollPositionBinding: CGPoint = .zero
     
@@ -46,7 +46,7 @@ struct GoalsPageView: View {
                 UniversalText( "Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                 Spacer()
                 
-                IconButton("plus", label: "Add Goal") { showingGoalCreationView = true }
+                IconButton("plus", label: "Add Goal") { coordinator.presentSheet(.goalCreationView(editting: false)) }
             }
             
             TabView {
@@ -71,6 +71,5 @@ struct GoalsPageView: View {
         }
         .padding(7)
         .universalBackground()
-        .sheet(isPresented: $showingGoalCreationView) { GoalCreationView.makeGoalCreationView(editing: false) }
     }
 }

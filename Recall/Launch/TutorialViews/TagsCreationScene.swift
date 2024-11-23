@@ -20,7 +20,8 @@ extension TutorialViews {
         @ObservedResults(RecallCategory.self,
                          where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
         
-        @State var showingTagCreationView: Bool = false
+        @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+        
         @State var sentTag: Bool = false
         
         @State var name: String = ""
@@ -141,7 +142,7 @@ extension TutorialViews {
                 TagPageView(tags: Array(tags))
                 Spacer()
                 LargeRoundedButton("create another tag", icon: "arrow.up", wide: true) {
-                    showingTagCreationView = true
+                    coordinator.presentSheet(.tagCreationView(editting: false))
                 }
             }
             .slideTransition()
@@ -156,13 +157,6 @@ extension TutorialViews {
                 RealmManager.addObject(tag)
                 sentTag = true
             }
-            .sheet(isPresented: $showingTagCreationView) {
-                CategoryCreationView(editing: false,
-                                     tag: nil,
-                                     label: "",
-                                     goalRatings: Dictionary())
-            }
-            
         }
         
 //        MARK: Body

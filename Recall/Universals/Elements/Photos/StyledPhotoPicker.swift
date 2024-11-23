@@ -26,9 +26,8 @@ struct PhotoPickerModifier: ViewModifier {
                 if !viewModel.showingPhotoPicker { return }
                 Task { await viewModel.loadPhotoPickerItems(oldValue: oldVal) }
             }
-            .onDisappear {
-                viewModel.clear()
-            }
+            .onAppear { viewModel.clear() }
+            .onDisappear { viewModel.clear() }
     }
 }
 
@@ -99,7 +98,7 @@ struct StyledPhotoPickerCarousel: View {
                 } else {
                     
                     ForEach( viewModel.selectedImages, id: \.self ) { image in
-                        makePhotoPreview(image, allowsRemoval: false)
+                        makePhotoPreview(image, allowsRemoval: true)
                     }
                 }
             }

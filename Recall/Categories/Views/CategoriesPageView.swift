@@ -14,7 +14,6 @@ struct CategoriesPageView: View {
     
     enum TagPage: String, Identifiable, CaseIterable {
         case tags = "Tags"
-        case templates = "Templates"
         case favorites = "Favorites"
         
         var id: String { self.rawValue }
@@ -23,7 +22,6 @@ struct CategoriesPageView: View {
         func getAddButtonName() -> String {
             switch self {
             case .tags: return "Create Tag"
-            case .templates: return "Template"
             case .favorites: return "Favorite"
             }
         }
@@ -32,10 +30,7 @@ struct CategoriesPageView: View {
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     
-    @State var showingCreateTagView: Bool = false
-    @State var showingCreateEventView: Bool = false
-    @State var showingCreateFavoriteEventView: Bool = false
-    
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @State var activePage: TagPage = .tags
     
@@ -63,7 +58,6 @@ struct CategoriesPageView: View {
     private func makePagePicker(geo: GeometryProxy) -> some View {
         HStack {
             makePagePickerOption(page: .tags, icon: "tag")
-            makePagePickerOption(page: .templates, icon: "viewfinder.rectangular")
             makePagePickerOption(page: .favorites, icon: "circle.rectangle.filled.pattern.diagonalline")
         }
         .padding(.bottom, 5)
@@ -79,9 +73,8 @@ struct CategoriesPageView: View {
                 Spacer()
                 
                 IconButton("plus", label: activePage.getAddButtonName()) {
-                    if activePage == .tags { showingCreateTagView = true }
-                    if activePage == .templates { showingCreateEventView = true }
-                    if activePage == .favorites { showingCreateFavoriteEventView = true }
+                    if activePage == .tags { coordinator.presentSheet( .tagCreationView(editting: false) ) }
+                    if activePage == .favorites { coordinator.presentSheet( .eventCreationView(favorite: true)) }
                 }
             }
             
@@ -101,12 +94,7 @@ struct CategoriesPageView: View {
                         .ignoresSafeArea()
                         .padding(.horizontal, 7)
                         .tag( TagPage.tags )
-                    
-                    TemplatePageView(events: events)
-                        .ignoresSafeArea()
-                        .padding(.horizontal, 7)
-                        .tag( TagPage.templates )
-                    
+
                     FavoritesPageView(events: events)
                         .ignoresSafeArea()
                         .padding(.horizontal, 7)
@@ -117,17 +105,5 @@ struct CategoriesPageView: View {
             }
         }
         .universalBackground()
-        .sheet(isPresented: $showingCreateTagView) {
-            CategoryCreationView(editing: false,
-                                 tag: nil,
-                                 label: "",
-                                 goalRatings: Dictionary())
-        }
-        .sheet(isPresented: $showingCreateEventView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: .now)
-        }
-        .sheet(isPresented: $showingCreateFavoriteEventView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: .now, favorite: true)
-        }
     }
 }

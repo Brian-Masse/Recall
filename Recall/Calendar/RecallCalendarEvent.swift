@@ -214,7 +214,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         let list = RealmSwift.List<Data>()
         
         for image in images {
-            let data = PhotoManager.encodeImage(image, in: 800)
+            let data = PhotoManager.encodeImage(image, compressionQuality: 0.45, in: 600)
+            print("uploaded image. size: \(data.count)")
             list.append(data)
         }
         
@@ -257,7 +258,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @MainActor
     func toggleFavorite() {
         RealmManager.updateObject(self) { thawed in
-            thawed.isFavorite = !self.isFavorite
+            thawed.isFavorite = !self.isFavorite 
         }
     }
     
@@ -278,6 +279,17 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     }
     
     func getLengthInHours() -> Double { endTime.timeIntervalSince(startTime) / Constants.HourTime }
+    
+    func getDurationString() -> String {
+        let hours = endTime.timeIntervalSince(startTime) / Constants.HourTime
+        let roundedHours = floor(hours)
+        let minutes = (hours - roundedHours) * 60
+        
+        let hourString = "\(Int(roundedHours)) hr "
+        let minuteString = "\(Int(minutes))"
+        
+        return (Int(roundedHours) == 0 ? "" : hourString) + ( Int(minutes) == 0 ? "" : minuteString ) + (Int(roundedHours) == 0 ? " mins" : "")
+    }
     
     func getColor() -> Color { category?.getColor() ?? Colors.defaultLightAccent }
     

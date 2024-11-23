@@ -31,7 +31,7 @@ struct FavoritesPageView: View {
 //    ie. collecting al favorite events that happened in the same month
 //    this should always be done asyncrounously
     private func updateGrouping() async {
-        self.dataLoaded = false
+        withAnimation { self.dataLoaded = false } 
         
         let filteredAndSortedEvents = await filterEvents()
         
@@ -82,6 +82,9 @@ struct FavoritesPageView: View {
         let events: [RecallCalendarEvent]
         let geo: GeometryProxy
         
+        @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+        @Namespace private var namespace
+        
         let grouping: Calendar.Component
         @State var showingFullSection: Bool = true
         
@@ -115,7 +118,6 @@ struct FavoritesPageView: View {
                 if showingFullSection {
                     ForEach( groupedEvents ) { event in
                         CalendarEventPreviewContentView(event: event, events: events)
-                        .frame(height: 120)
                         .contextMenu {
                             ContextMenuButton("unfavorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
                                 event.toggleFavorite()
@@ -130,6 +132,11 @@ struct FavoritesPageView: View {
                         }, message: {
                             Text("This action cannot be undone.")
                         })
+                        
+                        .safeZoomMatch(id: event.identifier(), namespace: namespace)
+                        .onTapGesture {
+                            coordinator.push( .recallEventView(id: event.identifier(), event: event, events: [event], Namespace: namespace) )
+                        }
                         
                     }
                 }
@@ -195,6 +202,5 @@ struct FavoritesPageView: View {
         .onChange(of: grouping) { Task { await updateGrouping() } }
         .onChange(of: events)   { Task { await updateGrouping() } }
         .task { await updateGrouping() }
-        .onDisappear { dataLoaded = false }
     }
 }

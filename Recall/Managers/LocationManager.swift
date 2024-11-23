@@ -9,6 +9,19 @@ import Foundation
 import CoreLocation
 import MapKit
 
+extension CLLocation {
+    func fetchCityAndCountry(completion: @escaping (_ city: String?, _ country:  String?, _ error: Error?) -> ()) {
+        CLGeocoder().reverseGeocodeLocation(self) { completion($0?.first?.locality, $0?.first?.country, $1) }
+    }
+    
+    func fetchCityAndCountry() async -> [CLPlacemark] {
+        let res = try? await CLGeocoder().reverseGeocodeLocation(self)
+        return res ?? []
+    }
+}
+
+
+
 final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
     
     @Published var lastKnownLocation: CLLocationCoordinate2D?
@@ -43,13 +56,17 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
         }
     }
     
-    func getLocationInformation() -> LocationResult? {
+    func getLocationInformation() async -> LocationResult? {
         self.checkLocationAuthorization()
         
-        if let coordinate = manager.location?.coordinate {
-            let mapItem = MKMapItem.forCurrentLocation()
+        if let location = manager.location {
+            var locationTitle = "Unnamed Location"
             
-            return .init(location: coordinate, title: mapItem.placemark.title ?? "Current Location")
+            if let placemark = await location.fetchCityAndCountry().first {
+                locationTitle = (placemark.locality ?? "") + ", " + (placemark.country ?? "")
+            }
+            
+            return .init(location: location.coordinate, title: locationTitle)
         }
         
         return nil

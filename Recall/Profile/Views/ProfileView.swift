@@ -16,16 +16,18 @@ struct ProfileView: View {
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     @Namespace var profileNamespace
+    
     @ObservedObject private var colors = Colors.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @State var showingDataTransfer: Bool = false
-    @State var showingEditingView: Bool = false
     @State var ownerID: String = ""
     
 //    When changing items in settings, set these to true to display a save button. This makes edditing settings more seamless.
     @State var madeNotificationChanges: Bool = false
     @State var madeDefaultEventLengthChanges: Bool = false
     
+//    MARK: Temporary Settings
 //    temporary settings: change these before committing them to the index when users hit save
     @ObservedRealmObject var index = RecallModel.index
     
@@ -52,12 +54,13 @@ struct ProfileView: View {
 //        events
         static var showNotesOnPreviewLabel = "Show event notes on preview"
         
-        static var universalFineSelectionLabel = "Universal precise time selection"
-        
         static var defaultTimeSnappingLabel = "Default event snapping"
         
         static var recallAtEndOfLastEvent = "Moving Recall"
         static var recallAtEndOfLastEventDescription = "When enabled, each Recall starts at the end of the last event."
+        
+        static var automaticLocation = "Automatic Location"
+        static var automaticLocationdescription = "When enabled, events will automatically save your current location."
         
         static var recallStyleLabel = "Default Recall Style"
         
@@ -65,16 +68,49 @@ struct ProfileView: View {
         static var notificationsDisabledWarning = "Notifications are disabled, enable them in settings"
         static var notificationTimeSelectionLabel = "When would you like to be reminded?"
         
-//        extra
         static var deletionWarning = "Are you sure you want to delete your profile?"
     }
     
+//    MARK: Bindings
+    private var showingNotesOnPreviewBinding: Binding<Bool> {
+        Binding { index.showNotesOnPreview }
+        set: { newValue in index.setShowNotesOnPreview(to: newValue) }
+    }
     
-//    MARK: Overview
+    private var fineTimeSelectorIsDefault: Binding<Bool> {
+        Binding { index.defaultFineTimeSelector }
+        set: { newValue in index.setDefaultFineTimeSelector(to: newValue) }
+    }
     
+    private var recallAtTheEndOfLastEventBinding: Binding<Bool> {
+        Binding { index.recallEventsAtEndOfLastRecall }
+        set: { newValue in index.setRecallAtEndOfLastEvent(to: newValue) }
+    }
     
+    private var automaticLocationBinding: Binding<Bool> {
+        Binding { index.automaticLocation }
+        set: { newValue in index.setAutomaticLocation(to: newValue) }
+    }
     
-//    MARK: OverviewViewBuilders
+//    MARK: makeNotificationMessage
+    private func makeNotificationMessage() async -> String {
+        let settings = await NotificationManager.shared.getNotificationStatus()
+        switch settings {
+        case .denied:   return ""
+        default: return ""
+        }
+    }
+    
+//    MARK: checkNotificationStatus
+//    gets the current notification status from the notification manager
+    @MainActor
+    private func checkNotificationStatus() async {
+        let status = await NotificationManager.shared.getNotificationStatus()
+        showingNotificationToggle = (status != .denied)
+    }
+
+    
+//    MARK: makeContactLabel
 //    these are the indivudal nodes that make up the contact section
     @ViewBuilder
     private func makeContactLabel( title: String, content: String ) -> some View {
@@ -88,6 +124,7 @@ struct ProfileView: View {
         .padding(.vertical, 5)
     }
     
+//    MARK: makeDemographicLabel
 //    these are the big blocks that describe birthday and date joined
     @ViewBuilder
     private func makeDemographicLabel(mainText: String, secondaryText: String, tertiaryText: String) -> some View {
@@ -107,7 +144,7 @@ struct ProfileView: View {
         }
     }
 
-//    MARK: OverviewBody
+//    MARK: makeDemographicInfo
     @ViewBuilder
     private func makeDemographicInfo() -> some View {
         
@@ -143,20 +180,8 @@ struct ProfileView: View {
             .rectangularBackground(7, style: .secondary, stroke: true, strokeWidth: 1)
         }
     }
-    
-//    MARK: settings
-    
-    
-    
-//    MARK: Settings ViewBuilders
-    @ViewBuilder
-    private func makeSettingsDivider() -> some View {
-        Rectangle()
-            .frame(height: 1)
-            .universalTextStyle()
-            .opacity(0.6)
-    }
-    
+
+//    MARK: makeSettingsDescription
 //    if a certain setting needs to be described more, use this description block
     private func makeSettingsDescription(_ text: String) -> some View {
         UniversalText( text, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
@@ -169,6 +194,13 @@ struct ProfileView: View {
     private func makeSettings() -> some View {
         
         VStack(alignment: .leading) {
+            
+            UniversalText( "Calendar Display Options", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            
+            makeCalendarDisplayOptions()
+                .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
+                .padding(.bottom, 20)
+                
             
             UniversalText( "Event Settings", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
             
@@ -195,58 +227,10 @@ struct ProfileView: View {
             
             makePageFooter()
                 .padding(.bottom)
-                
         }
     }
     
-//    MARK: Event Settings ViewBuilders
-
-    @ViewBuilder
-    private func makeDefaultEventLengthSelector() -> some View {
-        LengthSelector("Default Event Length",
-                       length: $defaultEventLength,
-                       fontSize: Constants.UIDefaultTextSize,
-                       allowFineToggle: false)
-        
-        if madeDefaultEventLengthChanges {
-            ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeDefaultEventLengthChanges } action: {
-                RecallModel.index.setDefaultEventLength(to: defaultEventLength)
-                madeDefaultEventLengthChanges = false
-            }
-        }
-    }
-    
-    private var showingNotesOnPreviewBinding: Binding<Bool> {
-        Binding { index.showNotesOnPreview }
-        set: { newValue in index.setShowNotesOnPreview(to: newValue) }
-    }
-    
-    private var fineTimeSelectorIsDefault: Binding<Bool> {
-        Binding { index.defaultFineTimeSelector }
-        set: { newValue in index.setDefaultFineTimeSelector(to: newValue) }
-    }
-    
-    private var recallAtTheEndOfLastEventBinding: Binding<Bool> {
-        Binding { index.recallEventsAtEndOfLastRecall }
-        set: { newValue in index.setRecallAtEndOfLastEvent(to: newValue) }
-    }
-    
-    @ViewBuilder
-    private func makeTimeSnappingSelector(title: String, option: TimeRounding) -> some View {
-        VStack(spacing: 0) {
-            Spacer()
-            HStack {
-                Spacer()
-                UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-                Spacer()
-            }
-            Spacer()
-        }
-        .if(option.rawValue == index.defaultEventSnapping) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
-        .if(option.rawValue != index.defaultEventSnapping) { view in view.rectangularBackground(style: .primary) }
-            .onTapGesture { withAnimation { index.setDefaultTimeSnapping(to: option) } }
-    }
-    
+//    MARK: makeDefaultTimeSnappingSelector =
     @ViewBuilder
     private func makeDefaultTimeSnappingSelector() -> some View {
         UniversalText(SettingsConstants.defaultTimeSnappingLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
@@ -257,33 +241,7 @@ struct ProfileView: View {
         }
     }
     
-    private func makeDefaultRecallStyleSelectorOption(_ label: String, icon: String, option: Bool) -> some View {
-        HStack {
-            Spacer()
-            VStack {
-                RecallIcon(icon)
-                    .padding(.bottom, 5)
-                UniversalText(label, size: Constants.UISmallTextSize, font: Constants.mainFont)
-            }
-            Spacer()
-        }
-        .if( option == index.recallEventsWithEventTime ) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
-        .if( option != index.recallEventsWithEventTime ) { view in view.rectangularBackground(style: .primary) }
-        .onTapGesture { withAnimation { index.setDefaultRecallStyle(to: option) } }
-    }
-    
-    private func makeDefaultRecallStyleSelector() -> some View {
-        
-        VStack(alignment: .leading) {
-            UniversalText( SettingsConstants.recallStyleLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-               HStack {
-                makeDefaultRecallStyleSelectorOption("Recall with event time", icon: "calendar", option: true)
-                makeDefaultRecallStyleSelectorOption("Recall with event length", icon: "rectangle.expand.vertical", option: false)
-            }
-            .padding(.bottom, 5)
-        }
-    }
-    
+//    MARK: makeCalendarDensityOption
     @ViewBuilder
     private func makeCalendarDensityOption(_ option: Int, caption: String) -> some View {
         
@@ -309,10 +267,11 @@ struct ProfileView: View {
             } }
     }
     
+//    MARK: makeCalendarDensitySelector
     @ViewBuilder
     private func makeCalendarDensitySelector() -> some View {
         VStack(alignment: .leading) {
-            UniversalText( "Calendar Size", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            UniversalText( "Calendar Density", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
             
             HStack(spacing: 0) {
                 makeCalendarDensityOption(0, caption: "compact")
@@ -322,8 +281,77 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: CalendarColoumnCountSelector
+    @ViewBuilder
+    private func makeCalendarColoumnCountOption(_ option: Int, icon: String) -> some View {
+        UniversalButton {
+            HStack {
+                Spacer()
+                RecallIcon( icon )
+                Spacer()
+            }.rectangularBackground(style: index.calendarColoumnCount == option ? .accent : .primary)
+            
+        } action: { index.setCalendarColoumnCount(to: option) }
+        
+    }
     
-//    MARK: Event Settings Body
+    @ViewBuilder
+    private func makeCalendarColoumnCountSelector() -> some View {
+        VStack(alignment: .leading) {
+            UniversalText( "Coloumns", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            
+            HStack(spacing: 10) {
+                makeCalendarColoumnCountOption(1, icon: "rectangle")
+                makeCalendarColoumnCountOption(2, icon: "rectangle.split.2x1")
+                makeCalendarColoumnCountOption(3, icon: "rectangle.split.3x1")
+            }
+        }
+    }
+    
+//    MARK: - makeCalendarDisplayOptions
+    @ViewBuilder
+    private func makeCalendarDisplayOptions() -> some View {
+        VStack(alignment: .leading, spacing: 20) {
+            makeCalendarDensitySelector()
+            
+            makeCalendarColoumnCountSelector()
+        }
+    }
+    
+//    MARK: makeDefaultEventLengthSelector
+    @ViewBuilder
+    private func makeDefaultEventLengthSelector() -> some View {
+        LengthSelector("Default Event Length",
+                       length: $defaultEventLength,
+                       fontSize: Constants.UIDefaultTextSize,
+                       allowFineToggle: false)
+        
+        if madeDefaultEventLengthChanges {
+            ConditionalLargeRoundedButton(title: "save", icon: "arrow.forward") { madeDefaultEventLengthChanges } action: {
+                RecallModel.index.setDefaultEventLength(to: defaultEventLength)
+                madeDefaultEventLengthChanges = false
+            }
+        }
+    }
+    
+//    MARK: makeTimeSnappingSelector
+    @ViewBuilder
+    private func makeTimeSnappingSelector(title: String, option: TimeRounding) -> some View {
+        VStack(spacing: 0) {
+            Spacer()
+            HStack {
+                Spacer()
+                UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                Spacer()
+            }
+            Spacer()
+        }
+        .if(option.rawValue == index.defaultEventSnapping) { view in view.rectangularBackground(style: .accent, foregroundColor: .black) }
+        .if(option.rawValue != index.defaultEventSnapping) { view in view.rectangularBackground(style: .primary) }
+            .onTapGesture { withAnimation { index.setDefaultTimeSnapping(to: option) } }
+    }
+    
+//    MARK: makeEventSettings
     @ViewBuilder
     private func makeEventSettings() -> some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -333,19 +361,11 @@ struct ProfileView: View {
                     else { madeDefaultEventLengthChanges = false }
                 }
             
-            makeSettingsDivider()
-            
-            makeCalendarDensitySelector()
-            
-            makeSettingsDivider()
+            Divider()
             
 //        toggles
             StyledToggle(showingNotesOnPreviewBinding) {
                 UniversalText( SettingsConstants.showNotesOnPreviewLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-            }
-            
-            StyledToggle(fineTimeSelectorIsDefault) {
-                UniversalText(SettingsConstants.universalFineSelectionLabel, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
             
             StyledToggle(recallAtTheEndOfLastEventBinding) {
@@ -353,31 +373,19 @@ struct ProfileView: View {
             }
             makeSettingsDescription(SettingsConstants.recallAtEndOfLastEventDescription)
             
-            makeSettingsDivider()
+            StyledToggle(automaticLocationBinding) {
+                UniversalText( SettingsConstants.automaticLocation, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            }
+            makeSettingsDescription(SettingsConstants.automaticLocationdescription)
             
-            makeDefaultRecallStyleSelector()
+            Divider()
             
             makeDefaultTimeSnappingSelector()
             
         }
     }
     
-    
-//    MARK: Notification Settings
-    private func makeNotificationMessage() async -> String {
-        let settings = await NotificationManager.shared.getNotificationStatus()
-        switch settings {
-        case .denied:   return ""
-        default: return ""
-        }
-    }
-     
-    @MainActor
-    private func checkStatus() async {
-        let status = await NotificationManager.shared.getNotificationStatus()
-        showingNotificationToggle = (status != .denied)
-    }
-    
+//    MARK: makeReminderSettings
     @ViewBuilder
     private func makeReminderSettings() -> some View {
         
@@ -385,14 +393,14 @@ struct ProfileView: View {
             StyledToggle($notificationsEnabled) {
                 UniversalText( "Daily reminder", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
             }
-            .onAppear { Task { await checkStatus() } }
+            .onAppear { Task { await checkNotificationStatus() } }
             .onChange(of: notificationsEnabled) {
                 
                 if notificationsEnabled {
                     Task {
                         let results = await NotificationManager.shared.requestNotifcationPermissions()
                         notificationsEnabled = results
-                        await checkStatus()
+                        await checkNotificationStatus()
                     }
                 }
                 
@@ -429,6 +437,7 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: makeAccentColorOption
     @ViewBuilder
     private func makeAccentColorOption(_ accentColor: Colors.AccentColor, index: Int) -> some View {
         VStack {
@@ -452,6 +461,7 @@ struct ProfileView: View {
         }
     }
     
+//    MARK: makeAccentColorPicker
     @ViewBuilder
     private func makeAccentColorPicker() -> some View {
         GeometryReader { geo in
@@ -476,14 +486,19 @@ struct ProfileView: View {
 //    MARK: Header/Footers
     @ViewBuilder
     private func makePageHeader() -> some View {
-        UniversalText(index.getFullName(), size: Constants.UITitleTextSize, font: Constants.titleFont)
+        HStack {
+            UniversalText(index.getFullName(), size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+            Spacer()
+            
+            DismissButton()
+        }
     }
     
     @ViewBuilder
     private func makePageFooter() -> some View {
         VStack {
             HStack {
-                IconButton("pencil", label: "Edit", fullWidth: true) { showingEditingView = true }
+                IconButton("pencil", label: "Edit", fullWidth: true) { coordinator.presentSheet(.indexEditingView(index: index)) }
                 IconButton("arrow.down", label: "Signout", fullWidth: true) {
                     RecallModel.realmManager.logoutUser()
                     RecallModel.realmManager.setState(.splashScreen)
@@ -535,6 +550,8 @@ struct ProfileView: View {
                 }
             }
         }
+        .animation(.easeInOut, value: index)
+        
         .padding(7)
         .universalBackground()
         .alert("OwnerID", isPresented: $showingDataTransfer) {
@@ -551,14 +568,6 @@ struct ProfileView: View {
                 }
             } label: { Text( "delete profile" ) }
         }
-        .sheet(isPresented: $showingEditingView) {
-            ProfileEditorView(email: index.email,
-                              phoneNumber: index.phoneNumber,
-                              dateOfBirth: index.dateOfBirth,
-                              firstName: index.firstName,
-                              lastName: index.lastName)
-        }
-        
     }
     
 }

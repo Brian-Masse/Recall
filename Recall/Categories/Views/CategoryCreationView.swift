@@ -66,6 +66,14 @@ struct CategoryCreationView: View {
         presentationMode.wrappedValue.dismiss()
     }
     
+    static func makeCateogryCreationView(editing: Bool, tag: RecallCategory? = nil) -> some View {
+        if editing {
+            CategoryCreationView(editing: true, tag: tag!, label: tag!.label, goalRatings: RecallCalendarEvent.translateGoalRatingList(tag!.goalRatings))
+        } else {
+            CategoryCreationView(editing: false, tag: nil, label: "", goalRatings: [:])
+        }
+    }
+    
     private func checkCompletion() -> Bool {
         !self.label.isEmpty
     }

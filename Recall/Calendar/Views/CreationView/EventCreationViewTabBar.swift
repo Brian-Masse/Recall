@@ -28,7 +28,7 @@ struct EventCreationViewTabBar: View {
     }
     
     private var showToolBar: Bool {
-        !(link != nil && location != nil && !viewModel.selectedImages.isEmpty)
+        (link == nil && !showingLinkField) || location == nil || viewModel.selectedImages.isEmpty
     }
     
     private var showPreviews: Bool {
@@ -100,6 +100,9 @@ struct EventCreationViewTabBar: View {
             StyledURLField("", binding: $link, prompt: "Add an optional Link")
                 .padding(.leading, link == nil ? 0 : 15)
                 .transition(.blurReplace)
+                .onChange(of: link) {
+                    if link == nil { withAnimation { self.showingLinkField = false }}
+                }
         }
         
         if location != nil {

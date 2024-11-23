@@ -15,12 +15,10 @@ struct GoalPreviewView: View {
 //    MARK: Vars
     @ObservedRealmObject var goal: RecallGoal
     @StateObject var dataModel: RecallGoalDataModel = RecallGoalDataModel()
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
-    @State var showingGoalView: Bool = false
-    @State var showingEditingView: Bool = false
     @State var showingDeletionAlert: Bool = false
-    
-    
+    @Namespace private var namespace
     
     let events: [RecallCalendarEvent]
     
@@ -47,11 +45,6 @@ struct GoalPreviewView: View {
     private func makeMetaData() -> some View {
         VStack {
             HStack {
-//                    .frame(maxWidth: 80)
-//                    .padding(.vertical, 5)
-//
-//                Divider(vertical: true)
-
                 VStack(alignment: .trailing) {
                     UniversalText("completed",
                                   size: Constants.UISmallTextSize,
@@ -114,20 +107,13 @@ struct GoalPreviewView: View {
                 VStack(alignment: .leading) {
                     makeHeader()
                     
-//                    Divider()
-//                        .padding(.bottom)
-                    
                     makeMetaData()
                         .padding(.bottom)
-                    
-//                    makeProgressBar()
-                    
-//                    Spacer()
                 }
                 .rectangularBackground(style: .secondary, stroke: true)
-                .onTapGesture { showingGoalView = true }
+                .onTapGesture { coordinator.push(.recallGoalEventView(goal: goal, id: goal.id, Namespace: namespace)) }
                 .contextMenu {
-                    ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") { showingEditingView = true }
+                    ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") { coordinator.presentSheet(.goalCreationView(editting: true, goal: goal)) }
                     ContextMenuButton("delete", icon: "trash", role: .destructive) { showingDeletionAlert = true }
                 }
             } else {
@@ -135,11 +121,6 @@ struct GoalPreviewView: View {
             }
         }
 //        .task { await dataModel.makeData(for: goal, with: events) }
-        .fullScreenCover(isPresented: $showingGoalView) {
-            GoalView(goal: goal, events: events)
-                .environmentObject(dataModel)
-        }
-        .sheet(isPresented: $showingEditingView) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
         .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
             Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
         }

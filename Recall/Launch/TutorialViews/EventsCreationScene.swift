@@ -22,8 +22,8 @@ extension TutorialViews {
         @ObservedResults(RecallCalendarEvent.self,
                          where: { event in event.ownerID == RecallModel.ownerID}) var events
         
-        @State var showingTagCreationView: Bool = false
-        @State var showingEventCretionView: Bool = false
+        @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+        
         @State var showingAllGoals: Bool = false
         @State var sentFirstEvent: Bool = false
         
@@ -37,13 +37,9 @@ extension TutorialViews {
         @Binding var scene: TutorialViews.TutorialScene
         @Binding var broadScene: TutorialViews.TutorialScene.BroadScene
         @Binding var nextButtonIsActive: Bool
-        
-//        private func hasGoalRating(at key: String) -> Bool {
-//            goalRatings[key] != nil && goalRatings[key] != "" && goalRatings[key] != "0"
-//        }
-    
-//        MARK: ViewBuilders
 
+        
+//        MARK: ViewBuilders
         @ViewBuilder
         private func makeSplashScreen() -> some View {
             Group {
@@ -128,16 +124,10 @@ extension TutorialViews {
                     }
                     .padding(.bottom, 7)
                     
-                    LargeRoundedButton("create another tag", icon: "arrow.up", wide: true) { showingTagCreationView = true}
+                    LargeRoundedButton("create another tag", icon: "arrow.up", wide: true) { coordinator.presentSheet(.tagCreationView(editting: false))  }
                 }
             }
             .slideTransition()
-            .sheet(isPresented: $showingTagCreationView) {
-                CategoryCreationView(editing: false,
-                                     tag: nil,
-                                     label: "",
-                                     goalRatings: Dictionary())
-            }
             .onChange(of: tag) {
                 if tag.label != "" && !tag.label.isEmpty {
                     nextButtonIsActive = true
@@ -194,13 +184,15 @@ extension TutorialViews {
         private func makeCalendarView() -> some View {
             VStack {
                 GeometryReader { geo in
-                    StyledCalendarContainerView(at: .now,
-                                                with: Array(events),
-                                                from: 0, to: 24,
-                                                geo: geo,
-                                                scale: 2)
+                    
+                    
+//                    StyledCalendarContainerView(at: .now,
+//                                                with: Array(events),
+//                                                from: 0, to: 24,
+//                                                geo: geo,
+//                                                scale: 2)
                 }
-                LargeRoundedButton("Recall", icon: "arrow.up", wide: true) { showingEventCretionView = true }
+                LargeRoundedButton("Recall", icon: "arrow.up", wide: true) { coordinator.presentSheet(.eventCreationView()) }
             }
             .slideTransition()
             .onAppear() {
@@ -219,9 +211,6 @@ extension TutorialViews {
                 RealmManager.addObject( event )
                 sentFirstEvent = true
                 
-            }
-            .sheet(isPresented: $showingEventCretionView) {
-                CalendarEventCreationView.makeEventCreationView(currentDay: .now)
             }
         }
         

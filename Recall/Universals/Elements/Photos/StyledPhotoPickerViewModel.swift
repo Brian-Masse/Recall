@@ -52,8 +52,9 @@ class StyledPhotoPickerViewModel: ObservableObject {
         if let index = selectedImages.firstIndex(of: image) {
             selectedImages.remove(at: index)
         
-            photoPickerItems.remove(at: index)
+            if photoPickerItems.count > index {
+                photoPickerItems.remove(at: index)
+            }
         }
     }
-    
 }

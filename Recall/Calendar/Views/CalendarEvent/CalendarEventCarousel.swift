@@ -8,9 +8,10 @@
 import Foundation
 import SwiftUI
 
+
 struct CalendarEventCarousel: View {
     
-    let events: [RecallCalendarEvent]
+    @State var events: [RecallCalendarEvent]
     let startIndex: Int
     
     var body: some View {
@@ -24,7 +25,7 @@ struct CalendarEventCarousel: View {
                             
                             let event = events[i]
                             
-                            TestCalendarEventView(event: event)
+                            RecallCalendarEventView(event: event)
                                 .frame(width: geo.size.width)
                             
                         }

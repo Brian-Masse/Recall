@@ -11,6 +11,8 @@ import RealmSwift
 import UIUniversals
 import MapKit
 
+//TODO: Fix Favorites Page
+
 //MARK: DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
     
@@ -37,17 +39,17 @@ extension View {
 }
 
 
-//MARK: TestCalendarEventView
-struct TestCalendarEventView: View {
-    
-    @ObservedObject private var calendarViewModel = RecallCalendarViewModel.shared
+//MARK: RecallCalendarEventView
+struct RecallCalendarEventView: View {
+     
+    @ObservedObject private var calendarViewModel = RecallCalendarContainerViewModel.shared
     @ObservedObject private var imageStoreViewModel = RecallCalendarEventImageStore.shared
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @Environment( \.colorScheme ) var colorScheme
-    @Environment( \.dismiss ) var dismiss
     
 //    MARK: Vars
-    @State var event: RecallCalendarEvent
+    @ObservedRealmObject var event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
     
     @State private var showEditView: Bool = false
@@ -59,6 +61,7 @@ struct TestCalendarEventView: View {
     @Namespace private var mapNameSpace
     
     private let largeCornerRadius: Double = 58
+    private let eventTitleMinLength: Int = 24
     
 //    MARK: Init
     init( event: RecallCalendarEvent, events: [RecallCalendarEvent] = [] ) {
@@ -73,7 +76,7 @@ struct TestCalendarEventView: View {
     }
     
     private func onAppear() async {
-        let decodedImages = await imageStoreViewModel.decodeImages(for: event)
+        let decodedImages = await imageStoreViewModel.decodeImages(for: event, expectedCount: event.images.count)
         withAnimation { self.decodedImages = decodedImages }
     }
     
@@ -88,10 +91,7 @@ struct TestCalendarEventView: View {
     
     private var dateLabel: String {
         let formatter = Date.FormatStyle().month().day()
-        let str1 = event.startTime.formatted(formatter)
-        let str2 = timeLabel
-        
-        return "\(str2), \(str1)"
+        return event.startTime.formatted(formatter)
     }
     
 //    MARK: SmallButton
@@ -115,27 +115,35 @@ struct TestCalendarEventView: View {
     
 //    MARK: sectionHeader
     @ViewBuilder
-    private func makeSectionHeader(_ icon: String, title: String) -> some View {
-        HStack {
-            RecallIcon(icon)
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            
-            Spacer()
+    private func makeSectionHeader(_ icon: String, title: String, fillerMessage: String = "", isActive: Bool = true) -> some View {
+        if isActive {
+            HStack {
+                RecallIcon(icon)
+                UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                
+                Spacer()
+            }
+            .padding(.leading)
+            .opacity(0.75)
+        } else {
+            makeSectionFiller(icon: icon, message: fillerMessage)
         }
-        .padding(.leading)
-        .opacity(0.75)
     }
     
+//    MARK: makeSectionFiller
     @ViewBuilder
-    private func makeSectionFiller(message: String) -> some View {
+    private func makeSectionFiller(icon: String, message: String) -> some View {
         UniversalButton {
             VStack {
                 HStack { Spacer() }
                 
-                RecallIcon( "plus" )
+                RecallIcon( icon )
+                    .padding(.bottom, 5)
                 
-                UniversalText( message, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                UniversalText( message, size: Constants.UIDefaultTextSize, font: Constants.mainFont, textAlignment: .center )
+                    .opacity(0.75)
             }
+            .opacity(0.75)
             .rectangularBackground(style: .secondary)
             
         } action: { showEditView = true }
@@ -145,7 +153,6 @@ struct TestCalendarEventView: View {
 //    MARK: Header
     @ViewBuilder
     private func makeHeader() -> some View {
-        
         let titleColor = event.getColor().safeMix(with: .black, by: 0.6)
         
         HStack(spacing: 10) {
@@ -157,22 +164,28 @@ struct TestCalendarEventView: View {
             
             makeSmallButton("pencil", label: "edit") { showEditView = true }
             
-            makeSmallButton("chevron.down") { dismiss() }
-        }.foregroundStyle( event.images.isEmpty ? titleColor : .white )
+            DismissButton()
+        }
+        .foregroundStyle( event.images.isEmpty ? titleColor : .white )
     }
     
 //    MARK: MetaDataLabel
     @ViewBuilder
-    private func makeMetaDataLabel(icon: String, title: String) -> some View {
-        VStack {
-            HStack { Spacer() }
-            
-            RecallIcon(icon)
-            
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+    private func makeMetaDataLabel(icon: String, title: String, action: (() -> Void)? = nil) -> some View {
+        UniversalButton {
+            VStack {
+                HStack { Spacer() }
+                
+                RecallIcon(icon)
+                
+                UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            }
+            .frame(height: 30)
+            .opacity(0.65)
+            .rectangularBackground(style: .secondary)
+        } action: {
+            if let action { action() }
         }
-        .frame(height: 30)
-        .rectangularBackground(style: .secondary)
     }
     
     @ViewBuilder
@@ -182,9 +195,11 @@ struct TestCalendarEventView: View {
                 
                 makeMetaDataLabel(icon: "tag", title: "\(event.getTagLabel())")
                 
-                makeMetaDataLabel(icon: "deskclock", title: "\(Int(event.getLengthInHours())) hr")
+                makeMetaDataLabel(icon: "deskclock", title: event.getDurationString())
                 
-                makeMetaDataLabel(icon: event.isFavorite ? "checkmark" : "plus", title: "Favorite")
+                makeMetaDataLabel(icon: event.isFavorite ? "checkmark" : "plus", title: "Favorite") {
+                    event.toggleFavorite()
+                }
             }
             
             makeCalendarContainer()
@@ -206,12 +221,13 @@ struct TestCalendarEventView: View {
                          on: event.startTime,
                          startHour: startHour,
                          endHour: endHour,
-                         includeGestures: false)
+                         includeGestures: false,
+                         highlightEvent: event)
                 .padding(.leading, 25 )
                 .task { await calendarViewModel.loadEvents(for: event.startTime, in: events) }
         }
         .frame(height: 150)
-        .rectangularBackground(style: .secondary)
+        .rectangularBackground(style: .secondary, stroke: true)
     }
     
 //    MARK: PhotoCarousel
@@ -227,7 +243,10 @@ struct TestCalendarEventView: View {
     @ViewBuilder
     private func makePhotoCarousel() -> some View {
         VStack(alignment: .leading) {
-            makeSectionHeader("photo.on.rectangle", title: "photos")
+            makeSectionHeader("photo.on.rectangle",
+                              title: "photos",
+                              fillerMessage: "Add photos",
+                              isActive: event.images.count != 0)
             
             if event.images.count != 0 {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -236,11 +255,10 @@ struct TestCalendarEventView: View {
                             makePhoto(uiImage: image)
                         }
                     }
-                    .frame(height: 200)
-                }.clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
-            } else {
-                
-                makeSectionFiller(message: "Add photos for this event")
+                    .frame(height: event.images.count == 1 ? 300 : 200)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
+                .padding(.bottom)
             }
         }
     }
@@ -249,9 +267,12 @@ struct TestCalendarEventView: View {
     @ViewBuilder
     private func makeMap() -> some View {
         VStack(alignment: .leading) {
+            makeSectionHeader("location",
+                              title: event.locationTitle,
+                              fillerMessage: "Add a location",
+                              isActive: !event.locationTitle.isEmpty)
+            
             if let location = event.getLocationResult() {
-                
-                makeSectionHeader("location", title: "\(location.title)")
                 
                 Map(position: $position, scope: mapNameSpace) {
                     Marker(coordinate: location.location) {
@@ -261,11 +282,7 @@ struct TestCalendarEventView: View {
                 .allowsHitTesting(false)
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
                 .frame(height: 200)
-                
-            } else {
-                makeSectionHeader("location", title: "location")
-                
-                makeSectionFiller(message: "Add a location for this event")
+                .padding(.bottom)
             }
         }
     }
@@ -296,14 +313,26 @@ struct TestCalendarEventView: View {
     private func makeTimeLabel() -> some View {
         HStack {
             RecallIcon("clock")
+                .opacity(0.75)
             
             VStack(alignment: .leading) {
                 
-                UniversalText( dateLabel, size: Constants.UISubHeaderTextSize, font: Constants.mainFont )
+                UniversalText( timeLabel, size: Constants.UISubHeaderTextSize, font: Constants.mainFont )
                 
-                UniversalText( "see more on \(dateLabel)", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                    .opacity(0.55)
+                HStack {
+                    
+                    RecallIcon("chevron.left")
+                        .font(.caption)
+                    
+                    UniversalText( "see more on \(dateLabel)", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                    
+                    RecallIcon("chevron.right")
+                        .font(.caption)
+                }
+                .opacity(0.55)
             }
+            
+            Spacer()
         }
         .padding(.leading)
     }
@@ -329,7 +358,7 @@ struct TestCalendarEventView: View {
             
             makeSectionHeader("calendar.day.timeline.left", title: "Event Actions")
             
-            makeActionButton(icon: "circle.rectangle.filled.pattern.diagonalline", label: "favorite") { }
+            makeActionButton(icon: "circle.rectangle.filled.pattern.diagonalline", label: "favorite") { event.toggleFavorite() }
             
             makeActionButton(icon: "pencil", label: "edit") { showEditView = true }
             
@@ -426,7 +455,7 @@ struct TestCalendarEventView: View {
                         .contentShape(NullContentShape())
                 }
                 .ignoresSafeArea()
-                .frame(width: geo.size.width, height: geo.size.height * 0.8)
+                .frame(width: geo.size.width, height: geo.size.height * 0.9)
                 .contentShape(Rectangle())
             }
         }
@@ -437,6 +466,11 @@ struct TestCalendarEventView: View {
     private func makeContent() -> some View {
         VStack(spacing: 7) {
             VStack(alignment: .leading) {
+                if event.title.count > eventTitleMinLength {
+                    makeSectionHeader("widget.small", title: event.title)
+                        .padding(.bottom)
+                }
+                
                 makeTimeLabel()
                     .padding(.bottom)
                 
@@ -445,16 +479,12 @@ struct TestCalendarEventView: View {
                 
                 makeMetaData()
                     .padding(.bottom)
-            }.rectangularBackground(style: .primary)
+                
+                makeRichDataSection()
+            }
+            .padding(.top)
+            .rectangularBackground(style: .primary)
             
-            VStack {
-                makePhotoCarousel()
-                    .padding(.bottom)
-                
-                makeMap()
-                    .padding(.bottom)
-            }.rectangularBackground(style: .primary)
-                
             VStack {
                 makeActionButtons()
                 
@@ -464,6 +494,26 @@ struct TestCalendarEventView: View {
         .clipShape(RoundedRectangle(cornerRadius: largeCornerRadius))
         .padding(.horizontal, 5)
         .padding(.bottom, 20)
+    }
+    
+    @ViewBuilder
+    private func makeRichDataSection() -> some View {
+        VStack(alignment: .leading) {
+            if !event.images.isEmpty || !event.locationTitle.isEmpty {
+                makePhotoCarousel()
+                
+                makeMap()
+            } else {
+                
+                makeSectionHeader("grid", title: "Additional Information")
+                    .padding(.top)
+                
+                HStack {
+                    makePhotoCarousel()
+                    makeMap()
+                }
+            }
+        }
     }
     
 //    MARK: PhotoScroller
@@ -506,18 +556,22 @@ struct TestCalendarEventView: View {
                 makeRegularLayout()
             }
         }
-        .task { await onAppear() }
         .background(.black)
-        .deleteableCalendarEvent(deletionBool: $showDeleteAlert, event: event)
-        .sheet(isPresented: $showEditView) {
-            CalendarEventCreationView.makeEventCreationView(currentDay: event.startTime,
-                                                            editing: true,
-                                                            event: event)
+        .task { await onAppear() }
+        
+        .onChange(of: event.images) { Task { await onAppear() } }
+        .onChange(of: showEditView) {
+            if showEditView { coordinator.presentSheet(.eventEdittingView(event: event)) }
+            showEditView = false
         }
+        
+        .deleteableCalendarEvent(deletionBool: $showDeleteAlert, event: event)
+        
+        .animation(.easeInOut, value: event)
     }
 }
 
-
-#Preview {
-    TestCalendarEventView(event: sampleEventNoPhotos )
-}
+//
+//#Preview {
+//    RecallCalendarEventView(event: sampleEventNoPhotos )
+//}

@@ -50,7 +50,6 @@ struct CalendarView: View {
 //        this happens when they belong to a forwards collision group
         var i = 0
         while i < events.count {
-            
             let currentEvent = events[i]
             
 //            get backwardCollisionRecord
@@ -182,6 +181,7 @@ struct CalendarView: View {
                                 -CGFloat(getVerticalOffset(of: events[i],
                                                            relativeTo: events[collisionRecord.forwardCollisions.lowerBound].startTime))
                             }
+                            .opacity(highlightEvent == nil ? 1 : ( highlightEvent!.title == events[i].title ? 1 : 0.25 ))
                     }
                 } else if collisionRecord.backwardsCollisionIndicies.contains(i + collisionRecord.backwardCollisions.lowerBound) {
                     Rectangle()
@@ -199,7 +199,7 @@ struct CalendarView: View {
     }
     
 //    MARK: Initialization
-    @ObservedObject private var viewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     
     private let events: [RecallCalendarEvent]
     private let day: Date
@@ -208,38 +208,39 @@ struct CalendarView: View {
     private let endHour: Int
     
     private let includeGestures: Bool
+    private let highlightEvent: RecallCalendarEvent?
     
 //    TODO: When the app boots, this function call runs for every single day the user has ever recorded events for
 //    not sure why, but that should probably be fixed!
 //    This also gets run to update every single time the user scrolls on the main vertical calendar 
-    init(events: [RecallCalendarEvent], on day: Date, startHour: Double = 0, endHour: Int = 24, includeGestures: Bool = true) {
-        self.day = day
+    init(events: [RecallCalendarEvent], on day: Date, startHour: Double = 0, endHour: Int = 24, includeGestures: Bool = true, highlightEvent: RecallCalendarEvent? = nil) {
         self.events = events
+        self.day = day
         self.startHour = startHour
         self.endHour = endHour
         self.includeGestures = includeGestures
+        self.highlightEvent = highlightEvent
     }
     
 //    MARK: Body
     var body: some View {
-        
-        let records = mapEvents()
-        let startOfDay = day.resetToStartOfDay()
-        
         GeometryReader { geo in
             ZStack(alignment: .top) {
                 
                 Rectangle()
                     .foregroundStyle(.clear)
                 
+                let records = mapEvents()
+                let startOfDay = day.resetToStartOfDay()
+
                 ForEach( 0..<records.count, id: \.self ) { i in
                     let record = records[i]
                     let event = events[record.forwardCollisions.lowerBound]
                     let eventStartHour = Calendar.current.component(.hour, from: event.startTime)
                     let eventEndHour = Calendar.current.component(.hour, from: event.endTime)
                     
-                    if eventEndHour >= Int(startHour) && eventStartHour <= endHour {
-
+                    if max(eventEndHour, eventStartHour) >= Int(startHour) && min(eventStartHour, eventEndHour) <= endHour {
+                        
                         let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
                                                        relativeTo: startOfDay)
                         

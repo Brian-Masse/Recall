@@ -20,19 +20,13 @@ struct EventSelectionEditorView: View {
 //    
 //    @Binding var selection: [ RecallCalendarEvent ]
     
-    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
     
     @State private var date: Date = Date.now
     
     @State private var showingDeletetionAlert: Bool = false
 
 //    MARK: Struct Methods
-    private func onDismiss() {
-        if !viewModel.selecting {
-            viewModel.selection = []
-        }
-    }
-    
 //    this runs on the first appear of the selector
     private func setup() {
         self.date = viewModel.currentDay
@@ -149,8 +143,8 @@ struct EventSelectionEditorView: View {
                 }
             }
         }
+        .padding()
         .ignoresSafeArea()
-        .onDisappear() { onDismiss() }
         .onAppear() { setup() }
         .alert("delete events?", isPresented: $showingDeletetionAlert, actions: {
             Button(role: .destructive) { delete() } label: { Text("delete") }

@@ -18,7 +18,7 @@ struct RecallApp: App {
         Colors.setColors(baseLight:         .init(255, 255, 255),
                          secondaryLight:    .init(240, 240, 238),
                          baseDark:          .init(0, 0, 0),
-                         secondaryDark:     .init(27.5, 27.5, 25.5),
+                         secondaryDark:     .init(25, 25, 25),
                          lightAccent:       .init(130, 130, 100),
                          darkAccent:        .init(178, 196, 128),
                          matchDefaults: true)
@@ -28,8 +28,8 @@ struct RecallApp: App {
         Constants.setFontSizes(UILargeTextSize: 90,
                                UITitleTextSize: 45,
                                UIMainHeaderTextSize: 35,
-                               UIHeaderTextSize: 30,
-                               UISubHeaderTextSize: 20,
+                               UIHeaderTextSize: 25,
+                               UISubHeaderTextSize: 16,
                                UIDefeaultTextSize: 15,
                                UISmallTextSize: 11)
         

@@ -10,6 +10,8 @@ import SwiftUI
 import RealmSwift
 import UIUniversals
 
+//TODO: Update this view!
+
 @MainActor
 struct ProfileEditorView: View {
     
@@ -19,6 +21,16 @@ struct ProfileEditorView: View {
         case incomplete = "please provide your name, email, phone number, and birthday to continue"
         case phoneNumber = "please provide a valid 10 digit phone number"
         case none = ""
+    }
+    
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+    
+    static func makeProfileEditorView(from index: RecallIndex) -> ProfileEditorView {
+        ProfileEditorView(email: index.email,
+                          phoneNumber: index.phoneNumber,
+                          dateOfBirth: index.dateOfBirth,
+                          firstName: index.firstName,
+                          lastName: index.lastName)
     }
     
 //    MARK: Methods

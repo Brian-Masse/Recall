@@ -112,6 +112,13 @@ struct StyledURLField: View {
         HStack {
             if !showingURL || url == nil {
                 StyledTextField(title: title, binding: $text, prompt: prompt, clearable: true, isFocussed: $isFocussed, shouldFocusOnAppear: true)
+                    .onChange(of: self.text) {
+                        if self.text.isEmpty { withAnimation {
+                            self.url = nil
+                            self.showingURL = false
+                            self.isFocussed = false
+                        }}
+                    }
                 
                 if showingCompleteButton {
                     UniversalButton {

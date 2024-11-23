@@ -133,9 +133,10 @@ private struct StyledLocationSearchView: View {
         }
     }
     
-    private func getUserLocation() {
-        if let locationResult = LocationManager.shared.getLocationInformation() {
+    private func getUserLocation() async {
+        if let locationResult = await LocationManager.shared.getLocationInformation() {
             self.searchResults = [ locationResult ]
+            self.searchString = locationResult.title
         }
     }
     
@@ -173,7 +174,7 @@ private struct StyledLocationSearchView: View {
             UniversalButton {
                 RecallIcon("location.fill.viewfinder")
                     .rectangularBackground(style: .secondary)
-            } action: { getUserLocation() }
+            } action: { Task { await getUserLocation() }}
 
         
             if showingToggle {
@@ -236,7 +237,7 @@ private struct StyledLocationSearchView: View {
             locationService.update(queryFragment: searchString)
             withAnimation { showingSearchResults = !searchString.isEmpty }
         }
-        .onAppear { getUserLocation() }
+        .onAppear { Task { await getUserLocation() }}
         .ignoresSafeArea()
     }
 }

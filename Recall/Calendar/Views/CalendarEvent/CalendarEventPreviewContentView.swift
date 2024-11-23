@@ -14,7 +14,7 @@ struct CalendarEventPreviewContentView: View {
     
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
-    @ObservedObject private var viewModel: RecallCalendarViewModel = RecallCalendarViewModel.shared
+    @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
     
     let event: RecallCalendarEvent
     let events: [RecallCalendarEvent]
@@ -23,18 +23,20 @@ struct CalendarEventPreviewContentView: View {
 
     
 //   These are all relativley arbitrary values, but they've been found to work across a number of device sizes and text scales
-    let minWidth: CGFloat = 250
     private let minHeight: CGFloat = 65
     private let minHeightForDescription: CGFloat = 110
     private let minHeightForTitle: Double = 15
     
     @State var showingEvent: Bool = false
     
-    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], showMetaData: Bool = true) {
+    let height: Double
+    
+    init( event: RecallCalendarEvent, events: [RecallCalendarEvent], showMetaData: Bool = true, height: Double = .infinity) {
         
         self.event = event
         self.events = events
         self.showMetaData = showMetaData
+        self.height = height
     }
     
     private var isSelected: Bool {
@@ -42,20 +44,13 @@ struct CalendarEventPreviewContentView: View {
         return index != nil
     }
     
-//    MARK: Title
+    
     @ViewBuilder
-    private func makeTitle(in geo: GeometryProxy) -> some View {
-        if geo.size.height > minHeightForTitle {
-            let shouldScale = geo.size.height < Constants.UISubHeaderTextSize + 5
-            
-            UniversalText( event.title,
-                           size: Constants.UISubHeaderTextSize,
-                           font: Constants.titleFont,
-                           scale: shouldScale,
-                           minimumScaleFactor: 0.1)
+    private func makeTitle() -> some View {
+        if height > minHeightForTitle {
+            UniversalText( event.title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
         }
     }
-    
     
     @ViewBuilder
     private func makeNode(icon: String, text: String, wrap: Bool = false) -> some View {
@@ -66,76 +61,64 @@ struct CalendarEventPreviewContentView: View {
             UniversalText( text, size: Constants.UISmallTextSize, font: Constants.mainFont, wrap: wrap )
         }
         .opacity(0.65)
-
     }
     
 //    MARK: content
     @ViewBuilder
-    private func makeBody(in geo: GeometryProxy) -> some View {
-        let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
-        
+    private func makeBody() -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {Spacer()}
             
-            makeTitle(in: geo)
+            makeTitle()
             
-            if geo.size.height > minHeight {
+            if height > minHeight {
                 if !event.notes.isEmpty && RecallModel.index.showNotesOnPreview {
                     makeNode(icon: "text.justify.leading", text: event.notes, wrap: true)
                         .padding(.bottom, 7)
                 }
                 
                 if showMetaData {
+                    let timeString = "\( event.startTime.formatted( date: .omitted, time: .shortened ) ) - \( event.endTime.formatted( date: .omitted, time: .shortened ) )"
+                    
                     makeNode(icon: "clock", text: timeString)
-                    
+
                     makeNode(icon: "tag", text: event.getTagLabel())
-                    
-                    if let url = event.getURL() {
-                        makeNode(icon: "link", text: url.relativePath)
+
+                    if let urlString = event.getURL()?.relativePath {
+                        makeNode(icon: "link", text: urlString)
                     }
-                    
-                    if let location = event.getLocationResult() {
-                        makeNode(icon: "location", text: location.title)
+
+                    if let locationTitle = event.getLocationResult()?.title {
+                        makeNode(icon: "location", text: locationTitle)
                     }
-                    
+
                     if !event.images.isEmpty {
                         makeNode(icon: "photo.on.rectangle", text: "has Photos")
                     }
                 }
             }
-            
             Spacer()
-            
-//            if geo.size.height > minHeightForDescription && /*index.showNotesOnPreview &&*/ !event.notes.isEmpty {
-//                UniversalText( event.notes,
-//                               size: Constants.UISmallTextSize,
-//                               font: Constants.mainFont)
-//                .opacity(0.75)
-//            }
         }
         .foregroundStyle(event.getColor().safeMix(with: .black, by: colorScheme == .light ? 0.5 : 0) )
     }
     
-    private func verticalPadding(in geo: GeometryProxy) -> Double {
-        min( 12, (geo.size.height - Constants.UISubHeaderTextSize) / 2 )
+    private func verticalPadding() -> Double {
+        min( 12, (height - Constants.UISubHeaderTextSize) / 2 )
     }
     
 //    MARK: Body
     var body: some View {
         
-        GeometryReader { geo in
-            Rectangle()
-                .foregroundStyle(.background)
-            
+        ZStack {
             Rectangle()
                 .opacity(0.25)
-                .opacity(viewModel.selecting && !isSelected ? 0.3 : 1)
+                .background()
             
-            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5)
-                .stroke(style: .init(lineWidth: 2))
-                .opacity(0.5)
+//            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5)
+//                .stroke(style: .init(lineWidth: 2))
+//                .opacity(0.5)
             
-            makeBody(in: geo)
+            makeBody()
                 .overlay(alignment: .leading) {
                     RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                         .foregroundColor(event.getColor())
@@ -144,7 +127,15 @@ struct CalendarEventPreviewContentView: View {
                 }
                 .padding(.leading, 10)
                 .padding(.horizontal, 12)
-                .padding(.vertical, verticalPadding(in: geo))
+                .padding(.vertical, verticalPadding())
+                .frame(maxHeight: height, alignment: .top)
+            
+            if viewModel.selecting && !isSelected {
+                Rectangle()
+                    .opacity(0.25)
+                    .foregroundStyle(colorScheme == .light ? .white : .black)
+            }
+                
         }
         .foregroundStyle(event.getColor() )
         .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))

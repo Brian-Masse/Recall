@@ -17,7 +17,7 @@ struct TagPageView: View {
         
         @ObservedRealmObject var tag: RecallCategory
         
-        @State var showingEditTagView: Bool = false
+        @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
         
         @ViewBuilder
         private func makeGoalTags() -> some View {
@@ -50,7 +50,7 @@ struct TagPageView: View {
             .rectangularBackground(7, style: .secondary)
             .contextMenu {
                 ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
-                    showingEditTagView = true
+                    coordinator.presentSheet(.tagCreationView(editting: true, tag: tag))
                 }
                 
                 ContextMenuButton( tag.isFavorite ? "unfavorite" : "favorite", icon: tag.isFavorite ? "xmark" : "checkmark") {
@@ -60,13 +60,6 @@ struct TagPageView: View {
                 ContextMenuButton("delete", icon: "trash", role: .destructive) {
                     tag.delete()
                 }
-            }
-            .sheet(isPresented: $showingEditTagView) {
-                CategoryCreationView(editing: true,
-                                     tag: tag,
-                                     label: tag.label,
-                                     goalRatings: RecallCalendarEvent.translateGoalRatingList(tag.goalRatings),
-                                     color: tag.getColor())
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  RecallCalendarViewModel.swift
+//  RecallCalendarContainerViewModel.swift
 //  Recall
 //
 //  Created by Brian Masse on 8/21/24.
@@ -9,9 +9,10 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
-class RecallCalendarViewModel: ObservableObject {
+// handles the events, currentDay, and selections of the calendarContainer
+class RecallCalendarContainerViewModel: ObservableObject {
     
-    static let shared = RecallCalendarViewModel()
+    static let shared = RecallCalendarContainerViewModel()
     
     //    MARK: Vars
     var filteredEvents: [String:[RecallCalendarEvent]] = [:]
@@ -25,6 +26,18 @@ class RecallCalendarViewModel: ObservableObject {
     @Published private(set) var subDayIndex: Int = 0
     @Published private(set) var daysPerView: Int = 2
     
+    var initialDaysPerView: Int = 2
+    
+//    This is the scrollPosition when a user changes the daysPerView variable
+//    It allows the offset / index calculation to work regardless of when the user switched to the new layout
+    var baseCalendarOffset: Double = 0
+    var baseCalendarIndex: Int = 0
+    
+//    This is the initialWidth of the calendarContainer
+//    it is subtracted from all offsets to effectivly 0 it. Its not really necessary, but makes the offset code more readable
+    var initialCalendarWidth: Double = 0
+    var initialCalendarWidthSet: Bool = false
+    
     @Published var scale: Double = 100
     @Published var gestureInProgress: Bool = false
     
@@ -33,12 +46,15 @@ class RecallCalendarViewModel: ObservableObject {
     
     init() {
         self.getScale(from: RecallModel.index.calendarDensity)
+        self.daysPerView = RecallModel.index.calendarColoumnCount
+        self.initialDaysPerView = daysPerView
     }
     
 //    MARK: Setters
     func setCurrentDay(to day: Date, scrollToDay: Bool = true) {
     
         withAnimation { self.currentDay = day }
+        objectWillChange.send()
         
         if scrollToDay {
             shouldScrollCalendar.toggle()
@@ -51,11 +67,28 @@ class RecallCalendarViewModel: ObservableObject {
     }
     
     func setDaysPerView(to count: Int) { withAnimation {
+        let dayOffset = count - daysPerView
+//        self.currentDay += Double(dayOffset) * Constants.DayTime
+        
         self.daysPerView = count
+        self.subDayIndex = 0
     }}
-    
+
     func setSubDayIndex(to index: Int) {
         self.subDayIndex = index
+    }
+    
+    func setBaseCalendarOffset(to offset: Double) {
+        let index = Int( floor( Date.now.timeIntervalSince(currentDay) ) / Constants.DayTime  )
+        let dayOffset = daysPerView - initialDaysPerView
+        self.baseCalendarIndex = index - dayOffset
+        self.baseCalendarOffset = offset
+    }
+    
+    func setInitialWidth( _ width: Double ) {
+        if self.initialCalendarWidthSet { return }
+        self.initialCalendarWidth = width
+        self.initialCalendarWidthSet = true
     }
     
     func setScale(to scale: Double) {
@@ -111,23 +144,25 @@ class RecallCalendarViewModel: ObservableObject {
         }
     }}
     
-//    MARK: Event Filtering
-    static func dateKey(from date: Date) -> String { date.formatted(date: .complete, time: .omitted) }
+    func stopSelecting() { withAnimation {
+        self.selection = []
+        self.selecting = false
+    } }
     
+//    MARK: Event Filtering
     func loadEvents( for day: Date, in events: [RecallCalendarEvent] ) async {
+//        if abs(currentDay.timeIntervalSince(day) / Constants.DayTime) > 4 { return }
         
-        if abs(currentDay.timeIntervalSince(day) / Constants.DayTime) > 4 { return }
-        
-        let key = RecallCalendarViewModel.dateKey(from: day)
+        let key = day.getDayKey()
         if filteredEvents[key] != nil { return }
         
         let filteredEvents = events.filter { event in
-            let startKey = RecallCalendarViewModel.dateKey(from: event.startTime)
+            let startKey = event.startTime.getDayKey()
             return key == startKey
         }.sorted { event1, event2 in
             event1.startTime < event2.startTime
         }
-
+        
         DispatchQueue.main.sync {
             withAnimation {
                 self.filteredEvents[key] = filteredEvents
@@ -137,19 +172,28 @@ class RecallCalendarViewModel: ObservableObject {
     }
     
     func getEvents(on day: Date) -> [RecallCalendarEvent] {
-        let key = RecallCalendarViewModel.dateKey(from: day)
+        let key = day.getDayKey()
         
         if let events = filteredEvents[key] {
             return events
         }
+        
         return []
+    }
+    
+    func getEvents(on day: Date, in events: [RecallCalendarEvent]) async -> [RecallCalendarEvent] {
+        let key = day.getDayKey()
+        
+        if let events = filteredEvents[key] { return events }
+        
+        await loadEvents(for: day, in: events)
+        return getEvents(on: day)
     }
     
     
 //    called when the events refresh remotely from the server
     func invalidateEvents(newEvents: [RecallCalendarEvent]) {
         self.filteredEvents = [:]
-        
         Task {
 //            render the day to the left
             await loadEvents(for: currentDay + Constants.DayTime, in: newEvents )
