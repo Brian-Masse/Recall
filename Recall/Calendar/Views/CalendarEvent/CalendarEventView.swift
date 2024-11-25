@@ -492,7 +492,7 @@ struct RecallCalendarEventView: View {
             }.rectangularBackground(style: .primary)
         }
         .clipShape(RoundedRectangle(cornerRadius: largeCornerRadius))
-        .padding(.horizontal, 5)
+//        .padding(.horizontal, 5)
         .padding(.bottom, 20)
     }
     
