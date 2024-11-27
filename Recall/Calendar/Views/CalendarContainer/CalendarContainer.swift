@@ -373,6 +373,7 @@ struct CalendarContainer: View {
                                 .allowsHitTesting(false)
                                 .foregroundStyle(.clear)
                             }
+                            .padding(.top)
 
                             .simultaneousGesture(createEventHoldGesture(in: geo))
                             
