@@ -82,3 +82,4 @@ Recall is a calendar based app designed around recording daily events to be able
 - Fixed various bugs related to the calendar layout
 
 Happy Birthday :)
+Happy Thanksgiving :)
