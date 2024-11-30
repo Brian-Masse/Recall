@@ -27,7 +27,7 @@ class RecallCategoryStore {
 
 //MARK: RecallCategory
 class RecallCategory: Object, Identifiable, OwnedRealmObject {
-    
+
     @Persisted(primaryKey: true) var _id: ObjectId
     
     @Persisted var ownerID: String  = ""

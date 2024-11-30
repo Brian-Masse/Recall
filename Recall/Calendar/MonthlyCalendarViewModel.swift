@@ -25,10 +25,10 @@ class CalendarPageViewModel: ObservableObject {
     }
     
     @MainActor
-    func recallWasCompleted(on date: Date) -> Bool { recallLog[ date.getDayKey() ] ?? false }
+    func resetRenderStatus() { self.rendered = false }
     
     @MainActor
-    func recallWasCompleted(key: String) -> Bool { recallLog[ key ] ?? false }
+    func recallWasCompleted(on date: Date) -> Bool { recallLog[ date.getDayKey() ] ?? false }
         
 //    MARK: renderCalendar
 //    for every day in the calendar, check whether the recallWasCompleted
@@ -39,10 +39,9 @@ class CalendarPageViewModel: ObservableObject {
         
         var currentKey = events[0].startTime.getDayKey()
         for event in events {
-            
             let key = event.startTime.getDayKey()
             if key != currentKey {
-                self.recallLog[ currentKey ] = true
+                self.recallLog[ key ] = true
                 currentKey = key
             }
         }

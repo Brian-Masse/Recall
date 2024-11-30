@@ -42,6 +42,18 @@ struct RecallModel {
             print("failed to complete the wait: \(error.localizedDescription)")
         }
     }
+    
+//    MARK: Data Updating
+//    This function is called anytime there is a change to the events
+    @MainActor
+    func updateEvents(_ events: [RecallCalendarEvent]) {
+        
+        // require that views indirectly dependent on events are re-rendered
+        CalendarPageViewModel.shared.resetRenderStatus()
+        
+        // update the stored data with the new values of events
+        RecallModel.dataModel.storeData( events: events)
+    }
 
 //    MARK: Data Validation
 //    when data is invalidated, when the user goes to the goals page view

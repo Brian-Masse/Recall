@@ -41,7 +41,10 @@ struct MainView: View {
                 Constants.setupConstants()
                 RecallModel.dataModel.storeData( events: data.events, goals: data.goals )
             }
-            .onChange(of: events) { RecallModel.dataModel.storeData( events: Array(events)) }
+            .onChange(of: events) { RecallModel.shared.updateEvents(Array(events)) }
             .universalBackground()
     }
 }
+
+
+
