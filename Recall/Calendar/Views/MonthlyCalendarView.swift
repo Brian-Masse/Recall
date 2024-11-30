@@ -13,9 +13,9 @@ import RealmSwift
 struct MonthlyCalendarView: View {
 //    MARK: LocalConstants
     private struct LocalConstants {
-        static let gridSpacing: Double = 5
+        static let gridSpacing: Double = 3
         static let daysPerRow: Double = 7
-        static let strokePadding: Double = 10
+        static let strokePadding: Double = 15
     }
     
 //    MARK: Vars
@@ -76,29 +76,23 @@ struct MonthlyCalendarView: View {
             .padding(.vertical, 10)
             .padding(.top)
   
-            VStack {
+            VStack(alignment: .leading, spacing: LocalConstants.gridSpacing ) {
                 
                 let rowCount = Int(ceil(Double( dayCount + startOfMonthOffset  ) / 7))
                 
                 ForEach( 0..<rowCount, id: \.self ) { i in
-                    
-                    HStack(spacing: 0) {
-                        HStack(spacing: LocalConstants.gridSpacing ) {
-                            ForEach( 0..<7, id: \.self ) { f in
-                                let day = (i * 7) + f - startOfMonthOffset
-                                
-                                if day <= -1 {Rectangle() .foregroundStyle(.clear)
-                                } else if day < dayCount {
-                                    DayView(day: day, startOfMonth: startOfMonth, width: width)
-                                }
+                
+                    HStack(spacing: LocalConstants.gridSpacing ) {
+                        ForEach( 0..<7, id: \.self ) { f in
+                            let day = (i * 7) + f - startOfMonthOffset
+                            
+                            if day <= -1 {Rectangle().foregroundStyle(.clear).frame(width: width)
+                            } else if day < dayCount {
+                                DayView(day: day, startOfMonth: startOfMonth, width: width)
                             }
                         }
-                        .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
-                        
-                        Spacer()
                     }
-                    
-                    if i < rowCount - 1 { Divider() }
+                    .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
                 }
             }
             .rectangularBackground(LocalConstants.strokePadding, style: .secondary, stroke: true)
@@ -116,6 +110,7 @@ struct MonthlyCalendarView: View {
         
         @State private var date: Date = .now
         @State private var recallWasCompleted: Bool = false
+        @State private var eventCount: Int = 0
         @State private var roundRightEdge: Bool = false
         
         let day: Int
@@ -124,11 +119,14 @@ struct MonthlyCalendarView: View {
         
         private func getDate() async -> Date { startOfMonth + (Constants.DayTime * Double(day)) }
         
-        private func checkCompletion() async -> Bool { viewModel.recallWasCompleted(on: date) }
+        private func checkCompletion() async -> Bool {
+            self.eventCount = viewModel.recallWasCompleted(on: date)
+            return eventCount > 0
+        }
         
         private func shouldRoundRightEdge() async -> Bool {
             let previousDay = Calendar.current.date(byAdding: .day, value: 1, to: self.date)!
-            return !viewModel.recallWasCompleted(on: previousDay )
+            return viewModel.recallWasCompleted(on: previousDay ) == 0
         }
         
         var  body: some View {
@@ -143,10 +141,9 @@ struct MonthlyCalendarView: View {
                 .background { if recallWasCompleted {
                         Rectangle()
                             .foregroundStyle(Colors.getAccent(from: colorScheme))
-                            .cornerRadius(100, corners: [.topLeft, .bottomLeft])
-                            .cornerRadius(roundRightEdge ? 100 : 0, corners: [.topRight, .bottomRight] )
-                            .padding(.trailing, roundRightEdge ? 0 : -30)
+                            .cornerRadius(Constants.UIDefaultCornerRadius - 13)
                             .transition(.blurReplace)
+                            .opacity( Double(eventCount) / 11 )
                 } }
                 .task {
                     self.date                   = await getDate()
@@ -169,15 +166,10 @@ struct MonthlyCalendarView: View {
     
     @MainActor
     @ViewBuilder
-    private func makeCalendar() -> some View {
-        GeometryReader { geo in
-            let width = gridItemWidth(in: geo)
-            
-            InfiniteScroller { i in
-                let month = Calendar.current.date(byAdding: .month, value: i, to: .now)!
-                
-                makeMonth(month, in: width)
-            }
+    private func makeCalendar(itemWidth: Double) -> some View {
+        InfiniteScroller { i in
+            let month = Calendar.current.date(byAdding: .month, value: i, to: .now)!
+            makeMonth(month, in: itemWidth)
         }
     }
     
@@ -203,17 +195,11 @@ struct MonthlyCalendarView: View {
     
 //    MARK: makeDaysOfWeekHeader
     @ViewBuilder
-    private func makeDaysOfWeekHeader() -> some View {
+    private func makeDaysOfWeekHeader(itemWidth: Double) -> some View {
         HStack(alignment: .center, spacing: 0 ) {
             ForEach( 0..<7, id: \.self ) { i in
-
-                Spacer()
-                
-                UniversalText( "\( getDayOfWeekTitle(i) )",
-                               size: Constants.UIDefaultTextSize,
-                               font: Constants.mainFont)
-                
-                Spacer()
+                UniversalText( "\( getDayOfWeekTitle(i) )", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                    .frame(width: max(itemWidth, 1) + LocalConstants.gridSpacing)
                 
                 if i != 6 {
                     Divider(vertical: true, strokeWidth: 1)
@@ -221,26 +207,29 @@ struct MonthlyCalendarView: View {
                         .opacity(0.5)
                 }
             }
-        }.opacity(0.5)
+        }
+        .opacity(0.5)
     }
     
 //    MARK: Body
     var body: some View {
-        
-        VStack(alignment: .leading, spacing: 5) {
+        GeometryReader { geo in
+            let width = gridItemWidth(in: geo)
             
-            makeHeader()
-                .padding(.bottom)
-            
-            makeDaysOfWeekHeader()
-                .padding(.bottom, 5)
-            
-            makeCalendar()
+            VStack(alignment: .leading, spacing: 5) {
+                
+                makeHeader()
+                    .padding(.bottom)
+                
+                VStack(spacing: 5) {
+                    makeDaysOfWeekHeader(itemWidth: width)
+                        .padding(.bottom, 5)
+                    
+                    makeCalendar(itemWidth: width)
+                }
+            }
         }
-        .onAppear {
-            viewModel.renderCalendar(events: arrEvents)
-            
-        }
+        .task { await viewModel.renderCalendar(events: arrEvents) }
         .padding(7)
         .universalBackground()
     }
