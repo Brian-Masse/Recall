@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -90,6 +90,9 @@
 		C9C471052CEAA224004AB489 /* MonthlyCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C470F92CEAA224004AB489 /* MonthlyCalendarView.swift */; };
 		C9C471062CEAA224004AB489 /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C470F72CEAA224004AB489 /* CalendarPageView.swift */; };
 		C9C471072CEAA224004AB489 /* EventSelectionEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C470F82CEAA224004AB489 /* EventSelectionEditorView.swift */; };
+		C9C8E0592D0CF248009607BE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9C8E0582D0CF248009607BE /* WidgetKit.framework */; };
+		C9C8E05B2D0CF248009607BE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9C8E05A2D0CF248009607BE /* SwiftUI.framework */; };
+		C9C8E0682D0CF249009607BE /* Recall-WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C9C8E0562D0CF248009607BE /* Recall-WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */; };
 		C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */; };
 		C9D299E62CACB83200814965 /* StyledLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D299E52CACB83200814965 /* StyledLocationPicker.swift */; };
@@ -120,6 +123,13 @@
 			remoteGlobalIDString = C91BCEED2A618434003C6DD6;
 			remoteInfo = Recall;
 		};
+		C9C8E0662D0CF249009607BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C91BCEE62A618434003C6DD6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9C8E0552D0CF248009607BE;
+			remoteInfo = "Recall-WidgetExtension";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -130,6 +140,27 @@
 			dstSubfolderSpec = 10;
 			files = (
 				C9C470DC2CE8A51C004AB489 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9C8E0692D0CF249009607BE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C9C8E0682D0CF249009607BE /* Recall-WidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9C8E07C2D0D0196009607BE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -220,6 +251,11 @@
 		C9C470F82CEAA224004AB489 /* EventSelectionEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSelectionEditorView.swift; sourceTree = "<group>"; };
 		C9C470F92CEAA224004AB489 /* MonthlyCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyCalendarView.swift; sourceTree = "<group>"; };
 		C9C470FA2CEAA224004AB489 /* RecallDailySummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallDailySummaryView.swift; sourceTree = "<group>"; };
+		C9C8E0562D0CF248009607BE /* Recall-WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Recall-WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9C8E0582D0CF248009607BE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C9C8E05A2D0CF248009607BE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C9C8E06E2D0CF52D009607BE /* RecallRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RecallRelease.entitlements; sourceTree = "<group>"; };
+		C9C8E06F2D0CF5F9009607BE /* Recall-WidgetExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Recall-WidgetExtensionRelease.entitlements"; sourceTree = "<group>"; };
 		C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCreationScene.swift; sourceTree = "<group>"; };
 		C9D299E52CACB83200814965 /* StyledLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledLocationPicker.swift; sourceTree = "<group>"; };
@@ -234,6 +270,27 @@
 		C9EA0EE62A6B556300E36EF1 /* CategoryCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCreationView.swift; sourceTree = "<group>"; };
 		C9F829272CB0C783002342B7 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C9C8E06C2D0CF249009607BE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C9C8E0552D0CF248009607BE /* Recall-WidgetExtension */;
+		};
+		C9C8E0772D0D00C8009607BE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				RecallWidgetCalendarEvent.swift,
+			);
+			target = C91BCEED2A618434003C6DD6 /* Recall */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C9C8E05C2D0CF248009607BE /* Recall-Widget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C9C8E0772D0D00C8009607BE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, C9C8E06C2D0CF249009607BE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Recall-Widget"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		C91BCEEB2A618434003C6DD6 /* Frameworks */ = {
@@ -261,6 +318,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C9C8E0532D0CF248009607BE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9C8E05B2D0CF248009607BE /* SwiftUI.framework in Frameworks */,
+				C9C8E0592D0CF248009607BE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -280,9 +346,12 @@
 		C91BCEE52A618434003C6DD6 = {
 			isa = PBXGroup;
 			children = (
+				C9C8E06F2D0CF5F9009607BE /* Recall-WidgetExtensionRelease.entitlements */,
 				C91BCEF02A618435003C6DD6 /* Recall */,
 				C91BCF022A618437003C6DD6 /* RecallTests */,
 				C91BCF0C2A618437003C6DD6 /* RecallUITests */,
+				C9C8E05C2D0CF248009607BE /* Recall-Widget */,
+				C9C8E0572D0CF248009607BE /* Frameworks */,
 				C91BCEEF2A618435003C6DD6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -293,6 +362,7 @@
 				C91BCEEE2A618435003C6DD6 /* Recall.app */,
 				C91BCEFF2A618437003C6DD6 /* RecallTests.xctest */,
 				C91BCF092A618437003C6DD6 /* RecallUITests.xctest */,
+				C9C8E0562D0CF248009607BE /* Recall-WidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -300,6 +370,7 @@
 		C91BCEF02A618435003C6DD6 /* Recall */ = {
 			isa = PBXGroup;
 			children = (
+				C9C8E06E2D0CF52D009607BE /* RecallRelease.entitlements */,
 				C91BCEF72A618437003C6DD6 /* Recall.entitlements */,
 				C94F067A2A6AF90600C99EA0 /* Info.plist */,
 				C9EE9EAD2B608AFF0090DB16 /* Resources */,
@@ -564,6 +635,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		C9C8E0572D0CF248009607BE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C9C8E0582D0CF248009607BE /* WidgetKit.framework */,
+				C9C8E05A2D0CF248009607BE /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C9D299E42CACB81400814965 /* Maps */ = {
 			isa = PBXGroup;
 			children = (
@@ -626,10 +706,12 @@
 				C985EB5B2CACBB1D003186BD /* ShellScript */,
 				C91BCEEC2A618434003C6DD6 /* Resources */,
 				C9B8DF602C63344500B11A38 /* Embed Frameworks */,
+				C9C8E0692D0CF249009607BE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C9C8E0672D0CF249009607BE /* PBXTargetDependency */,
 			);
 			name = Recall;
 			packageProductDependencies = (
@@ -678,6 +760,29 @@
 			productReference = C91BCF092A618437003C6DD6 /* RecallUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		C9C8E0552D0CF248009607BE /* Recall-WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9C8E06D2D0CF249009607BE /* Build configuration list for PBXNativeTarget "Recall-WidgetExtension" */;
+			buildPhases = (
+				C9C8E0522D0CF248009607BE /* Sources */,
+				C9C8E0532D0CF248009607BE /* Frameworks */,
+				C9C8E0542D0CF248009607BE /* Resources */,
+				C9C8E07C2D0D0196009607BE /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C9C8E05C2D0CF248009607BE /* Recall-Widget */,
+			);
+			name = "Recall-WidgetExtension";
+			packageProductDependencies = (
+			);
+			productName = "Recall-WidgetExtension";
+			productReference = C9C8E0562D0CF248009607BE /* Recall-WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -685,7 +790,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1430;
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					C91BCEED2A618434003C6DD6 = {
@@ -698,6 +803,9 @@
 					C91BCF082A618437003C6DD6 = {
 						CreatedOnToolsVersion = 14.3.1;
 						TestTargetID = C91BCEED2A618434003C6DD6;
+					};
+					C9C8E0552D0CF248009607BE = {
+						CreatedOnToolsVersion = 16.2;
 					};
 				};
 			};
@@ -722,6 +830,7 @@
 				C91BCEED2A618434003C6DD6 /* Recall */,
 				C91BCEFE2A618437003C6DD6 /* RecallTests */,
 				C91BCF082A618437003C6DD6 /* RecallUITests */,
+				C9C8E0552D0CF248009607BE /* Recall-WidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -750,6 +859,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C91BCF072A618437003C6DD6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9C8E0542D0CF248009607BE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -883,6 +999,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C9C8E0522D0CF248009607BE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -895,6 +1018,11 @@
 			isa = PBXTargetDependency;
 			target = C91BCEED2A618434003C6DD6 /* Recall */;
 			targetProxy = C91BCF0A2A618437003C6DD6 /* PBXContainerItemProxy */;
+		};
+		C9C8E0672D0CF249009607BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9C8E0552D0CF248009607BE /* Recall-WidgetExtension */;
+			targetProxy = C9C8E0662D0CF249009607BE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1063,7 +1191,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Recall/Recall.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Recall/RecallRelease.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -1192,6 +1320,71 @@
 			};
 			name = Release;
 		};
+		C9C8E06A2D0CF249009607BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LN4JU8GNV7;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Recall-Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Recall-Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Masse-Brian.Recall.Recall-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C9C8E06B2D0CF249009607BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "Recall-WidgetExtensionRelease.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LN4JU8GNV7;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Recall-Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Recall-Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Masse-Brian.Recall.Recall-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1227,6 +1420,15 @@
 			buildConfigurations = (
 				C91BCF1A2A618437003C6DD6 /* Debug */,
 				C91BCF1B2A618437003C6DD6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9C8E06D2D0CF249009607BE /* Build configuration list for PBXNativeTarget "Recall-WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9C8E06A2D0CF249009607BE /* Debug */,
+				C9C8E06B2D0CF249009607BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

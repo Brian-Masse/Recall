@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import UIUniversals
-
+import WidgetKit
 
 let inDev = true
 
@@ -25,11 +25,11 @@ struct RecallModel {
 
     
 //    MARK: Methods
-    @MainActor
-    static func getDaysSinceFirstEvent() -> Double {
-        (Date.now.timeIntervalSince(getEarliestEventDate() )) / Constants.DayTime
-    }
-    
+//    @MainActor
+//    static func getDaysSinceFirstEvent() -> Double {
+//        (Date.now.timeIntervalSince(getEarliestEventDate() )) / Constants.DayTime
+//    }
+//    
     @MainActor
     static func getEarliestEventDate() -> Date {
         RecallModel.index.earliestEventDate
@@ -53,6 +53,18 @@ struct RecallModel {
         
         // update the stored data with the new values of events
         RecallModel.dataModel.storeData( events: events)
+    }
+    
+//    This function is called anytime an event changes, and that even is to be used in a widget
+//    ie. if a user favorites / unfavorites an event, it may run this function if the most recent favorite event changes
+//    This function is here to centralize the updating of widget information
+    @MainActor
+    func updateWidgetData(for event: RecallCalendarEvent, key: String, widget: WidgetStorageKeys.widgets) {
+        let widgetEvent = event.createWidgetEvent()
+        
+        WidgetStorage.shared.saveEvent(widgetEvent, for: key)
+        
+        WidgetCenter.shared.reloadTimelines(ofKind: widget.rawValue)
     }
 
 //    MARK: Data Validation

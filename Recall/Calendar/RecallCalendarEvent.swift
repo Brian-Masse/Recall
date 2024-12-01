@@ -366,6 +366,16 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         else if goal.targetTag?.label ?? "" == self.category?.label ?? "-" { return 1 }
         return 0
     }
+    
+//    MARK: CreateWidgetEvent
+//    Widgets take in a simplified version of calendar events, known as
+//    RecallWigetCalendarEvent. This function translates an event into a widget event
+    func createWidgetEvent() -> RecallWidgetCalendarEvent {
+        .init(title: self.title,
+              notes: self.notes,
+              startTime: self.startTime,
+              endTime: self.endTime)
+    }
 }
 
 

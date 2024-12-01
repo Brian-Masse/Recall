@@ -20,7 +20,7 @@ struct EventsDataSection: View {
     @State var timePeriod: RecallDataModel.TimePeriod = .allTime
     
     private var daysInTimePeriod: Double {
-        timePeriod == .recent ? 7 : RecallModel.getDaysSinceFirstEvent()
+        timePeriod == .recent ? 7 : Double(RecallModel.index.daysSinceFirstEvent())
     }
     
 //    MARK: ViewBuilder
