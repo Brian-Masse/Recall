@@ -19,7 +19,10 @@ class CalendarPageViewModel: ObservableObject {
     private var recallLog: [String: Int] = [:]
     
     @MainActor
-    func resetRenderStatus() { self.rendered = false }
+    func resetRenderStatus() {
+        self.rendered = false
+        self.recallLog.removeAll()
+    }
     
     @MainActor
     func recallWasCompleted(on date: Date) -> Int { recallLog[ date.getDayKey() ] ?? 0 }
@@ -30,19 +33,11 @@ class CalendarPageViewModel: ObservableObject {
     func renderCalendar( events: [RecallCalendarEvent] ) async {
         if events.isEmpty { return }
         if self.rendered { return }
-        
-//        var currentKey = events[0].startTime.getDayKey()
+
         for event in events {
             let key = event.startTime.getDayKey()
-//            if key != currentKey {
-            if let val = self.recallLog[ key ] {
-                self.recallLog[ key ] = val + 1
-            } else {
-                self.recallLog[ key ] = 0
-            }
-                
-//                currentKey = key
-//            }
+            if let val = self.recallLog[ key ] { self.recallLog[ key ] = val + 1
+            } else { self.recallLog[ key ] = 1 }
         }
         self.rendered = true
         self.objectWillChange.send()

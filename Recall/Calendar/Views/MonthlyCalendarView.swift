@@ -18,6 +18,16 @@ struct MonthlyCalendarView: View {
         static let strokePadding: Double = 15
     }
     
+//    MARK: Line
+    struct Line: Shape {
+        func path(in rect: CGRect) -> Path {
+            var path = Path()
+            path.move(to: CGPoint(x: 0, y: 0))
+            path.addLine(to: CGPoint(x: rect.width, y: 0))
+            return path
+        }
+    }
+    
 //    MARK: Vars
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
@@ -73,15 +83,19 @@ struct MonthlyCalendarView: View {
             UniversalText( getMonthName(for: date),
                            size: Constants.UISubHeaderTextSize,
                            font: Constants.titleFont)
-            .padding(.vertical, 10)
             .padding(.top)
+            
+            Line()
+                .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [1, 7]))
+                .frame(height: 1)
+                .padding(.vertical)
+                .opacity(0.25)
   
             VStack(alignment: .leading, spacing: LocalConstants.gridSpacing ) {
                 
                 let rowCount = Int(ceil(Double( dayCount + startOfMonthOffset  ) / 7))
                 
                 ForEach( 0..<rowCount, id: \.self ) { i in
-                
                     HStack(spacing: LocalConstants.gridSpacing ) {
                         ForEach( 0..<7, id: \.self ) { f in
                             let day = (i * 7) + f - startOfMonthOffset
@@ -95,7 +109,6 @@ struct MonthlyCalendarView: View {
                     .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
                 }
             }
-            .rectangularBackground(LocalConstants.strokePadding, style: .secondary, stroke: true)
         }
     }
     
@@ -171,6 +184,7 @@ struct MonthlyCalendarView: View {
             let month = Calendar.current.date(byAdding: .month, value: i, to: .now)!
             makeMonth(month, in: itemWidth)
         }
+        .rectangularBackground(LocalConstants.strokePadding, style: .secondary, stroke: true, cornerRadius: Constants.UILargeCornerRadius)
     }
     
 //    MARK: makeHeader
