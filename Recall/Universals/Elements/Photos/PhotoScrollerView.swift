@@ -10,8 +10,7 @@ import SwiftUI
 import UIUniversals
 
 //MARK: PhotoScrollViewModel
-@Observable
-final class PhotoScrollerViewModel: Sendable {
+class PhotoScrollerViewModel {
     let restHeight: Double = 0.6
     let peekHeight: Double = 0.92
     
@@ -111,12 +110,14 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
 //    MARK: ContentMask
     private struct ContentMask: Shape {
         let screenHeight: Double
-        var sharedData: PhotoScrollerViewModel
+        let peekHeight: Double
+        let restHeight: Double
+        let isExpanded: Bool
         
         func path(in rect: CGRect) -> Path {
-            let restHeight = rect.size.height - screenHeight * (sharedData.restHeight)
-            let fullheight = screenHeight * sharedData.peekHeight
-            let height = (!sharedData.isExpanded ? fullheight : restHeight) + 100
+            let restHeight = rect.size.height - screenHeight * (restHeight)
+            let fullheight = screenHeight * peekHeight
+            let height = (!isExpanded ? fullheight : restHeight) + 100
             
             let offset = rect.size.height - height
             
@@ -162,7 +163,10 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                 }
             }
             .scrollPosition($scrollPosition)
-            .contentShape(ContentMask (screenHeight: screenHeight, sharedData: sharedData) )
+            .contentShape(ContentMask (screenHeight: screenHeight,
+                                       peekHeight: sharedData.peekHeight,
+                                       restHeight: sharedData.restHeight,
+                                       isExpanded: sharedData.isExpanded ))
             .scrollClipDisabled()
             .onScrollGeometryChange(for: CGFloat.self, of: { geo in geo.contentOffset.y }) { oldValue, newValue in
                 sharedData.mainOffset = newValue

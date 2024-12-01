@@ -50,31 +50,31 @@ class RealmManager: ObservableObject {
     
 //    MARK: Subscriptions
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
-    var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) {
+    static var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) {
         .init(named: QuerySubKey.calendarComponent.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var categoryQuery: (QueryPermission<RecallCategory>) {
+    static var categoryQuery: (QueryPermission<RecallCategory>) {
         .init(named: QuerySubKey.category.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var goalsQuery: (QueryPermission<RecallGoal>) {
+    static var goalsQuery: (QueryPermission<RecallGoal>) {
         .init(named: QuerySubKey.goal.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var goalsNodeQuery: (QueryPermission<GoalNode>) {
+    static var goalsNodeQuery: (QueryPermission<GoalNode>) {
         .init(named: QuerySubKey.goalNode.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var indexQuery: (QueryPermission<RecallIndex>) {
+    static var indexQuery: (QueryPermission<RecallIndex>) {
         .init(named: QuerySubKey.index.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var dicQuery: (QueryPermission<DictionaryNode>) {
+    static var dicQuery: (QueryPermission<DictionaryNode>) {
         .init(named: QuerySubKey.dictionary.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var summaryQuery: (QueryPermission<RecallDailySummary>) {
+    static var summaryQuery: (QueryPermission<RecallDailySummary>) {
         .init(named: QuerySubKey.summary.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
@@ -190,16 +190,13 @@ class RealmManager: ObservableObject {
     
 //    MARK: Logout
     @MainActor
-    func logoutUser() {
+    func logoutUser() async {
         if let user = self.user {
-            user.logOut { error in
-                if let err = error { print("error logging out: \(err.localizedDescription)") }
-                
-                DispatchQueue.main.async {
-                    NotificationManager.shared.clearNotifications()
-                    self.setState(.authenticating)
-                }
-            }
+            try? await user.logOut()
+            
+            NotificationManager.shared.clearNotifications()
+            self.setState(.authenticating)
+            
         }
         Task { await self.removeAllNonBaseSubscriptions() }
         
@@ -207,7 +204,7 @@ class RealmManager: ObservableObject {
     }
     
 //    MARK: SetConfiguration
-    private func addInitialSubscription<T: Object>(_ query: QueryPermission<T>, to subs: SyncSubscriptionSet ) {
+    static func addInitialSubscription<T: Object>(_ query: QueryPermission<T>, to subs: SyncSubscriptionSet ) {
         let subscription = query.getSubscription()
         
         if subs.first(named: query.name) == nil {
@@ -219,13 +216,13 @@ class RealmManager: ObservableObject {
     private func setConfiguration() {
         self.configuration = user!.flexibleSyncConfiguration(initialSubscriptions: { subs in
             
-            self.addInitialSubscription(self.calendarEventQuery, to: subs)
-            self.addInitialSubscription(self.categoryQuery, to: subs)
-            self.addInitialSubscription(self.goalsQuery, to: subs)
-            self.addInitialSubscription(self.indexQuery, to: subs)
-            self.addInitialSubscription(self.goalsNodeQuery, to: subs)
-            self.addInitialSubscription(self.dicQuery, to: subs)
-            self.addInitialSubscription(self.summaryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.calendarEventQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.categoryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalsQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.indexQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalsNodeQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.dicQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.summaryQuery, to: subs)
             
         })
         
@@ -243,7 +240,7 @@ class RealmManager: ObservableObject {
     
 //    MARK: Profile Functions
     @MainActor
-    func deleteProfile() async { self.logoutUser() }
+    func deleteProfile() async { await self.logoutUser() }
     
 //    This checks the user has created a profile with Recall already
 //    if not it will trigger the ProfileCreationScene

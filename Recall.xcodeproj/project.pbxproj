@@ -703,7 +703,6 @@
 			buildPhases = (
 				C91BCEEA2A618434003C6DD6 /* Sources */,
 				C91BCEEB2A618434003C6DD6 /* Frameworks */,
-				C985EB5B2CACBB1D003186BD /* ShellScript */,
 				C91BCEEC2A618434003C6DD6 /* Resources */,
 				C9B8DF602C63344500B11A38 /* Embed Frameworks */,
 				C9C8E0692D0CF249009607BE /* Embed Foundation Extensions */,
@@ -873,26 +872,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		C985EB5B2CACBB1D003186BD /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "echo \"running!\"\n\nif [ $ENABLE_PREVIEWS == \"NO\" ]\nthen\n    echo \"Previews not enabled\"\nelse\n  echo \"Skipping Bump of version\"\n  echo $ENABLE_PREVIEWS\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C91BCEEA2A618434003C6DD6 /* Sources */ = {
@@ -1340,7 +1319,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Masse-Brian.Recall.Recall-Widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1373,7 +1352,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Masse-Brian.Recall.Recall-Widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

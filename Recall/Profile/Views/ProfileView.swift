@@ -500,7 +500,7 @@ struct ProfileView: View {
             HStack {
                 IconButton("pencil", label: "Edit", fullWidth: true) { coordinator.presentSheet(.indexEditingView(index: index)) }
                 IconButton("arrow.down", label: "Signout", fullWidth: true) {
-                    RecallModel.realmManager.logoutUser()
+                    await RecallModel.realmManager.logoutUser()
                     RecallModel.realmManager.setState(.splashScreen)
                 }
             }
@@ -563,7 +563,7 @@ struct ProfileView: View {
         .alert(SettingsConstants.deletionWarning, isPresented: $showingError) {
             Button(role: .destructive) {
                 Task {
-                    RecallModel.realmManager.logoutUser()
+                    await RecallModel.realmManager.logoutUser()
                     await RecallModel.realmManager.deleteProfile()
                 }
             } label: { Text( "delete profile" ) }
