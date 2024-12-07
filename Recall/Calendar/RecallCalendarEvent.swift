@@ -92,7 +92,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         self.cachedGoalRatings = self.goalRatings
     }
     
-//    MARK: Update
+//    MARK: - Update
     private func updateRecentRecallEventEndTime(to time: Date) {
         RecallModel.index.setMostRecentRecallEvent(to: time)
     }
@@ -189,7 +189,15 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         }
     }
     
-//    MARK: GetLocationResult
+//    MARK: - get CalendarEvent
+    static func getRecallCalendarEvent(from id: ObjectId) -> RecallCalendarEvent? {
+        let results: Results<RecallCalendarEvent> = RealmManager.retrieveObject { query in query._id == id }
+        guard let first = results.first else { print("no event exists with given id: \(id.stringValue)"); return nil }
+        return first
+    }
+    
+    
+//    MARK:  GetLocationResult
 //    checks if the event has any location data, and if it does, parses it into a locationResult and returns it
     func getLocationResult() -> LocationResult? {
         if self.locationTitle.isEmpty { return nil }
@@ -237,21 +245,14 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         return dic
     }
     
-    
-//    MARK: ToggleTemplate
-    @MainActor
-    func toggleTemplate() {
-        RealmManager.updateObject(self) { thawed in
-            thawed.isTemplate = !self.isTemplate
-        }
-    }
-    
 //    MARK: ToggleFavorite
     @MainActor
     func toggleFavorite() {
         RealmManager.updateObject(self) { thawed in
             thawed.isFavorite = !self.isFavorite 
         }
+        
+        RecallModel.dataStore.checkMostRecentFavoriteEvent(against: self, isFavorite: !self.isFavorite)
     }
     
     
@@ -290,26 +291,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    MARK: Delete
     @MainActor
     func delete(preserveTemplate: Bool = false) {
-        if !preserveTemplate {
-            if self.isTemplate { self.toggleTemplate() }
-            RealmManager.deleteObject(self) { event in event._id == self._id }
-        }
         
-        else {
-            var components = DateComponents()
-            components.year = 2005
-            components.month = 5
-            components.day = 18
-            let newDate = Calendar.current.date(from: components)
-            
-            let startComponents  = Calendar.current.dateComponents([.minute, .hour], from: startTime)
-            let endComponents    = Calendar.current.dateComponents([.minute, .hour], from: endTime)
-            
-            let startDate = Calendar.current.date(bySettingHour: startComponents.hour!, minute: startComponents.minute!, second: 0, of: newDate!)
-            let endDate   = Calendar.current.date(bySettingHour: endComponents.hour!, minute: endComponents.minute!, second: 0, of: newDate!)
-            
-            updateDate(startDate: startDate, endDate: endDate)
-        }
+        if self.isFavorite { self.toggleFavorite() }
+        
+        RealmManager.deleteObject(self) { event in event._id == self._id }
         
         RecallModel.shared.updateEvent(self)
 

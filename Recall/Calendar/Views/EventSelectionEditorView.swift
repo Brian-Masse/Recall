@@ -39,15 +39,6 @@ struct EventSelectionEditorView: View {
     }
     
     @MainActor
-    private func template() {
-        for event in viewModel.selection {
-            if !event.isTemplate { event.toggleTemplate() }
-        }
-        
-        withAnimation { viewModel.selecting = false }
-    }
-    
-    @MainActor
     private func delete() {
         for event in viewModel.selection {
             event.delete(preserveTemplate: false)
@@ -133,7 +124,6 @@ struct EventSelectionEditorView: View {
                         .padding(.bottom)
                     
                     UniversalText("actions", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                    makeSubButton("template", icon: "viewfinder.rectangular") { template() }
                     makeSubButton("favorite", icon: "arrow.up.right") {  }
                     makeSubButton("delete", icon: "trash") { showingDeletetionAlert = true }
                  
