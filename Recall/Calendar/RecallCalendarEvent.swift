@@ -107,7 +107,6 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                  images: [UIImage],
                  tagID: ObjectId,
                  goalRatings: Dictionary<String, String> ) {
-        if !self.startTime.matches(startDate, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: startDate) }
         
         RealmManager.updateObject(self) { thawed in
             thawed.title = title
@@ -132,17 +131,12 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             updateRecentRecallEventEndTime(to: endDate)
         }
         
-        RecallModel.index.addEventToIndex(on: startDate)
         checkUpdateEarliestEvent()
     }
     
 //    MARK: UpdateDate
     @MainActor
     func updateDate(startDate: Date? = nil, endDate: Date? = nil) {
-        if let startDate {
-            if !self.startTime.matches(startDate, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: startDate) }
-        }
-        
         RealmManager.updateObject(self) { thawed in
             thawed.startTime = startDate ?? thawed.startTime
             thawed.endTime = endDate ?? thawed.endTime
@@ -162,9 +156,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     func updateDateComponent(to date: Date) {
         let newStart = self.startTime.dateBySetting(dateFrom: date)
         let newEnd = self.endTime.dateBySetting(dateFrom: date)
-        
-        if !self.startTime.matches(newStart, to: .day) { RecallModel.index.updateEventsIndex(oldDate: self.startTime, newDate: newStart) }
-        
+
         RealmManager.updateObject(self) { thawed in
             thawed.startTime = newStart
             thawed.endTime = newEnd
@@ -298,8 +290,6 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    MARK: Delete
     @MainActor
     func delete(preserveTemplate: Bool = false) {
-        RecallModel.index.removeEventFromIndex(on: self.startTime)
-        
         if !preserveTemplate {
             if self.isTemplate { self.toggleTemplate() }
             RealmManager.deleteObject(self) { event in event._id == self._id }

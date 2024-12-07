@@ -93,6 +93,7 @@
 		C9C8E0592D0CF248009607BE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9C8E0582D0CF248009607BE /* WidgetKit.framework */; };
 		C9C8E05B2D0CF248009607BE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9C8E05A2D0CF248009607BE /* SwiftUI.framework */; };
 		C9C8E0682D0CF249009607BE /* Recall-WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C9C8E0562D0CF248009607BE /* Recall-WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C9C8E07F2D0D3DAA009607BE /* WidgetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8E07D2D0D3D6E009607BE /* WidgetManager.swift */; };
 		C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */; };
 		C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */; };
 		C9D299E62CACB83200814965 /* StyledLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D299E52CACB83200814965 /* StyledLocationPicker.swift */; };
@@ -256,6 +257,7 @@
 		C9C8E05A2D0CF248009607BE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		C9C8E06E2D0CF52D009607BE /* RecallRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RecallRelease.entitlements; sourceTree = "<group>"; };
 		C9C8E06F2D0CF5F9009607BE /* Recall-WidgetExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Recall-WidgetExtensionRelease.entitlements"; sourceTree = "<group>"; };
+		C9C8E07D2D0D3D6E009607BE /* WidgetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetManager.swift; sourceTree = "<group>"; };
 		C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCreationScene.swift; sourceTree = "<group>"; };
 		C9D299E52CACB83200814965 /* StyledLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledLocationPicker.swift; sourceTree = "<group>"; };
@@ -548,6 +550,7 @@
 		C9B8DF632C69076F00B11A38 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				C9C8E07D2D0D3D6E009607BE /* WidgetManager.swift */,
 				C92284962CC85CB700280BFA /* PhotoManager.swift */,
 				C91BCF242A61D0B9003C6DD6 /* PermissionManager.swift */,
 				C9F829272CB0C783002342B7 /* LocationManager.swift */,
@@ -894,6 +897,7 @@
 				C9C471012CEAA224004AB489 /* CalendarEventView.swift in Sources */,
 				C9C471022CEAA224004AB489 /* CalendarContainer.swift in Sources */,
 				C9C471032CEAA224004AB489 /* RecallDailySummaryView.swift in Sources */,
+				C9C8E07F2D0D3DAA009607BE /* WidgetManager.swift in Sources */,
 				C9C471042CEAA224004AB489 /* CalendarEventPreviewView.swift in Sources */,
 				C9C471052CEAA224004AB489 /* MonthlyCalendarView.swift in Sources */,
 				C9C471062CEAA224004AB489 /* CalendarPageView.swift in Sources */,

@@ -62,20 +62,13 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         self.lastName = lastName
         
         
-        Task {
-            await initializeIndex()
-            await indexEvents()
-        }
+        Task { await initializeIndex() }
     }
     
 //    MARK: OnAppear
     @MainActor
     func onAppear() {
         self.toggleNotifcations(to: self.notificationsEnabled, time: self.notificationsTime)
-        
-        Task {
-            await indexEvents()
-        }
     }
     
 //    MARK: UpdateEarliestEventData
@@ -324,63 +317,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
                          lightAccent: accentColor.lightAccent,
                          darkAccent: accentColor.darkAccent)
     }
-    
-    
-//    MARK: EventsIndex
-//    This stores how many events were created on a given day, indexed by their date
-    @Persisted private var eventsIndexUpToDate: Bool = false
-    @Persisted var eventsIndex = Map<String, Int>()
-    
-    @MainActor
-    func addEventToIndex( on date: Date ) {
-        let key = date.getDayKey()
-        let count = eventsIndex[key] ?? 0
-        
-        RealmManager.updateObject(self) { thawed in
-            thawed.eventsIndex[key] = count + 1
-        }
-    }
-    
-//    MARK: RemoveEventFromIndex
-    @MainActor
-    func removeEventFromIndex( on date: Date ) {
-        let key = date.getDayKey()
-        let count = eventsIndex[key] ?? 0
-        
-        if count > 0 {
-            RealmManager.updateObject(self) { thawed in
-                thawed.eventsIndex[key] = count - 1
-            }
-        }
-    }
-    
-//    MARK: UpdateEventIndex
-    @MainActor
-    func updateEventsIndex( oldDate: Date, newDate: Date ) {
-        removeEventFromIndex(on: oldDate)
-        removeEventFromIndex(on: newDate)
-    }
-    
-//    MARK: IndexEvents
-    @MainActor
-    func indexEvents() async {
-        if eventsIndexUpToDate { return }
-        
-        RealmManager.updateObject(self) { thawed in
-            thawed.eventsIndex = Map<String, Int>()
-        }
-        
-        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
-        
-        for event in events {
-            addEventToIndex(on: event.startTime)
-        }
-        
-        RealmManager.updateObject(self) { thawed in
-            thawed.eventsIndexUpToDate = true
-        }
-    }
-    
+
     
 //    MARK: reindex
 //    these sets of functions react to the ways an event can be updated, and consequently effect the goalProgress index
