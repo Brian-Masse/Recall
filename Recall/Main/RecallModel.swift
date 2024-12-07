@@ -22,6 +22,7 @@ struct RecallModel {
     
     static let realmManager: RealmManager = RealmManager()
     static var index: RecallIndex { RecallModel.realmManager.index  }
+    static var dataStore: RecallDataStore { RecallModel.realmManager.dataStore  }
 
     
 //    MARK: Methods

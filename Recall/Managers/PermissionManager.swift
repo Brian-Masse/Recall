@@ -16,6 +16,7 @@ enum QuerySubKey: String, CaseIterable {
     case index
     case dictionary
     case summary
+    case dataStore
 }
 
 

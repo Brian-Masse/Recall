@@ -36,6 +36,7 @@ class RealmManager: ObservableObject {
     var configuration: Realm.Configuration!
     
     var index: RecallIndex!
+    var dataStore: RecallDataStore!
     
 //    These variables are just temporary storage until the realm is initialized, and can be put in the database
     var firstName: String = ""
@@ -76,6 +77,10 @@ class RealmManager: ObservableObject {
     
     static var summaryQuery: (QueryPermission<RecallDailySummary>) {
         .init(named: QuerySubKey.summary.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
+    
+    static var dataStoreQuery: (QueryPermission<RecallDataStore>) {
+        .init(named: QuerySubKey.dataStore.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
 //    MARK: Initialization
@@ -223,6 +228,7 @@ class RealmManager: ObservableObject {
             RealmManager.addInitialSubscription(RealmManager.goalsNodeQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.dicQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.summaryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.dataStoreQuery, to: subs)
             
         })
         
@@ -233,7 +239,8 @@ class RealmManager: ObservableObject {
                                            GoalNode.self,
                                            DictionaryNode.self,
                                            RecallRecentUpdate.self,
-                                           RecallDailySummary.self
+                                           RecallDailySummary.self,
+                                           RecallDataStore.self
         ]
     }
     
@@ -271,6 +278,21 @@ class RealmManager: ObservableObject {
         self.index = index
         self.setState(.creatingProfile)
     }
+    
+//    MARK: DataStore Functions
+    @MainActor
+    func checkDataStore() async {
+        let results: Results<RecallDataStore> = RealmManager.retrieveObject()
+        
+        if let dataStore = results.first(where: { store in store.ownerID == RecallModel.ownerID }) {
+            self.dataStore = dataStore
+        } else {
+            let dataStore = RecallDataStore()
+            dataStore.ownerID = RecallModel.ownerID
+            RealmManager.addObject(dataStore)
+            self.dataStore = dataStore
+        }
+    }
 
 //    MARK: Realm Loading Functions
 //    Called once the realm is loaded in OpenSyncedRealmView
@@ -279,6 +301,7 @@ class RealmManager: ObservableObject {
         self.realm = realm
         await RecallModel.updateManager.initialize()
         await self.checkProfile()
+        await self.checkDataStore()
         RecallModel.index.updateAccentColor()
     }
     

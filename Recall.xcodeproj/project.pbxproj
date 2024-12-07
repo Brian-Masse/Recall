@@ -94,6 +94,7 @@
 		C9C8E05B2D0CF248009607BE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9C8E05A2D0CF248009607BE /* SwiftUI.framework */; };
 		C9C8E0682D0CF249009607BE /* Recall-WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C9C8E0562D0CF248009607BE /* Recall-WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C9C8E07F2D0D3DAA009607BE /* WidgetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8E07D2D0D3D6E009607BE /* WidgetManager.swift */; };
+		C9C8E0822D0E0CCF009607BE /* RecallDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8E0802D0E0CC5009607BE /* RecallDataStore.swift */; };
 		C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */; };
 		C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */; };
 		C9D299E62CACB83200814965 /* StyledLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D299E52CACB83200814965 /* StyledLocationPicker.swift */; };
@@ -258,6 +259,7 @@
 		C9C8E06E2D0CF52D009607BE /* RecallRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RecallRelease.entitlements; sourceTree = "<group>"; };
 		C9C8E06F2D0CF5F9009607BE /* Recall-WidgetExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Recall-WidgetExtensionRelease.entitlements"; sourceTree = "<group>"; };
 		C9C8E07D2D0D3D6E009607BE /* WidgetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetManager.swift; sourceTree = "<group>"; };
+		C9C8E0802D0E0CC5009607BE /* RecallDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallDataStore.swift; sourceTree = "<group>"; };
 		C9CB1FAE2AA964BF0071AD58 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C9CB1FB02AAA048B0071AD58 /* ProfileCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCreationScene.swift; sourceTree = "<group>"; };
 		C9D299E52CACB83200814965 /* StyledLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledLocationPicker.swift; sourceTree = "<group>"; };
@@ -424,6 +426,7 @@
 				C91BCF3B2A61E3EE003C6DD6 /* MainView.swift */,
 				C91A812D2C77DB6F00EFF561 /* TabBar.swift */,
 				C91BCF262A61D0DB003C6DD6 /* RecallModel.swift */,
+				C9C8E0802D0E0CC5009607BE /* RecallDataStore.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -883,6 +886,7 @@
 			files = (
 				C91E1CFB2AFC789E00029F43 /* FavoritesPageView.swift in Sources */,
 				C91BCEF42A618435003C6DD6 /* RecallView.swift in Sources */,
+				C9C8E0822D0E0CCF009607BE /* RecallDataStore.swift in Sources */,
 				C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */,
 				C91BCF332A61DE55003C6DD6 /* Extensions.swift in Sources */,
 				C91A812A2C76807400EFF561 /* RecallCalendarContainerViewModel.swift in Sources */,
