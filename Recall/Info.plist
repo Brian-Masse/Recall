@@ -28,11 +28,6 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>RenoMono.otf</string>
-		<string>Syne-VariableFont_wght.ttf</string>
-		<string>AndaleMono.ttf</string>
-		<string>SF-Mono-Medium.otf</string>
-		<string>SF-Pro.ttf</string>
 		<string>Syne-Medium.ttf</string>
 	</array>
 </dict>

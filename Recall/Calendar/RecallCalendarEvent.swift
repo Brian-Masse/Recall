@@ -348,8 +348,11 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     func createWidgetEvent() -> RecallWidgetCalendarEvent {
         .init(title: self.title,
               notes: self.notes,
+              tag: self.getTagLabel(),
               startTime: self.startTime,
-              endTime: self.endTime)
+              endTime: self.endTime,
+              color: self.getColor()
+        )
     }
 }
 

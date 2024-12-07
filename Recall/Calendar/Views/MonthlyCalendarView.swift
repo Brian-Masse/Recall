@@ -250,7 +250,7 @@ struct MonthlyCalendarView: View {
 }
 
 #Preview {
-    
-    MonthlyCalendarView()
+    Text("Preview")
+//    MonthlyCalendarView()
     
 }

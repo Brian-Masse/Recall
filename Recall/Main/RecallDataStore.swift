@@ -16,7 +16,23 @@ class RecallDataStore: Object {
     @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var ownerID: String
     
-//    MARK: mostRecentFavoriteWidget
+//    MARK: - ManageWidgets
+//    take the stored values in this class, and write them into the shared UserDefaults
+//    This will be run a lot (namely any time an event is created / updated)
+    func writeAllWidgetDataToStore() {
+        writeMostRecentFavoriteEventToStore()
+    }
+    
+    private func writeMostRecentFavoriteEventToStore() {
+        if let mostRecentFavoriteEvent = getMostRecentFavoriteEvent() {
+            let widgetEvent = mostRecentFavoriteEvent.createWidgetEvent()
+            WidgetStorage.shared.saveEvent(widgetEvent,
+                                           for: WidgetStorageKeys.recentFavoriteEvent,
+                                           timelineKind: .mostRecentFavoriteEvent)
+        }
+    }
+    
+//    MARK: - mostRecentFavoriteWidget
     @Persisted var mostRecentFavoriteEventId: ObjectId? = nil
     
     func getMostRecentFavoriteEvent() -> RecallCalendarEvent? {
@@ -24,13 +40,17 @@ class RecallDataStore: Object {
         return RecallCalendarEvent.getRecallCalendarEvent(from: mostRecentFavoriteEventId!)
     }
     
+//    MARK: updateMostRecentEvent
     @MainActor
     private func updateMostRecentEvent(with mostRecentFavoriteEvent: RecallCalendarEvent) {
         RealmManager.updateObject(self) { thawed in
             thawed.mostRecentFavoriteEventId = mostRecentFavoriteEvent._id
         }
+        
+        writeMostRecentFavoriteEventToStore()
     }
     
+//    MARK: setMostRecentFavoriteEvent
 //    find the most recent favorite event
     @MainActor
     private func setMostRecentFavoriteEvent() async {
@@ -45,6 +65,7 @@ class RecallDataStore: Object {
         }
     }
     
+//    MARK: checkMostRecentFavoriteEvent
 //    when an event's favorite status changes, check whether it is now the mot recent favorite event
     @MainActor
     func checkMostRecentFavoriteEvent(against event: RecallCalendarEvent, isFavorite: Bool) {
