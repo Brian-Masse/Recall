@@ -65,6 +65,8 @@ class WidgetStorage {
 
 //MARK: - RecallWidgetCalendarEvent
 class RecallWidgetCalendarEvent: Codable, TimelineEntry {
+    static let blank: String = "BLANK-EVENT"
+    
     let date: Date
     
     let title: String

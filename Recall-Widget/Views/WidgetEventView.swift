@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+//MARK: WidgetEventView
 struct WidgetEventView: View {
     
     let event: RecallWidgetCalendarEvent
@@ -54,7 +55,6 @@ struct WidgetEventView: View {
     
 //    MARK: Body
     var body: some View {
-        
         ZStack(alignment: .topLeading) {
             Rectangle()
                 .opacity(0.25)
@@ -75,7 +75,31 @@ struct WidgetEventView: View {
     }
 }
 
+//MARK: WidgetPlaceholderView
+struct WidgetPlaceholderView: View {
+    
+    let icon: String
+    let message: String
+    let subtext: String
+    
+    var body: some View {
+        VStack {
+            HStack {Spacer()}
+            Spacer()
+            RecallIcon(icon)
+                .font(.title)
+                .padding(.bottom, 5)
+            
+            UniversalText(message, size: Constants.UISubHeaderTextSize + 3, font: Constants.mainFont)
+            
+            UniversalText(subtext, size: Constants.UISmallTextSize, font: Constants.mainFont, textAlignment: .center)
+                .opacity(0.65)
+            Spacer()
+        }
+    }
+}
 
+//MARK: Preview
 #Preview {
     let event: RecallWidgetCalendarEvent = .init(title: "title",
                                                  notes: "notes notes note snotesnotes",

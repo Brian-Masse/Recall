@@ -12,17 +12,21 @@ import UIUniversals
 //MARK: TimelineProvider
 struct MostRecentWidgetTimelineProvider: TimelineProvider {
     func placeholder(in context: Context) -> RecallWidgetCalendarEvent {
-        .init(title: "placeholder")
+        .init(title: "Favorite Evnent 🤩",
+              notes: "Great Time",
+              tag: "Tag")
     }
 
     func getSnapshot(in context: Context, completion: @escaping (RecallWidgetCalendarEvent) -> ()) {
-        let event = RecallWidgetCalendarEvent(title: "snapshot")
+        let event = RecallWidgetCalendarEvent(title: "Favorite Evnent 🤩",
+                                              notes: "Great Time",
+                                              tag: "Tag")
         completion(event)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         
-        var entry = RecallWidgetCalendarEvent(title: "no favorites")
+        var entry = RecallWidgetCalendarEvent(title: RecallWidgetCalendarEvent.blank)
         if let mostRecentFavoriteEvent = WidgetStorage.shared.retrieveEvent(for: WidgetStorageKeys.recentFavoriteEvent) {
             entry = mostRecentFavoriteEvent
         }
@@ -38,9 +42,17 @@ struct MostRecentFavoriteWidgetView : View {
     var event: MostRecentWidgetTimelineProvider.Entry
 
     var body: some View {
-        WidgetEventView(event: event)
-            .padding(7)
-            .background()
+        Group {
+            if event.title == RecallWidgetCalendarEvent.blank {
+                WidgetPlaceholderView(icon: "circle.rectangle.filled.pattern.diagonalline",
+                                      message: "No Favorites",
+                                      subtext: "Favorited events on your calendar will appear here")
+            } else {
+                WidgetEventView(event: event)
+            }
+        }
+        .padding(7)
+        .background()
     }
 }
 
@@ -54,8 +66,9 @@ struct MostRecentFavoriteWidget: Widget {
                 .containerBackground(.fill, for: .widget)
         }
         .contentMarginsDisabled()
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .supportedFamilies([.systemSmall, .systemMedium])
+        .configurationDisplayName("Favorite Event")
+        .description("Showcase your most recent favorite event, or cycle through all your favorite events")
     }
 }
 
