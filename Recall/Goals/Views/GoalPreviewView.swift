@@ -120,7 +120,7 @@ struct GoalPreviewView: View {
                 LoadingView(height: 220)
             }
         }
-//        .task { await dataModel.makeData(for: goal, with: events) }
+        .task { await dataModel.makeData(for: goal, with: events) }
         .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
             Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
         }
