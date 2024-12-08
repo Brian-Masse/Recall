@@ -48,7 +48,7 @@ struct MostRecentWidgetTimelineProvider: AppIntentTimelineProvider {
             }
             
             return Timeline(entries: [entry],
-                            policy: .after(.now + 1))
+                            policy: .after(.now + Constants.HourTime * 3))
            
 //        otherwise just read the most recent favorite event, and display that
         } else {

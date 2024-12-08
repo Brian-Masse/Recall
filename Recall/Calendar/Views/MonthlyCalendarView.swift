@@ -39,6 +39,8 @@ struct MonthlyCalendarView: View {
     
     private var arrEvents: [RecallCalendarEvent] { Array(events) }
     
+    private let largeCornerRadius: Double = 58
+    
 //    MARK: Convenience Functions
     private func getDay(of date: Date) -> Int {
         Calendar.current.component(.day, from: date)
@@ -185,16 +187,25 @@ struct MonthlyCalendarView: View {
             makeMonth(month, in: itemWidth)
         }
         .padding(LocalConstants.strokePadding)
-//        .background {
-//            let largeRadi = Constants.UILargeCornerRadius + 20
-//            
-//            UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
-//                                   bottomLeadingRadius: largeRadi,
-//                                   bottomTrailingRadius: largeRadi,
-//                                   topTrailingRadius: Constants.UILargeCornerRadius)
-//        }
+        .clipShape(UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
+                                          bottomLeadingRadius: largeCornerRadius,
+                                          bottomTrailingRadius: largeCornerRadius,
+                                          topTrailingRadius: Constants.UILargeCornerRadius))
+        .background {
+            UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
+                                   bottomLeadingRadius: largeCornerRadius,
+                                   bottomTrailingRadius: largeCornerRadius,
+                                   topTrailingRadius: Constants.UILargeCornerRadius)
+            .universalStyledBackgrond(.secondary, onForeground: true)
+            
+            UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
+                                   bottomLeadingRadius: largeCornerRadius,
+                                   bottomTrailingRadius: largeCornerRadius,
+                                   topTrailingRadius: Constants.UILargeCornerRadius)
+            .stroke(lineWidth: 1)
+        }
         
-        .rectangularBackground(LocalConstants.strokePadding, style: .secondary, stroke: true, cornerRadius: Constants.UILargeCornerRadius)
+//        .rectangularBackground(LocalConstants.strokePadding, style: .secondary, stroke: true, cornerRadius: Constants.UILargeCornerRadius)
     }
     
 //    MARK: makeHeader
