@@ -14,12 +14,17 @@ import UIUniversals
 struct WidgetStorageKeys {
     enum widgets: String {
         case mostRecentFavoriteEvent = "com.recall.widget.favoriteEvent"
+        case monthlyLog = "com.recall.widget.monthlyLog"
     }
     
     static let suiteName: String = "group.Masse-Brian.Recall"
     
+//    favorite events widgets
     static let recentFavoriteEvent = "recentFavoriteEvent"
     static let favoriteEvents = "favoriteEvents"
+    
+//    monthly view widgets
+    static let currentMonthLog = "currentMonthLog"
 }
 
 //MARK: - WidgetStorage
@@ -84,6 +89,28 @@ class WidgetStorage {
         }
         
         return nil
+    }
+    
+//    MARK: saveList
+    func saveList( _ list: [Int], for key: String, timelineKind: WidgetStorageKeys.widgets ) {
+        if let group = initializeGroup() {
+            if let encodedList = try? JSONEncoder().encode(list) {
+                group.set(encodedList, forKey: key)
+            }
+            
+            WidgetCenter.shared.reloadTimelines(ofKind: timelineKind.rawValue)
+        }
+    }
+    
+//    MARK: retrieveList
+    func retrieveList(for key: String) -> [Int] {
+        if let group = initializeGroup() {
+            if let encodedList = group.data(forKey: key) {
+                let list = try? JSONDecoder().decode([Int].self, from: encodedList)
+                return list ?? []
+            }
+        }
+        return []
     }
 }
 

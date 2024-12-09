@@ -47,5 +47,6 @@ struct RecallWidgetBundel: WidgetBundle {
     
     var body: some Widget {
         MostRecentFavoriteWidget()
+        MonthlyLogWidget()
     }
 }

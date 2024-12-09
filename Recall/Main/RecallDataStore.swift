@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import SwiftUI
 import RealmSwift
 import WidgetKit
+import UIUniversals
 
 class RecallDataStore: Object {
     
@@ -23,8 +23,12 @@ class RecallDataStore: Object {
     func writeAllWidgetDataToStore() {
         writeMostRecentFavoriteEventToStore()
         writeAllFavoriteEventsToStore()
+        writeCurrentMonthLogToStore()
     }
     
+//    each individual writeXXXToStore is basically just a flush function
+//    whatever the value stored in the dataStore is gets written to the UserDefaults
+//    meaning that it is up to other parts of the code to correctly update the data in the store
     private func writeMostRecentFavoriteEventToStore() {
         if let mostRecentFavoriteEvent = getMostRecentFavoriteEvent() {
             let widgetEvent = mostRecentFavoriteEvent.createWidgetEvent()
@@ -45,6 +49,34 @@ class RecallDataStore: Object {
         WidgetStorage.shared.saveEvents(widgetEvents,
                                         for: WidgetStorageKeys.favoriteEvents,
                                         timelineKind: .mostRecentFavoriteEvent)
+    }
+    
+    @MainActor
+    private func writeCurrentMonthLogToStore() {
+        let log = Array(self.currentMonthLog)
+        
+        WidgetStorage.shared.saveList(log,
+                                      for: WidgetStorageKeys.currentMonthLog,
+                                      timelineKind: .monthlyLog)
+    }
+    
+//    MARK: - Initialize
+//    This function goes through the stored properties of the data store, and for those that are null,
+//    computes them. It then flushses all of them to the UserDefaults to be used by the widgets
+//    This is run to make sure all values are properly initialized, and that they are accessible to widgets
+    @MainActor
+    func initalizeDataStore() async {
+//        mostRecentFavorite
+        if self.mostRecentFavoriteEventId == nil {
+            await setMostRecentFavoriteEvent()
+        }
+        
+//        monthlyLog
+        if self.currentMonthLog.isEmpty {
+            await setCurrentMonthLog()
+        }
+        
+        self.writeAllWidgetDataToStore()
     }
     
 //    MARK: - mostRecentFavoriteWidget
@@ -94,5 +126,63 @@ class RecallDataStore: Object {
         }
         
         writeAllFavoriteEventsToStore()
+    }
+    
+//    MARK: - currentMonthLogWidget
+    @Persisted var currentMonthLog: List<Int> = List()
+    
+    @MainActor
+    private func updateCurrrentMonthLog(with arr: [Int]) {
+        let list: List<Int> = List()
+        list.append(objectsIn: arr)
+        
+        RealmManager.updateObject(self) { thawed in
+            thawed.currentMonthLog = list
+        }
+        
+        writeCurrentMonthLogToStore()
+    }
+    
+//    MARK: setCurrentMonthLog
+//    go through each event over the past month, and tally its contribution on each day
+    @MainActor
+    private func setCurrentMonthLog() async {
+        var currentMonthLog = [Int](repeating: 0, count: 31)
+        
+        let startOfMonth = Date.now.getStartOfMonth()
+        let results: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        
+        let filteredResults = results
+            .filter { $0.startTime > startOfMonth }
+        
+        for event in filteredResults {
+            let i = floor(event.startTime.timeIntervalSince(startOfMonth) / Constants.DayTime)
+            currentMonthLog[Int(i)] += 1
+        }
+        
+        if currentMonthLog != Array(self.currentMonthLog) {
+            updateCurrrentMonthLog(with: currentMonthLog)
+        }
+    }
+    
+//    MARK: insertOrRemoveEventFromMonthLog
+//    If an even is created or deleted, this function will increment or decrement the month log on that day.
+    @MainActor
+    func insertOrRemoveEventFromMonthLog(_ event: RecallCalendarEvent, inserted: Bool) async {
+        let firstOfMonth = Date.now.getStartOfMonth()
+        
+        if event.startTime > firstOfMonth {
+            var monthLog = Array(currentMonthLog)
+            
+            let index = floor(event.startTime.timeIntervalSince(firstOfMonth) / Constants.DayTime)
+            monthLog[Int(index)] += inserted ? 1 : -1
+            
+            updateCurrrentMonthLog(with: monthLog)
+        }
+    }
+    
+//    MARK: changeEventInMonthLog
+    func changeEventInMonthLog() async {
+        await self.setCurrentMonthLog()
     }
 }

@@ -291,6 +291,7 @@
 		C9C8E0772D0D00C8009607BE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				MonthLogWidget.swift,
 				RecallWidgetCalendarEvent.swift,
 				Views/WidgetEventView.swift,
 			);

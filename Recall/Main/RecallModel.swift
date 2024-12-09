@@ -43,18 +43,6 @@ struct RecallModel {
             print("failed to complete the wait: \(error.localizedDescription)")
         }
     }
-    
-//    MARK: Data Updating
-//    This function is called anytime there is a change to the events
-    @MainActor
-    func updateEvents(_ events: [RecallCalendarEvent]) {
-        
-        // require that views indirectly dependent on events are re-rendered
-        CalendarPageViewModel.shared.resetRenderStatus()
-        
-        // update the stored data with the new values of events
-        RecallModel.dataModel.storeData( events: events)
-    }
 
 //    MARK: Data Validation
 //    when data is invalidated, when the user goes to the goals page view
@@ -85,14 +73,30 @@ struct RecallModel {
         self.dataGoalsValidated = validated
     }
     
+//    MARK: Updates
+    enum UpdateType {
+        case insert
+        case delete
+        case update
+    }
+    
 //    This gets called anytime an event is created, modified, or deleted
 //    Any standard update behavior should be included in this function
-    func updateEvent(_ event: RecallCalendarEvent) {
+    func updateEvent(_ event: RecallCalendarEvent, updateType: UpdateType) {
         RecallModel.shared.setGoalDataValidation(to: false)
         RecallModel.shared.setDataOverviewValidation(to: false)
         RecallModel.shared.setDataEventsValidated(to: false)
         
         Task { await RecallModel.index.updateEvent(event) }
+        
+//        depending on the udpateType, call the relevant data updating methods in the dataStore
+        Task {
+            if updateType == .insert || updateType == .delete {
+                await RecallModel.dataStore.insertOrRemoveEventFromMonthLog(event, inserted: updateType == .insert)
+            } else {
+                await RecallModel.dataStore.changeEventInMonthLog()
+            }
+        }
     }
     
     func updateGoal(_ goal: RecallGoal) {
@@ -106,6 +110,17 @@ struct RecallModel {
         RecallModel.shared.setDataOverviewValidation(to: false)
         RecallModel.shared.setDataOverviewValidation(to: false)
         RecallModel.shared.setDataGoalsValidated(to: false)
+    }
+    
+//    This function is called anytime there is a change to the events
+    @MainActor
+    func updateEvents(_ events: [RecallCalendarEvent]) {
+        
+        // require that views indirectly dependent on events are re-rendered
+        CalendarPageViewModel.shared.resetRenderStatus()
+        
+        // update the stored data with the new values of events
+        RecallModel.dataModel.storeData( events: events)
     }
     
 }

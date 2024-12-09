@@ -46,12 +46,8 @@ struct MonthlyCalendarView: View {
         Calendar.current.component(.day, from: date)
     }
     
-    private func getStartOfMonth(for date: Date) -> Date {
-        Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Calendar.current.startOfDay(for: date)))!
-    }
-    
     private func getStartOfMonthOfffset(for date: Date) -> Int {
-        let startOfMonth = getStartOfMonth(for: date)
+        let startOfMonth = date.getStartOfMonth()
         return Calendar.current.component(.weekday, from: startOfMonth) - 1
     }
     
@@ -79,7 +75,7 @@ struct MonthlyCalendarView: View {
         
         let dayCount = Calendar.current.range(of: .day, in: .month, for: date)?.count ?? 0
         let startOfMonthOffset = getStartOfMonthOfffset(for: date)
-        let startOfMonth = getStartOfMonth(for: date)
+        let startOfMonth = date.getStartOfMonth()
         
         VStack(alignment: .leading, spacing: 0) {
             UniversalText( getMonthName(for: date),
@@ -146,7 +142,7 @@ struct MonthlyCalendarView: View {
         
         var  body: some View {
             
-            UniversalText("\(Int(day + 1))",
+            UniversalText("\(Int(eventCount))",
                           size: Constants.UISubHeaderTextSize,
                           font: Constants.titleFont)
             

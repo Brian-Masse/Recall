@@ -40,6 +40,7 @@ struct MainView: View {
             .task {
                 Constants.setupConstants()
                 RecallModel.dataModel.storeData( events: data.events, goals: data.goals )
+                await RecallModel.dataStore.initalizeDataStore()
             }
             .onChange(of: events) { RecallModel.shared.updateEvents(Array(events)) }
             .universalBackground()

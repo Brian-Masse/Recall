@@ -80,7 +80,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         
             checkUpdateEarliestEvent()
             
-            RecallModel.shared.updateEvent(self)
+            RecallModel.shared.updateEvent(self, updateType: .insert)
             updateRecentRecallEventEndTime(to: endTime)
         }
     }
@@ -127,7 +127,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             if let retrievedTag = RecallCategory.getCategoryObject(from: tagID) { thawed.category = retrievedTag }
             thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
             
-            RecallModel.shared.updateEvent(thawed)
+            RecallModel.shared.updateEvent(thawed, updateType: .update)
             updateRecentRecallEventEndTime(to: endDate)
         }
         
@@ -141,7 +141,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.startTime = startDate ?? thawed.startTime
             thawed.endTime = endDate ?? thawed.endTime
             
-            RecallModel.shared.updateEvent(thawed)
+            RecallModel.shared.updateEvent(thawed, updateType: .update)
             updateRecentRecallEventEndTime(to: thawed.endTime)
         
         }
@@ -161,7 +161,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.startTime = newStart
             thawed.endTime = newEnd
             
-            RecallModel.shared.updateEvent(thawed)
+            RecallModel.shared.updateEvent(thawed, updateType: .update)
             
         }
         
@@ -173,7 +173,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         RealmManager.updateObject(self) { thawed in
             thawed.category = tag
             
-            RecallModel.shared.updateEvent(thawed)
+            RecallModel.shared.updateEvent(thawed, updateType: .update)
         }
     }
     
@@ -185,7 +185,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             
             thawed.goalRatings = list
             
-            RecallModel.shared.updateEvent(thawed)
+            RecallModel.shared.updateEvent(thawed, updateType: .update)
         }
     }
     
@@ -296,7 +296,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         
         RealmManager.deleteObject(self) { event in event._id == self._id }
         
-        RecallModel.shared.updateEvent(self)
+        RecallModel.shared.updateEvent(self, updateType: .delete)
 
     }
     
