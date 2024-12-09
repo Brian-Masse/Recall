@@ -87,7 +87,7 @@ struct RecallModel {
         RecallModel.shared.setDataOverviewValidation(to: false)
         RecallModel.shared.setDataEventsValidated(to: false)
         
-        Task { await RecallModel.index.updateEvent(event) }
+//        Task { await RecallModel.index.updateEvent(event) }
         
 //        depending on the udpateType, call the relevant data updating methods in the dataStore
         Task {

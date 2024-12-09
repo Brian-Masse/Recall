@@ -177,6 +177,7 @@ struct CalendarContainer: View {
     
     private func cleanEvent() {
         if let newEvent {
+            if newEvent.isInvalidated { return }
             if newEvent.title.isEmpty || newEvent.getTagLabel().isEmpty {
                 RealmManager.deleteObject(newEvent) { event in
                     newEvent.title.isEmpty

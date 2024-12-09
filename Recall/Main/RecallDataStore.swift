@@ -72,7 +72,7 @@ class RecallDataStore: Object {
         }
         
 //        monthlyLog
-        if self.currentMonthLog.isEmpty {
+        if self.currentMonthLog.isEmpty || !Date.now.matches(lastUpdatedMonth, to: .month) {
             await setCurrentMonthLog()
         }
         
@@ -129,7 +129,10 @@ class RecallDataStore: Object {
     }
     
 //    MARK: - currentMonthLogWidget
+//    This is a 31 long integer list that indicates how many recalls were done on a certain day
     @Persisted var currentMonthLog: List<Int> = List()
+//    This indicates the last time the currentMonthLog was updated. Each month it needs to be recomputed
+    @Persisted var lastUpdatedMonth: Date = .now
     
     @MainActor
     private func updateCurrrentMonthLog(with arr: [Int]) {
@@ -141,6 +144,13 @@ class RecallDataStore: Object {
         }
         
         writeCurrentMonthLogToStore()
+    }
+    
+    @MainActor
+    private func updateLastUpedatedMonth(with date: Date) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.lastUpdatedMonth = date
+        }
     }
     
 //    MARK: setCurrentMonthLog
