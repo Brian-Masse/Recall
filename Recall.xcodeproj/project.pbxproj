@@ -46,6 +46,8 @@
 		C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C954AAD02A76FA4E00897BCE /* Animations.swift */; };
 		C9741CFD2D0E9AC8004CA458 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38BD2C9B568400AA8C3F /* UIUniversals */; };
 		C9741CFE2D0E9AC8004CA458 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9C470CD2CE6EC84004AB489 /* UIUniversals */; };
+		C9741D162D0F899C004CA458 /* UniversalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9741D152D0F899C004CA458 /* UniversalExtensions.swift */; };
+		C9741D172D0F89A5004CA458 /* UniversalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9741D152D0F899C004CA458 /* UniversalExtensions.swift */; };
 		C985EB5D2CACBDE6003186BD /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985EB5C2CACBDE6003186BD /* LocationService.swift */; };
 		C98CEE0F2AFFFC3E00B75924 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98CEE0E2AFFFC3E00B75924 /* UpdateManager.swift */; };
 		C98CEE112B00246800B75924 /* UpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98CEE102B00246800B75924 /* UpdateView.swift */; };
@@ -221,6 +223,7 @@
 		C94F067A2A6AF90600C99EA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C94F067D2A6B215400C99EA0 /* GoalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalView.swift; sourceTree = "<group>"; };
 		C954AAD02A76FA4E00897BCE /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
+		C9741D152D0F899C004CA458 /* UniversalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalExtensions.swift; sourceTree = "<group>"; };
 		C98573432B8936AE001D9895 /* AndaleMono.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AndaleMono.ttf; sourceTree = "<group>"; };
 		C985EB5C2CACBDE6003186BD /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		C98CEE0E2AFFFC3E00B75924 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateManager.swift; sourceTree = "<group>"; };
@@ -448,6 +451,7 @@
 				C91BCF302A61DDBA003C6DD6 /* Constants.swift */,
 				C9E3E01D2C91F099000E0911 /* CreationFormView.swift */,
 				C91BCF322A61DE55003C6DD6 /* Extensions.swift */,
+				C9741D152D0F899C004CA458 /* UniversalExtensions.swift */,
 				C954AAD02A76FA4E00897BCE /* Animations.swift */,
 			);
 			path = Universals;
@@ -940,6 +944,7 @@
 				C9E3E02F2C9207B5000E0911 /* CactusTimeDial.swift in Sources */,
 				C9CB1FAF2AA964BF0071AD58 /* NotificationManager.swift in Sources */,
 				C98F2F2B2A9D216700E92B30 /* TutorialViews.swift in Sources */,
+				C9741D162D0F899C004CA458 /* UniversalExtensions.swift in Sources */,
 				C92284992CC97AE700280BFA /* StyledPickerWrapper.swift in Sources */,
 				C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */,
 				C9E49D182A68AF750023EBC0 /* GoalCreationView.swift in Sources */,
@@ -1003,6 +1008,7 @@
 			files = (
 				C996CE122D0E2DAD0056006D /* RecallIcon.swift in Sources */,
 				C99050402D0E36E600C800FD /* Constants.swift in Sources */,
+				C9741D172D0F89A5004CA458 /* UniversalExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

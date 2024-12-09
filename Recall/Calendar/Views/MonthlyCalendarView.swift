@@ -73,7 +73,7 @@ struct MonthlyCalendarView: View {
     @ViewBuilder
     private func makeMonth(_ date: Date, in width: CGFloat) -> some View {
         
-        let dayCount = Calendar.current.range(of: .day, in: .month, for: date)?.count ?? 0
+        let dayCount = date.getDaysInMonth()
         let startOfMonthOffset = getStartOfMonthOfffset(for: date)
         let startOfMonth = date.getStartOfMonth()
         

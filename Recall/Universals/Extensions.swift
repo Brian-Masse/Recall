@@ -31,10 +31,6 @@ extension Date {
     func getDayKey() -> String {
         self.formatted(date: .numeric, time: .omitted)
     }
-    
-    func getStartOfMonth() -> Date {
-        Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Calendar.current.startOfDay(for: self)))!
-    }
 }
 
 //MARK: Double
