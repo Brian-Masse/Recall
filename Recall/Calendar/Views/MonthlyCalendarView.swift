@@ -142,7 +142,7 @@ struct MonthlyCalendarView: View {
         
         var  body: some View {
             
-            UniversalText("\(Int(eventCount))",
+            UniversalText("\(Int(day + 1))",
                           size: Constants.UISubHeaderTextSize,
                           font: Constants.titleFont)
             

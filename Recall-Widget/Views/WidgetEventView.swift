@@ -64,7 +64,7 @@ struct WidgetEventView: View {
             }
         }
         .foregroundStyle( event.color.safeMix(with: colorScheme == .light ? .black : .white,
-                                              by: 0.2) )
+                                              by: colorScheme == .light ? 0.5 : 0.2) )
     }
     
 //    MARK: Body
