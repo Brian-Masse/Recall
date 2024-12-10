@@ -16,14 +16,44 @@ struct RecallWidgetCalendarEventCollection: TimelineEntry {
     var events: [RecallWidgetCalendarEvent]
 }
 
-//MARK: TimelineProvider
+//MARK: - TimelineProvider
 struct TodaysEventsTimelineProvider: TimelineProvider {
+    private func generateFillerData() -> [RecallWidgetCalendarEvent] {
+        let startOfDay = Date.now.resetToStartOfDay() + 8 * Constants.HourTime
+        
+        return [
+            .init(startTime: startOfDay,
+                  endTime: startOfDay + (1 * Constants.HourTime),
+                  color: .blue),
+            
+            .init(startTime: startOfDay + (1 * Constants.HourTime),
+                  endTime: startOfDay + (3 * Constants.HourTime),
+                  color: .orange),
+            
+            .init(startTime: startOfDay + (3 * Constants.HourTime),
+                  endTime: startOfDay + (5 * Constants.HourTime),
+                  color: .blue),
+            
+            .init(startTime: startOfDay + (6 * Constants.HourTime),
+                  endTime: startOfDay + (7 * Constants.HourTime),
+                  color: .red),
+            
+            .init(startTime: startOfDay + (7 * Constants.HourTime),
+                  endTime: startOfDay + (12 * Constants.HourTime),
+                  color: .purple),
+            
+            .init(startTime: startOfDay + (12 * Constants.HourTime),
+                  endTime: startOfDay + (14 * Constants.HourTime),
+                  color: .blue)
+        ]
+    }
+
     func placeholder(in context: Context) -> RecallWidgetCalendarEventCollection {
-        .init(events: [ .init(title: "placeholder") ])
+        .init(events: generateFillerData())
     }
     
     func getSnapshot(in context: Context, completion: @escaping @Sendable (RecallWidgetCalendarEventCollection) -> Void) {
-        let entry: RecallWidgetCalendarEventCollection = .init(events: [ RecallWidgetCalendarEvent(title: "snapshot") ])
+        let entry: RecallWidgetCalendarEventCollection = .init(events: generateFillerData())
         completion(entry)
     }
     
@@ -37,7 +67,7 @@ struct TodaysEventsTimelineProvider: TimelineProvider {
     }
 }
 
-//MARK: MostRecentFavoriteWidget
+//MARK: - MostRecentFavoriteWidget
 struct TodaysEventsWidget: Widget {
     let kind = WidgetStorageKeys.widgets.todaysEvents.rawValue
     
@@ -56,7 +86,7 @@ struct TodaysEventsWidget: Widget {
 }
 
 
-//MARK: WidgetView
+//MARK: - WidgetView
 struct TodaysRecallWidgetView : View {
 
     @Environment(\.widgetFamily) var widgetFamily
@@ -90,7 +120,7 @@ struct TodaysRecallWidgetView : View {
         
         ZStack {
             ForEach(0..<5, id: \.self) { i in
-                let date = startDate + (Constants.HourTime * Double(i))
+                let date = startDate + (Constants.HourTime * Double(i) * 2)
                 
                 UniversalText( date.formatted(formatter),
                                size: Constants.UISmallTextSize - 1,
@@ -140,12 +170,12 @@ struct TodaysRecallWidgetView : View {
     var body: some View {
         GeometryReader { geo in
             let splitIndex: Int = entry.events.firstIndex { event in
-                getSingleColoumnLayoutPosition(for: event) + 50 > geo.size.height
-            } ?? entry.events.count - 1
+                getSingleColoumnLayoutPosition(for: event) + 65 > geo.size.height
+            } ?? entry.events.count
             
             HStack(alignment: .top, spacing: 5) {
                 makeCalendarPane(startIndex: 0, endIndex: splitIndex)
-            
+                
                 if widgetFamily != .systemSmall && splitIndex < entry.events.count {
                     makeCalendarPane(startIndex: splitIndex, endIndex: entry.events.count)
                 }
@@ -159,9 +189,9 @@ struct TodaysRecallWidgetView : View {
 }
 
 //MARK: Preview
-//#Preview(as: .systemSmall) {
-//    MonthlyLogWidget()
-//} timeline: {
-//
-////    MonthlyLogEntry(data: data)
-//}
+#Preview(as: .systemSmall) {
+    MonthlyLogWidget()
+} timeline: {
+    RecallWidgetCalendarEventCollection(events: [])
+//    MonthlyLogEntry(data: data)
+}

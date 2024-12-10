@@ -67,8 +67,6 @@ struct WidgetEventView: View {
                                               by: 0.2) )
     }
     
-    
-    
 //    MARK: Body
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -82,6 +80,9 @@ struct WidgetEventView: View {
                 .padding(10)
             
             makeContent()
+                .if( event.title == RecallWidgetCalendarEvent.placeholder ) { view in
+                    view.redacted(reason: .placeholder)
+                }
                 .padding(7)
                 .padding(.leading)
         }

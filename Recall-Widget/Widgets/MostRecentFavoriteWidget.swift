@@ -23,15 +23,11 @@ struct RandomizeFavoriteWidgetIntent: WidgetConfigurationIntent {
 //MARK: TimelineProvider
 struct MostRecentWidgetTimelineProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> RecallWidgetCalendarEvent {
-        .init(title: "Favorite Evnent 🤩",
-              notes: "Great Time",
-              tag: "Tag")
+        .init()
     }
     
     func snapshot(for configuration: RandomizeFavoriteWidgetIntent, in context: Context) async -> RecallWidgetCalendarEvent {
-        RecallWidgetCalendarEvent(title: "Favorite Evnent 🤩",
-                                  notes: "Great Time",
-                                  tag: "Tag")
+        .init()
     }
 
 //    MARK: createTimeline

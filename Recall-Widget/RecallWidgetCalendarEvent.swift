@@ -122,6 +122,7 @@ class WidgetStorage {
 //MARK: - RecallWidgetCalendarEvent
 class RecallWidgetCalendarEvent: Codable, TimelineEntry {
     static let blank: String = "BLANK-EVENT"
+    static let placeholder: String = "PLACEHOLDER"
     
     let date: Date
     let id: String
@@ -138,7 +139,13 @@ class RecallWidgetCalendarEvent: Codable, TimelineEntry {
     let endTime: Date
     
 //    MARK: init
-    init( id: String = "", title: String, notes: String = "", tag: String = "?", startTime: Date = .now, endTime: Date = .now, color: Color = Colors.getAccent(from: .light)) {
+    init( id: String = "",
+          title: String = RecallWidgetCalendarEvent.placeholder,
+          notes: String = "placeholder",
+          tag: String = "?",
+          startTime: Date = .now,
+          endTime: Date = .now,
+          color: Color = Colors.getAccent(from: .light)) {
         self.id = id
         
         self.title = title

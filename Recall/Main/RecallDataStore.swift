@@ -56,8 +56,9 @@ class RecallDataStore: Object {
     private func writeTodaysEventsToStore() {
         let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
         let widgetEvents: [RecallWidgetCalendarEvent] = events
-            .filter { $0.startTime.matches(.now - 2 * Constants.DayTime, to: .day) }
+            .filter { $0.startTime.matches(.now - 1 * Constants.DayTime, to: .day) }
             .sorted { $0.startTime < $1.startTime }
+            .filter { Calendar.current.component(.hour, from: $0.startTime) > 5 }
             .map { $0.createWidgetEvent() }
         
         WidgetStorage.shared.saveEvents(widgetEvents,
