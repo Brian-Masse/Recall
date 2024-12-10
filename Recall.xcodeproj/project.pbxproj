@@ -294,9 +294,10 @@
 		C9C8E0772D0D00C8009607BE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				MonthLogWidget.swift,
 				RecallWidgetCalendarEvent.swift,
 				Views/WidgetEventView.swift,
+				Widgets/MonthLogWidget.swift,
+				Widgets/TodaysEventsWidget.swift,
 			);
 			target = C91BCEED2A618434003C6DD6 /* Recall */;
 		};

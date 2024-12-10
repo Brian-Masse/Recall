@@ -12,7 +12,19 @@ import UIUniversals
 //MARK: WidgetEventView
 struct WidgetEventView: View {
     
+    @Environment(\.colorScheme) var colorScheme
+    
     let event: RecallWidgetCalendarEvent
+    let height: Double
+    let showContent: Bool
+    
+    private let minimiumHeightForContent: Double = 50
+    
+    init( event: RecallWidgetCalendarEvent, height: Double = .infinity, showContent: Bool = true ) {
+        self.event = event
+        self.height = height
+        self.showContent = showContent
+    }
     
     var timeString: String {
         let formatter = Date.FormatStyle().month(.abbreviated).day(.defaultDigits)
@@ -27,7 +39,7 @@ struct WidgetEventView: View {
             RecallIcon(icon)
                 .font(.caption)
             
-            UniversalText(title, size: Constants.UISmallTextSize + 2, font: Constants.mainFont, lineLimit: lineLimit)
+            UniversalText(title, size: Constants.UISmallTextSize, font: Constants.mainFont, lineLimit: lineLimit)
         }
         .opacity(0.75)
     }
@@ -39,16 +51,20 @@ struct WidgetEventView: View {
             
             UniversalText( event.title, size: Constants.UISubHeaderTextSize, font: Constants.mainFont, lineLimit: 3 )
             
-            makeContentHeader(icon: "clock", title: timeString)
-            
-            makeContentHeader(icon: "tag", title: event.tag)
-            
-            if !event.notes.isEmpty {
-                makeContentHeader(icon: "text.justify.leading",
-                                  title: event.notes,
-                                  lineLimit: 4)
+            if showContent && height > minimiumHeightForContent {
+                makeContentHeader(icon: "clock", title: timeString)
+                
+                makeContentHeader(icon: "tag", title: event.tag)
+                
+                if !event.notes.isEmpty {
+                    makeContentHeader(icon: "text.justify.leading",
+                                      title: event.notes,
+                                      lineLimit: 4)
+                }
             }
         }
+        .foregroundStyle( event.color.safeMix(with: colorScheme == .light ? .black : .white,
+                                              by: 0.2) )
     }
     
     
@@ -69,9 +85,9 @@ struct WidgetEventView: View {
                 .padding(7)
                 .padding(.leading)
         }
-        .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))
+        .frame(maxHeight: height, alignment: .top)
+        .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 6))
         .foregroundStyle(event.color )
-        .shadow(color: .black.opacity(0.1), radius: 10, y: 10)
     }
 }
 

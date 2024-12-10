@@ -24,6 +24,7 @@ class RecallDataStore: Object {
         writeMostRecentFavoriteEventToStore()
         writeAllFavoriteEventsToStore()
         writeCurrentMonthLogToStore()
+        writeTodaysEventsToStore()
     }
     
 //    each individual writeXXXToStore is basically just a flush function
@@ -49,6 +50,19 @@ class RecallDataStore: Object {
         WidgetStorage.shared.saveEvents(widgetEvents,
                                         for: WidgetStorageKeys.favoriteEvents,
                                         timelineKind: .mostRecentFavoriteEvent)
+    }
+    
+    @MainActor
+    private func writeTodaysEventsToStore() {
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        let widgetEvents: [RecallWidgetCalendarEvent] = events
+            .filter { $0.startTime.matches(.now - 2 * Constants.DayTime, to: .day) }
+            .sorted { $0.startTime < $1.startTime }
+            .map { $0.createWidgetEvent() }
+        
+        WidgetStorage.shared.saveEvents(widgetEvents,
+                                        for: WidgetStorageKeys.todaysEvents,
+                                        timelineKind: .todaysEvents)
     }
     
     @MainActor
@@ -188,11 +202,14 @@ class RecallDataStore: Object {
             monthLog[Int(index)] += inserted ? 1 : -1
             
             updateCurrrentMonthLog(with: monthLog)
+            self.writeTodaysEventsToStore()
         }
     }
     
 //    MARK: changeEventInMonthLog
     func changeEventInMonthLog() async {
         await self.setCurrentMonthLog()
+        await self.writeTodaysEventsToStore()
     }
+
 }

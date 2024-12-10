@@ -15,6 +15,7 @@ struct WidgetStorageKeys {
     enum widgets: String {
         case mostRecentFavoriteEvent = "com.recall.widget.favoriteEvent"
         case monthlyLog = "com.recall.widget.monthlyLog"
+        case todaysEvents = "com.recall.widget.todaysEvents"
     }
     
     static let suiteName: String = "group.Masse-Brian.Recall"
@@ -25,6 +26,9 @@ struct WidgetStorageKeys {
     
 //    monthly view widgets
     static let currentMonthLog = "currentMonthLog"
+    
+//    todays events widgets
+    static let todaysEvents = "todaysEvents"
 }
 
 //MARK: - WidgetStorage
