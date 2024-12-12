@@ -29,6 +29,12 @@ struct WidgetStorageKeys {
     
 //    todays events widgets
     static let todaysEvents = "todaysEvents"
+    
+//    accentColor
+    static let updateAccentColorTrigger = "updateAccentColorTrigger"
+    static let ligthAccent = "lightAccent"
+    static let darkAccent = "darkAccent"
+    static let mixValue = "mixValue"
 }
 
 //MARK: - WidgetStorage
@@ -116,8 +122,74 @@ class WidgetStorage {
         }
         return []
     }
-}
+    
+//    MARK: saveColor
+    func saveColor(_ color: Color, for key: String) {
+        if let group = initializeGroup() {
+            let components = color.components
+            let compList = [components.red, components.green, components.blue]
+            
+            if let list = try? JSONEncoder().encode(compList) {
+                group.set(list, forKey: key)
+            }
+        }
+    }
+    
+//    MARK: retrieveColor
+    func retrieveColor(for key: String) -> Color {
+        if let group = initializeGroup() {
+            if let encodedList = group.data(forKey: key) {
+                if let list = try? JSONDecoder().decode([Double].self, from: encodedList) {
+                    return Color(red: list[0], green: list[1], blue: list[2])
+                }
+            }
+        }
+        return .blue
+    }
+    
+//    MARK: saveBasicValue
+    func saveBasicValue<T: Codable>(value: T, key: String) {
+        if let group = initializeGroup() {
+            if let encodedValue = try? JSONEncoder().encode(value) {
+                group.set(encodedValue, forKey: key)
+            }
+        }
+    }
+    
+//    MARK: retrieveBasicValue
+    func retrieveBasicValue<T: Codable>(key: String) -> T? {
+        if let group = initializeGroup() {
+            if let encodedValue = group.data(forKey: key) {
+                return try? JSONDecoder().decode(T.self, from: encodedValue)
+            }
+        }
+        return nil
+    }
+    
+    //MARK: - UpdateAccentColor
+    func checkForUpdateAccentColor() {
+        if let updateTrigger: Bool = WidgetStorage.shared.retrieveBasicValue(key: WidgetStorageKeys.updateAccentColorTrigger) {
+            
+            if updateTrigger {
+                let lightAccentColor = WidgetStorage.shared.retrieveColor(for: WidgetStorageKeys.ligthAccent)
+                let darkAccentColor = WidgetStorage.shared.retrieveColor(for: WidgetStorageKeys.darkAccent)
+                let mixValue: Double = WidgetStorage.shared.retrieveBasicValue(key: WidgetStorageKeys.mixValue) ?? 0
+                
+                updateAccentColor(lightAccent: lightAccentColor, darkAccent: darkAccentColor, mixValue: mixValue)
+                
+                WidgetStorage.shared.saveBasicValue(value: false, key: WidgetStorageKeys.updateAccentColorTrigger)
+            }
+        }
+    }
 
+    //This function takes in a new accentColor / colors, and sets it in the Colors variable
+    private func updateAccentColor(lightAccent: Color, darkAccent: Color, mixValue: Double) {
+        Colors.setColors(secondaryLight: Colors.defaultSecondaryLight.safeMix(with: lightAccent, by: mixValue),
+                         secondaryDark: Colors.defaultSecondaryDark.safeMix(with: darkAccent, by: mixValue),
+                         lightAccent: lightAccent,
+                         darkAccent: darkAccent)
+    }
+}
 
 //MARK: - RecallWidgetCalendarEvent
 class RecallWidgetCalendarEvent: Codable, TimelineEntry {

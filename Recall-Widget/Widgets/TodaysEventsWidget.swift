@@ -59,6 +59,8 @@ struct TodaysEventsTimelineProvider: TimelineProvider {
     
     func getTimeline(in context: Context, completion: @escaping @Sendable (Timeline<RecallWidgetCalendarEventCollection>) -> Void) {
         
+        WidgetStorage.shared.checkForUpdateAccentColor()
+        
         let events: [RecallWidgetCalendarEvent] = WidgetStorage.shared.retrieveEvents(for: WidgetStorageKeys.todaysEvents) ?? []
         let entry: RecallWidgetCalendarEventCollection = .init(events: events)
 

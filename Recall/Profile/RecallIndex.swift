@@ -9,6 +9,7 @@ import Foundation
 import RealmSwift
 import UIUniversals
 import SwiftUI
+import WidgetKit
 
 
 //Each user will have one of these objects stored under their profile in the database
@@ -316,6 +317,14 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
                          secondaryDark: Colors.defaultSecondaryDark.safeMix(with: accentColor.darkAccent, by: mixValue),
                          lightAccent: accentColor.lightAccent,
                          darkAccent: accentColor.darkAccent)
+        
+//        signal to the widgets that the accent color has chagned
+        WidgetStorage.shared.saveColor(accentColor.lightAccent, for: WidgetStorageKeys.ligthAccent)
+        WidgetStorage.shared.saveColor(accentColor.darkAccent, for: WidgetStorageKeys.darkAccent)
+        WidgetStorage.shared.saveBasicValue(value: accentColor.mixValue, key: WidgetStorageKeys.mixValue)
+        WidgetStorage.shared.saveBasicValue(value: true, key: WidgetStorageKeys.updateAccentColorTrigger)
+        
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     

@@ -33,6 +33,8 @@ struct MostRecentWidgetTimelineProvider: AppIntentTimelineProvider {
 //    MARK: createTimeline
     func timeline(for configuration: RandomizeFavoriteWidgetIntent, in context: Context) async -> Timeline<RecallWidgetCalendarEvent> {
         
+        WidgetStorage.shared.checkForUpdateAccentColor()
+        
 //        if the user has selected to randomize the favorite events
 //        pull all the favorite events from the local storage,
 //        pick a random event, and reload the timeline every hour
@@ -65,12 +67,14 @@ struct MostRecentFavoriteWidgetView : View {
     var event: MostRecentWidgetTimelineProvider.Entry
 
     var body: some View {
-        Group {
+        VStack(alignment: .leading) {
             if event.title == RecallWidgetCalendarEvent.blank {
                 WidgetPlaceholderView(icon: "circle.rectangle.filled.pattern.diagonalline",
                                       message: "No Favorites",
                                       subtext: "Favorited events on your calendar will appear here")
             } else {
+                UniversalText( "Favorite Events", size: Constants.UISubHeaderTextSize, font: Constants.mainFont )
+                
                 WidgetEventView(event: event)
             }
         }

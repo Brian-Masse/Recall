@@ -39,6 +39,8 @@ struct MonthlyLogTimelineProvider: TimelineProvider {
     }
     
     func getTimeline(in context: Context, completion: @escaping @Sendable (Timeline<MonthlyLogEntry>) -> Void) {
+        WidgetStorage.shared.checkForUpdateAccentColor()
+        
         var entry = MonthlyLogEntry(data: [])
         let currentMontlyLogEntries = WidgetStorage.shared.retrieveList(for: WidgetStorageKeys.currentMonthLog)
         if !currentMontlyLogEntries.isEmpty {
