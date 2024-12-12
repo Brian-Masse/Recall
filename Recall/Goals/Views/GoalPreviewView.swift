@@ -14,7 +14,7 @@ struct GoalPreviewView: View {
     
 //    MARK: Vars
     @ObservedRealmObject var goal: RecallGoal
-    @StateObject var dataModel: RecallGoalDataModel = RecallGoalDataModel()
+//    @StateObject var dataModel: RecallGoalDataStore = RecallGoalDataStore()
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @State var showingDeletionAlert: Bool = false
@@ -121,6 +121,10 @@ struct GoalPreviewView: View {
 //            }
         }
 //        .task { await dataModel.makeData(for: goal, with: events) }
+        .task {
+            goal.checkGoalDataStoreExists()
+            await goal.dataStore!.setAllData()
+        }
         .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
             Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
         }

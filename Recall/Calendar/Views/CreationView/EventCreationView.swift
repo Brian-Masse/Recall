@@ -140,6 +140,7 @@ struct CalendarEventCreationView: View {
     
     @State private var category: RecallCategory
     @State private var goalRatings: Dictionary<String, String>
+    @State private var updatedGoalRatings: Bool = false
 
 //    MARK: Init
     @MainActor
@@ -206,7 +207,7 @@ struct CalendarEventCreationView: View {
                           location: location,
                           images: viewModel.selectedImages,
                           tagID: category._id,
-                          goalRatings: goalRatings)
+                          goalRatings: updatedGoalRatings ? goalRatings : nil)
         }
         presentationMode.wrappedValue.dismiss()
     }
@@ -384,6 +385,7 @@ struct CalendarEventCreationView: View {
         }
         .onAppear { onAppear() }
         .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
+        .onChange(of: goalRatings) { updatedGoalRatings = true }
         .alert(alertTitle,
                isPresented: $showingAlert) {
             Button("dimiss", role: .cancel) { }

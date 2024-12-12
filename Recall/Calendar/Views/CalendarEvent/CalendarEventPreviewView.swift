@@ -121,7 +121,7 @@ struct CalendarEventPreviewView: View {
                     let roundedStartTime = viewModel.getTime(from: self.moveOffset, on: event.startTime)
                     let roundedEndTime = roundedStartTime + event.getLengthInHours() * Constants.HourTime
                     
-                    event.updateDate(startDate: roundedStartTime, endDate: roundedEndTime )
+                    event.updateTime(startDate: roundedStartTime, endDate: roundedEndTime )
                 }
                 self.resetEditingControls()
             }
@@ -140,8 +140,8 @@ struct CalendarEventPreviewView: View {
                 
                 let roundedTime = viewModel.getTime(from: self.resizeOffset, on: event.startTime)
                 
-                if direction == .up { event.updateDate(startDate: roundedTime) }
-                if direction == .down { event.updateDate(endDate: roundedTime) }
+                if direction == .up { event.updateTime(startDate: roundedTime) }
+                if direction == .down { event.updateTime(endDate: roundedTime) }
 
                 self.resetEditingControls()
             }

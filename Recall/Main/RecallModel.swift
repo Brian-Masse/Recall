@@ -77,9 +77,13 @@ struct RecallModel {
     enum UpdateType {
         case insert
         case delete
+        case changeDate
+        case changeTime
+        case changeGoals
         case update
     }
     
+//    MARK: - UpdateEvent
 //    This gets called anytime an event is created, modified, or deleted
 //    Any standard update behavior should be included in this function
     func updateEvent(_ event: RecallCalendarEvent, updateType: UpdateType) {
@@ -87,7 +91,10 @@ struct RecallModel {
         RecallModel.shared.setDataOverviewValidation(to: false)
         RecallModel.shared.setDataEventsValidated(to: false)
         
-//        Task { await RecallModel.index.updateEvent(event) }
+        if updateType == .changeDate || updateType == .changeTime || updateType == .insert {
+            checkUpdateEarliestEvent(event: event)
+            updateRecentRecallEventEndTime(to: event.endTime)
+        }
         
 //        depending on the udpateType, call the relevant data updating methods in the dataStore
         Task {
@@ -99,12 +106,27 @@ struct RecallModel {
         }
     }
     
+//    MARK: UpdateEarliestEvent
+//    When updating the date compnents for the event, check if it is the earliest event the user has
+    private func checkUpdateEarliestEvent(event: RecallCalendarEvent) {
+        if Calendar.current.component(.year, from: event.startTime) == 2005 { return }
+        if event.startTime < RecallModel.realmManager.index.earliestEventDate {
+            RecallModel.realmManager.index.updateEarliestEventDate(with: event.startTime)
+        }
+    }
+    
+    private func updateRecentRecallEventEndTime(to time: Date) {
+        RecallModel.index.setMostRecentRecallEvent(to: time)
+    }
+    
+//    MARK: - UpdateGoal
     func updateGoal(_ goal: RecallGoal) {
         RecallModel.shared.setGoalDataValidation(to: false)
         RecallModel.shared.setDataOverviewValidation(to: false)
         RecallModel.shared.setDataGoalsValidated(to: false)
     }
     
+//    MARK: - UpdateTag
     func updateTag(_ tag: RecallCategory) {
         RecallModel.shared.setGoalDataValidation(to: false)
         RecallModel.shared.setDataOverviewValidation(to: false)
@@ -112,6 +134,7 @@ struct RecallModel {
         RecallModel.shared.setDataGoalsValidated(to: false)
     }
     
+//    MARK: - UpdateEvents
 //    This function is called anytime there is a change to the events
     @MainActor
     func updateEvents(_ events: [RecallCalendarEvent]) {

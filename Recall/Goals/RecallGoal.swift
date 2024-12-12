@@ -34,58 +34,11 @@ class GoalNode: Object, Identifiable, OwnedRealmObject {
     }
 }
 
-
-////MARK: DictionaryNode
-////These are pretty much the same in structure as the goalNode (they are meant to be used as a form of dictionary storage in realmSwift)
-////They will be kept in this form, not even downloaded until one is specifically needed
-////(ie. you update an event from 4 months ago, donwload the nodes from that time, and update their value)
-//
-////They should be used universally as dictionaryNodes, but have been created for indexing historic goalWasMet data for each goal
-////I mainly want to be able to seperate goalNodes from all the other different types of nodes
-//
-//class DictionaryNode: Object, Identifiable, OwnedRealmObject {
-//    
-//    @Persisted(primaryKey: true) var _id: ObjectId
-//    
-////    the objectOwnerID is the id of the object that has 'dictionary' this dictionaryNode belongs to
-////    it avoids parsing all that information into the key value
-//    @Persisted var ownerID: String = ""
-//    @Persisted var objectOwnerID: String = ""
-//    @Persisted var key: String = ""
-//    @Persisted var data: String = ""
-//    
-//    private static var dateFormat: String = "dd/MM/yy"
-//    
-//    convenience init(ownerID: String, objectOwnerID: String, key: String, data: String) {
-//        self.init()
-//        
-//        self.ownerID = ownerID
-//        self.objectOwnerID = objectOwnerID
-//        self.key = key
-//        self.data = data
-//    }
-//    
-//    static func makeKey(from date: Date) -> String {
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = DictionaryNode.dateFormat
-//        
-//        return formatter.string(from: date)
-//    }
-//    
-//    func keyAsDate() -> Date {
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = DictionaryNode.dateFormat
-//        
-//        return formatter.date(from: self.key) ?? .now
-//    }
-//    
-//}
-
-//    MARK: RecallGoal
+//    MARK: - RecallGoal
 class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
     
-//    MARK: Enums
+//    MARK: GoalFrequence
     enum GoalFrequence: String, Identifiable, CaseIterable {
         case daily
         case weekly
@@ -112,6 +65,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    MARK: GoalType
     enum GoalType: String, Identifiable, CaseIterable {
         case hourly
         case byTag
@@ -134,12 +88,12 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
             Priority(rawValue: priority) ?? .medium
         }
     }
-//    MARK: Body
-    
+//    MARK: - Vars
     @Persisted(primaryKey: true) var _id: ObjectId
-    
     @Persisted var ownerID: String = ""
     @Persisted var creationDate: Date = .now
+    
+    @Persisted var dataStore: RecallGoalDataStore? = nil
     
     @Persisted var label: String = ""
     @Persisted var goalDescription: String = ""
@@ -151,13 +105,6 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     @Persisted var type: String = ""
     @Persisted var targetTag: RecallCategory? = nil
     
-    
-//    This will describe if the goal was met on a given day
-//    it is formatted like this for quick retrieval / updating, and so that a single event change will not force the goal to reevaluate
-//    whether it was met for everyday the user has had an account
-//    this property works closely with goalWasMet, getGoalProgress, and the index
-//    @Persisted var indexedGoalProgressHistory: List< DictionaryNode > = List()
-    
 //    This overrideKey has a very specific purpose, and does not need to be used in general use of the app
 //    If there is an issue with sync, and data needs to be manually reinserted into the synced realm from a local realm file
 //    the objectIDs of everything will be overriden / changed. This is fine for most objects, however goals use their object ids
@@ -167,6 +114,8 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
     var id: String { self._id.stringValue }
     
+//    MARK: - Init
+    @MainActor
     convenience init( ownerID: String, label: String, description: String, frequency: Int, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?) {
         self.init()
         
@@ -182,9 +131,13 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
             if let retrievedTag = RecallCategory.getCategoryObject(from: id) { self.targetTag = retrievedTag }
         }
         
+        self.dataStore = RecallGoalDataStore(goal: self, newGoal: true)
+        RealmManager.addObject(dataStore!)
+        
         RecallModel.shared.updateGoal(self)
     }
     
+//    MARK: Update
     func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?, creationDate: Date) {
         
         RealmManager.updateObject(self) { thawed in
@@ -204,12 +157,32 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         RecallModel.shared.updateGoal(self)
     }
     
+//    MARK: Delete
     func delete() {
         RealmManager.deleteObject(self) { goal in goal._id == self._id }
         RecallModel.shared.updateGoal(self)
     }
     
-//    MARK: Convenience Functions
+//    MARK: - Convenience Functions
+//    for goals created before the addition of the RecallGoalDataStore, they will need to create them as soon as possible
+//    this function is run when a goal first appears on screen, and determines whether it has a store or not
+    func checkGoalDataStoreExists() {
+        if dataStore == nil {
+            let dataStore = RecallGoalDataStore(goal: self, newGoal: false)
+            RealmManager.addObject(dataStore)
+            
+            RealmManager.updateObject(self) { thawed in
+                thawed.dataStore = dataStore
+            }
+        }
+    }
+    
+    static func getGoal(from id: ObjectId) -> RecallGoal? {
+        let results: Results<RecallGoal> = RealmManager.retrieveObject { query in query._id == id }
+        guard let first = results.first else { print("no goals exists with given id: \(id.stringValue)"); return nil }
+        return first
+    }
+    
     func getEncryptionKey() -> String {
         label + ( overrideKey ?? _id.stringValue)  
     }

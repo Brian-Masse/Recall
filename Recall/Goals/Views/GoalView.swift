@@ -51,7 +51,7 @@ struct GoalView: View {
 //    MARK: vars
     
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var dataModel: RecallGoalDataModel
+    @EnvironmentObject var dataModel: RecallGoalDataStore
     
     @ObservedRealmObject var goal: RecallGoal
     @ObservedResults(RecallCategory.self,
@@ -160,6 +160,24 @@ struct GoalView: View {
                 Spacer()
                 LargeRoundedButton("", icon: "arrow.down") { presentationMode.wrappedValue.dismiss() }
             }
+            
+            ScrollView {
+                LazyVStack {
+                    ForEach( 0..<(goal.dataStore?.goalHistory.count ?? 0), id: \.self ) { i in
+                        if let node = goal.dataStore?.goalHistory[i] {
+                            
+                            Text("\(node.date.formatted(date: .numeric, time: .omitted)) -- \( node.contributingHours)")
+                            
+                            ForEach( 0..<node.contributingEvents.count, id: \.self ) { i in
+                                if let event = RecallCalendarEvent.getRecallCalendarEvent(from: node.contributingEvents[i]) {
+                                    Text("\(event.title), (\(event.getLengthInHours())")
+                                        .opacity(0.5)
+                                }
+                            }
+                        }
+                    }
+                }
+            }.defaultScrollAnchor(.bottom)
             
 //            ScrollView(.vertical, showsIndicators: false) {
 //                VStack(alignment: .leading) {

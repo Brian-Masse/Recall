@@ -77,11 +77,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         if !previewEvent {
             if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) { self.category = retrievedCategory }
             self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
-        
-            checkUpdateEarliestEvent()
             
             RecallModel.shared.updateEvent(self, updateType: .insert)
-            updateRecentRecallEventEndTime(to: endTime)
         }
     }
 
@@ -92,11 +89,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         self.cachedGoalRatings = self.goalRatings
     }
     
-//    MARK: - Update
-    private func updateRecentRecallEventEndTime(to time: Date) {
-        RecallModel.index.setMostRecentRecallEvent(to: time)
-    }
-    
+//    MARK: - General Update
     @MainActor
     func update( title: String,
                  notes: String,
@@ -106,14 +99,34 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                  location: LocationResult? = nil,
                  images: [UIImage],
                  tagID: ObjectId,
-                 goalRatings: Dictionary<String, String> ) {
+                 goalRatings: Dictionary<String, String>? = nil ) {
         
+//        check if the user is updating the date of the event
+        if !startDate.matches(self.startTime, to: .day) {
+            updateDate(to: startDate)
+        }
+//        check if the user is updating the time of the event
+        if ( startDate != startTime || endDate != endTime ) {
+            updateTime(startDate: startDate, endDate: endDate)
+        }
+        
+//        check if user is updating the tag
+        if tagID != category?._id {
+            if let retrievedTag = RecallCategory.getCategoryObject(from: tagID) {
+                updateTag(with: retrievedTag)
+            }
+        }
+        
+//        check if the user is updating the goalRatings
+        if let goalRatings {
+            updateGoalRatings(with: goalRatings)
+        }
+        
+//        update all other properties
         RealmManager.updateObject(self) { thawed in
             thawed.title = title
             thawed.notes = notes
             thawed.urlString = urlString
-            thawed.startTime = startDate
-            thawed.endTime = endDate
             
             let imageData = encodeImages(from: images)
             thawed.images = imageData
@@ -124,36 +137,24 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                 thawed.locationLatitude = location.location.latitude
             }
             
-            if let retrievedTag = RecallCategory.getCategoryObject(from: tagID) { thawed.category = retrievedTag }
-            thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
-            
             RecallModel.shared.updateEvent(thawed, updateType: .update)
-            updateRecentRecallEventEndTime(to: endDate)
         }
-        
-        checkUpdateEarliestEvent()
     }
     
-//    MARK: UpdateDate
+//    MARK: UpdateTime
     @MainActor
-    func updateDate(startDate: Date? = nil, endDate: Date? = nil) {
+    func updateTime(startDate: Date? = nil, endDate: Date? = nil) {
         RealmManager.updateObject(self) { thawed in
             thawed.startTime = startDate ?? thawed.startTime
             thawed.endTime = endDate ?? thawed.endTime
             
-            RecallModel.shared.updateEvent(thawed, updateType: .update)
-            updateRecentRecallEventEndTime(to: thawed.endTime)
-        
+            RecallModel.shared.updateEvent(thawed, updateType: .changeTime)
         }
-        
-        checkUpdateEarliestEvent()
     }
     
-//    MARK: UpdateDateComponent
-//    unlike updateDate, which sets the event's date to that new value, this only sets the date components
-//    preserving the time details
+//    MARK: UpdateDate
     @MainActor
-    func updateDateComponent(to date: Date) {
+    func updateDate(to date: Date) {
         let newStart = self.startTime.dateBySetting(dateFrom: date)
         let newEnd = self.endTime.dateBySetting(dateFrom: date)
 
@@ -161,19 +162,16 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             thawed.startTime = newStart
             thawed.endTime = newEnd
             
-            RecallModel.shared.updateEvent(thawed, updateType: .update)
-            
+            RecallModel.shared.updateEvent(thawed, updateType: .changeDate)
         }
-        
-        updateRecentRecallEventEndTime(to: newEnd)
-        checkUpdateEarliestEvent()
     }
     
+//    MARK: updateTag
     func updateTag(with tag: RecallCategory) {
         RealmManager.updateObject(self) { thawed in
             thawed.category = tag
             
-            RecallModel.shared.updateEvent(thawed, updateType: .update)
+            RecallModel.shared.updateEvent(thawed, updateType: .changeGoals)
         }
     }
     
@@ -182,10 +180,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     func updateGoalRatings(with ratings: Dictionary<String, String>) {
         let list = RecallCalendarEvent.translateGoalRatingDictionary(ratings)
         RealmManager.updateObject(self) { thawed in
-            
             thawed.goalRatings = list
             
-            RecallModel.shared.updateEvent(thawed, updateType: .update)
+            RecallModel.shared.updateEvent(thawed, updateType: .changeGoals)
         }
     }
     
@@ -300,20 +297,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 
     }
     
-//    MARK: UpdateEarliestEvent
-//    When updating the date compnents for the event, check if it is the earliest event the user has
-    private func checkUpdateEarliestEvent() {
-        
-        if Calendar.current.component(.year, from: self.startTime) == 2005 { return }
-        if self.startTime < RecallModel.realmManager.index.earliestEventDate {
-            RecallModel.realmManager.index.updateEarliestEventDate(with: self.startTime)
-        }
-    }
-    
 //    MARK: GetGoalMultiplier
 //    This checks to see if this event has a multiplier for a specifc goal (ie. coding should have 'productive')
     @MainActor
-    private func getGoalMultiplier(from goal: RecallGoal) -> Double {
+    func getGoalMultiplier(from goal: RecallGoal) -> Double {
         let key = goal.getEncryptionKey()
         let data = goalRatings.first { node in node.key == key }?.data ?? "0"
         return Double(data) ?? 0

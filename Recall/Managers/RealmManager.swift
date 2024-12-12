@@ -71,9 +71,13 @@ class RealmManager: ObservableObject {
         .init(named: QuerySubKey.index.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-//    static var dicQuery: (QueryPermission<DictionaryNode>) {
-//        .init(named: QuerySubKey.dictionary.rawValue) { query in query.ownerID == RecallModel.ownerID }
-//    }
+    static var goalHistoryNodeQuery: (QueryPermission<RecallGoalHistoryNode>) {
+        .init(named: QuerySubKey.goalHistoryNode.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
+    
+    static var goalDataStore: (QueryPermission<RecallGoalDataStore>) {
+        .init(named: QuerySubKey.goalDataStore.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
     
     static var summaryQuery: (QueryPermission<RecallDailySummary>) {
         .init(named: QuerySubKey.summary.rawValue) { query in query.ownerID == RecallModel.ownerID }
@@ -220,27 +224,31 @@ class RealmManager: ObservableObject {
     @MainActor
     private func setConfiguration() {
         self.configuration = user!.flexibleSyncConfiguration(initialSubscriptions: { subs in
-            
             RealmManager.addInitialSubscription(RealmManager.calendarEventQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.categoryQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.goalsQuery, to: subs)
+            
             RealmManager.addInitialSubscription(RealmManager.indexQuery, to: subs)
-            RealmManager.addInitialSubscription(RealmManager.goalsNodeQuery, to: subs)
-//            RealmManager.addInitialSubscription(RealmManager.dicQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.summaryQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.dataStoreQuery, to: subs)
             
+            RealmManager.addInitialSubscription(RealmManager.goalsNodeQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalHistoryNodeQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalDataStore, to: subs)
         })
         
         self.configuration.objectTypes = [ RecallCalendarEvent.self,
                                            RecallCategory.self,
                                            RecallGoal.self,
+                                           
                                            RecallIndex.self,
-                                           GoalNode.self,
-//                                           DictionaryNode.self,
                                            RecallRecentUpdate.self,
                                            RecallDailySummary.self,
-                                           RecallDataStore.self
+                                           RecallDataStore.self,
+                                           
+                                           GoalNode.self,
+                                           RecallGoalHistoryNode.self,
+                                           RecallGoalDataStore.self
         ]
     }
     
@@ -302,12 +310,22 @@ class RealmManager: ObservableObject {
         await RecallModel.updateManager.initialize()
         await self.checkProfile()
         await self.checkDataStore()
+        self.addNonInitialSubscriptions()
         RecallModel.index.updateAccentColor()
     }
     
 //    MARK: Subscription Functions
-//    Subscriptions are only used when the app is online
-//    otherwise you are able to retrieve all the data from the Realm by default
+    func addNonInitialSubscriptions() {
+//        after updating an app with new subscriptions, the initial subs closure isn't run, the following ensures the app
+//       has all its susbcriptions
+        let subscriptions = realm.subscriptions
+        
+        subscriptions.update {
+            RealmManager.addInitialSubscription(RealmManager.goalHistoryNodeQuery, to: subscriptions)
+            RealmManager.addInitialSubscription(RealmManager.goalDataStore, to: subscriptions)
+        }
+    }
+    
     func removeSubscription(name: String) async {
         let subscriptions = self.realm.subscriptions
         let foundSubscriptions = subscriptions.first(named: name)

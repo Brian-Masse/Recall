@@ -38,7 +38,7 @@
 		C92284A02CD2D38700280BFA /* RecallCalendarEventImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922849F2CD2D38700280BFA /* RecallCalendarEventImageStore.swift */; };
 		C92284A22CD2D9EF00280BFA /* PhotoScrollerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92284A12CD2D9EF00280BFA /* PhotoScrollerView.swift */; };
 		C922852B2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922852A2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift */; };
-		C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923D51B2A8F119C00E432B9 /* RecallGoalDataModel.swift */; };
+		C923D51C2A8F119C00E432B9 /* RecallGoalDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923D51B2A8F119C00E432B9 /* RecallGoalDataStore.swift */; };
 		C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F102A688855007E8537 /* UniversalForm.swift */; };
 		C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B1F172A68931F007E8537 /* GoalsPageView.swift */; };
 		C94F06762A6AD9F200C99EA0 /* GoalPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F06752A6AD9F200C99EA0 /* GoalPreviewView.swift */; };
@@ -216,7 +216,7 @@
 		C922849F2CD2D38700280BFA /* RecallCalendarEventImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCalendarEventImageStore.swift; sourceTree = "<group>"; };
 		C92284A12CD2D9EF00280BFA /* PhotoScrollerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoScrollerView.swift; sourceTree = "<group>"; };
 		C922852A2CD4AEC200280BFA /* PhotoScrollerSimultaneousGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoScrollerSimultaneousGesture.swift; sourceTree = "<group>"; };
-		C923D51B2A8F119C00E432B9 /* RecallGoalDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoalDataModel.swift; sourceTree = "<group>"; };
+		C923D51B2A8F119C00E432B9 /* RecallGoalDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallGoalDataStore.swift; sourceTree = "<group>"; };
 		C94B1F102A688855007E8537 /* UniversalForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalForm.swift; sourceTree = "<group>"; };
 		C94B1F172A68931F007E8537 /* GoalsPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsPageView.swift; sourceTree = "<group>"; };
 		C94F06752A6AD9F200C99EA0 /* GoalPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalPreviewView.swift; sourceTree = "<group>"; };
@@ -486,7 +486,7 @@
 			isa = PBXGroup;
 			children = (
 				C9E49D152A68AC820023EBC0 /* RecallGoal.swift */,
-				C923D51B2A8F119C00E432B9 /* RecallGoalDataModel.swift */,
+				C923D51B2A8F119C00E432B9 /* RecallGoalDataStore.swift */,
 				C94B1F1A2A689335007E8537 /* Views */,
 			);
 			path = Goals;
@@ -970,7 +970,7 @@
 				C9F829282CB0C783002342B7 /* LocationManager.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,
 				C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */,
-				C923D51C2A8F119C00E432B9 /* RecallGoalDataModel.swift in Sources */,
+				C923D51C2A8F119C00E432B9 /* RecallGoalDataStore.swift in Sources */,
 				C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */,
 				C98F2F272A945B7400E92B30 /* ProfileView.swift in Sources */,
 				C9BFBC932CB4D6FF00ADC110 /* InfiniteScroller.swift in Sources */,
