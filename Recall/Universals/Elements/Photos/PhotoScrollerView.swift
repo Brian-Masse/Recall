@@ -192,9 +192,6 @@ struct TestPhotoScrollerView: View {
                     .ignoresSafeArea()
                     .frame(width: geo.size.width, height: geo.size.height * 0.8)
                     .contentShape(Rectangle())
-                    .onTapGesture {
-                        print("hi there!")
-                    }
 //
                 PhotoScrollerView(startExpanded: false) {
                     Text("hi there")

@@ -59,18 +59,18 @@ class RecallDataModel: ObservableObject {
             
             var goalsMetCount: Int = 0
             
-            for goal in goals {
-                let progressNum = await 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
-                let met = await goal.goalWasMet(on: iterator, events: events)
-                goalsMetCount += (met ? 1 : 0)
-                
-                progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
-                timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
-            }
-            
-            goalsMet.append(.init(date: iterator, count: Double(goalsMetCount), category: "", goal: ""))
-            
-            iterator += Constants.DayTime
+//            for goal in goals {
+//                let progressNum = await 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
+//                let met = await goal.goalWasMet(on: iterator, events: events)
+//                goalsMetCount += (met ? 1 : 0)
+//                
+//                progress.append(.init(date: iterator, count: progressNum, category: "", goal: goal.label))
+//                timesMet.append(.init(date: iterator, count: met ? 1 : 0, category: "", goal: goal.label))
+//            }
+//            
+//            goalsMet.append(.init(date: iterator, count: Double(goalsMetCount), category: "", goal: ""))
+//            
+//            iterator += Constants.DayTime
         }
         return ( progress, timesMet, goalsMet )
     }

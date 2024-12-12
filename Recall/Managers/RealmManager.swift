@@ -71,9 +71,9 @@ class RealmManager: ObservableObject {
         .init(named: QuerySubKey.index.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    static var dicQuery: (QueryPermission<DictionaryNode>) {
-        .init(named: QuerySubKey.dictionary.rawValue) { query in query.ownerID == RecallModel.ownerID }
-    }
+//    static var dicQuery: (QueryPermission<DictionaryNode>) {
+//        .init(named: QuerySubKey.dictionary.rawValue) { query in query.ownerID == RecallModel.ownerID }
+//    }
     
     static var summaryQuery: (QueryPermission<RecallDailySummary>) {
         .init(named: QuerySubKey.summary.rawValue) { query in query.ownerID == RecallModel.ownerID }
@@ -226,7 +226,7 @@ class RealmManager: ObservableObject {
             RealmManager.addInitialSubscription(RealmManager.goalsQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.indexQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.goalsNodeQuery, to: subs)
-            RealmManager.addInitialSubscription(RealmManager.dicQuery, to: subs)
+//            RealmManager.addInitialSubscription(RealmManager.dicQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.summaryQuery, to: subs)
             RealmManager.addInitialSubscription(RealmManager.dataStoreQuery, to: subs)
             
@@ -237,7 +237,7 @@ class RealmManager: ObservableObject {
                                            RecallGoal.self,
                                            RecallIndex.self,
                                            GoalNode.self,
-                                           DictionaryNode.self,
+//                                           DictionaryNode.self,
                                            RecallRecentUpdate.self,
                                            RecallDailySummary.self,
                                            RecallDataStore.self
