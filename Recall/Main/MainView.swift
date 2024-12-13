@@ -43,6 +43,7 @@ struct MainView: View {
                 await RecallModel.dataStore.initalizeDataStore()
             }
             .onChange(of: events) { RecallModel.shared.updateEvents(Array(events)) }
+        
             .universalBackground()
     }
 }

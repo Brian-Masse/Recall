@@ -92,6 +92,13 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    MARK: - General Update
     var oldStartTime: Date = .now
     var oldEndTime: Date = .now
+    var oldGoalRatings: [GoalNode] = []
+    
+    private func updateOldData(_ event: RecallCalendarEvent) {
+        event.oldStartTime = self.startTime
+        event.oldEndTime = self.endTime
+        event.oldGoalRatings = Array(self.goalRatings)
+    }
     
     @MainActor
     func update( title: String,
@@ -104,13 +111,14 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
                  tagID: ObjectId,
                  goalRatings: Dictionary<String, String>? = nil ) {
         
-//        check if the user is updating the date of the event
-        if !startDate.matches(self.startTime, to: .day) {
-            updateDate(to: startDate)
-        }
 //        check if the user is updating the time of the event
         if ( startDate != startTime || endDate != endTime ) {
             updateTime(startDate: startDate, endDate: endDate)
+        }
+        
+//        check if the user is updating the date of the event
+        if !startDate.matches(self.startTime, to: .day) {
+            updateDate(to: startDate)
         }
         
 //        check if user is updating the tag
@@ -148,9 +156,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @MainActor
     func updateTime(startDate: Date? = nil, endDate: Date? = nil) {
         RealmManager.updateObject(self) { thawed in
-            thawed.oldStartTime = self.startTime
-            thawed.oldEndTime = self.endTime
-            
+            updateOldData(thawed)
             thawed.startTime = startDate ?? thawed.startTime
             thawed.endTime = endDate ?? thawed.endTime
             
@@ -163,11 +169,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     func updateDate(to date: Date) {
         let newStart = self.startTime.dateBySetting(dateFrom: date)
         let newEnd = self.endTime.dateBySetting(dateFrom: date)
-
+        
         RealmManager.updateObject(self) { thawed in
-            thawed.oldStartTime = self.startTime
-            thawed.oldEndTime = self.endTime
-            
+            updateOldData(thawed)
             thawed.startTime = newStart
             thawed.endTime = newEnd
             
@@ -178,9 +182,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    MARK: updateTag
     func updateTag(with tag: RecallCategory) {
         RealmManager.updateObject(self) { thawed in
+            updateOldData(thawed)
             thawed.category = tag
             
-            RecallModel.shared.updateEvent(thawed, updateType: .changeGoals)
+            RecallModel.shared.updateEvent(thawed, updateType: .update)
         }
     }
     
@@ -188,7 +193,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @MainActor
     func updateGoalRatings(with ratings: Dictionary<String, String>) {
         let list = RecallCalendarEvent.translateGoalRatingDictionary(ratings)
+        
         RealmManager.updateObject(self) { thawed in
+            updateOldData(thawed)
             thawed.goalRatings = list
             
             RecallModel.shared.updateEvent(thawed, updateType: .changeGoals)
@@ -299,6 +306,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     func delete(preserveTemplate: Bool = false) {
         
         if self.isFavorite { self.toggleFavorite() }
+        
+        updateOldData(self)
         
         RealmManager.deleteObject(self) { event in event._id == self._id }
         

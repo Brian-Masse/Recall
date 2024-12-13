@@ -167,6 +167,18 @@ struct GoalView: View {
                         if let node = goal.dataStore?.goalHistory[i] {
                             
                             Text("\(node.date.formatted(date: .numeric, time: .omitted)) -- \( node.contributingHours)")
+                                .onAppear {
+                                    var sum: Double = 0
+                                    for event in node.contributingEvents {
+                                        if let event = RecallCalendarEvent.getRecallCalendarEvent(from: event) {
+                                            sum += event.getLengthInHours()
+                                        }
+                                    }
+//                                    
+                                    if sum.round(to: 2) != node.contributingHours.round(to: 2) {
+                                        print("sum and contributing hours do not match: \(sum), \(node.contributingHours))")
+                                    }
+                                }
                             
                             ForEach( 0..<node.contributingEvents.count, id: \.self ) { i in
                                 if let event = RecallCalendarEvent.getRecallCalendarEvent(from: node.contributingEvents[i]) {

@@ -77,19 +77,19 @@ class RecallGoalDataStore: Object {
     static func handleEventUpdate( _ event: RecallCalendarEvent, updateType: RecallModel.UpdateType ) async {
         switch updateType {
         case .insert:
-            await callEventUpdate(event, updater: updateGoalHistoryWithInsertion)
+            await callEventUpdater(event, updater: updateGoalHistoryWithInsertion)
             
         case .delete:
-            break
+            await callEventUpdater(event, updater: updateGoalHistoryWithDeletion)
             
         case .changeDate:
-            break
+            await callEventUpdater(event, updater: updateGoalHistoryWithEventDate)
             
         case .changeTime:
-            await callEventUpdate(event, updater: updateGoalHistoryWithEventTime)
+            await callEventUpdater(event, updater: updateGoalHistoryWithEventTime)
             
         case .changeGoals:
-            break
+            await updateGoalHistoryWithGoalRatings(event)
             
         case .update:
             break
@@ -98,7 +98,7 @@ class RecallGoalDataStore: Object {
     
 //    MARK: callEventUpdate
     @MainActor
-    static func callEventUpdate( _ event: RecallCalendarEvent,
+    static func callEventUpdater( _ event: RecallCalendarEvent,
                                  updater: (RecallCalendarEvent, RecallGoalDataStore) async -> Void ) async {
         let goals: [ RecallGoal ] = RealmManager.retrieveObjects()
         
@@ -126,6 +126,7 @@ class RecallGoalDataStore: Object {
         }
     }
     
+//    MARK: setAllData
     func setAllData() async {
         if dataValidated { return }
         
@@ -199,6 +200,41 @@ class RecallGoalDataStore: Object {
         }
     }
     
+//    MARK: updateGoalHistoryWithDeletion
+//    when an event id deleted, this function updates the history
+//    if this event was the only event contributing to a goal on a certain day, this will NOT delete the history node
+//    also: it uses the `oldTimes`, because this function is also invoked by the changing date handler
+    @MainActor
+    static func updateGoalHistoryWithDeletion(
+        _ event: RecallCalendarEvent,
+        store: RecallGoalDataStore
+    ) async {
+        let history = Array( store.goalHistory )
+        
+        if let i = history.firstIndex(where: { node in
+            node.date.matches(event.oldStartTime, to: .day)
+        }) {
+            let node = history[i]
+            let oldLength = event.oldEndTime.timeIntervalSince(event.oldStartTime) / Constants.HourTime
+            node.updateContributingHours(to: node.contributingHours - oldLength)
+            node.removeEvent(event)
+        }
+    }
+    
+//    MARK: updateGoalHistoryWithEventData
+//    when an events date changes (not time) this function will run to update the history
+    @MainActor
+    static func updateGoalHistoryWithEventDate(
+        _ event: RecallCalendarEvent,
+        store: RecallGoalDataStore
+    ) async {
+//        removes the event from the first day
+        await updateGoalHistoryWithDeletion(event, store: store)
+        
+//        adds it to the second
+        await updateGoalHistoryWithInsertion(event, store: store)
+    }
+    
 //    MARK: updateGoalHistoryWithEventTime
 //    When an event's time changes (not date) this function will run to update the history
     @MainActor
@@ -215,5 +251,20 @@ class RecallGoalDataStore: Object {
             let newContributingHours: Double = history[i].contributingHours - oldLength + event.getLengthInHours()
             history[i].updateContributingHours(to: newContributingHours)
         }
+    }
+    
+//    MARK: updateGoalHistoryWithGoalRatings
+    @MainActor
+    static func updateGoalHistoryWithGoalRatings(_ event: RecallCalendarEvent) async {
+//        go through all the old ratings and delete any information in them
+        for rating in event.oldGoalRatings {
+            if let goal = RecallGoal.getGoalFromKey(rating.key) {
+                if let store = goal.dataStore {
+                    await updateGoalHistoryWithDeletion(event, store: store)
+                }
+            }
+        }
+
+        await handleEventUpdate(event, updateType: .insert)
     }
 }

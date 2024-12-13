@@ -731,40 +731,42 @@
             filePath = "Recall/Goals/RecallGoalDataStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
+            startingLineNumber = "187"
+            endingLineNumber = "187"
             landmarkName = "updateGoalHistoryWithInsertion(_:store:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "0F0A354F-19A6-4E73-B7A3-7AC038C2E1F1 - 470cceb0fd2abfcb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for static Recall.RecallGoalDataStore.updateGoalHistoryWithInsertion(_: Recall.RecallCalendarEvent, store: Recall.RecallGoalDataStore) async -&gt; ()"
-                  moduleName = "Recall.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Goals/RecallGoalDataStore.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "186"
-                  endingLineNumber = "186">
-               </Location>
-               <Location
-                  uuid = "0F0A354F-19A6-4E73-B7A3-7AC038C2E1F1 - 8f4f9ecf09f66201"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Recall.RecallGoalHistoryNode) -&gt; Swift.Bool in static Recall.RecallGoalDataStore.updateGoalHistoryWithInsertion(_: Recall.RecallCalendarEvent, store: Recall.RecallGoalDataStore) async -&gt; ()"
-                  moduleName = "Recall.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brianmasse/Developer/Xcode/Recall/Recall/Goals/RecallGoalDataStore.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "186"
-                  endingLineNumber = "186">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D78513CF-EED3-4190-A602-D8DCFDCD1CA7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Goals/RecallGoalDataStore.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "212"
+            endingLineNumber = "212"
+            landmarkName = "updateGoalHistoryWithDeletion(_:store:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AA9BC554-211A-4985-B7E3-56490AF2CCEF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Goals/RecallGoalDataStore.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
+            landmarkName = "updateGoalHistoryWithGoalRatings(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
