@@ -265,8 +265,8 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @MainActor
     func initializeIndex() async {
     
-        let goals: [RecallGoal] = RealmManager.retrieveObjects()
-        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList()
         
         let startDate = earliestEventDate
         
@@ -340,7 +340,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         let endDate = iterator + (7 * Constants.DayTime)
         
         let goals = await event.getGoals()
-        let events: [RecallCalendarEvent] = await RealmManager.retrieveObjects()
+        let events: [RecallCalendarEvent] = await RealmManager.retrieveObjectsInList()
         
 //        while iterator <= endDate {
 //            

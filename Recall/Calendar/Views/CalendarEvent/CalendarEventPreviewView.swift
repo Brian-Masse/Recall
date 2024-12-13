@@ -66,6 +66,7 @@ struct CalendarEventPreviewView: View {
     @State private var moving: Bool = false //local variables
     @State private var resizing: Bool = false //used to block the movement gesture while resizing
 
+    @State private var beingDeleted: Bool = false
     @State private var showingDeletionAlert: Bool = false
     @State private var indexOfEventInEvents: Int = 0
     
@@ -216,6 +217,7 @@ struct CalendarEventPreviewView: View {
             
             CalendarEventPreviewContentView(event: event, events: events, height: geo.size.height - 4)
                 .safeZoomMatch(id: indexOfEventInEvents, namespace: namespace)
+                .opacity(beingDeleted ? 0 : 1)
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
                         ZStack {
@@ -268,6 +270,7 @@ struct CalendarEventPreviewView: View {
                     
                     ContextMenuButton("delete", icon: "trash", role: .destructive) {
                         defaultContextMenuAction()
+                        withAnimation { beingDeleted = true }
                         if event.isTemplate { showingDeletionAlert = true }
                         else { event.delete() }
                     }
@@ -282,7 +285,6 @@ struct CalendarEventPreviewView: View {
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
         }
         .zIndex( resizing || moving ? 5 : 0 )
-        
         
     }
 }

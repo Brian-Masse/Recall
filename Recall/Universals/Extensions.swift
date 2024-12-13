@@ -61,7 +61,7 @@ extension Constants {
     
     @MainActor
     static private func setTagColorsDic() {
-        let tags: [RecallCategory] = RealmManager.retrieveObjects()
+        let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
         
         var dic: Dictionary<String, Color> = Dictionary()
         if tags.count == 0 { return }
@@ -75,7 +75,7 @@ extension Constants {
     
     @MainActor
     static private func setGoalColorsDic() {
-        let goals: [RecallGoal] = RealmManager.retrieveObjects()
+        let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
         
         var dic: Dictionary<String, Color> = Dictionary()
         if goals.count == 0 { return }

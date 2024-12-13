@@ -186,6 +186,31 @@ struct CalendarPageView: View {
         date.formatted(.dateTime.weekday().month().day())
     }
     
+    @MainActor
+    private func generateEvent() async {
+        for i in 0..<40 {
+            print("creating")
+            let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
+                                        title: "testing",
+                                        notes: "",
+                                        urlString: "",
+                                        startTime: .now,
+                                        endTime: .now + Constants.HourTime,
+                                        categoryID: .init(),
+                                        goalRatings: [:])
+            
+            RealmManager.addObject(event)
+            
+            await RecallModel.wait(for: 0.2)
+            
+            print("deleting")
+            
+            event.delete()
+            
+            await RecallModel.wait(for: 0.2)
+        }
+    }
+    
 //    MARK: Headers
     @ViewBuilder
     private func makeHeader() -> some View {
@@ -199,6 +224,10 @@ struct CalendarPageView: View {
 
             Spacer()
             
+            RecallIcon("folder")
+                .onTapGesture {
+                    Task { await generateEvent() }
+                }
             
             RecallIcon("calendar")
                 .rectangularBackground(style: .secondary)

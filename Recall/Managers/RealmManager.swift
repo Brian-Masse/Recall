@@ -261,7 +261,7 @@ class RealmManager: ObservableObject {
 //    if not it will trigger the ProfileCreationScene
     @MainActor
     func checkProfile() async {
-        let results: Results<RecallIndex> = RealmManager.retrieveObject()
+        let results: Results<RecallIndex> = RealmManager.retrieveObjectsInResults()
         
         if let index = results.first(where: { index in index.ownerID == RecallModel.ownerID }) {
             self.index = index
@@ -290,7 +290,7 @@ class RealmManager: ObservableObject {
 //    MARK: DataStore Functions
     @MainActor
     func checkDataStore() async {
-        let results: Results<RecallDataStore> = RealmManager.retrieveObject()
+        let results: Results<RecallDataStore> = RealmManager.retrieveObjectsInResults()
         
         if let dataStore = results.first(where: { store in store.ownerID == RecallModel.ownerID }) {
             self.dataStore = dataStore
@@ -376,16 +376,16 @@ class RealmManager: ObservableObject {
         
         if ownerID.isEmpty { return }
         
-        let goals: [RecallGoal] = RealmManager.retrieveObjects()
+        let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
         for goal in goals { RealmManager.transferOwnership(of: goal, to: ownerID) }
         
-        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList()
         for event in events { RealmManager.transferOwnership(of: event, to: ownerID) }
         
-        let tags: [RecallCategory] = RealmManager.retrieveObjects()
+        let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
         for tag in tags { RealmManager.transferOwnership(of: tag, to: ownerID) }
         
-        let dataNodes: [GoalNode] = RealmManager.retrieveObjects()
+        let dataNodes: [GoalNode] = RealmManager.retrieveObjectsInList()
         for node in dataNodes { RealmManager.transferOwnership(of: node, to: ownerID) }
         
     }
@@ -431,20 +431,23 @@ class RealmManager: ObservableObject {
             getRealm(from: realm).add(object) }
     }
     
-    static func retrieveObject<T:Object>( realm: Realm? = nil, where query: ( (Query<T>) -> Query<Bool> )? = nil ) -> Results<T> {
+    @MainActor
+    static func retrieveObjectsInResults<T:Object>( realm: Realm? = nil, where query: ( (Query<T>) -> Query<Bool> )? = nil ) -> Results<T> {
         if query == nil { return getRealm(from: realm).objects(T.self) }
         else { return getRealm(from: realm).objects(T.self).where(query!) }
     }
     
     @MainActor
-    static func retrieveObjects<T: Object>(realm: Realm? = nil, where query: ( (T) -> Bool )? = nil) -> [T] {
+    static func retrieveObjectsInList<T: Object>(realm: Realm? = nil, where query: ( (T) -> Bool )? = nil) -> [T] {
         if query == nil { return Array(getRealm(from: realm).objects(T.self)) }
         else { return Array(getRealm(from: realm).objects(T.self).filter(query!)  ) }
     }
 
+
     static func deleteObject<T: RealmSwiftObject>( _ object: T, where query: @escaping (T) -> Bool, realm: Realm? = nil ) where T: Identifiable {
         
         if let obj = getRealm(from: realm).objects(T.self).filter( query ).first {
+            print("uh oh spagetios!")
             self.writeToRealm {
                 getRealm(from: realm).delete(obj)
             }

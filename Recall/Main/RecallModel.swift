@@ -86,24 +86,26 @@ struct RecallModel {
 //    MARK: - UpdateEvent
 //    This gets called anytime an event is created, modified, or deleted
 //    Any standard update behavior should be included in this function
-    func updateEvent(_ event: RecallCalendarEvent, updateType: UpdateType) {
-        RecallModel.shared.setGoalDataValidation(to: false)
-        RecallModel.shared.setDataOverviewValidation(to: false)
-        RecallModel.shared.setDataEventsValidated(to: false)
-        
+    func updateEvent(_ event: RecallCalendarEvent, updateType: UpdateType, completion: (() -> Void)? = nil) {
         if updateType == .changeDate || updateType == .changeTime || updateType == .insert {
             checkUpdateEarliestEvent(event: event)
             updateRecentRecallEventEndTime(to: event.endTime)
         }
         
-//        depending on the udpateType, call the relevant data updating methods in the dataStore
         Task {
+            // require that views indirectly dependent on events are re-rendered
+//            await CalendarPageViewModel.shared.resetRenderStatus()
+        
             await RecallGoalDataStore.handleEventUpdate(event, updateType: updateType)
             
             if updateType == .insert || updateType == .delete {
                 await RecallModel.dataStore.insertOrRemoveEventFromMonthLog(event, inserted: updateType == .insert)
-            } else {
+            } else if updateType == .changeDate {
                 await RecallModel.dataStore.changeEventInMonthLog()
+            }
+            
+            DispatchQueue.main.sync {
+                if let completion { completion() } 
             }
         }
     }
@@ -141,11 +143,8 @@ struct RecallModel {
     @MainActor
     func updateEvents(_ events: [RecallCalendarEvent]) {
         
-        // require that views indirectly dependent on events are re-rendered
-        CalendarPageViewModel.shared.resetRenderStatus()
-        
         // update the stored data with the new values of events
-        RecallModel.dataModel.storeData( events: events)
+//        RecallModel.dataModel.storeData( events: events)
     }
     
 }

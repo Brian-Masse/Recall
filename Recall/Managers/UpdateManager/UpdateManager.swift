@@ -65,7 +65,7 @@ class UpdateManager: ObservableObject {
 //    in reality they might not actually be on this version, the actual version theyre on is hardcoded in deployment version
     @MainActor
     private func retrieveRemoteVersion() -> RecallRecentUpdate {
-        if let recentUpdateObject: RecallRecentUpdate = RealmManager.retrieveObject(realm: self.realm).first {
+        if let recentUpdateObject: RecallRecentUpdate = RealmManager.retrieveObjectsInResults(realm: self.realm).first {
             return recentUpdateObject
         }
         let version = "1.0.0"
@@ -87,7 +87,7 @@ class UpdateManager: ObservableObject {
                 
                 let outDatedVersions = remoteVersion.getOutdatedVersions(from: localVersion, to: UpdateManager.deploymentVersion)
                 
-                let updates: [RecallUpdate] = RealmManager.retrieveObjects(realm: self.realm) { query in
+                let updates: [RecallUpdate] = RealmManager.retrieveObjectsInList(realm: self.realm) { query in
                     outDatedVersions.contains { str in str == query.version }
                 }
                 
@@ -110,7 +110,7 @@ class UpdateManager: ObservableObject {
         
         let remoteVersion = retrieveRemoteVersion()
         
-        if let _: RecallUpdate  = RealmManager.retrieveObject(realm: self.realm, where: { query in
+        if let _: RecallUpdate  = RealmManager.retrieveObjectsInResults(realm: self.realm, where: { query in
             query.version == version
         }).first {
             print("attemping to add a version that already exists in history: \( version )")
@@ -128,7 +128,7 @@ class UpdateManager: ObservableObject {
     @MainActor
     private func addPage( _ page: RecallUpdatePage, to updateVersion: String ) {
         
-        if let update: RecallUpdate = RealmManager.retrieveObjects(realm: self.realm, where: { query in
+        if let update: RecallUpdate = RealmManager.retrieveObjectsInList(realm: self.realm, where: { query in
             query.version == updateVersion
         }).first {
             
@@ -146,7 +146,7 @@ class UpdateManager: ObservableObject {
     @MainActor
     private func updatePage( _ version: String, title: String, newTitle: String? = nil, newDescription: String? = nil ) {
         
-        if let update: RecallUpdate = RealmManager.retrieveObject(realm: self.realm, where: { query in
+        if let update: RecallUpdate = RealmManager.retrieveObjectsInResults(realm: self.realm, where: { query in
             query.version == version
         }).first {
             

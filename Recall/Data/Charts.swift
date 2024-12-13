@@ -168,7 +168,7 @@ struct ActivitiesPerDay: View {
     @ViewBuilder
     private func makeLegend() -> some View {
         let rowCount: Double = 4
-        let tags: [RecallCategory] = RealmManager.retrieveObjects()
+        let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
         let itemsPerRow: Int = Int(ceil(Double(tags.count) / rowCount))
         
         HStack {

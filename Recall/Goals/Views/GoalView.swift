@@ -10,6 +10,106 @@ import SwiftUI
 import RealmSwift
 import UIUniversals
 
+//MARK: - YearCalendar
+struct YearCalendar: View {
+    
+    let maxSaturation: Double
+    let getValue: (Date) -> Double
+    
+    private let numberOfDays: Int = 365
+    private let width: Double = 20
+    
+//    MARK: YearCalendarDayView
+    private struct DayView: View {
+        let startDate: Date
+        let index: Int
+        
+        let width: Double
+        let maxSaturation: Double
+        let getValue: (Date) -> Double
+        
+        @State private var saturation: Double = 0
+        
+        private func loadSaturation() async {
+            let date = startDate + Constants.DayTime * Double(index)
+            let value = getValue(date)
+            
+            withAnimation { self.saturation = value }
+        }
+        
+        var body: some View {
+            RoundedRectangle(cornerRadius: 4)
+                .frame(width: width, height: width)
+                .universalStyledBackgrond(.accent, onForeground: true)
+                .opacity(saturation / maxSaturation)
+                .task { await loadSaturation() }
+        }
+    }
+    
+//    MARK: YearCalendarBody
+    var body: some View {
+        
+        let startDate = Date.now - (Constants.DayTime * Double(numberOfDays))
+        let startDateOffset = Calendar.current.component(.weekday, from: startDate) - 1
+        let colCount = ceil(Double(numberOfDays + startDateOffset) / 7)
+        
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 3) {
+                ForEach(0..<Int(colCount), id: \.self) { col in
+                    
+                    VStack(spacing: 3) {
+                        ForEach(0..<7, id: \.self) { row in
+                            
+                            let dateIndex = (col * 7) + row - startDateOffset
+                            
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .frame(width: width, height: width)
+                                    .universalStyledBackgrond(.secondary, onForeground: true)
+                                
+                                if dateIndex > 0 && dateIndex <= numberOfDays {
+                                    DayView(startDate: startDate,
+                                            index: dateIndex,
+                                            width: width,
+                                            maxSaturation: maxSaturation,
+                                            getValue: getValue)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .defaultScrollAnchor(.trailing)
+    }
+}
+
+//MARK: GoalAnnualProgressView
+struct GoalAnnualProgressView: View {
+    
+    @State private var goalHistory: [String : Double] = [:]
+    
+    let goal: RecallGoal
+    
+    private func getGoalHistory() async {
+        if let store = goal.dataStore {
+            let historyDic: [String:Double] = Array(store.goalHistory)
+                .reduce(into: [String: Double]()) { partialResult, node in
+                    partialResult[node.date.formatted(date: .numeric, time: .omitted)] = node.contributingHours
+                }
+            
+            withAnimation { self.goalHistory = historyDic }
+        }
+    }
+    
+    var body: some View {
+        YearCalendar(maxSaturation: Double(goal.targetHours) / 3.5) { date in
+            goalHistory[ date.formatted(date: .numeric, time: .omitted) ] ?? 0
+        }
+        .task { await getGoalHistory() }
+    }
+}
+
 struct GoalView: View {
     
 ////    MARK: Helpers
@@ -160,6 +260,8 @@ struct GoalView: View {
                 Spacer()
                 LargeRoundedButton("", icon: "arrow.down") { presentationMode.wrappedValue.dismiss() }
             }
+            
+            GoalAnnualProgressView(goal: goal)
             
             ScrollView {
                 LazyVStack {

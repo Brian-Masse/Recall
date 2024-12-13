@@ -32,8 +32,9 @@ struct DataNode: Identifiable {
     
 //    MARK: Conveineince Functions
     
+    @MainActor
     private func getGoal() -> RecallGoal? {
-        RealmManager.retrieveObject { goal in
+        RealmManager.retrieveObjectsInResults { goal in
              goal.label.equals(self.goal)
         }.first
     }

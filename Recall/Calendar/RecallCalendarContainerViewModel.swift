@@ -189,14 +189,18 @@ class RecallCalendarContainerViewModel: ObservableObject {
     
     
 //    called when the events refresh remotely from the server
-    func invalidateEvents(newEvents: [RecallCalendarEvent]) {
+    func invalidateEvents(events: [RecallCalendarEvent]) {
         self.filteredEvents = [:]
         Task {
 //            render the day to the left
-            await loadEvents(for: currentDay + Constants.DayTime, in: newEvents )
+            await loadEvents(for: currentDay + Constants.DayTime, in: events )
             
             for i in 0..<daysPerView {
-                await loadEvents(for: currentDay - (Constants.DayTime * Double(i)), in: newEvents )
+                await loadEvents(for: currentDay - (Constants.DayTime * Double(i)), in: events )
+                
+                if i == 0 {
+                    print( filteredEvents[currentDay.getDayKey()]?.last?.title )
+                }
             }
         }
     }

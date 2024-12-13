@@ -12,6 +12,7 @@ struct RecallView: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var realmManager = RecallModel.realmManager
     
+    
 //    MARK: Body
     var body: some View {
 

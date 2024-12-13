@@ -203,8 +203,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     }
     
 //    MARK: - get CalendarEvent
+    @MainActor
     static func getRecallCalendarEvent(from id: ObjectId) -> RecallCalendarEvent? {
-        let results: Results<RecallCalendarEvent> = RealmManager.retrieveObject { query in query._id == id }
+        let results: Results<RecallCalendarEvent> = RealmManager.retrieveObjectsInResults { query in query._id == id }
         guard let first = results.first else { print("no event exists with given id: \(id.stringValue)"); return nil }
         return first
     }
@@ -309,10 +310,10 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         
         updateOldData(self)
         
-        RealmManager.deleteObject(self) { event in event._id == self._id }
-        
-        RecallModel.shared.updateEvent(self, updateType: .delete)
-
+        RecallModel.shared.updateEvent(self, updateType: .delete) {
+            print("this is running")
+            RealmManager.deleteObject(self) { event in event._id == self._id }
+        }
     }
     
 //    MARK: GetGoalMultiplier

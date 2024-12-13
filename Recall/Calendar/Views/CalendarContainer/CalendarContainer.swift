@@ -337,9 +337,6 @@ struct CalendarContainer: View {
                 })
                 
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo, dayCount: dayCount) }
-                .onChange(of: events) { oldValue, newValue in
-                    viewModel.invalidateEvents(newEvents: newValue)
-                }
             }
             .defaultScrollAnchor(.trailing)
             .scrollTargetBehavior(.viewAligned)
@@ -352,49 +349,49 @@ struct CalendarContainer: View {
     
 //    MARK: Body
     var body: some View {
-        VStack {
-            GeometryReader { geo in
-                VStack {
-                    ScrollViewReader { proxy in
+        GeometryReader { geo in
+            ScrollViewReader { proxy in
+                
+                ScrollView(.vertical, showsIndicators: false) {
+                    
+                    ZStack(alignment: .top) {
+                        EmptyCalendarView(startHour: 0, endHour: 26, labelWidth: calendarLabelWidth)
                         
-                        ScrollView(.vertical, showsIndicators: false) {
+                        makeCalendarCarousel(in: geo)
+                        
+                        VStack {
+                            Rectangle()
+                                .frame(height: (9 * Constants.HourTime) / viewModel.scale)
                             
-                            ZStack(alignment: .top) {
-                                EmptyCalendarView(startHour: 0, endHour: 26, labelWidth: calendarLabelWidth)
-                                
-                                makeCalendarCarousel(in: geo)
-                                
-                                VStack {
-                                    Rectangle()
-                                        .frame(height: (9 * Constants.HourTime) / viewModel.scale)
-                                    
-                                    Rectangle()
-                                        .id("scrollTarget")
-                                }
-                                .allowsHitTesting(false)
-                                .foregroundStyle(.clear)
-                            }
-                            .padding(.top)
-                            .simultaneousGesture(createEventHoldGesture(in: geo))
-                            
-                            .coordinateSpace(name: coordinateSpaceName)
-                            
-                            RecallDailySummaryView(summaries: summaries)
-                                .padding(.bottom, 400)
+                            Rectangle()
+                                .id("scrollTarget")
                         }
-                        .simultaneousGesture(scaleGesture)
-                        .scrollDisabled(viewModel.gestureInProgress)
-                        .onAppear { if !scrolledToEvents {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                proxy.scrollTo("scrollTarget", anchor: .top) }
-                                scrolledToEvents = true
-                        } }
-                        .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
-                            makeCalendarLabels()
-                                .padding(.leading, calendarLabelWidth)
-                        } }
+                        .allowsHitTesting(false)
+                        .foregroundStyle(.clear)
                     }
+                    .padding(.top)
+                    .simultaneousGesture(createEventHoldGesture(in: geo))
+                    
+                    .coordinateSpace(name: coordinateSpaceName)
+                    
+                    RecallDailySummaryView(summaries: summaries)
+                        .padding(.bottom, 400)
                 }
+                .simultaneousGesture(scaleGesture)
+                .scrollDisabled(viewModel.gestureInProgress)
+                .onAppear { if !scrolledToEvents {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        proxy.scrollTo("scrollTarget", anchor: .top) }
+                        scrolledToEvents = true
+                } }
+                .onChange(of: events) { oldValue, newValue in
+                    viewModel.invalidateEvents(events: newValue)
+                    print("Events have been changed")
+                }
+                .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
+                    makeCalendarLabels()
+                        .padding(.leading, calendarLabelWidth)
+                } }
             }
         }
     }

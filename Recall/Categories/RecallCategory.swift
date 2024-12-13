@@ -84,7 +84,7 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
     @MainActor
     private func updateEvents(preference: TagUpdatingOption, newLabel: String, newRatings: Dictionary<String, String>) async {
         
-        let filteredEvents: [RecallCalendarEvent] = RealmManager.retrieveObjects() { event in event.getTagLabel() == newLabel }
+        let filteredEvents: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList() { event in event.getTagLabel() == newLabel }
         
         let oldRatingsDic = RecallCalendarEvent.translateGoalRatingList(self.goalRatings)
 
@@ -134,8 +134,9 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
     
     
 //    MARK: Convenience Functions
+    @MainActor
     static func getCategoryObject(from id: ObjectId) -> RecallCategory? {
-        let results: Results<RecallCategory> = RealmManager.retrieveObject { query in query._id == id }
+        let results: Results<RecallCategory> = RealmManager.retrieveObjectsInResults { query in query._id == id }
         guard let first = results.first else { print("no Category exists with given id: \(id.stringValue)"); return nil }
         return first
     }

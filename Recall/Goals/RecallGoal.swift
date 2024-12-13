@@ -138,6 +138,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     }
     
 //    MARK: Update
+    @MainActor
     func update( label: String, description: String, frequency: GoalFrequence, targetHours: Int, priority: Priority, type: GoalType, targetTag: RecallCategory?, creationDate: Date) {
         
         RealmManager.updateObject(self) { thawed in
@@ -177,8 +178,9 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+    @MainActor
     static func getGoal(from id: ObjectId) -> RecallGoal? {
-        let results: Results<RecallGoal> = RealmManager.retrieveObject { query in query._id == id }
+        let results: Results<RecallGoal> = RealmManager.retrieveObjectsInResults { query in query._id == id }
         guard let first = results.first else { print("no goals exists with given id: \(id.stringValue)"); return nil }
         return first
     }
@@ -191,7 +193,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
     @MainActor
     static func getGoalFromKey(_ key: String) -> RecallGoal? {
-        let goals: [RecallGoal] = RealmManager.retrieveObjects { goal in
+        let goals: [RecallGoal] = RealmManager.retrieveObjectsInList { goal in
             goal.getEncryptionKey() == key
         }
         return goals.first

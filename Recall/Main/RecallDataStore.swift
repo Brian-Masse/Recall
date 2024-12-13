@@ -30,6 +30,7 @@ class RecallDataStore: Object {
 //    each individual writeXXXToStore is basically just a flush function
 //    whatever the value stored in the dataStore is gets written to the UserDefaults
 //    meaning that it is up to other parts of the code to correctly update the data in the store
+    @MainActor
     private func writeMostRecentFavoriteEventToStore() {
         if let mostRecentFavoriteEvent = getMostRecentFavoriteEvent() {
             let widgetEvent = mostRecentFavoriteEvent.createWidgetEvent()
@@ -41,7 +42,7 @@ class RecallDataStore: Object {
     
     @MainActor
     private func writeAllFavoriteEventsToStore() {
-        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList()
         
         let widgetEvents: [RecallWidgetCalendarEvent] = events
             .filter { $0.isFavorite }
@@ -54,7 +55,7 @@ class RecallDataStore: Object {
     
     @MainActor
     private func writeTodaysEventsToStore() {
-        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList()
         let widgetEvents: [RecallWidgetCalendarEvent] = events
             .filter { $0.startTime.matches(.now - 1 * Constants.DayTime, to: .day) }
             .sorted { $0.startTime < $1.startTime }
@@ -97,6 +98,7 @@ class RecallDataStore: Object {
 //    MARK: - mostRecentFavoriteWidget
     @Persisted var mostRecentFavoriteEventId: ObjectId? = nil
     
+    @MainActor
     func getMostRecentFavoriteEvent() -> RecallCalendarEvent? {
         if mostRecentFavoriteEventId == nil { return nil }
         return RecallCalendarEvent.getRecallCalendarEvent(from: mostRecentFavoriteEventId!)
@@ -116,7 +118,7 @@ class RecallDataStore: Object {
 //    find the most recent favorite event
     @MainActor
     private func setMostRecentFavoriteEvent() async {
-        let results: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        let results: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList()
         
         let filteredResults = results
             .filter { $0.isFavorite }
@@ -157,7 +159,6 @@ class RecallDataStore: Object {
         RealmManager.updateObject(self) { thawed in
             thawed.currentMonthLog = list
         }
-        
         writeCurrentMonthLogToStore()
     }
     
@@ -175,10 +176,10 @@ class RecallDataStore: Object {
         var currentMonthLog = [Int](repeating: 0, count: 31)
         
         let startOfMonth = Date.now.getStartOfMonth()
-        let results: [RecallCalendarEvent] = RealmManager.retrieveObjects()
         
+        let results: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList()
         let filteredResults = results
-            .filter { $0.startTime > startOfMonth }
+            .filter { $0 .startTime > startOfMonth }
         
         for event in filteredResults {
             let i = floor(event.startTime.timeIntervalSince(startOfMonth) / Constants.DayTime)

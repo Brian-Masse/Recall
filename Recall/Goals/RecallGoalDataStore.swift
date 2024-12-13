@@ -69,7 +69,7 @@ class RecallGoalDataStore: Object {
         self.ownerID = RecallModel.ownerID
         self.goalId = goal._id
         
-        self.goal = getGoal()
+        Task { self.goal = await getGoal() }
     }
     
 //    MARK: - HandleEventUpdate
@@ -100,7 +100,8 @@ class RecallGoalDataStore: Object {
     @MainActor
     static func callEventUpdater( _ event: RecallCalendarEvent,
                                  updater: (RecallCalendarEvent, RecallGoalDataStore) async -> Void ) async {
-        let goals: [ RecallGoal ] = RealmManager.retrieveObjects()
+        let goals: [ RecallGoal ] = RealmManager.retrieveObjectsInList()
+        if event.isInvalidated { return }
         
         for goal in goals {
             if event.goalRatings.contains(where: { $0.key == goal.key }) {
@@ -113,6 +114,7 @@ class RecallGoalDataStore: Object {
     
     
 //    MARK: - Convenience Functions
+    @MainActor
     private func getGoal() -> RecallGoal {
         if goal != nil { return goal! }
         
@@ -151,7 +153,7 @@ class RecallGoalDataStore: Object {
 //    MARK: setGoalHistory
     @MainActor
     func setGoalHistory() async {
-        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList()
         
         let filteredEvents = events
             .filter { $0.getGoalMultiplier(from: getGoal()) > 0 }
