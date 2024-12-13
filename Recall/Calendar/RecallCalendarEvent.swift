@@ -90,6 +90,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     }
     
 //    MARK: - General Update
+    var oldStartTime: Date = .now
+    var oldEndTime: Date = .now
+    
     @MainActor
     func update( title: String,
                  notes: String,
@@ -145,6 +148,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
     @MainActor
     func updateTime(startDate: Date? = nil, endDate: Date? = nil) {
         RealmManager.updateObject(self) { thawed in
+            thawed.oldStartTime = self.startTime
+            thawed.oldEndTime = self.endTime
+            
             thawed.startTime = startDate ?? thawed.startTime
             thawed.endTime = endDate ?? thawed.endTime
             
@@ -159,6 +165,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         let newEnd = self.endTime.dateBySetting(dateFrom: date)
 
         RealmManager.updateObject(self) { thawed in
+            thawed.oldStartTime = self.startTime
+            thawed.oldEndTime = self.endTime
+            
             thawed.startTime = newStart
             thawed.endTime = newEnd
             

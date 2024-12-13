@@ -312,6 +312,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     func updateAccentColor(to index: Int? = nil) {
         let accentColor = Colors.accentColorOptions[index ?? self.recallAccentColorIndex]
         let mixValue = accentColor.mixValue
+
         
         Colors.setColors(secondaryLight: Colors.defaultSecondaryLight.safeMix(with: accentColor.lightAccent, by: mixValue),
                          secondaryDark: Colors.defaultSecondaryDark.safeMix(with: accentColor.darkAccent, by: mixValue),

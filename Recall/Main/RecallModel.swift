@@ -98,6 +98,8 @@ struct RecallModel {
         
 //        depending on the udpateType, call the relevant data updating methods in the dataStore
         Task {
+            await RecallGoalDataStore.handleEventUpdate(event, updateType: updateType)
+            
             if updateType == .insert || updateType == .delete {
                 await RecallModel.dataStore.insertOrRemoveEventFromMonthLog(event, inserted: updateType == .insert)
             } else {

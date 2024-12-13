@@ -31,6 +31,25 @@ class RecallGoalHistoryNode: Object {
         self.contributingHours = 0
     }
     
+    func updateContributingHours(to hours: Double) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.contributingHours = hours
+        }
+    }
+    
+    func addEvent(_ event: RecallCalendarEvent) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.contributingEvents.append(event._id)
+        }
+    }
+    
+    func removeEvent(_ event: RecallCalendarEvent) {
+        if let index = contributingEvents.firstIndex(of: event._id) {
+            RealmManager.updateObject(self) { thawed in
+                thawed.contributingEvents.remove(at: index)
+            }
+        }
+    }
 }
 
 
@@ -54,27 +73,40 @@ class RecallGoalDataStore: Object {
     }
     
 //    MARK: - HandleEventUpdate
-    static func handleEventUpdate( _ event: RecallCalendarEvent, updateType: [RecallModel.UpdateType] ) {
-//        switch updateType {
-//        case .insert:
-//            
-//            
-//        case .delete:
-//            
-//        case .update:
-//            
-//        }
+    @MainActor
+    static func handleEventUpdate( _ event: RecallCalendarEvent, updateType: RecallModel.UpdateType ) async {
+        switch updateType {
+        case .insert:
+            await callEventUpdate(event, updater: updateGoalHistoryWithInsertion)
+            
+        case .delete:
+            break
+            
+        case .changeDate:
+            break
+            
+        case .changeTime:
+            await callEventUpdate(event, updater: updateGoalHistoryWithEventTime)
+            
+        case .changeGoals:
+            break
+            
+        case .update:
+            break
+        }
     }
     
 //    MARK: callEventUpdate
     @MainActor
     static func callEventUpdate( _ event: RecallCalendarEvent,
-                                 updater: (RecallCalendarEvent, RecallGoalDataStore) -> Void ) {
+                                 updater: (RecallCalendarEvent, RecallGoalDataStore) async -> Void ) async {
         let goals: [ RecallGoal ] = RealmManager.retrieveObjects()
         
         for goal in goals {
-            if let dataStore = goal.dataStore {
-                updater( event, dataStore )
+            if event.goalRatings.contains(where: { $0.key == goal.key }) {
+                if let dataStore = goal.dataStore {
+                    await updater( event, dataStore )
+                }
             }
         }
     }
@@ -106,7 +138,7 @@ class RecallGoalDataStore: Object {
     @Persisted var goalHistory: RealmSwift.List<RecallGoalHistoryNode> = List()
     
     @MainActor
-    private func updateGoalHistory(with history: [RecallGoalHistoryNode]) {
+    func updateGoalHistory(with history: [RecallGoalHistoryNode]) {
         let list = RealmSwift.List<RecallGoalHistoryNode>()
         list.append(objectsIn: history)
         
@@ -140,5 +172,48 @@ class RecallGoalDataStore: Object {
         }
         
         updateGoalHistory(with: history)
+    }
+    
+//    MARK: updateGoalHistorywithInsertion
+//    when an event is created, update the history either by creating a new history node, or updating one that already exists
+    @MainActor
+    static func updateGoalHistoryWithInsertion(
+        _ event: RecallCalendarEvent,
+        store: RecallGoalDataStore
+    ) async {
+        var history = Array( store.goalHistory )
+        
+        if let i = history.firstIndex(where: { node in
+            node.date.matches(event.startTime, to: .day)
+        }) {
+            let node = history[i]
+            node.updateContributingHours(to:  node.contributingHours + event.getLengthInHours() )
+            node.addEvent(event)
+        } else {
+            let node = RecallGoalHistoryNode(date: event.startTime)
+            node.contributingEvents.append(event._id)
+            node.contributingHours += event.getLengthInHours()
+            
+            history.append(node)
+            store.updateGoalHistory(with: history)
+        }
+    }
+    
+//    MARK: updateGoalHistoryWithEventTime
+//    When an event's time changes (not date) this function will run to update the history
+    @MainActor
+    static func updateGoalHistoryWithEventTime(
+        _ event: RecallCalendarEvent,
+        store: RecallGoalDataStore
+    ) async {
+        let history = Array( store.goalHistory )
+        
+        if let i = history.firstIndex(where: { node in
+            node.date.matches(event.startTime, to: .day)
+        }) {
+            let oldLength =  event.oldEndTime.timeIntervalSince(event.oldStartTime) / Constants.HourTime
+            let newContributingHours: Double = history[i].contributingHours - oldLength + event.getLengthInHours()
+            history[i].updateContributingHours(to: newContributingHours)
+        }
     }
 }
