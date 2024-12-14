@@ -51,7 +51,8 @@ struct EmptyCalendarView: View {
         }
     }
     
-    @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
+//    MARK: Vars
+    private var viewModel = RecallCalendarContainerViewModel.shared
     
     private let startHour: Int
     private let endHour: Int
@@ -87,7 +88,7 @@ struct EmptyCalendarView: View {
 //MARK: CalendarContainer
 struct CalendarContainer: View {
     
-//    MARK: Initialization
+//    MARK: Vars
     @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
@@ -386,9 +387,9 @@ struct CalendarContainer: View {
                         proxy.scrollTo("scrollTarget", anchor: .top) }
                         scrolledToEvents = true
                 } }
-                .onChange(of: events) { oldValue, newValue in
-                    viewModel.invalidateEvents(events: newValue)
-                }
+//                .onChange(of: events) { oldValue, newValue in
+//                    viewModel.invalidateEvents(events: newValue)
+//                }
                 .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
                     makeCalendarLabels()
                         .padding(.leading, calendarLabelWidth)

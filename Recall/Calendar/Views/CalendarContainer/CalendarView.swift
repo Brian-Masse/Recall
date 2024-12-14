@@ -29,7 +29,7 @@ struct CalendarView: View {
     }
     
     
-    private func checkCollisions(between startTime1: Date, endTime1: Date,
+    static private func checkCollisions(between startTime1: Date, endTime1: Date,
                                  and startTime2: Date, endTime2: Date) -> Bool {
         (startTime1 > startTime2 && startTime1 < endTime2) ||
         (endTime1 > startTime2 && endTime1 < endTime2) ||
@@ -42,7 +42,7 @@ struct CalendarView: View {
     
 //    MARK: Map Events
 //    map events takes the events and creates a series of collisions records
-    private func mapEvents() -> [ CollisionRecord ] {
+    static private func mapEvents(with events: [RecallCalendarEvent]) -> [ CollisionRecord ] {
         
         var records: [CollisionRecord] = []
         
@@ -137,6 +137,7 @@ struct CalendarView: View {
     
 //    take the distance between two events and return a length in pixels
     private func getVerticalOffset(of event: RecallCalendarEvent, relativeTo startTime: Date) -> Double {
+        if event.isInvalidated { return 0}
         let difference = event.startTime.timeIntervalSince(startTime) - (startHour * Constants.HourTime)
         return difference / viewModel.scale
         
@@ -174,14 +175,21 @@ struct CalendarView: View {
                 if i == abs(indexToRender) || collisionRecord.backwardsCollisionIndicies.count == 0 {
                     ForEach( collisionRecord.forwardCollisions, id: \.self ) { i in
                         
-                        CalendarEventPreviewView(event: events[i], events: events, includeGestures: includeGestures)
-                            .id(events[i]._id)
-                            .frame(height: getLength(of: events[i]))
-                            .alignmentGuide(VerticalAlignment.top) { _ in
-                                -CGFloat(getVerticalOffset(of: events[i],
-                                                           relativeTo: events[collisionRecord.forwardCollisions.lowerBound].startTime))
-                            }
-                            .opacity(highlightEvent == nil ? 1 : ( highlightEvent!.title == events[i].title ? 1 : 0.25 ))
+                        let index = min(events.count - 1, i)
+                        let event = events[index]
+                        let startTime = events[collisionRecord.forwardCollisions.lowerBound].startTime
+                            
+                        CalendarEventPreviewView(event: event,
+                                                 events: events,
+                                                 includeGestures: includeGestures)
+                        .id(event._id)
+                        .transition(.blurReplace)
+                        .frame(height: getLength(of: event))
+                        .alignmentGuide(VerticalAlignment.top) { _ in
+                            -CGFloat(getVerticalOffset(of: events[index],
+                                                       relativeTo: startTime))
+                        }
+                        .opacity(highlightEvent == nil ? 1 : ( highlightEvent!.title == events[i].title ? 1 : 0.25 ))
                     }
                 } else if collisionRecord.backwardsCollisionIndicies.contains(i + collisionRecord.backwardCollisions.lowerBound) {
                     Rectangle()
@@ -198,7 +206,7 @@ struct CalendarView: View {
         
     }
     
-//    MARK: Initialization
+//    MARK: Vars
     @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     
     private let events: [RecallCalendarEvent]
@@ -210,16 +218,25 @@ struct CalendarView: View {
     private let includeGestures: Bool
     private let highlightEvent: RecallCalendarEvent?
     
+    @State private var records: [CollisionRecord] = []
+    
+    private func getRecrods() async {
+        let newRecords = CalendarView.mapEvents(with: events)
+            
+        self.records = newRecords
+    }
+    
 //    TODO: When the app boots, this function call runs for every single day the user has ever recorded events for
 //    not sure why, but that should probably be fixed!
 //    This also gets run to update every single time the user scrolls on the main vertical calendar 
     init(events: [RecallCalendarEvent], on day: Date, startHour: Double = 0, endHour: Int = 24, includeGestures: Bool = true, highlightEvent: RecallCalendarEvent? = nil) {
-        self.events = events
         self.day = day
         self.startHour = startHour
         self.endHour = endHour
         self.includeGestures = includeGestures
         self.highlightEvent = highlightEvent
+        
+        self.events = events
     }
     
 //    MARK: Body
@@ -230,12 +247,12 @@ struct CalendarView: View {
                 Rectangle()
                     .foregroundStyle(.clear)
                 
-                let records = mapEvents()
+//                let records = CalendarView.mapEvents(with: events)
                 let startOfDay = day.resetToStartOfDay()
 
-                ForEach( 0..<records.count, id: \.self ) { i in
+                ForEach( 0..<min(events.count, records.count), id: \.self ) { i in
                     let record = records[i]
-                    let event = events[record.forwardCollisions.lowerBound]
+                    let event = events[min(events.count - 1, record.forwardCollisions.lowerBound)]
                     let eventStartHour = Calendar.current.component(.hour, from: event.startTime)
                     let eventEndHour = Calendar.current.component(.hour, from: event.endTime)
                     
@@ -250,6 +267,11 @@ struct CalendarView: View {
                     }
                 }
             }
+        }
+        .animation(.easeInOut, value: events.count) 
+        .task { await getRecrods() }
+        .onChange(of: viewModel.filteredEvents ) {
+            Task { await self.getRecrods() }
         }
     }
 }

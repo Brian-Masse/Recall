@@ -96,8 +96,9 @@ struct RecallModel {
             // require that views indirectly dependent on events are re-rendered
 //            await CalendarPageViewModel.shared.resetRenderStatus()
         
+            await RecallCalendarContainerViewModel.shared.updatedFilteredEvents(event, updateType: updateType)
             await RecallGoalDataStore.handleEventUpdate(event, updateType: updateType)
-            
+//            
             if updateType == .insert || updateType == .delete {
                 await RecallModel.dataStore.insertOrRemoveEventFromMonthLog(event, inserted: updateType == .insert)
             } else if updateType == .changeDate {
