@@ -149,12 +149,9 @@ struct CalendarEventPreviewView: View {
     }
     
 //    MARK: Input Response
-//    this function runs anyitme a user selects any option from the context menu
-//    its meant to disable any features that may be incmpatible with the currently performered action
-    @MainActor
-    private func defaultContextMenuAction() { }
     
     private func onTap() {
+//        viewModel.gestureInProgress = false
         Task { await findEvent() }
         
         if viewModel.selecting { viewModel.selectEvent(event) }
@@ -207,8 +204,8 @@ struct CalendarEventPreviewView: View {
                     .bold()
             }
             .frame(height: 20)
-            .offset(y: direction == .up ? -30 : 30)
             .gesture(resizeGesture( direction ) )
+            .padding(7)
         }
     }
 
@@ -218,7 +215,9 @@ struct CalendarEventPreviewView: View {
             CalendarEventPreviewContentView(event: event, events: events, height: geo.size.height - 4)
                 .safeZoomMatch(id: indexOfEventInEvents, namespace: namespace)
                 .opacity(beingDeleted ? 0 : 1)
-                .background(alignment: resizeDirection == .up ? .bottom : .top) {
+                .opacity(resizing || moving ? 0.35 : 1)
+            
+                .overlay(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
                         ZStack {
                             RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
@@ -228,48 +227,47 @@ struct CalendarEventPreviewView: View {
                         }
                             .foregroundStyle(event.getColor())
                             .overlay(makeLengthHandles())
-
-                            .onAppear { resetOffsets(in: geo)  }
+                        
                             .offset(y: getPreviewOffset(in: geo) )
                             .frame(height: getPreviewHeight(in: geo) )
+                    }
+                }
+                .onChange(of: viewModel.gestureInProgress) {
+                    if (moving || resizing) && !viewModel.gestureInProgress {
+                        resetEditingControls()
                     }
                 }
             
                 .contextMenu { if includeGestures {
                     ContextMenuButton("move", icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") {
-                        defaultContextMenuAction()
+                        resetOffsets(in: geo)
                         beginMoving()
                     }
                     
                     ContextMenuButton("resize", icon: "rectangle.expand.vertical") {
-                        defaultContextMenuAction()
+                        resetOffsets(in: geo)
                         beginResizing()
                     }
                     
                     ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
-                        defaultContextMenuAction()
                         coordinator.presentSheet( .eventEdittingView(event: event) )
                     }
                     
                     ContextMenuButton("duplicate", icon: "rectangle.on.rectangle") {
-                        defaultContextMenuAction()
                         duplicate()
                     }
                     
                     ContextMenuButton("favorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
-                        defaultContextMenuAction()
                         event.toggleFavorite()
                     }
                     
                     ContextMenuButton("select", icon: "selection.pin.in.out") {
-                        defaultContextMenuAction()
                         viewModel.selecting = true
                         coordinator.presentSheet(.selectionView) { viewModel.stopSelecting() }
                         viewModel.selectEvent(event)
                     }
                     
                     ContextMenuButton("delete", icon: "trash", role: .destructive) {
-                        defaultContextMenuAction()
                         withAnimation { beingDeleted = true }
                         if event.isTemplate { showingDeletionAlert = true }
                         else { event.delete() }
@@ -277,14 +275,11 @@ struct CalendarEventPreviewView: View {
                 } }
                 .onTapGesture { if includeGestures { onTap() }}
             
-                .opacity(resizing || moving ? 0.5 : 1)
                 .padding(2)
                 .simultaneousGesture(drag, including: includeGestures ? .all : .none)
                 .task { await findEvent() }
 
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
         }
-        .zIndex( resizing || moving ? 5 : 0 )
-        
     }
 }

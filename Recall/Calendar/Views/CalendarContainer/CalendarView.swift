@@ -246,6 +246,7 @@ struct CalendarView: View {
                         
                         makeEventCollection(from: records[i], in: geo)
                             .offset(y: offset)
+                            .zIndex(0)
                     }
                 }
             }

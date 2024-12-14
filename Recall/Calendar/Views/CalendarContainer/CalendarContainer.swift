@@ -211,6 +211,7 @@ struct CalendarContainer: View {
     private func createEventHoldGesture(in geo: GeometryProxy) -> some Gesture {
         LongPressGesture(minimumDuration: 1)
             .onEnded { value in withAnimation {
+                if viewModel.gestureInProgress { return }
                 self.creatingEvent = true
                 viewModel.gestureInProgress = true
             } }
@@ -369,10 +370,11 @@ struct CalendarContainer: View {
                         .allowsHitTesting(false)
                         .foregroundStyle(.clear)
                     }
-                    .padding(.top)
                     .simultaneousGesture(createEventHoldGesture(in: geo))
+                    .onTapGesture { viewModel.gestureInProgress = false }
                     
                     .coordinateSpace(name: coordinateSpaceName)
+                    .padding(.top, 30)
                     
                     RecallDailySummaryView(summaries: summaries)
                         .padding(.bottom, 400)

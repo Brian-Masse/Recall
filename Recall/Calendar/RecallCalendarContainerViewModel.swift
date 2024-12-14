@@ -129,6 +129,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
     func roundPosition(_ position: Double, to timeRounding: TimeRounding) -> Double {
         let hoursInPosition = (position * scale) / Constants.HourTime
         let roundedHours = (hoursInPosition * Double(timeRounding.rawValue)).rounded(.down) / Double(timeRounding.rawValue)
+        
         return (roundedHours * Constants.HourTime) / scale
     }
     
