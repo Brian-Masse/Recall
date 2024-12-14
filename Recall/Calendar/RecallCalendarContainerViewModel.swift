@@ -197,10 +197,6 @@ class RecallCalendarContainerViewModel: ObservableObject {
             
             for i in 0..<daysPerView {
                 await loadEvents(for: currentDay - (Constants.DayTime * Double(i)), in: events )
-                
-                if i == 0 {
-                    print( filteredEvents[currentDay.getDayKey()]?.last?.title )
-                }
             }
         }
     }

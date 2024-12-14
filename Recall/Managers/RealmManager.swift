@@ -447,7 +447,6 @@ class RealmManager: ObservableObject {
     static func deleteObject<T: RealmSwiftObject>( _ object: T, where query: @escaping (T) -> Bool, realm: Realm? = nil ) where T: Identifiable {
         
         if let obj = getRealm(from: realm).objects(T.self).filter( query ).first {
-            print("uh oh spagetios!")
             self.writeToRealm {
                 getRealm(from: realm).delete(obj)
             }

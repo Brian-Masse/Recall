@@ -386,7 +386,6 @@ struct CalendarContainer: View {
                 } }
                 .onChange(of: events) { oldValue, newValue in
                     viewModel.invalidateEvents(events: newValue)
-                    print("Events have been changed")
                 }
                 .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
                     makeCalendarLabels()

@@ -311,7 +311,6 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         updateOldData(self)
         
         RecallModel.shared.updateEvent(self, updateType: .delete) {
-            print("this is running")
             RealmManager.deleteObject(self) { event in event._id == self._id }
         }
     }
