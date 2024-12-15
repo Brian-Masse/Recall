@@ -16,6 +16,8 @@ import UIKit
 struct CoordinatorView: View {
     @ObservedObject private var appCoordinator = RecallNavigationCoordinator.shared
     
+    @Namespace private var navigationNapespace
+    
     let data: MainView.RecallData
     
     var body: some View {
@@ -57,7 +59,17 @@ struct CoordinatorView: View {
                         .navigationTitle("")
                         .navigationBarBackButtonHidden(true)
                         .navigationBarHidden(true)
-            }
+                }
+                .onOpenURL { url in
+                    if let id = try? ObjectId(string: url.lastPathComponent) {
+                        if let event = RecallCalendarEvent.getRecallCalendarEvent(from: id) {
+                            appCoordinator.push(.recallEventView(id: "",
+                                                                 event: event,
+                                                                 events: data.events,
+                                                                 Namespace: navigationNapespace))
+                        }
+                    }
+                }
         }
     }
 }

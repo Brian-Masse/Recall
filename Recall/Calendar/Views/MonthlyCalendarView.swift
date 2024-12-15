@@ -184,6 +184,16 @@ struct MonthlyCalendarView: View {
             let month = Calendar.current.date(byAdding: .month, value: i, to: .now)!
             makeMonth(month, in: itemWidth)
         }
+        .padding(LocalConstants.strokePadding)
+//        .background {
+//            let largeRadi = Constants.UILargeCornerRadius + 20
+//            
+//            UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
+//                                   bottomLeadingRadius: largeRadi,
+//                                   bottomTrailingRadius: largeRadi,
+//                                   topTrailingRadius: Constants.UILargeCornerRadius)
+//        }
+        
         .rectangularBackground(LocalConstants.strokePadding, style: .secondary, stroke: true, cornerRadius: Constants.UILargeCornerRadius)
     }
     
@@ -249,8 +259,6 @@ struct MonthlyCalendarView: View {
     }
 }
 
-#Preview {
-    Text("Preview")
+//#Preview {
 //    MonthlyCalendarView()
-    
-}
+//}

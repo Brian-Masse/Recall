@@ -22,23 +22,22 @@ struct WidgetEventView: View {
     
 //    MARK: Content
     @ViewBuilder
-    private func makeContentHeader(icon: String, title: String) -> some View {
+    private func makeContentHeader(icon: String, title: String, lineLimit: Int = 1) -> some View {
         HStack(alignment: .top) {
             RecallIcon(icon)
-                .font(.callout)
+                .font(.caption)
             
-            UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont, lineLimit: 1)
+            UniversalText(title, size: Constants.UISmallTextSize + 2, font: Constants.mainFont, lineLimit: lineLimit)
         }
         .opacity(0.75)
-        .padding(.leading, 7)
     }
     
     @ViewBuilder
     private func makeContent() -> some View {
         
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 3) {
             
-            UniversalText( event.title, size: Constants.UIHeaderTextSize - 5, font: Constants.mainFont )
+            UniversalText( event.title, size: Constants.UISubHeaderTextSize, font: Constants.mainFont, lineLimit: 3 )
             
             makeContentHeader(icon: "clock", title: timeString)
             
@@ -46,7 +45,8 @@ struct WidgetEventView: View {
             
             if !event.notes.isEmpty {
                 makeContentHeader(icon: "text.justify.leading",
-                                  title: event.notes)
+                                  title: event.notes,
+                                  lineLimit: 4)
             }
         }
     }

@@ -19,6 +19,7 @@ struct WidgetStorageKeys {
     static let suiteName: String = "group.Masse-Brian.Recall"
     
     static let recentFavoriteEvent = "recentFavoriteEvent"
+    static let favoriteEvents = "favoriteEvents"
 }
 
 //MARK: - WidgetStorage
@@ -60,6 +61,30 @@ class WidgetStorage {
         
         return nil
     }
+    
+//    MARK: saveEvents
+    func saveEvents(_ events: [RecallWidgetCalendarEvent], for key: String, timelineKind: WidgetStorageKeys.widgets) {
+        if let group = initializeGroup() {
+            
+            if let encodedEvents = try? JSONEncoder().encode(events) {
+                group.set(encodedEvents, forKey: key)
+            }
+            
+            WidgetCenter.shared.reloadTimelines(ofKind: timelineKind.rawValue)
+        }
+    }
+    
+//    MARK: retrieveEvents
+    func retrieveEvents( for key: String ) -> [RecallWidgetCalendarEvent]? {
+        if let group = initializeGroup() {
+            if let encodedEvents = group.data(forKey: key) {
+                
+                return try? JSONDecoder().decode([RecallWidgetCalendarEvent].self, from: encodedEvents)
+            }
+        }
+        
+        return nil
+    }
 }
 
 
@@ -68,6 +93,7 @@ class RecallWidgetCalendarEvent: Codable, TimelineEntry {
     static let blank: String = "BLANK-EVENT"
     
     let date: Date
+    let id: String
     
     let title: String
     let notes: String
@@ -81,7 +107,9 @@ class RecallWidgetCalendarEvent: Codable, TimelineEntry {
     let endTime: Date
     
 //    MARK: init
-    init( title: String, notes: String = "", tag: String = "?", startTime: Date = .now, endTime: Date = .now, color: Color = Colors.getAccent(from: .light)) {
+    init( id: String = "", title: String, notes: String = "", tag: String = "?", startTime: Date = .now, endTime: Date = .now, color: Color = Colors.getAccent(from: .light)) {
+        self.id = id
+        
         self.title = title
         self.notes = notes
         self.tag = tag

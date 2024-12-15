@@ -44,6 +44,8 @@
 		C94F06762A6AD9F200C99EA0 /* GoalPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F06752A6AD9F200C99EA0 /* GoalPreviewView.swift */; };
 		C94F067E2A6B215500C99EA0 /* GoalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F067D2A6B215400C99EA0 /* GoalView.swift */; };
 		C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C954AAD02A76FA4E00897BCE /* Animations.swift */; };
+		C9741CFD2D0E9AC8004CA458 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38BD2C9B568400AA8C3F /* UIUniversals */; };
+		C9741CFE2D0E9AC8004CA458 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9C470CD2CE6EC84004AB489 /* UIUniversals */; };
 		C985EB5D2CACBDE6003186BD /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985EB5C2CACBDE6003186BD /* LocationService.swift */; };
 		C98CEE0F2AFFFC3E00B75924 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98CEE0E2AFFFC3E00B75924 /* UpdateManager.swift */; };
 		C98CEE112B00246800B75924 /* UpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98CEE102B00246800B75924 /* UpdateView.swift */; };
@@ -305,6 +307,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9741CFE2D0E9AC8004CA458 /* UIUniversals in Frameworks */,
+				C9741CFD2D0E9AC8004CA458 /* UIUniversals in Frameworks */,
 				C9C470D12CE6ECA1004AB489 /* RealmSwift in Frameworks */,
 				C9BF38C12C9B56CA00AA8C3F /* UIUniversals in Frameworks */,
 			);
@@ -1153,7 +1157,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Recall/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Recall.;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Recal would like to access your camera to provide images for your events";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Recall needs your location to provide location information on events";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Recall needs your location to provide location information for your events";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -1197,7 +1203,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Recall/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Recall.;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Recal would like to access your camera to provide images for your events";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Recall needs your location to provide location information on events";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Recall needs your location to provide location information for your events";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

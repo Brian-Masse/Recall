@@ -8,32 +8,59 @@
 import WidgetKit
 import SwiftUI
 import UIUniversals
+import AppIntents
+
+//MARK: RandomizeFavoriteWidgetIntent
+struct RandomizeFavoriteWidgetIntent: WidgetConfigurationIntent {
+    static var title: LocalizedStringResource = "Randomize Events"
+    static var description: LocalizedStringKey = "Choose to show your most recent favorite, or a random favorite"
+    
+    @Parameter(title: "Randomize")
+    var randomize: Bool?
+    
+}
 
 //MARK: TimelineProvider
-struct MostRecentWidgetTimelineProvider: TimelineProvider {
+struct MostRecentWidgetTimelineProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> RecallWidgetCalendarEvent {
         .init(title: "Favorite Evnent 🤩",
               notes: "Great Time",
               tag: "Tag")
     }
-
-    func getSnapshot(in context: Context, completion: @escaping (RecallWidgetCalendarEvent) -> ()) {
-        let event = RecallWidgetCalendarEvent(title: "Favorite Evnent 🤩",
-                                              notes: "Great Time",
-                                              tag: "Tag")
-        completion(event)
+    
+    func snapshot(for configuration: RandomizeFavoriteWidgetIntent, in context: Context) async -> RecallWidgetCalendarEvent {
+        RecallWidgetCalendarEvent(title: "Favorite Evnent 🤩",
+                                  notes: "Great Time",
+                                  tag: "Tag")
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+//    MARK: createTimeline
+    func timeline(for configuration: RandomizeFavoriteWidgetIntent, in context: Context) async -> Timeline<RecallWidgetCalendarEvent> {
         
-        var entry = RecallWidgetCalendarEvent(title: RecallWidgetCalendarEvent.blank)
-        if let mostRecentFavoriteEvent = WidgetStorage.shared.retrieveEvent(for: WidgetStorageKeys.recentFavoriteEvent) {
-            entry = mostRecentFavoriteEvent
+//        if the user has selected to randomize the favorite events
+//        pull all the favorite events from the local storage,
+//        pick a random event, and reload the timeline every hour
+        if configuration.randomize ?? false {
+            
+            var entry = RecallWidgetCalendarEvent(title: RecallWidgetCalendarEvent.blank)
+            if let allFavoriteEvents = WidgetStorage.shared.retrieveEvents(for: WidgetStorageKeys.favoriteEvents) {
+                entry = allFavoriteEvents.randomElement() ?? entry
+            }
+            
+            return Timeline(entries: [entry],
+                            policy: .after(.now + 1))
+           
+//        otherwise just read the most recent favorite event, and display that
+        } else {
+            
+            var entry = RecallWidgetCalendarEvent(title: RecallWidgetCalendarEvent.blank)
+            if let mostRecentFavoriteEvent = WidgetStorage.shared.retrieveEvent(for: WidgetStorageKeys.recentFavoriteEvent) {
+                entry = mostRecentFavoriteEvent
+            }
+            
+            return Timeline(entries: [entry],
+                            policy: .never)
         }
-        
-        let timeline = Timeline(entries: [entry],
-                                policy: .after(.now + 1 * Constants.HourTime))
-        completion(timeline)
     }
 }
 
@@ -53,15 +80,18 @@ struct MostRecentFavoriteWidgetView : View {
         }
         .padding(7)
         .background()
+        .widgetURL(URL(string: "recall/favoriteEvent/\(event.id)"))
     }
 }
 
-//MARK: RecallWidget
+//MARK: MostRecentFavoriteWidget
 struct MostRecentFavoriteWidget: Widget {
     let kind = WidgetStorageKeys.widgets.mostRecentFavoriteEvent.rawValue
     
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: MostRecentWidgetTimelineProvider()) { entry in
+        
+        AppIntentConfiguration(kind: kind,
+                               provider: MostRecentWidgetTimelineProvider()) { entry in
             MostRecentFavoriteWidgetView(event: entry)
                 .containerBackground(.fill, for: .widget)
         }
@@ -72,6 +102,7 @@ struct MostRecentFavoriteWidget: Widget {
     }
 }
 
+//MARK: Preview
 #Preview(as: .systemSmall) {
     MostRecentFavoriteWidget()
 } timeline: {

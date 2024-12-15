@@ -346,7 +346,8 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
 //    Widgets take in a simplified version of calendar events, known as
 //    RecallWigetCalendarEvent. This function translates an event into a widget event
     func createWidgetEvent() -> RecallWidgetCalendarEvent {
-        .init(title: self.title,
+        .init(id: self._id.stringValue,
+              title: self.title,
               notes: self.notes,
               tag: self.getTagLabel(),
               startTime: self.startTime,

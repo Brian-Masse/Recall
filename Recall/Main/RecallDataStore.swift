@@ -19,8 +19,10 @@ class RecallDataStore: Object {
 //    MARK: - ManageWidgets
 //    take the stored values in this class, and write them into the shared UserDefaults
 //    This will be run a lot (namely any time an event is created / updated)
+    @MainActor
     func writeAllWidgetDataToStore() {
         writeMostRecentFavoriteEventToStore()
+        writeAllFavoriteEventsToStore()
     }
     
     private func writeMostRecentFavoriteEventToStore() {
@@ -30,6 +32,19 @@ class RecallDataStore: Object {
                                            for: WidgetStorageKeys.recentFavoriteEvent,
                                            timelineKind: .mostRecentFavoriteEvent)
         }
+    }
+    
+    @MainActor
+    private func writeAllFavoriteEventsToStore() {
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        
+        let widgetEvents: [RecallWidgetCalendarEvent] = events
+            .filter { $0.isFavorite }
+            .map { $0.createWidgetEvent() }
+        
+        WidgetStorage.shared.saveEvents(widgetEvents,
+                                        for: WidgetStorageKeys.favoriteEvents,
+                                        timelineKind: .mostRecentFavoriteEvent)
     }
     
 //    MARK: - mostRecentFavoriteWidget
@@ -77,5 +92,7 @@ class RecallDataStore: Object {
         } else {
             Task { await setMostRecentFavoriteEvent() }
         }
+        
+        writeAllFavoriteEventsToStore()
     }
 }

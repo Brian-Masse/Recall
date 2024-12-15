@@ -90,7 +90,7 @@ struct RecallCalendarEventView: View {
     }
     
     private var dateLabel: String {
-        let formatter = Date.FormatStyle().month().day()
+        let formatter = Date.FormatStyle().month().day().year()
         return event.startTime.formatted(formatter)
     }
     
