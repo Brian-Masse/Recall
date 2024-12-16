@@ -284,6 +284,7 @@ class RealmManager: ObservableObject {
         RealmManager.addObject(index)
         
         self.index = index
+        self.index.onAppear()
         self.setState(.creatingProfile)
     }
     
@@ -318,11 +319,20 @@ class RealmManager: ObservableObject {
     func addNonInitialSubscriptions() {
 //        after updating an app with new subscriptions, the initial subs closure isn't run, the following ensures the app
 //       has all its susbcriptions
-        let subscriptions = realm.subscriptions
+        let subs = realm.subscriptions
         
-        subscriptions.update {
-            RealmManager.addInitialSubscription(RealmManager.goalHistoryNodeQuery, to: subscriptions)
-            RealmManager.addInitialSubscription(RealmManager.goalDataStore, to: subscriptions)
+        subs.update {
+            RealmManager.addInitialSubscription(RealmManager.calendarEventQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.categoryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalsQuery, to: subs)
+            
+            RealmManager.addInitialSubscription(RealmManager.indexQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.summaryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.dataStoreQuery, to: subs)
+            
+            RealmManager.addInitialSubscription(RealmManager.goalsNodeQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalHistoryNodeQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalDataStore, to: subs)
         }
     }
     

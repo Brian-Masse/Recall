@@ -70,6 +70,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @MainActor
     func onAppear() {
         self.toggleNotifcations(to: self.notificationsEnabled, time: self.notificationsTime)
+        if self.calendarColoumnCount == 0 { setCalendarColoumnCount(to: 2) }
     }
     
 //    MARK: UpdateEarliestEventData

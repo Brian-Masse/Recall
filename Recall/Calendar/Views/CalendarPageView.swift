@@ -186,51 +186,6 @@ struct CalendarPageView: View {
         date.formatted(.dateTime.weekday().month().day())
     }
     
-    @MainActor
-       private func generateEvent() async {
-           for i in 0..<1 {
-//               print("creating")
-               let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
-                                           title: "testing",
-                                           notes: "",
-                                           urlString: "",
-                                           startTime: .now,
-                                           endTime: .now + Constants.HourTime,
-                                           categoryID: .init(),
-                                           goalRatings: [:])
-               
-               let event2 = RecallCalendarEvent(ownerID: RecallModel.ownerID,
-                                           title: "testing",
-                                           notes: "",
-                                           urlString: "",
-                                                startTime: .now + Constants.HourTime,
-                                           endTime: .now + 2 * Constants.HourTime,
-                                           categoryID: .init(),
-                                           goalRatings: [:])
-               
-               let event3 = RecallCalendarEvent(ownerID: RecallModel.ownerID,
-                                           title: "testing",
-                                           notes: "",
-                                           urlString: "",
-                                               startTime: .now + 2 * Constants.HourTime,
-                                           endTime: .now + 3 * Constants.HourTime,
-                                           categoryID: .init(),
-                                           goalRatings: [:])
-               
-               RealmManager.addObject(event)
-               RealmManager.addObject(event2)
-               RealmManager.addObject(event3)
-               
-//               await RecallModel.wait(for: 0.2)
-               
-//               print("deleting")
-               
-//               event.delete()
-//               
-//               await RecallModel.wait(for: 0.2)
-           }
-       }
-    
 //    MARK: Headers
     @ViewBuilder
     private func makeHeader() -> some View {
@@ -243,10 +198,6 @@ struct CalendarPageView: View {
             } action: { viewModel.setCurrentDay(to: .now) }
 
             Spacer()
-            
-            RecallIcon("calendar")
-                .rectangularBackground(style: .secondary)
-                .onTapGesture { Task { await generateEvent() }}
             
             RecallIcon("calendar")
                 .rectangularBackground(style: .secondary)
@@ -271,6 +222,9 @@ struct CalendarPageView: View {
                 
             
             CalendarContainer(events: Array(events), summaries: dailySummaries)
+                .onAppear {
+                    print(events.count)
+                }
         }
         .padding(7)
         .universalBackground()

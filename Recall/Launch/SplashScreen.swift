@@ -35,7 +35,7 @@ struct SplashScreen: View {
                     
                     HStack {
                         LargeRoundedButton("Create an account or login", icon: "arrow.forward") {
-//                            realmManager.setState(.authenticating)
+                            realmManager.setState(.authenticating)
                         }
                         Spacer()
                     }

@@ -262,6 +262,7 @@ struct CalendarEventPreviewView: View {
                         event.toggleFavorite()
                     }
                     
+                    
                     ContextMenuButton("select", icon: "selection.pin.in.out") {
                         viewModel.selecting = true
                         coordinator.presentSheet(.selectionView) { viewModel.stopSelecting() }
