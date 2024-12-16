@@ -16,6 +16,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
     
 //    MARK: - Vars
     var filteredEvents: [String:[RecallCalendarEvent]] = [:]
+    @Published private(set) var filteredEventsTrigger: Bool = false
     
     @Published private(set) var currentDay: Date = Date.now
     //    this will be toggled whenever the view should scroll to the currentDay
@@ -156,7 +157,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
     } }
     
 //    MARK: - loadEvents
-    func loadEvents( for day: Date, in events: [RecallCalendarEvent] ) async {
+    func loadEvents( for day: Date, in events: [RecallCalendarEvent], autoSendChanges: Bool = true ) async {
         let key = day.getDayKey()
         if filteredEvents[key] != nil { return }
         
@@ -170,7 +171,9 @@ class RecallCalendarContainerViewModel: ObservableObject {
         DispatchQueue.main.sync {
             withAnimation {
                 self.filteredEvents[key] = filteredEvents
-                self.objectWillChange.send()
+                if autoSendChanges {
+                    self.objectWillChange.send()
+                }
             }
         }
     }
@@ -180,6 +183,10 @@ class RecallCalendarContainerViewModel: ObservableObject {
         let key = day.getDayKey()
         
         if let events = filteredEvents[key] {
+            if day.matches(.now, to: .day) {
+                print( "from fetch: event count: \(events.count)" )
+            }
+            
             return events
         }
         
@@ -188,70 +195,24 @@ class RecallCalendarContainerViewModel: ObservableObject {
     
 //    MARK: invalidateEvents
 //    called when the events refresh remotely from the server
-    func invalidateEvents(events: [RecallCalendarEvent]) {
+    func invalidateEvents(events: [RecallCalendarEvent]) async {
+        
+        let dispatchGroup = DispatchGroup()
+        
         self.filteredEvents = [:]
+        print("cleared events")
         
-        Task {
-//            render the day to the left
-            await loadEvents(for: currentDay + Constants.DayTime, in: events )
-            
-            for i in 0..<daysPerView {
-                await loadEvents(for: currentDay - (Constants.DayTime * Double(i)), in: events )
-            }
-        }
-    }
-
-//    MARK: - updateFilteredEvents
-    @MainActor
-    func updatedFilteredEvents(_ event: RecallCalendarEvent, updateType: RecallModel.UpdateType) async {
-        switch updateType {
-        case .insert: updateFilteredEventsWithInsertion(event)
-        case .delete: updateFilteredEventsWithDeletion(event)
-        case .changeDate: break
-        default: updateFilteredEventsWithGenericUpdate(event)
+        //            render the day to the left
+        await loadEvents(for: currentDay + Constants.DayTime, in: events, autoSendChanges: false )
+        
+        for i in 0..<daysPerView {
+            await loadEvents(for: currentDay - (Constants.DayTime * Double(i)), in: events, autoSendChanges: false )
         }
         
-        self.objectWillChange.send()
-    }
-    
-//    MARK: updateFilteredEventsWithInsertion
-    @MainActor
-    private func updateFilteredEventsWithInsertion(_ event: RecallCalendarEvent) {
-        let key = event.startTime.getDayKey()
-        
-        if var events = filteredEvents[key] {
-            events.append(event)
-            
-            self.filteredEvents[key] = events
+        DispatchQueue.main.sync {
+            self.objectWillChange.send()
+            print("pushing changes: \( filteredEvents[Date.now.getDayKey()]?.count )")
         }
     }
-    
-//    MARK: updateFilteredEventsWithDeletion
-    @MainActor
-    private func updateFilteredEventsWithDeletion(_ event: RecallCalendarEvent) {
-        let key = event.startTime.getDayKey()
-        
-        if var events = filteredEvents[key] {
-            if let index = events.firstIndex(where: { $0.identifier() == event.identifier() }) {
-                events.remove(at: index)
-            }
-            
-            self.filteredEvents[key] = events
-        }
-    }
-    
-//    MARK: updateFilteredEventsWithGenericUpdate
-    @MainActor
-    private func updateFilteredEventsWithGenericUpdate(_ event: RecallCalendarEvent) {
-        let key = event.startTime.getDayKey()
-        
-        if var events = filteredEvents[key] {
-            if let index = events.firstIndex(where: { $0._id == event._id }) {
-                events[index] = event
-            }
-            
-            self.filteredEvents[key] = events
-        }
-    }
-    
 }
+//2326

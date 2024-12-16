@@ -104,6 +104,9 @@ struct CalendarContainer: View {
     
     @State private var scrolledToEvents: Bool = false
     
+    @State private var invalidatingEvents: Bool = false
+    private let dispatchGroup = DispatchGroup()
+    
     init(events: [RecallCalendarEvent], summaries: [RecallDailySummary]) {
         self.events = events
         self.summaries = summaries
@@ -327,7 +330,9 @@ struct CalendarContainer: View {
                         }
                         .padding(.horizontal, 2)
                         .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
-                        .task { await viewModel.loadEvents(for: day, in: events) }
+                        .task {
+                            await viewModel.loadEvents(for: day, in: events)
+                        }
                     }
                 }
                 .scrollTargetLayout()
@@ -387,14 +392,35 @@ struct CalendarContainer: View {
                         proxy.scrollTo("scrollTarget", anchor: .top) }
                         scrolledToEvents = true
                 } }
-//                .onChange(of: events) { oldValue, newValue in
-//                    viewModel.invalidateEvents(events: newValue)
-//                }
+                .onChange(of: events) { oldValue, newValue in
+                    if invalidatingEvents { queuedEventChanges = newValue }
+                    else { invalidateEvents(events: events) }
+                }
                 .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
                     makeCalendarLabels()
                         .padding(.leading, calendarLabelWidth)
                 } }
             }
+        }
+    }
+    
+    @State private var queuedEventChanges: [RecallCalendarEvent]? = nil
+    
+    private func invalidateEvents(events: [RecallCalendarEvent]) {
+        Task {
+            invalidatingEvents = true
+            print("events changed in the container: \(events.count)")
+            await viewModel.invalidateEvents(events: events)
+            invalidatingEvents = false
+            self.clearInvalidatingEventsQueue()
+        }
+    }
+    
+    private func clearInvalidatingEventsQueue() {
+        if let queuedEventChanges {
+            
+            invalidateEvents(events: queuedEventChanges)
+            self.queuedEventChanges = nil
         }
     }
 }

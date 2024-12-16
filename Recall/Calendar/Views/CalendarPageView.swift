@@ -187,29 +187,49 @@ struct CalendarPageView: View {
     }
     
     @MainActor
-    private func generateEvent() async {
-        for i in 0..<20 {
-            print("creating")
-            let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
-                                            title: "testing",
-                                            notes: "",
-                                            urlString: "",
-                                            startTime: .now,
-                                            endTime: .now + Constants.HourTime,
-                                            categoryID: .init(),
-                                            goalRatings: [:])
-            
-            RealmManager.addObject(event)
-            
-            await RecallModel.wait(for: 0.2)
-            
-            print("deleting")
-            
-            event.delete()
-            
-            await RecallModel.wait(for: 0.2)
-        }
-    }
+       private func generateEvent() async {
+           for i in 0..<1 {
+//               print("creating")
+               let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
+                                           title: "testing",
+                                           notes: "",
+                                           urlString: "",
+                                           startTime: .now,
+                                           endTime: .now + Constants.HourTime,
+                                           categoryID: .init(),
+                                           goalRatings: [:])
+               
+               let event2 = RecallCalendarEvent(ownerID: RecallModel.ownerID,
+                                           title: "testing",
+                                           notes: "",
+                                           urlString: "",
+                                                startTime: .now + Constants.HourTime,
+                                           endTime: .now + 2 * Constants.HourTime,
+                                           categoryID: .init(),
+                                           goalRatings: [:])
+               
+               let event3 = RecallCalendarEvent(ownerID: RecallModel.ownerID,
+                                           title: "testing",
+                                           notes: "",
+                                           urlString: "",
+                                               startTime: .now + 2 * Constants.HourTime,
+                                           endTime: .now + 3 * Constants.HourTime,
+                                           categoryID: .init(),
+                                           goalRatings: [:])
+               
+               RealmManager.addObject(event)
+               RealmManager.addObject(event2)
+               RealmManager.addObject(event3)
+               
+//               await RecallModel.wait(for: 0.2)
+               
+//               print("deleting")
+               
+//               event.delete()
+//               
+//               await RecallModel.wait(for: 0.2)
+           }
+       }
     
 //    MARK: Headers
     @ViewBuilder
@@ -225,18 +245,12 @@ struct CalendarPageView: View {
             Spacer()
             
             RecallIcon("calendar")
-                .onTapGesture {
-                    print("delete this")
-                    events.last?.delete()
-                }
-            
-            RecallIcon("calendar")
-                .onTapGesture { Task {
-                    await generateEvent()
-                }}
+                .rectangularBackground(style: .secondary)
+                .onTapGesture { Task { await generateEvent() }}
             
             RecallIcon("calendar")
                 .rectangularBackground(style: .secondary)
+            
                 .safeZoomMatch(id: RecallnavigationMatchKeys.monthlyCalendarView, namespace: calendarPageViewNameSpace)
                 .onTapGesture { coordinator.push(.monthlyCalendarView(namespace: calendarPageViewNameSpace)) }
             

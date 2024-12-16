@@ -162,6 +162,7 @@ struct CalendarView: View {
     }
     
 //    MARK: EventCollection
+    @MainActor
     @ViewBuilder
     private func makeEventCollection(from collisionRecord: CollisionRecord, in geo: GeometryProxy) -> some View {
         
@@ -183,7 +184,8 @@ struct CalendarView: View {
                                                  events: events,
                                                  includeGestures: includeGestures)
                         .id(event._id)
-                        .transition(.blurReplace)
+                        .matchedGeometryEffect(id: event._id, in: namespace)
+//                        .transition(.blurReplace)
                         .frame(height: getLength(of: event))
                         .alignmentGuide(VerticalAlignment.top) { _ in
                             -CGFloat(getVerticalOffset(of: events[index],
@@ -208,6 +210,7 @@ struct CalendarView: View {
     
 //    MARK: Vars
     @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
+    @Namespace private var namespace
     
     private let events: [RecallCalendarEvent]
     private let day: Date
@@ -217,14 +220,6 @@ struct CalendarView: View {
     
     private let includeGestures: Bool
     private let highlightEvent: RecallCalendarEvent?
-    
-    @State private var records: [CollisionRecord] = []
-    
-    private func getRecrods() async {
-        let newRecords = CalendarView.mapEvents(with: events)
-            
-        self.records = newRecords
-    }
     
 //    TODO: When the app boots, this function call runs for every single day the user has ever recorded events for
 //    not sure why, but that should probably be fixed!
@@ -247,31 +242,37 @@ struct CalendarView: View {
                 Rectangle()
                     .foregroundStyle(.clear)
                 
-//                let records = CalendarView.mapEvents(with: events)
+                let records = CalendarView.mapEvents(with: events)
                 let startOfDay = day.resetToStartOfDay()
 
-                ForEach( 0..<min(events.count, records.count), id: \.self ) { i in
+                ForEach( 0..<records.count, id: \.self ) { i in
                     let record = records[i]
                     let event = events[min(events.count - 1, record.forwardCollisions.lowerBound)]
                     let eventStartHour = Calendar.current.component(.hour, from: event.startTime)
                     let eventEndHour = Calendar.current.component(.hour, from: event.endTime)
                     
-                    if max(eventEndHour, eventStartHour) >= Int(startHour) && min(eventStartHour, eventEndHour) <= endHour {
+                    if max(eventEndHour, eventStartHour) >= Int(startHour) &&
+                        min(eventStartHour, eventEndHour) <= endHour &&
+                        events.count > record.forwardCollisions.lowerBound
+                    {
                         
-                        let offset = getVerticalOffset(of: events[records[i].forwardCollisions.lowerBound],
-                                                       relativeTo: startOfDay)
+                        let offset = getVerticalOffset(of: event, relativeTo: startOfDay)
                         
-                        makeEventCollection(from: records[i], in: geo)
+                        makeEventCollection(from: record, in: geo)
+                            .overlay {
+                                Text("\(events.count)")
+                            }
                             .offset(y: offset)
                             .zIndex(0)
                     }
                 }
             }
         }
-        .animation(.easeInOut, value: events.count) 
-        .task { await getRecrods() }
-        .onChange(of: viewModel.filteredEvents ) {
-            Task { await self.getRecrods() }
+        .animation(.easeInOut, value: events)
+        .onChange(of: events.count) { oldValue, newValue in
+            if day.matches(.now, to: .day) {
+                print("events chagned: ", oldValue, newValue)
+            }
         }
     }
 }

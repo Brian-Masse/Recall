@@ -93,10 +93,6 @@ struct RecallModel {
         }
         
         Task {
-            // require that views indirectly dependent on events are re-rendered
-//            await CalendarPageViewModel.shared.resetRenderStatus()
-        
-            await RecallCalendarContainerViewModel.shared.updatedFilteredEvents(event, updateType: updateType)
             await RecallGoalDataStore.handleEventUpdate(event, updateType: updateType)
 //            
             if updateType == .insert || updateType == .delete {
