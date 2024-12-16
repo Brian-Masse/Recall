@@ -448,7 +448,6 @@ class RealmManager: ObservableObject {
         
         if let obj = getRealm(from: realm).objects(T.self).filter( query ).first {
             self.writeToRealm {
-                print("deleted Object from Realm")
                 getRealm(from: realm).delete(obj)
             }
         }

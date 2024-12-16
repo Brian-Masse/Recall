@@ -182,13 +182,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
     func getEvents(on day: Date) -> [RecallCalendarEvent] {
         let key = day.getDayKey()
         
-        if let events = filteredEvents[key] {
-            if day.matches(.now, to: .day) {
-                print( "from fetch: event count: \(events.count)" )
-            }
-            
-            return events
-        }
+        if let events = filteredEvents[key] { return events }
         
         return []
     }
@@ -196,13 +190,10 @@ class RecallCalendarContainerViewModel: ObservableObject {
 //    MARK: invalidateEvents
 //    called when the events refresh remotely from the server
     func invalidateEvents(events: [RecallCalendarEvent]) async {
-        
-        let dispatchGroup = DispatchGroup()
-        
+
         self.filteredEvents = [:]
-        print("cleared events")
         
-        //            render the day to the left
+//        render the day to the left
         await loadEvents(for: currentDay + Constants.DayTime, in: events, autoSendChanges: false )
         
         for i in 0..<daysPerView {
@@ -211,8 +202,6 @@ class RecallCalendarContainerViewModel: ObservableObject {
         
         DispatchQueue.main.sync {
             self.objectWillChange.send()
-            print("pushing changes: \( filteredEvents[Date.now.getDayKey()]?.count )")
         }
     }
 }
-//2326

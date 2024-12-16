@@ -204,6 +204,7 @@ struct CalendarEventPreviewView: View {
                     .bold()
             }
             .frame(height: 20)
+            .offset(y: direction == .up ? -30 : 30)
             .gesture(resizeGesture( direction ) )
             .padding(7)
         }
@@ -215,15 +216,15 @@ struct CalendarEventPreviewView: View {
             CalendarEventPreviewContentView(event: event, events: events, height: geo.size.height - 4)
                 .safeZoomMatch(id: indexOfEventInEvents, namespace: namespace)
                 .opacity(beingDeleted ? 0 : 1)
-                .opacity(resizing || moving ? 0.35 : 1)
+                .opacity(resizing || moving ? 0.65 : 1)
             
-                .overlay(alignment: resizeDirection == .up ? .bottom : .top) {
+                .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
                         ZStack {
                             RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                                 .stroke(style: .init(lineWidth: 3, lineCap: .round, dash: [5, 10], dashPhase: 15))
                             RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                                .opacity(0.3)
+                                .opacity(0.15)
                         }
                             .foregroundStyle(event.getColor())
                             .overlay(makeLengthHandles())

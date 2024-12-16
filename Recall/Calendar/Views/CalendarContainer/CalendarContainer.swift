@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+//MARK: ScrollPreferenceKey
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
     
     static var defaultValue: CGPoint = .zero
@@ -16,7 +17,7 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) { }
 }
 
-//MARK: Calendar
+//MARK: - Calendar
 struct EmptyCalendarView: View {
     
     private func getCalendarMarkLabel(hour: Int) -> String {
@@ -29,6 +30,7 @@ struct EmptyCalendarView: View {
         return date.formatted(format)
     }
     
+//    MARK: makeCalendarMark
     @ViewBuilder
     private func makeCalendarMark(hour: Int, minute: Int = 0, includeLabel: Bool = true, opacity: Double = 0.15) -> some View {
         HStack(alignment: .top) {
@@ -51,7 +53,7 @@ struct EmptyCalendarView: View {
         }
     }
     
-//    MARK: Vars
+//    MARK: CalendarView Vars
     private var viewModel = RecallCalendarContainerViewModel.shared
     
     private let startHour: Int
@@ -67,6 +69,7 @@ struct EmptyCalendarView: View {
         self.includeCurrentTimeMark = includeCurrentTimeMark
     }
     
+//    MARK: CalendarView Body
     var body: some View {
         ZStack(alignment: .top) {
             ForEach( startHour...endHour, id: \.self ) { i in
@@ -85,8 +88,9 @@ struct EmptyCalendarView: View {
 }
 
 
-//MARK: CalendarContainer
+//MARK: - CalendarContainer
 struct CalendarContainer: View {
+    
     
 //    MARK: Vars
     @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
@@ -114,7 +118,7 @@ struct CalendarContainer: View {
     
     @State private var previousScrollOffset: Double = 0
     
-//    MARK: Struct Methods
+//    MARK: - setCurrentPostIndex
     private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy, dayCount: Int) {
 
         if viewModel.scrollingCalendar { return }
@@ -142,6 +146,7 @@ struct CalendarContainer: View {
         
     }
     
+//    MARK: setSubDayIndex
     private func setSubDayIndex(from scrollPosition: Double, in geo: GeometryProxy) {
         let proposedIndex: Int = Int(floor((abs(scrollPosition) / geo.size.width) * Double(viewModel.daysPerView)))
         let index = min(max( 0, proposedIndex ), viewModel.daysPerView)
@@ -172,7 +177,31 @@ struct CalendarContainer: View {
             }
     }
     
-//    MARK: EventCreationGesture
+//    MARK: - InvalidateEvents
+    @State private var queuedEventChanges: [RecallCalendarEvent]? = nil
+    
+    private func invalidateEvents(events: [RecallCalendarEvent]) {
+        Task {
+            invalidatingEvents = true
+            await viewModel.invalidateEvents(events: events)
+            invalidatingEvents = false
+            self.clearInvalidatingEventsQueue()
+        }
+    }
+    
+//    MARK: clearInvalidatingEventsQueue
+//    When in the (async) process of invalidating events, it is possible another update to events will come through
+//    In such cases, those changes will be queued, and once the first changes are finished, will be executed here
+//    This is NOT a major sync issue however, it only pertains to the current session of UI
+    private func clearInvalidatingEventsQueue() {
+        if let queuedEventChanges {
+            
+            invalidateEvents(events: queuedEventChanges)
+            self.queuedEventChanges = nil
+        }
+    }
+    
+//    MARK: - EventCreationGesture
     @State private var newEvent: RecallCalendarEvent? = nil
     @State private var creatingEvent: Bool = false
     
@@ -190,6 +219,7 @@ struct CalendarContainer: View {
         }
     }
     
+//    MARK: createEvent
     private func createEvent() {
         let subDayOffset = Double(1 - viewModel.subDayIndex) * Constants.DayTime
         
@@ -212,6 +242,7 @@ struct CalendarContainer: View {
         RealmManager.addObject(event)
     }
     
+//    MARK: createEventHoldGesture
     private func createEventHoldGesture(in geo: GeometryProxy) -> some Gesture {
         LongPressGesture(minimumDuration: 1)
             .onEnded { value in withAnimation {
@@ -281,7 +312,7 @@ struct CalendarContainer: View {
         }
     }
     
-//    MARK: CalendarLabels
+//    MARK: - CalendarLabels
     @ViewBuilder
     private func makeCalendarLabels() -> some View {
         let format = Date.FormatStyle().weekday(.abbreviated).month().day()
@@ -401,26 +432,6 @@ struct CalendarContainer: View {
                         .padding(.leading, calendarLabelWidth)
                 } }
             }
-        }
-    }
-    
-    @State private var queuedEventChanges: [RecallCalendarEvent]? = nil
-    
-    private func invalidateEvents(events: [RecallCalendarEvent]) {
-        Task {
-            invalidatingEvents = true
-            print("events changed in the container: \(events.count)")
-            await viewModel.invalidateEvents(events: events)
-            invalidatingEvents = false
-            self.clearInvalidatingEventsQueue()
-        }
-    }
-    
-    private func clearInvalidatingEventsQueue() {
-        if let queuedEventChanges {
-            
-            invalidateEvents(events: queuedEventChanges)
-            self.queuedEventChanges = nil
         }
     }
 }

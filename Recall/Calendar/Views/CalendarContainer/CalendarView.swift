@@ -259,20 +259,12 @@ struct CalendarView: View {
                         let offset = getVerticalOffset(of: event, relativeTo: startOfDay)
                         
                         makeEventCollection(from: record, in: geo)
-                            .overlay {
-                                Text("\(events.count)")
-                            }
                             .offset(y: offset)
                             .zIndex(0)
                     }
                 }
             }
         }
-        .animation(.easeInOut, value: events)
-        .onChange(of: events.count) { oldValue, newValue in
-            if day.matches(.now, to: .day) {
-                print("events chagned: ", oldValue, newValue)
-            }
-        }
+        .animation(.spring, value: events)
     }
 }
