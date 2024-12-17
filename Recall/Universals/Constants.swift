@@ -98,7 +98,7 @@ extension Constants {
     static let UIScrollableBarWidthDouble: Double = 18
     
 //    exta
-    static let UILargeCornerRadius: CGFloat = 30
+    static let UILargeCornerRadius: CGFloat = 58
     static let subPadding: CGFloat = 7
     
     //    texts

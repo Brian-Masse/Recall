@@ -132,25 +132,7 @@ struct RecallCalendarEventView: View {
         .foregroundStyle( event.images.isEmpty ? titleColor : .white )
     }
     
-//    MARK: MetaDataLabel
-    @ViewBuilder
-    private func makeMetaDataLabel(icon: String, title: String, action: (() -> Void)? = nil) -> some View {
-        UniversalButton {
-            VStack {
-                HStack { Spacer() }
-                
-                RecallIcon(icon)
-                
-                UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            }
-            .frame(height: 30)
-            .opacity(0.65)
-            .rectangularBackground(style: .secondary)
-        } action: {
-            if let action { action() }
-        }
-    }
-    
+//    MARK: MetaData
     @ViewBuilder
     private func makeMetaData() -> some View {
         VStack {
@@ -459,7 +441,7 @@ struct RecallCalendarEventView: View {
             }.rectangularBackground(style: .primary)
         }
         .clipShape(RoundedRectangle(cornerRadius: largeCornerRadius))
-//        .padding(.horizontal, 5)
+        .padding(.horizontal, 5)
         .padding(.bottom, 20)
     }
     

@@ -151,6 +151,7 @@ struct GoalView: View {
             
             GoalAnnualProgressView(goal: goal)
                 .padding(.bottom)
+                .padding(.top, -40)
             
             ContributingTagListView(goal: goal)
         }
@@ -177,6 +178,7 @@ struct GoalView: View {
                 let label = showingAllTags ? "Show Less" : "Show All"
                 
                 makeSectionHeader("tag", title: "Contributing Tags")
+                    .padding(.trailing, 20)
                 
                 WrappedHStack(collection: tags, spacing: 7) { tag in
                     UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
@@ -196,28 +198,59 @@ struct GoalView: View {
         }
     }
     
+//    MARK: makeOverviewView
+
+    
+    @ViewBuilder
+    private func makeOverviewView() -> some View {
+        VStack(alignment: .leading) {
+            makeSectionHeader("text.alignleft", title: "\(goal.goalDescription)")
+            
+            HStack {
+                makeMetaDataLabel(icon: "circle.badge.exclamationmark", title: "\(goal.priority)")
+                
+                makeMetaDataLabel(icon: "arrow.trianglehead.clockwise.rotate.90", title: "\(goal.frequency)")
+                
+                makeMetaDataLabel(icon: "gauge.with.needle", title: "\(goal.targetHours)")
+            }
+            
+            Rectangle()
+                .frame(height: 500)
+                .foregroundStyle(.clear)
+        }
+    }
+    
 //    MARK: - GoalViewSection
     @ViewBuilder
-    private func makeGoalViewSection<T: View>( @ViewBuilder contentBuilder: () -> T) -> some View {
+    private func makeGoalViewSection<T: View>( first: Bool = false, last: Bool = false, @ViewBuilder contentBuilder: () -> T) -> some View {
         VStack(alignment: .leading) {
             contentBuilder()
+                .padding(.top, first ? 10 : 0)
+                .padding(.bottom, last ? 10 : 0)
         }
             .rectangularBackground(style: .primary)
+            .clipShape( UnevenRoundedRectangle(topLeadingRadius: first ? Constants.UILargeCornerRadius : Constants.UIDefaultCornerRadius,
+                                               bottomLeadingRadius: last ? Constants.UILargeCornerRadius : Constants.UIDefaultCornerRadius,
+                                               bottomTrailingRadius: last ? Constants.UILargeCornerRadius : Constants.UIDefaultCornerRadius,
+                                               topTrailingRadius: first ? Constants.UILargeCornerRadius : Constants.UIDefaultCornerRadius))
     }
     
 //    MARK: Content
     @ViewBuilder
     private func makeContent() -> some View {
-        ScrollView {
+        ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 7) {
                 
-                makeGoalViewSection {
+                makeGoalViewSection(first: true) {
                     makeAnnualProgressView()
+                }
+                
+                makeGoalViewSection(last: true) {
+                    makeOverviewView()
                 }
             }
         }
-//        .ignoresSafeArea()
-        .scrollClipDisabled()
+        .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
     }
     
 //    MARK: - Body
@@ -226,14 +259,15 @@ struct GoalView: View {
         GeometryReader { geo in
             VStack {
                 makeHeader()
-                    .padding()
+                    .padding(.horizontal)
                     .foregroundStyle(.black)
                 
                 makeContent()
-                    .frame(height: geo.size.height)
             }
         }
+        .padding(5)
         .background( Colors.getAccent(from: colorScheme).gradient )
+        .ignoresSafeArea(edges: .bottom)
         
         .sheet(isPresented: $showingGoalHistoryView) {
             makeGoalHistory()
