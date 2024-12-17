@@ -10,103 +10,86 @@ import SwiftUI
 import RealmSwift
 import UIUniversals
 
-//MARK: - YearCalendar
-struct YearCalendar: View {
-    
-    let maxSaturation: Double
-    let getValue: (Date) -> Double
-    
-    private let numberOfDays: Int = 365
-    private let width: Double = 15
-    
-//    MARK: YearCalendarDayView
-    private struct DayView: View {
-        let startDate: Date
-        let index: Int
-        
-        let width: Double
-        let maxSaturation: Double
-        let getValue: (Date) -> Double
-        
-        @State private var saturation: Double = 0
-        
-        private func loadSaturation() async {
-            let date = startDate + Constants.DayTime * Double(index)
-            let value = getValue(date)
-            
-            withAnimation { self.saturation = value }
-        }
-        
-        var body: some View {
-            RoundedRectangle(cornerRadius: 4)
-                .frame(width: width, height: width)
-                .universalStyledBackgrond(.accent, onForeground: true)
-                .opacity(saturation / maxSaturation)
-                .task { await loadSaturation() }
-        }
-    }
-    
-//    MARK: YearCalendarBody
-    var body: some View {
-        
-        let startDate = Date.now - (Constants.DayTime * Double(numberOfDays))
-        let startDateOffset = Calendar.current.component(.weekday, from: startDate) - 1
-        let colCount = ceil(Double(numberOfDays + startDateOffset) / 7)
-        
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 3) {
-                ForEach(0..<Int(colCount), id: \.self) { col in
-                    
-                    VStack(spacing: 3) {
-                        ForEach(0..<7, id: \.self) { row in
-                            
-                            let dateIndex = (col * 7) + row - startDateOffset
-                            
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .frame(width: width, height: width)
-                                    .universalStyledBackgrond(.secondary, onForeground: true)
-                                
-                                if dateIndex > 0 && dateIndex <= numberOfDays {
-                                    DayView(startDate: startDate,
-                                            index: dateIndex,
-                                            width: width,
-                                            maxSaturation: maxSaturation,
-                                            getValue: getValue)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .defaultScrollAnchor(.trailing)
-    }
-}
-
 //MARK: - GoalAnnualProgressView
 struct GoalAnnualProgressView: View {
     
     @State private var goalHistory: [String : Double] = [:]
+    @State private var tags: [RecallCategory] = []
+    
+    @State private var maxSaturation: Double = 0
+    
+    @State private var filteringTag: RecallCategory? = nil
     
     let goal: RecallGoal
     
+    private func toggleFilteringTag(tag: RecallCategory) {
+        if filteringTag == tag { filteringTag = nil }
+        else { filteringTag = tag }
+        
+        Task { await getGoalHistory() }
+    }
+    
+    private func getTags() async {
+        let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
+            .filter { $0.worksTowards(goal: goal) }
+        
+        withAnimation { self.tags = tags }
+    }
+    
     private func getGoalHistory() async {
         if let store = goal.dataStore {
+            
+            var maxSaturation: Double = 0
+            
             let historyDic: [String:Double] = Array(store.goalHistory)
                 .reduce(into: [String: Double]()) { partialResult, node in
-                    partialResult[node.date.formatted(date: .numeric, time: .omitted)] = node.contributingHours
+                    let contributingHours = node.getContributingHours(filteringBy: filteringTag?._id)
+                    partialResult[node.date.formatted(date: .numeric, time: .omitted)] = contributingHours
+                    maxSaturation = max(maxSaturation, contributingHours)
                 }
             
-            withAnimation { self.goalHistory = historyDic }
+            withAnimation {
+                self.goalHistory = historyDic
+                self.maxSaturation = maxSaturation
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func makeFilter() -> some View {
+        Menu {
+            ForEach(tags, id: \.self) { tag in
+                Button { toggleFilteringTag(tag: tag) } label: {
+                    HStack {
+                        if tag == filteringTag { Label(tag.label, systemImage: "checkmark") }
+                        else { Text(tag.label) }
+                    }
+                }
+            }
+            
+        } label: {
+            HStack {
+                UniversalText("filter", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                RecallIcon("line.3.horizontal.decrease.circle")
+            }
+            .rectangularBackground(10, style: .secondary)
+            .universalTextStyle()
         }
     }
     
     var body: some View {
-        YearCalendar(maxSaturation: Double(goal.targetHours) / 3.5) { date in
-            goalHistory[ date.formatted(date: .numeric, time: .omitted) ] ?? 0
+        VStack(alignment: .trailing) {
+            makeFilter()
+            
+            YearCalendar(maxSaturation: maxSaturation) { date in
+                goalHistory[ date.formatted(date: .numeric, time: .omitted) ] ?? 0
+            }
         }
-        .task { await getGoalHistory() }
+        .animation(.easeInOut, value: filteringTag)
+        .task {
+            await getTags()
+            await getGoalHistory()
+        }
     }
 }
 
@@ -131,20 +114,10 @@ struct GoalView: View {
                 ForEach( 0..<(goal.dataStore?.goalHistory.count ?? 0), id: \.self ) { i in
                     if let node = goal.dataStore?.goalHistory[i] {
                         
-                        Text("\(node.date.formatted(date: .numeric, time: .omitted)) -- \( node.contributingHours)")
-                            .onAppear {
-                                var sum: Double = 0
-                                for event in node.contributingEvents {
-                                    if let event = RecallCalendarEvent.getRecallCalendarEvent(from: event) {
-                                        sum += event.getLengthInHours()
-                                    }
-                                }
-//
-                                if sum.round(to: 2) != node.contributingHours.round(to: 2) {
-                                    print("sum and contributing hours do not match: \(sum), \(node.contributingHours))")
-                                }
-                            }
+                        let hours = node.getContributingHours(filteringBy: nil)
                         
+                        Text("\(node.date.formatted(date: .numeric, time: .omitted)) -- \(hours)")
+
                         ForEach( 0..<node.contributingEvents.count, id: \.self ) { i in
                             if let event = RecallCalendarEvent.getRecallCalendarEvent(from: node.contributingEvents[i]) {
                                 Text("\(event.title), (\(event.getLengthInHours())")

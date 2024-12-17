@@ -19,7 +19,23 @@ class RecallGoalHistoryNode: Object {
     
     @Persisted var date: Date = .now
     @Persisted var contributingEvents: RealmSwift.List<ObjectId> = List()
-    @Persisted var contributingHours: Double = 0
+    
+//    these two variables are here so that when filtering by tag, the front end does not need to find the calendar events
+//    with the coorespondings IDs, filter them, and then sum their total hours.
+//    This adds considerable complexity to maintaining the accuracy of the nodes, and I'm not sure if this is the long term solution
+    @Persisted var contributingTags: RealmSwift.List<ObjectId> = List()
+    @Persisted var contributingHoursByEvent: RealmSwift.List<Double> = List()
+    
+    @Persisted private var contributingHours: Double = 0
+    
+    func getContributingHours(filteringBy tagId: ObjectId? = nil) -> Double {
+        var sum: Double = 0
+        for i in 0..<contributingHoursByEvent.count {
+            if let tagId { if contributingTags[i] != tagId { continue } }
+            sum += contributingHoursByEvent[i]
+        }
+        return sum
+    }
 
 //    MARK: Init
     convenience init(date: Date) {
@@ -31,15 +47,19 @@ class RecallGoalHistoryNode: Object {
         self.contributingHours = 0
     }
     
-    func updateContributingHours(to hours: Double) {
-        RealmManager.updateObject(self) { thawed in
-            thawed.contributingHours = hours
+    func updateContributingHours(_ event: RecallCalendarEvent) {
+        if let index = contributingEvents.firstIndex(of: event._id) {
+            RealmManager.updateObject(self) { thawed in
+                thawed.contributingHoursByEvent[index] = event.getLengthInHours()
+            }
         }
     }
     
     func addEvent(_ event: RecallCalendarEvent) {
         RealmManager.updateObject(self) { thawed in
             thawed.contributingEvents.append(event._id)
+            thawed.contributingTags.append(event.category?._id ?? .init())
+            thawed.contributingHoursByEvent.append(event.getLengthInHours())
         }
     }
     
@@ -47,8 +67,14 @@ class RecallGoalHistoryNode: Object {
         if let index = contributingEvents.firstIndex(of: event._id) {
             RealmManager.updateObject(self) { thawed in
                 thawed.contributingEvents.remove(at: index)
+                thawed.contributingTags.remove(at: index)
+                thawed.contributingHoursByEvent.remove(at: index)
             }
         }
+    }
+    
+    func checkCorrectness() -> Bool {
+        (self.contributingEvents.count == self.contributingTags.count) && (self.contributingHoursByEvent.count == self.contributingEvents.count)
     }
 }
 
@@ -112,21 +138,6 @@ class RecallGoalDataStore: Object {
         }
     }
     
-    @MainActor
-    func checkCorrectness() -> Bool {
-        if let node = goalHistory.last {
-            var sum: Double = 0
-            for id in node.contributingEvents {
-                if let event = RecallCalendarEvent.getRecallCalendarEvent(from: id) {
-                    sum += event.getLengthInHours()
-                }
-            }
-            
-            if node.contributingHours != sum { return false }
-        }
-        return true
-    }
-    
 //    MARK: - Convenience Functions
     @MainActor
     private func getGoal() -> RecallGoal {
@@ -184,8 +195,11 @@ class RecallGoalDataStore: Object {
                 history.append( currentHistoryNode  )
             }
             
+            let hours = event.getLengthInHours()
+            
             currentHistoryNode.contributingEvents.append(event._id)
-            currentHistoryNode.contributingHours += event.getLengthInHours()
+            currentHistoryNode.contributingTags.append(event.category?._id ?? .init())
+            currentHistoryNode.contributingHoursByEvent.append(hours)
         }
         
         updateGoalHistory(with: history)
@@ -204,12 +218,11 @@ class RecallGoalDataStore: Object {
             node.date.matches(event.startTime, to: .day)
         }) {
             let node = history[i]
-            node.updateContributingHours(to:  node.contributingHours + event.getLengthInHours() )
             node.addEvent(event)
         } else {
             let node = RecallGoalHistoryNode(date: event.startTime)
             node.contributingEvents.append(event._id)
-            node.contributingHours += event.getLengthInHours()
+//            node.contributingHours += event.getLengthInHours()
             
             history.append(node)
             store.updateGoalHistory(with: history)
@@ -231,8 +244,6 @@ class RecallGoalDataStore: Object {
             node.date.matches(event.oldStartTime, to: .day)
         }) {
             let node = history[i]
-            let oldLength = event.oldEndTime.timeIntervalSince(event.oldStartTime) / Constants.HourTime
-            node.updateContributingHours(to: node.contributingHours - oldLength)
             node.removeEvent(event)
         }
     }
@@ -263,9 +274,7 @@ class RecallGoalDataStore: Object {
         if let i = history.firstIndex(where: { node in
             node.date.matches(event.startTime, to: .day)
         }) {
-            let oldLength =  event.oldEndTime.timeIntervalSince(event.oldStartTime) / Constants.HourTime
-            let newContributingHours: Double = history[i].contributingHours - oldLength + event.getLengthInHours()
-            history[i].updateContributingHours(to: newContributingHours)
+            history[i].updateContributingHours(event)
         }
     }
     

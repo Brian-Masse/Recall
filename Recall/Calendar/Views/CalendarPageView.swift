@@ -209,24 +209,24 @@ struct CalendarPageView: View {
                 
                 RealmManager.addObject(event)
                 
-                await RecallModel.wait(for: 0.2)
-                if !productivityGoal.dataStore!.checkCorrectness() {
-                    print("insertion")
-                }
-                
-                event.updateTime( endDate: .now + Constants.HourTime * 2 )
-                
-                await RecallModel.wait(for: 0.2)
-                if !productivityGoal.dataStore!.checkCorrectness() {
-                    print("insertion")
-                }
-                
-                event.delete()
-                
-                await RecallModel.wait(for: 0.2)
-                if !productivityGoal.dataStore!.checkCorrectness() {
-                    print("insertion")
-                }
+//                await RecallModel.wait(for: 0.2)
+//                if !productivityGoal.dataStore!.checkCorrectness() {
+//                    print("insertion")
+//                }
+//                
+//                event.updateTime( endDate: .now + Constants.HourTime * 2 )
+//                
+//                await RecallModel.wait(for: 0.2)
+//                if !productivityGoal.dataStore!.checkCorrectness() {
+//                    print("insertion")
+//                }
+//                
+//                event.delete()
+//                
+//                await RecallModel.wait(for: 0.2)
+//                if !productivityGoal.dataStore!.checkCorrectness() {
+//                    print("insertion")
+//                }
             }
         }
         
