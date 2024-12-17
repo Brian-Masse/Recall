@@ -77,9 +77,9 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
         if !previewEvent {
             if let retrievedCategory = RecallCategory.getCategoryObject(from: categoryID) { self.category = retrievedCategory }
             self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
-            
-            RecallModel.shared.updateEvent(self, updateType: .insert)
         }
+        
+        RecallModel.shared.updateEvent(self, updateType: .insert)
     }
 
 //    MARK: Override Init

@@ -110,43 +110,6 @@ struct RecallCalendarEventView: View {
             .font(.callout)
             .rectangularBackground(12, style: .transparent)
         } action: { action() }
-
-    }
-    
-//    MARK: sectionHeader
-    @ViewBuilder
-    private func makeSectionHeader(_ icon: String, title: String, fillerMessage: String = "", isActive: Bool = true) -> some View {
-        if isActive {
-            HStack {
-                RecallIcon(icon)
-                UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                
-                Spacer()
-            }
-            .padding(.leading)
-            .opacity(0.75)
-        } else {
-            makeSectionFiller(icon: icon, message: fillerMessage)
-        }
-    }
-    
-//    MARK: makeSectionFiller
-    @ViewBuilder
-    private func makeSectionFiller(icon: String, message: String) -> some View {
-        UniversalButton {
-            VStack {
-                HStack { Spacer() }
-                
-                RecallIcon( icon )
-                    .padding(.bottom, 5)
-                
-                UniversalText( message, size: Constants.UIDefaultTextSize, font: Constants.mainFont, textAlignment: .center )
-                    .opacity(0.75)
-            }
-            .opacity(0.75)
-            .rectangularBackground(style: .secondary)
-            
-        } action: { showEditView = true }
     }
     
     
@@ -246,7 +209,9 @@ struct RecallCalendarEventView: View {
             makeSectionHeader("photo.on.rectangle",
                               title: "photos",
                               fillerMessage: "Add photos",
-                              isActive: event.images.count != 0)
+                              isActive: event.images.count != 0) {
+                showEditView = true
+            }
             
             if event.images.count != 0 {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -270,7 +235,9 @@ struct RecallCalendarEventView: View {
             makeSectionHeader("location",
                               title: event.locationTitle,
                               fillerMessage: "Add a location",
-                              isActive: !event.locationTitle.isEmpty)
+                              isActive: !event.locationTitle.isEmpty) {
+                showEditView = true
+            }
             
             if let location = event.getLocationResult() {
                 

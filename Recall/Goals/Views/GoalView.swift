@@ -17,7 +17,7 @@ struct YearCalendar: View {
     let getValue: (Date) -> Double
     
     private let numberOfDays: Int = 365
-    private let width: Double = 20
+    private let width: Double = 15
     
 //    MARK: YearCalendarDayView
     private struct DayView: View {
@@ -84,7 +84,7 @@ struct YearCalendar: View {
     }
 }
 
-//MARK: GoalAnnualProgressView
+//MARK: - GoalAnnualProgressView
 struct GoalAnnualProgressView: View {
     
     @State private var goalHistory: [String : Double] = [:]
@@ -110,209 +110,162 @@ struct GoalAnnualProgressView: View {
     }
 }
 
+//MARK: - GoalView
 struct GoalView: View {
-    
-////    MARK: Helpers
-//    @ViewBuilder
-//    func makeSeperator() -> some View {
-//        Rectangle()
-//            .universalTextStyle()
-//            .frame(width: 1)
-//    }
-//    
-//    @ViewBuilder
-//    func makeOverViewDataView(title: String, icon: String, data: String) -> some View {
-//        
-//        HStack {
-//            RecallIcon(icon)
-//            UniversalText(title,
-//                          size: Constants.UIDefaultTextSize,
-//                          font: Constants.mainFont)
-//            
-//            Spacer()
-//            UniversalText(data, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-//        }
-//    }
-//    
-//    @ViewBuilder
-//    func makeCircularProgressWidget(title: String, value: Double, total: Double) -> some View {
-//        
-//        VStack {
-//            UniversalText( title, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-//                .padding(.bottom, 5)
-//            CircularProgressView(currentValue: value, totalValue: total)
-//        }
-//        .padding(5)
-//        .frame(width: 115)
-//        .rectangularBackground(style: .secondary)
-//        
-//    }
-//    
-//    MARK: vars
-    
-    @Environment(\.presentationMode) var presentationMode
+
+    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var dataModel: RecallGoalDataStore
+    @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
     @ObservedRealmObject var goal: RecallGoal
-    @ObservedResults(RecallCategory.self,
-                     where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
     
     let events: [RecallCalendarEvent]
     
-//    @State var showingEditingScreen: Bool = false
-//    @State var showingDeletionAlert: Bool = false
-//    
-////    MARK: ViewBuilders
-//    @ViewBuilder
-//    private func makeOverview() -> some View {
-//        UniversalText("overview",
-//                      size: Constants.UIHeaderTextSize,
-//                      font: Constants.titleFont)
-//        
-//        HStack {
-//            UniversalText( goal.goalDescription, size: Constants.UISmallTextSize, font: Constants.mainFont )
-//                .frame(width: 100)
-//            
-//            makeSeperator()
-//            
-//            VStack {
-//                makeOverViewDataView(title: "priority", icon: "exclamationmark.triangle", data: goal.priority)
-//                makeOverViewDataView(title: "period", icon: "calendar.day.timeline.leading", data: RecallGoal.GoalFrequence.getType(from: goal.frequency))
-//                makeOverViewDataView(title: "goal", icon: "flag.checkered", data: "\(goal.targetHours) \(goal.byTag() ? "tags" : "HR")")
-//                makeOverViewDataView(title: "created on", icon: "calendar.badge.clock", data: "\(goal.creationDate.formatted(date: .numeric, time: .omitted))")
-//            }
-//        }
-//        .rectangularBackground(style: .secondary)
-//        .padding(.bottom)
-//    }
-//    
-//    @ViewBuilder
-//    private func makeContributingTags() -> some View {
-//        let contributingTags = tags.filter { tag in tag.worksTowards(goal: goal) }
-//        
-//        if contributingTags.count != 0 {
-//            UniversalText("Contributing Tags", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-//            
-//            WrappedHStack(collection: Array(contributingTags)) { tag in
-//                HStack {
-//                    RecallIcon("arrow.up.right")
-//                    UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-//                    
-//                }
-//                .rectangularBackground(style: .primary)
-//            }
-//            .rectangularBackground(7, style: .secondary)
-//        }
-//    }
-//    
-//    @ViewBuilder
-//    private func makeQuickActions() -> some View {
-//        UniversalText("Quick Actions", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-//        ScrollView(.horizontal, showsIndicators: false) {
-//            HStack {
-//                LargeRoundedButton("edit", icon: "arrow.up.forward") { showingEditingScreen = true }
-//                LargeRoundedButton("delete", icon: "arrow.up.forward") { showingDeletionAlert = true }
-//                LargeRoundedButton("change goal target", icon: "arrow.up.forward") { showingEditingScreen = true }
-//            }
-//        }
-//        .rectangularBackground(7, style: .secondary)
-//        .padding(.bottom)
-//    }
-//    
-//    @ViewBuilder
-//    private func makeGoalReview() -> some View {
-//        
-//        let progressData = dataModel.progressData
-//        let averageData = dataModel.averageData
-//        let goalMetData = dataModel.goalMetData
-//        
-//        UniversalText("Goal Review", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-//            .padding(.bottom)
-//        
-//        ScrollView(.horizontal, showsIndicators: false) {
-//            HStack {
-//                makeCircularProgressWidget(title: "Current Progress", value: progressData, total: Double(goal.targetHours))
-//                
-//                makeCircularProgressWidget(title: "Average Activity", value: averageData, total: Double(goal.targetHours))
-//                
-//                makeCircularProgressWidget(title: "Number of Times met", value: Double(goalMetData.0), total: Double(goalMetData.1 + goalMetData.0))
-//            }
-//        }
-//        
-////
-//        ActivityPerDay(recentData: false, title: "activites per day", goal: goal, data: dataModel.progressOverTimeData)
-//            .frame(height: 160)
-//            .padding(5)
-//            .rectangularBackground(style: .secondary)
-//
-//        TotalActivites(title: "total activities", goal: goal, events: events, showYAxis: true)
-//            .frame(height: 160)
-//            .padding(5)
-//            .rectangularBackground(style: .secondary)
-//    }
+//    MARK: - GoalHistoryView
+    @State private var showingGoalHistoryView: Bool = false
     
-//    MARK: Body
-    var body: some View {
-        
-        VStack(alignment: .leading) {
-            HStack {
-                UniversalText(goal.label, size: Constants.UITitleTextSize, font: Constants.titleFont)
-                Spacer()
-                LargeRoundedButton("", icon: "arrow.down") { presentationMode.wrappedValue.dismiss() }
-            }
-            
-            GoalAnnualProgressView(goal: goal)
-            
-            ScrollView {
-                LazyVStack {
-                    ForEach( 0..<(goal.dataStore?.goalHistory.count ?? 0), id: \.self ) { i in
-                        if let node = goal.dataStore?.goalHistory[i] {
-                            
-                            Text("\(node.date.formatted(date: .numeric, time: .omitted)) -- \( node.contributingHours)")
-                                .onAppear {
-                                    var sum: Double = 0
-                                    for event in node.contributingEvents {
-                                        if let event = RecallCalendarEvent.getRecallCalendarEvent(from: event) {
-                                            sum += event.getLengthInHours()
-                                        }
-                                    }
-//                                    
-                                    if sum.round(to: 2) != node.contributingHours.round(to: 2) {
-                                        print("sum and contributing hours do not match: \(sum), \(node.contributingHours))")
+    @ViewBuilder
+    private func makeGoalHistory() -> some View {
+        ScrollView {
+            LazyVStack {
+                ForEach( 0..<(goal.dataStore?.goalHistory.count ?? 0), id: \.self ) { i in
+                    if let node = goal.dataStore?.goalHistory[i] {
+                        
+                        Text("\(node.date.formatted(date: .numeric, time: .omitted)) -- \( node.contributingHours)")
+                            .onAppear {
+                                var sum: Double = 0
+                                for event in node.contributingEvents {
+                                    if let event = RecallCalendarEvent.getRecallCalendarEvent(from: event) {
+                                        sum += event.getLengthInHours()
                                     }
                                 }
-                            
-                            ForEach( 0..<node.contributingEvents.count, id: \.self ) { i in
-                                if let event = RecallCalendarEvent.getRecallCalendarEvent(from: node.contributingEvents[i]) {
-                                    Text("\(event.title), (\(event.getLengthInHours())")
-                                        .opacity(0.5)
+//
+                                if sum.round(to: 2) != node.contributingHours.round(to: 2) {
+                                    print("sum and contributing hours do not match: \(sum), \(node.contributingHours))")
                                 }
+                            }
+                        
+                        ForEach( 0..<node.contributingEvents.count, id: \.self ) { i in
+                            if let event = RecallCalendarEvent.getRecallCalendarEvent(from: node.contributingEvents[i]) {
+                                Text("\(event.title), (\(event.getLengthInHours())")
+                                    .opacity(0.5)
                             }
                         }
                     }
                 }
-            }.defaultScrollAnchor(.bottom)
+            }
+        }.defaultScrollAnchor(.bottom)
+    }
+    
+    
+//    MARK: Header
+    @ViewBuilder
+    private func makeHeader() -> some View {
+        HStack {
+            UniversalText(goal.label, size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+            Spacer()
+            IconButton("newspaper") { showingGoalHistoryView = true }
             
-//            ScrollView(.vertical, showsIndicators: false) {
-//                VStack(alignment: .leading) {
-//                    
-//                    makeOverview()
-//                    
-//                    makeQuickActions()
-//
-//                    makeGoalReview()
-//                    
-//                    makeContributingTags()
-//                }
-//            }
-//            Spacer()
+            DismissButton()
         }
-        .padding(7)
-        .universalBackground()
-//        .sheet(isPresented: $showingEditingScreen) { GoalCreationView.makeGoalCreationView(editing: true, goal: goal) }
-//        .onAppear { dataModel.makeData(for: goal, with: events) }
-//        .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
-//            Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }
+    }
+    
+//    MARK: - makeAnnualProgressView
+    @ViewBuilder
+    private func makeAnnualProgressView() -> some View {
+        VStack(alignment: .leading) {
+            makeSectionHeader("calendar", title: "\(goal.label) over time")
+            
+            GoalAnnualProgressView(goal: goal)
+                .padding(.bottom)
+            
+            ContributingTagListView(goal: goal)
+        }
+    }
+    
+//    MARK: ContributingTagListView
+    private struct ContributingTagListView: View {
+        
+        @State private var tags: [RecallCategory] = []
+        @State private var showingAllTags: Bool = false
+        
+        let goal: RecallGoal
+        
+        private func getTags() async {
+            let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
+                .filter { tag in tag.worksTowards(goal: goal) }
+            
+            withAnimation { self.tags = tags }
+        }
+        
+        var body: some View {
+            VStack(alignment: .leading) {
+                
+                let label = showingAllTags ? "Show Less" : "Show All"
+                
+                makeSectionHeader("tag", title: "Contributing Tags")
+                
+                WrappedHStack(collection: tags, spacing: 7) { tag in
+                    UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                        .rectangularBackground(10, style: .secondary)
+                }
+                .frame(maxHeight: showingAllTags ? 300 : 40, alignment: .top)
+                .clipped()
+                
+                UniversalButton {
+                    UniversalText( label, size: Constants.UISmallTextSize, font: Constants.mainFont )
+                        .opacity(0.75)
+                        .padding(.leading)
+                } action: { showingAllTags.toggle() }
+            }
+            .onChange(of: showingAllTags) { Task { await getTags() } }
+            .task { await getTags() }
+        }
+    }
+    
+//    MARK: - GoalViewSection
+    @ViewBuilder
+    private func makeGoalViewSection<T: View>( @ViewBuilder contentBuilder: () -> T) -> some View {
+        VStack(alignment: .leading) {
+            contentBuilder()
+        }
+            .rectangularBackground(style: .primary)
+    }
+    
+//    MARK: Content
+    @ViewBuilder
+    private func makeContent() -> some View {
+        ScrollView {
+            LazyVStack(spacing: 7) {
+                
+                makeGoalViewSection {
+                    makeAnnualProgressView()
+                }
+            }
+        }
+//        .ignoresSafeArea()
+        .scrollClipDisabled()
+    }
+    
+//    MARK: - Body
+    var body: some View {
+        
+        GeometryReader { geo in
+            VStack {
+                makeHeader()
+                    .padding()
+                    .foregroundStyle(.black)
+                
+                makeContent()
+                    .frame(height: geo.size.height)
+            }
+        }
+        .background( Colors.getAccent(from: colorScheme).gradient )
+        
+        .sheet(isPresented: $showingGoalHistoryView) {
+            makeGoalHistory()
+                .padding(.top)
+        }
     }
     
     

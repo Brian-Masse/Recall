@@ -112,6 +112,20 @@ class RecallGoalDataStore: Object {
         }
     }
     
+    @MainActor
+    func checkCorrectness() -> Bool {
+        if let node = goalHistory.last {
+            var sum: Double = 0
+            for id in node.contributingEvents {
+                if let event = RecallCalendarEvent.getRecallCalendarEvent(from: id) {
+                    sum += event.getLengthInHours()
+                }
+            }
+            
+            if node.contributingHours != sum { return false }
+        }
+        return true
+    }
     
 //    MARK: - Convenience Functions
     @MainActor

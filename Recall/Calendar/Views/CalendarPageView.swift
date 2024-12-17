@@ -186,6 +186,53 @@ struct CalendarPageView: View {
         date.formatted(.dateTime.weekday().month().day())
     }
     
+    @MainActor
+    private func testGoalHistory() async {
+        if let productivityGoal: RecallGoal = RealmManager.retrieveObjectsInList(where: { goal in
+            goal.label == "Productivity"
+        }).first {
+            
+            let key = productivityGoal.key
+            
+            for i in 0..<15 {
+                let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
+                                                title: "test",
+                                                notes: "",
+                                                urlString: "",
+                                                location: nil,
+                                                images: [],
+                                                startTime: .now,
+                                                endTime: .now + Constants.HourTime,
+                                                categoryID: .init(),
+                                                goalRatings: [key : "1"],
+                                                previewEvent: false)
+                
+                RealmManager.addObject(event)
+                
+                await RecallModel.wait(for: 0.2)
+                if !productivityGoal.dataStore!.checkCorrectness() {
+                    print("insertion")
+                }
+                
+                event.updateTime( endDate: .now + Constants.HourTime * 2 )
+                
+                await RecallModel.wait(for: 0.2)
+                if !productivityGoal.dataStore!.checkCorrectness() {
+                    print("insertion")
+                }
+                
+                event.delete()
+                
+                await RecallModel.wait(for: 0.2)
+                if !productivityGoal.dataStore!.checkCorrectness() {
+                    print("insertion")
+                }
+            }
+        }
+        
+//        let event =
+    }
+    
 //    MARK: Headers
     @ViewBuilder
     private func makeHeader() -> some View {
@@ -198,6 +245,12 @@ struct CalendarPageView: View {
             } action: { viewModel.setCurrentDay(to: .now) }
 
             Spacer()
+            
+            RecallIcon("calendar")
+                .rectangularBackground(style: .secondary)
+                .onTapGesture {
+                    Task { await testGoalHistory() }
+                }
             
             RecallIcon("calendar")
                 .rectangularBackground(style: .secondary)
@@ -222,9 +275,6 @@ struct CalendarPageView: View {
                 
             
             CalendarContainer(events: Array(events), summaries: dailySummaries)
-                .onAppear {
-                    print(events.count)
-                }
         }
         .padding(7)
         .universalBackground()
