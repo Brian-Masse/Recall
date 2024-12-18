@@ -198,8 +198,8 @@ struct GoalView: View {
         }
     }
     
-//    MARK: makeOverviewView
-
+//    MARK: - makeOverviewView
+    @State private var count: Int = 0
     
     @ViewBuilder
     private func makeOverviewView() -> some View {
@@ -207,16 +207,70 @@ struct GoalView: View {
             makeSectionHeader("text.alignleft", title: "\(goal.goalDescription)")
             
             HStack {
-                makeMetaDataLabel(icon: "circle.badge.exclamationmark", title: "\(goal.priority)")
+                makeMetaDataLabel(icon: "circle.badge.exclamationmark",
+                                  title: "\(goal.priority) Priority")
                 
-                makeMetaDataLabel(icon: "arrow.trianglehead.clockwise.rotate.90", title: "\(goal.frequency)")
+                makeMetaDataLabel(icon: "arrow.trianglehead.clockwise.rotate.90",
+                                  title: goal.getGoalFrequencyDescription())
                 
-                makeMetaDataLabel(icon: "gauge.with.needle", title: "\(goal.targetHours)")
+                makeMetaDataLabel(icon: "gauge.with.needle",
+                                  title: goal.getTargetHoursDescription())
             }
+            .padding(.bottom)
+            
+            makeSectionHeader("flag.pattern.checkered", title: "Current Progress")
+            ProgressBarView(goal: goal)
             
             Rectangle()
                 .frame(height: 500)
                 .foregroundStyle(.clear)
+        }
+    }
+    
+//    MARK: ProgressBarView
+    private struct ProgressBarView: View {
+        
+        @State private var currentProgress: Double = 0
+        
+        let goal: RecallGoal
+        
+        private func getProgress() async {
+            var progress: Double = 0
+            if let store = goal.dataStore {
+                progress = await store.getCurrentGoalProgress(goalFrequency: goal.frequency)
+            }
+
+            withAnimation { currentProgress = progress }
+        }
+        
+        var body: some View {
+            VStack(alignment: .leading) {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        
+                        RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                            .universalStyledBackgrond(.secondary, onForeground: true)
+                        
+                        RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                            .frame(width: geo.size.width * min(1, currentProgress / Double(goal.targetHours)))
+                            .universalStyledBackgrond(.accent, onForeground: true)
+                            .overlay(alignment: .trailing) {
+                                UniversalText( "\(currentProgress)", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                                    .foregroundStyle(.black)
+                                    .padding(.trailing)
+                            }
+                    }
+                }.frame(height: 30)
+                
+                HStack {
+                    UniversalText( "0", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                    Spacer()
+                    UniversalText( "\(goal.targetHours)", size: Constants.UISmallTextSize, font: Constants.mainFont )
+                }
+                .padding(.horizontal)
+                .opacity(0.75)
+            }
+                .task { await getProgress() }
         }
     }
     

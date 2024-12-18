@@ -211,6 +211,18 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         return Date.now.timeIntervalSince( getStartDate() ) / ( rawFrequence == .daily ? Constants.DayTime : Constants.WeekTime)
     }
     
+    func getGoalFrequencyDescription() -> String {
+        self.frequency == 7 ? "Weekly" : "Daily"
+    }
+    
+    func getTargetHoursDescription() -> String {
+        if self.type == GoalType.byTag.rawValue {
+            return "\(targetHours) time" + (targetHours == 1 ? "" : "s")
+        } else {
+            return "\(targetHours) hr" + (targetHours == 1 ? "" : "s")
+        }
+    }
+    
 //    @MainActor
     func goalWasMet(on date: Date, events: [RecallCalendarEvent]) async -> Bool {
         true

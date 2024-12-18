@@ -98,6 +98,24 @@ class RecallGoalDataStore: Object {
         Task { self.goal = await getGoal() }
     }
     
+//    MARK: getCurrentGoalProgress
+    func getCurrentGoalProgress(goalFrequency: Int) async -> Double {
+        let count = goalHistory.count
+        let historySubset = Array(goalHistory[ (count - 7)..<count ])
+        
+//        get the start of the time period
+        let startOfWeek = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: .now).date! - Constants.DayTime
+        let startDate = goalFrequency == 7 ? startOfWeek : .now
+        
+        print(startDate)
+        
+        let contributingNodes = historySubset.filter{ $0.date >= startDate }
+        return contributingNodes.reduce(0) { partialResult, node in
+            print( node.getContributingHours() )
+            return partialResult + node.getContributingHours()
+        }
+    }
+    
 //    MARK: - HandleEventUpdate
     @MainActor
     static func handleEventUpdate( _ event: RecallCalendarEvent, updateType: RecallModel.UpdateType ) async {

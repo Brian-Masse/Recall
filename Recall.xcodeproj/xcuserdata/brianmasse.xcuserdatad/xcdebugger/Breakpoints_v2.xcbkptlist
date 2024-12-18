@@ -302,8 +302,8 @@
             filePath = "Recall/Goals/RecallGoal.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "334"
-            endingLineNumber = "334"
+            startingLineNumber = "346"
+            endingLineNumber = "346"
             landmarkName = "RecallGoal"
             landmarkType = "3">
          </BreakpointContent>
@@ -334,8 +334,8 @@
             filePath = "Recall/Goals/RecallGoal.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "341"
-            endingLineNumber = "341"
+            startingLineNumber = "353"
+            endingLineNumber = "353"
             landmarkName = "RecallGoal"
             landmarkType = "3">
          </BreakpointContent>
@@ -715,8 +715,8 @@
             filePath = "Recall/Goals/RecallGoalDataStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
+            startingLineNumber = "306"
+            endingLineNumber = "306"
             landmarkName = "updateGoalHistoryWithGoalRatings(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -731,8 +731,8 @@
             filePath = "Recall/Goals/RecallGoalDataStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "293"
-            endingLineNumber = "293"
+            startingLineNumber = "311"
+            endingLineNumber = "311"
             landmarkName = "updateGoalHistoryWithGoalRatings(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -793,8 +793,8 @@
             filePath = "Recall/Goals/RecallGoalDataStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "135"
-            endingLineNumber = "135"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
             landmarkName = "callEventUpdater(_:updater:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -809,8 +809,8 @@
             filePath = "Recall/Goals/RecallGoalDataStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "134"
-            endingLineNumber = "134"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
             landmarkName = "callEventUpdater(_:updater:)"
             landmarkType = "7">
          </BreakpointContent>
