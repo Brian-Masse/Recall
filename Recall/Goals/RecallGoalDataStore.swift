@@ -173,6 +173,8 @@ class RecallGoalDataStore: Object {
         if dataValidated { return }
         
         await setGoalHistory()
+        await setTotalContributions()
+        await setTotalContributingHours()
         
         await updateDataValidation(to: true)
     }
@@ -242,6 +244,9 @@ class RecallGoalDataStore: Object {
             history.append(node)
             store.updateGoalHistory(with: history)
         }
+        
+        store.incrementToatlContributions(by: 1)
+        store.incrementTotalContributingHours(by: event.getLengthInHours())
     }
     
 //    MARK: updateGoalHistoryWithDeletion
@@ -261,6 +266,10 @@ class RecallGoalDataStore: Object {
             let node = history[i]
             node.removeEvent(event)
         }
+        
+        store.incrementToatlContributions(by: -1)
+        store.incrementTotalContributingHours(by: -event.getLengthInHours())
+        
     }
     
 //    MARK: updateGoalHistoryWithEventData
@@ -306,5 +315,66 @@ class RecallGoalDataStore: Object {
         }
 
         await handleEventUpdate(event, updateType: .insert)
+    }
+    
+//    MARK: totalContributions
+    @Persisted var totalContributions: Int = 0
+    
+    @MainActor
+    private func setTotalContributions(to totalContributions: Int) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.totalContributions = totalContributions
+        }
+    }
+    
+    @MainActor
+    private func incrementToatlContributions(by amount: Int) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.totalContributions += amount
+        }
+    }
+    
+    func setTotalContributions() async {
+        var totalContributions: Int = 0
+        for node in goalHistory {
+            totalContributions += node.contributingEvents.count
+        }
+        
+        await setTotalContributions(to: totalContributions)
+    }
+    
+    func getContributionFrequency() -> Double {
+        Double(totalContributions) / Double(RecallModel.index.daysSinceFirstEvent())
+    }
+    
+//    MARK: totalContributingHours
+    @Persisted var totalContributingHours: Double = 0
+    
+    
+    @MainActor
+    private func setTotalContributingHours(to totalContributingHours: Double) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.totalContributingHours = totalContributingHours
+        }
+    }
+    
+    @MainActor
+    private func incrementTotalContributingHours(by amount: Double) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.totalContributingHours += amount
+        }
+    }
+    
+    func setTotalContributingHours() async {
+        var totalContributingHours: Double = 0
+        for node in goalHistory {
+            totalContributingHours += node.getContributingHours()
+        }
+        
+        await setTotalContributingHours(to: totalContributingHours)
+    }
+    
+    func getAverageHourlyContribution() -> Double {
+        Double(totalContributingHours) / Double(self.totalContributions)
     }
 }

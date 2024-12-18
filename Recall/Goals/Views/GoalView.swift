@@ -232,10 +232,6 @@ struct GoalView: View {
             
             makeSectionHeader("flag.pattern.checkered", title: "Current Progress")
             ProgressBarView(goal: goal)
-            
-            Rectangle()
-                .frame(height: 500)
-                .foregroundStyle(.clear)
         }
     }
     
@@ -286,6 +282,52 @@ struct GoalView: View {
         }
     }
     
+//    MARK: - makeGoalDataView
+    private func formatData(_ data: Double) -> String {
+        "\(data.round(to: 2))"
+    }
+    
+    @ViewBuilder
+    private func makeGoalDataPoint( icon: String, label: String, data: String ) -> some View {
+        HStack {
+            RecallIcon(icon)
+            UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            
+            Spacer()
+            
+            UniversalText(data, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+        }
+        .rectangularBackground(style: .secondary)
+    }
+    
+    @ViewBuilder
+    private func makeGoalDataView() -> some View {
+        VStack(alignment: .leading) {
+            makeSectionHeader("chart.dots.scatter", title: "data")
+            
+            makeGoalDataPoint(icon: "number",
+                              label: "Total Contributions",
+                              data: "\(goal.dataStore?.totalContributions ?? 0)" )
+            
+            makeGoalDataPoint(icon: "gauge.with.needle",
+                              label: "Contribution Frequency",
+                              data: formatData(goal.dataStore?.getContributionFrequency() ?? 0) )
+            
+            makeGoalDataPoint(icon: "hourglass.bottomhalf.filled",
+                              label: "Total Contributing Hours",
+                              data: formatData(goal.dataStore?.totalContributingHours ?? 0) )
+            
+            makeGoalDataPoint(icon: "camera.metering.center.weighted.average",
+                              label: "Average Contribution Time",
+                              data: formatData(goal.dataStore?.getAverageHourlyContribution() ?? 0) )
+            
+            Rectangle()
+                .frame(height: 100)
+                .foregroundStyle(.clear)
+        }
+    }
+    
+    
 //    MARK: - GoalViewSection
     @ViewBuilder
     private func makeGoalViewSection<T: View>( first: Bool = false, last: Bool = false, @ViewBuilder contentBuilder: () -> T) -> some View {
@@ -311,8 +353,12 @@ struct GoalView: View {
                     makeAnnualProgressView()
                 }
                 
-                makeGoalViewSection(last: true) {
+                makeGoalViewSection() {
                     makeOverviewView()
+                }
+                
+                makeGoalViewSection(last: true) {
+                    makeGoalDataView()
                 }
             }
         }
