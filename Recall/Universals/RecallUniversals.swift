@@ -75,7 +75,14 @@ func makeMetaDataLabel(icon: String, title: String, action: (() -> Void)? = nil)
 //MARK: - YearCalendar
 struct YearCalendar: View {
     let maxSaturation: Double
+    let color: Color?
     let getValue: (Date) -> Double
+    
+    init(maxSaturation: Double, color: Color? = nil, getValue: @escaping (Date) -> Double) {
+        self.maxSaturation = maxSaturation
+        self.color = color
+        self.getValue = getValue
+    }
     
     private let numberOfDays: Int = 365
     private let width: Double = 15
@@ -84,6 +91,7 @@ struct YearCalendar: View {
     private struct DayView: View {
         
         @Environment(\.dismiss) var dismiss
+        @Environment(\.colorScheme) var colorScheme
         @ObservedObject private var calendarViewModel = RecallCalendarContainerViewModel.shared
         @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
         
@@ -92,6 +100,7 @@ struct YearCalendar: View {
         
         let width: Double
         let maxSaturation: Double
+        let color: Color?
         let getValue: (Date) -> Double
         
         @State private var saturation: Double = 0
@@ -106,7 +115,7 @@ struct YearCalendar: View {
         var body: some View {
             RoundedRectangle(cornerRadius: 4)
                 .frame(width: width, height: width)
-                .universalStyledBackgrond(.accent, onForeground: true)
+                .foregroundStyle(color == nil ? Colors.getAccent(from: colorScheme) : color!)
                 .opacity(saturation / maxSaturation)
                 .onTapGesture {
                     calendarViewModel.setCurrentDay(to: startDate + Constants.DayTime * Double(index))
@@ -184,6 +193,7 @@ struct YearCalendar: View {
                                             index: dateIndex,
                                             width: width,
                                             maxSaturation: maxSaturation,
+                                            color: color,
                                             getValue: getValue)
                                 }
                             }

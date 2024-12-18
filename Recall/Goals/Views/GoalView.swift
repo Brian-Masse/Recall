@@ -146,7 +146,7 @@ struct GoalView: View {
             VStack(alignment: .trailing) {
                 makeFilter()
                 
-                YearCalendar(maxSaturation: maxSaturation) { date in
+                YearCalendar(maxSaturation: maxSaturation, color: goal.getColor()) { date in
                     goalHistory[ date.formatted(date: .numeric, time: .omitted) ] ?? 0
                 }
             }
@@ -261,7 +261,7 @@ struct GoalView: View {
                         
                         RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                             .frame(width: geo.size.width * min(1, currentProgress / Double(goal.targetHours)))
-                            .universalStyledBackgrond(.accent, onForeground: true)
+                            .foregroundStyle(goal.getColor())
                             .overlay(alignment: .trailing) {
                                 UniversalText( "\(currentProgress)", size: Constants.UISmallTextSize, font: Constants.mainFont )
                                     .foregroundStyle(.black)
@@ -378,7 +378,7 @@ struct GoalView: View {
             }
         }
         .padding(5)
-        .background( Colors.getAccent(from: colorScheme).gradient )
+        .background( goal.getColor().gradient )
         .ignoresSafeArea(edges: .bottom)
         
         .sheet(isPresented: $showingGoalHistoryView) {

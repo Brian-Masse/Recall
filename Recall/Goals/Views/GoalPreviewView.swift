@@ -124,6 +124,7 @@ struct GoalPreviewView: View {
         .task {
             goal.checkGoalDataStoreExists()
             await goal.dataStore!.setAllData()
+            goal.checkColor()
         }
         .alert("Delete Goal?", isPresented: $showingDeletionAlert) {
             Button(role: .destructive) { goal.delete() } label:    { Label("delete", systemImage: "trash") }

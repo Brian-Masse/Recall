@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import UIUniversals
+import SwiftUI
 
 //    MARK: Goal Node
 //    These will be stored in calendar events,
@@ -95,6 +96,11 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
     
     @Persisted var dataStore: RecallGoalDataStore? = nil
     
+    @Persisted var r: Double = 0
+    @Persisted var g: Double = 0
+    @Persisted var b: Double = 0
+    
+    
     @Persisted var label: String = ""
     @Persisted var goalDescription: String = ""
     
@@ -164,7 +170,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         RecallModel.shared.updateGoal(self)
     }
     
-//    MARK: - Convenience Functions
+//    MARK: - checkGoalDataStoreExists
 //    for goals created before the addition of the RecallGoalDataStore, they will need to create them as soon as possible
 //    this function is run when a goal first appears on screen, and determines whether it has a store or not
     func checkGoalDataStoreExists() {
@@ -178,6 +184,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         }
     }
     
+//    MARK: getGoal
     @MainActor
     static func getGoal(from id: ObjectId) -> RecallGoal? {
         let results: Results<RecallGoal> = RealmManager.retrieveObjectsInResults { query in query._id == id }
@@ -185,10 +192,8 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         return first
     }
     
-    func getEncryptionKey() -> String {
-        label + ( overrideKey ?? _id.stringValue)  
-    }
-    
+//    MARK: getEncryptionKey
+    func getEncryptionKey() -> String { label + ( overrideKey ?? _id.stringValue) }
     var key: String { getEncryptionKey() }
     
     @MainActor
@@ -199,11 +204,13 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         return goals.first
     }
     
+//    MARK: getStartDate
     @MainActor
     func getStartDate() -> Date {
         max( RecallModel.getEarliestEventDate().resetToStartOfDay(), creationDate.resetToStartOfDay() )
     }
     
+//    MARK: getNumberofTimePeriods
 //    This tells how many times you could have met the goal since creation (differs based on week vs day)
     @MainActor
     func getNumberOfTimePeriods() -> Double {
@@ -211,6 +218,7 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         return Date.now.timeIntervalSince( getStartDate() ) / ( rawFrequence == .daily ? Constants.DayTime : Constants.WeekTime)
     }
     
+//    MARK: - Descriptions
     func getGoalFrequencyDescription() -> String {
         self.frequency == 7 ? "Weekly" : "Daily"
     }
@@ -223,18 +231,39 @@ class RecallGoal: Object, Identifiable, OwnedRealmObject {
         }
     }
     
-//    @MainActor
-    func goalWasMet(on date: Date, events: [RecallCalendarEvent]) async -> Bool {
-        true
-//        await Double(self.getProgressTowardsGoal(from: events, on: date )) >= Double(targetHours)
+//    MARK: Color
+    func updateColor(_ color: Color) {
+        let components = color.components
+        RealmManager.updateObject(self) { thawed in
+            thawed.r = components.red
+            thawed.g = components.green
+            thawed.b = components.blue
+        }
     }
     
-    func byTag() -> Bool {
-        GoalType.getRawType(from: self.type) == .byTag
+    func getColor() -> Color {
+        .init(red: r, green: g, blue: b)
+    }
+    
+//    for goals created before goals had color, update their color to the accentColor of the app
+    func checkColor() {
+        if (r == 0 && g == 0 && b == 0 ) {
+            updateColor( Colors.getAccent(from: .light) )
+        }
     }
     
     
-//    MARK: Data Aggregators
+//    MARK: Data - Aggregators
+    //    @MainActor
+        func goalWasMet(on date: Date, events: [RecallCalendarEvent]) async -> Bool {
+            true
+    //        await Double(self.getProgressTowardsGoal(from: events, on: date )) >= Double(targetHours)
+        }
+        
+        func byTag() -> Bool {
+            GoalType.getRawType(from: self.type) == .byTag
+        }
+    
 //    @MainActor
 //    func retrieveProgressIndex(on date: Date) -> DictionaryNode? {
 //        let key = DictionaryNode.makeKey(from: date)
