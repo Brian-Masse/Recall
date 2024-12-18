@@ -107,12 +107,9 @@ class RecallGoalDataStore: Object {
         let startOfWeek = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: .now).date! - Constants.DayTime
         let startDate = goalFrequency == 7 ? startOfWeek : .now
         
-        print(startDate)
-        
         let contributingNodes = historySubset.filter{ $0.date >= startDate }
         return contributingNodes.reduce(0) { partialResult, node in
-            print( node.getContributingHours() )
-            return partialResult + node.getContributingHours()
+            partialResult + node.getContributingHours()
         }
     }
     

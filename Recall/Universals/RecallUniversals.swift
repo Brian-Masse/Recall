@@ -74,7 +74,6 @@ func makeMetaDataLabel(icon: String, title: String, action: (() -> Void)? = nil)
 
 //MARK: - YearCalendar
 struct YearCalendar: View {
-    
     let maxSaturation: Double
     let getValue: (Date) -> Double
     
@@ -83,6 +82,11 @@ struct YearCalendar: View {
     
 //    MARK: YearCalendarDayView
     private struct DayView: View {
+        
+        @Environment(\.dismiss) var dismiss
+        @ObservedObject private var calendarViewModel = RecallCalendarContainerViewModel.shared
+        @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
+        
         let startDate: Date
         let index: Int
         
@@ -104,6 +108,12 @@ struct YearCalendar: View {
                 .frame(width: width, height: width)
                 .universalStyledBackgrond(.accent, onForeground: true)
                 .opacity(saturation / maxSaturation)
+                .onTapGesture {
+                    calendarViewModel.setCurrentDay(to: startDate + Constants.DayTime * Double(index))
+                    dismiss()
+                    coordinator.goTo(.calendar)
+                }
+            
                 .task { await loadSaturation() }
                 .onChange(of: maxSaturation) { Task { await loadSaturation() } }
         }
