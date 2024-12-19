@@ -499,10 +499,10 @@ struct RecallCalendarEventView: View {
             
             if #available(iOS 18, *) {
                 makePhotoScroller()
-                    .padding(7)
+                    .padding(5)
             } else {
                 makeRegularLayout()
-                    .padding(7)
+                    .padding(5)
             }
         }
         .background(.black)

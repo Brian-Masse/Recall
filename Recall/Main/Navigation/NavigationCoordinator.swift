@@ -170,9 +170,7 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
                              dailySummaries: data.summaries)
             
         case .goals:
-            GoalsPageView(goals: data.goals,
-                          events: data.events,
-                          tags: data.tags)
+            GoalsPageView(goals: data.goals)
             
         case .tags:
             CategoriesPageView(events: data.events,

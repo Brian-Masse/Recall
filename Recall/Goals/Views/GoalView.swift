@@ -54,7 +54,7 @@ struct GoalView: View {
         HStack {
             UniversalText(goal.label, size: Constants.UIHeaderTextSize, font: Constants.titleFont)
             Spacer()
-            IconButton("newspaper") { showingGoalHistoryView = true }
+//            IconButton("newspaper") { showingGoalHistoryView = true }
             
             DismissButton()
         }
@@ -82,11 +82,21 @@ struct GoalView: View {
         @State private var goalHistory: [String : Double] = [:]
         @State private var tags: [RecallCategory] = []
         
+        @State private var dataLoaded: Bool = false
+        
         @State private var maxSaturation: Double = 0
         
-        @Binding var filteringTag: RecallCategory?
+        @Binding private var filteringTag: RecallCategory?
         
-        let goal: RecallGoal
+        private let goal: RecallGoal
+        
+        private let includeFiltering: Bool
+        
+        init( filteringTag: Binding<RecallCategory?> = .constant(nil), goal: RecallGoal, includingFiltering: Bool = true) {
+            self._filteringTag = filteringTag
+            self.goal = goal
+            self.includeFiltering = includingFiltering
+        }
         
         private func toggleFilteringTag(tag: RecallCategory) {
             if filteringTag == tag { filteringTag = nil }
@@ -94,6 +104,8 @@ struct GoalView: View {
         }
         
         private func getTags() async {
+            if !tags.isEmpty { return }
+            
             let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
                 .filter { $0.worksTowards(goal: goal) }
             
@@ -101,6 +113,8 @@ struct GoalView: View {
         }
         
         private func getGoalHistory() async {
+            if !goalHistory.isEmpty && !includeFiltering { return }
+            
             if let store = goal.dataStore {
                 
                 var maxSaturation: Double = 0
@@ -144,10 +158,17 @@ struct GoalView: View {
 //    MARK: GoalAnnualProgressViewBody
         var body: some View {
             VStack(alignment: .trailing) {
-                makeFilter()
+                if includeFiltering { makeFilter() } 
                 
-                YearCalendar(maxSaturation: maxSaturation, color: goal.getColor()) { date in
-                    goalHistory[ date.formatted(date: .numeric, time: .omitted) ] ?? 0
+                if !goalHistory.isEmpty {
+                    YearCalendar(maxSaturation: maxSaturation, color: goal.getColor(), forPreview: !includeFiltering) { date in
+                        goalHistory[ date.formatted(date: .numeric, time: .omitted) ] ?? 0
+                    }
+                } else {
+                    RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                        .universalStyledBackgrond(.secondary, onForeground: true)
+                        .frame(height: 50)
+                    
                 }
             }
             .animation(.easeInOut, value: filteringTag)
@@ -171,6 +192,7 @@ struct GoalView: View {
         let goal: RecallGoal
         
         private func getTags() async {
+            if !tags.isEmpty { return }
             let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
                 .filter { tag in tag.worksTowards(goal: goal) }
             
@@ -236,7 +258,7 @@ struct GoalView: View {
     }
     
 //    MARK: ProgressBarView
-    private struct ProgressBarView: View {
+    struct ProgressBarView: View {
         
         @State private var currentProgress: Double = 0
         

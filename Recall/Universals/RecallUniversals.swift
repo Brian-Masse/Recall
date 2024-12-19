@@ -78,14 +78,17 @@ struct YearCalendar: View {
     let color: Color?
     let getValue: (Date) -> Double
     
-    init(maxSaturation: Double, color: Color? = nil, getValue: @escaping (Date) -> Double) {
+    init(maxSaturation: Double, color: Color? = nil, forPreview: Bool = false, getValue: @escaping (Date) -> Double) {
         self.maxSaturation = maxSaturation
         self.color = color
         self.getValue = getValue
+        self.forPreview = forPreview
+        self.width = forPreview ? 12 : 15
     }
     
+    private let forPreview: Bool
     private let numberOfDays: Int = 365
-    private let width: Double = 15
+    private let width: Double
     
 //    MARK: YearCalendarDayView
     private struct DayView: View {
@@ -101,6 +104,8 @@ struct YearCalendar: View {
         let width: Double
         let maxSaturation: Double
         let color: Color?
+        let forPreview: Bool
+        
         let getValue: (Date) -> Double
         
         @State private var saturation: Double = 0
@@ -117,14 +122,15 @@ struct YearCalendar: View {
                 .frame(width: width, height: width)
                 .foregroundStyle(color == nil ? Colors.getAccent(from: colorScheme) : color!)
                 .opacity(saturation / maxSaturation)
-                .onTapGesture {
-                    calendarViewModel.setCurrentDay(to: startDate + Constants.DayTime * Double(index))
-                    dismiss()
-                    coordinator.goTo(.calendar)
-                }
-            
                 .task { await loadSaturation() }
                 .onChange(of: maxSaturation) { Task { await loadSaturation() } }
+                .if( !forPreview ) { view in
+                    view.onTapGesture {
+                        calendarViewModel.setCurrentDay(to: startDate + Constants.DayTime * Double(index))
+                        dismiss()
+                        coordinator.goTo(.calendar)
+                    }
+                }
         }
     }
     
@@ -167,7 +173,7 @@ struct YearCalendar: View {
 //    MARK: YearCalendarBody
     var body: some View {
         
-        let startDate = Date.now - (Constants.DayTime * Double(numberOfDays))
+        let startDate = Date.now.resetToStartOfDay() - (Constants.DayTime * Double(numberOfDays))
         let startDateOffset = Calendar.current.component(.weekday, from: startDate) - 1
         let colCount = ceil(Double(numberOfDays + startDateOffset) / 7)
         
@@ -175,9 +181,11 @@ struct YearCalendar: View {
             LazyHStack(spacing: 3) {
                 ForEach(0..<Int(colCount), id: \.self) { col in
                     
-                    VStack(alignment: .leading, spacing: 3) {
+                    LazyVStack(alignment: .leading, spacing: 3) {
                         
-                        MonthLabel(startDate: startDate, index: (col * 7) - startDateOffset, width: width)
+                        if !forPreview {
+                            MonthLabel(startDate: startDate, index: (col * 7) - startDateOffset, width: width)
+                        }
                         
                         ForEach(0..<7, id: \.self) { row in
                             
@@ -194,6 +202,7 @@ struct YearCalendar: View {
                                             width: width,
                                             maxSaturation: maxSaturation,
                                             color: color,
+                                            forPreview: forPreview,
                                             getValue: getValue)
                                 }
                             }
