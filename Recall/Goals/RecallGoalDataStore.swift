@@ -61,6 +61,10 @@ class RecallGoalHistoryNode: Object {
             thawed.contributingTags.append(event.category?._id ?? .init())
             thawed.contributingHoursByEvent.append(event.getLengthInHours())
         }
+        
+        if !checkCorrectness() {
+            print("ver very bad thing just happened")
+        }
     }
     
     func removeEvent(_ event: RecallCalendarEvent) {
@@ -239,7 +243,8 @@ class RecallGoalDataStore: Object {
         } else {
             let node = RecallGoalHistoryNode(date: event.startTime)
             node.contributingEvents.append(event._id)
-//            node.contributingHours += event.getLengthInHours()
+            node.contributingTags.append(event.category?._id ?? .init())
+            node.contributingHoursByEvent.append(event.getLengthInHours())
             
             history.append(node)
             store.updateGoalHistory(with: history)

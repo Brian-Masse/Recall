@@ -382,20 +382,14 @@ struct RecallCalendarEventView: View {
     @ViewBuilder
     private func makeBackground() -> some View {
         GeometryReader { geo in
-            ZStack(alignment: .top) {
-                
+            if let image = self.decodedImages.first {
                 Group {
-                    if let image = self.decodedImages.first {
-                        if #available(iOS 18, *) {
-                            makeLargePhotoCarousel(in: geo)
-                        } else {
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        }
+                    if #available(iOS 18, *) {
+                        makeLargePhotoCarousel(in: geo)
                     } else {
-                        Rectangle()
-                            .foregroundStyle(event.getColor().gradient)
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
                     }
                 }
                 .overlay {
@@ -403,9 +397,11 @@ struct RecallCalendarEventView: View {
                         .allowsHitTesting(false)
                         .contentShape(NullContentShape())
                 }
-                .ignoresSafeArea()
-                .frame(width: geo.size.width, height: geo.size.height * 0.9)
-                .contentShape(Rectangle())
+                .frame(width: geo.size.width, height: geo.size.height * 0.5)
+            } else {
+                Rectangle()
+                    .foregroundStyle(event.getColor().gradient)
+                    .ignoresSafeArea()
             }
         }
     }
