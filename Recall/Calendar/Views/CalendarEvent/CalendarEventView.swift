@@ -433,16 +433,18 @@ struct RecallCalendarEventView: View {
             }
             .padding(.top)
             .rectangularBackground(style: .primary)
+            .clipShape(UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
+                                              topTrailingRadius: Constants.UILargeCornerRadius))
             
             VStack {
                 makeActionButtons()
                 
                 Spacer()
-            }.rectangularBackground(style: .primary)
+            }
+            .rectangularBackground(style: .primary)
+            .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: Constants.UILargeCornerRadius,
+                                              bottomTrailingRadius: Constants.UILargeCornerRadius))
         }
-        .clipShape(RoundedRectangle(cornerRadius: largeCornerRadius))
-        .padding(.horizontal, 5)
-        .padding(.bottom, 20)
     }
     
     @ViewBuilder
@@ -501,12 +503,15 @@ struct RecallCalendarEventView: View {
             
             if #available(iOS 18, *) {
                 makePhotoScroller()
+                    .padding(7)
             } else {
                 makeRegularLayout()
+                    .padding(7)
             }
         }
         .background(.black)
         .task { await onAppear() }
+        .ignoresSafeArea(edges: .bottom)
         
         .onChange(of: event.images) { Task { await onAppear() } }
         .onChange(of: showEditView) {
