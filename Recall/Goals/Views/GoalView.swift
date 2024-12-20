@@ -70,7 +70,6 @@ struct GoalView: View {
             
             GoalAnnualProgressView(filteringTag: $filteringTag, goal: goal)
                 .padding(.bottom)
-                .padding(.top, -40)
             
             ContributingTagListView(filteringTag: $filteringTag, goal: goal)
         }
@@ -114,6 +113,7 @@ struct GoalView: View {
         
         private func getGoalHistory() async {
             if !goalHistory.isEmpty && !includeFiltering { return }
+            self.maxSaturation = 0
             
             if let store = goal.dataStore {
                 
@@ -128,37 +128,14 @@ struct GoalView: View {
                 
                 withAnimation {
                     self.goalHistory = historyDic
-                    self.maxSaturation = maxSaturation
+                    self.maxSaturation = min(maxSaturation, Double(goal.targetHours) / 3)
                 }
-            }
-        }
-        
-        @ViewBuilder
-        private func makeFilter() -> some View {
-            Menu {
-                ForEach(tags, id: \.self) { tag in
-                    Button { toggleFilteringTag(tag: tag) } label: {
-                        HStack {
-                            if tag == filteringTag { Label(tag.label, systemImage: "checkmark") }
-                            else { Text(tag.label) }
-                        }
-                    }
-                }
-                
-            } label: {
-                HStack {
-                    UniversalText("filter", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-                    RecallIcon("line.3.horizontal.decrease.circle")
-                }
-                .rectangularBackground(10, style: .secondary)
-                .universalTextStyle()
             }
         }
         
 //    MARK: GoalAnnualProgressViewBody
         var body: some View {
             VStack(alignment: .trailing) {
-                if includeFiltering { makeFilter() } 
                 
                 if !goalHistory.isEmpty {
                     YearCalendar(maxSaturation: maxSaturation, color: goal.getColor(), forPreview: !includeFiltering) { date in
@@ -216,7 +193,7 @@ struct GoalView: View {
                     UniversalText(tag.label, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                         .rectangularBackground(10, style: .secondary)
                         .opacity( (filteringTag == nil ? 1 : ( filteringTag == tag ? 1 : 0.35 ) ))
-                        .onTapGesture { toggleFilteringTag(tag: tag) }
+                        .onTapGesture { withAnimation { toggleFilteringTag(tag: tag) }}
                 }
                 .frame(maxHeight: showingAllTags ? 300 : 40, alignment: .top)
                 .clipped()

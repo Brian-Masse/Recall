@@ -83,7 +83,7 @@ struct YearCalendar: View {
         self.color = color
         self.getValue = getValue
         self.forPreview = forPreview
-        self.width = forPreview ? 12 : 15
+        self.width = forPreview ? 15 : 15
     }
     
     private let forPreview: Bool
@@ -183,9 +183,8 @@ struct YearCalendar: View {
                     
                     LazyVStack(alignment: .leading, spacing: 3) {
                         
-                        if !forPreview {
-                            MonthLabel(startDate: startDate, index: (col * 7) - startDateOffset, width: width)
-                        }
+                        MonthLabel(startDate: startDate, index: (col * 7) - startDateOffset, width: width)
+                            .opacity(0.5)
                         
                         ForEach(0..<7, id: \.self) { row in
                             
