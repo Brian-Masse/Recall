@@ -42,6 +42,7 @@ struct GoalPreviewView: View {
             makeMetaDataLabel(icon: "gauge.with.needle",
                               title: goal.getTargetHoursDescription())
         }
+        .frame(height: 30)
         .padding(.bottom)
     }
     
@@ -52,10 +53,10 @@ struct GoalPreviewView: View {
             VStack(alignment: .leading) {
                 makeHeader()
                 
-//                makeMetaData()
                 GoalView.GoalAnnualProgressView(goal: goal, includingFiltering: false)
                 
-                GoalView.ProgressBarView(goal: goal)
+//                makeSectionHeader("flag.pattern.checkered", title: "Current Progress")
+//                GoalView.ProgressBarView(goal: goal)
             }
         }
         .safeZoomMatch(id: goal.id, namespace: namespace)

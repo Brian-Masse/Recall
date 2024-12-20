@@ -86,7 +86,7 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                         sharedData.isExpanded = false
                         sharedData.progress = 0
                         
-                        scrollPosition.scrollTo(y: 1)
+//                        scrollPosition.scrollTo(y: 1)
                     }
                 }
                 
@@ -137,11 +137,11 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
             let minimisedHeight = (geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom) * sharedData.peekHeight
             
             VStack(spacing: 10) {
-                makeTopSpacer(in: screenHeight)
-                    .frame(width: geo.size.width)
-                
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 10) {
+                        makeTopSpacer(in: screenHeight)
+                            .frame(width: geo.size.width)
+                        
 //                        This adds a minor scroll ontop of the main scroll, so when pulling down it overrides any other gestures
 //                        namely the navigation(.zoom) swipe transition
                         if allowsScroll && !sharedData.isExpanded && sharedData.mainOffset <= 2 {
@@ -161,10 +161,17 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                 .onScrollGeometryChange(for: CGFloat.self, of: { geo in geo.contentOffset.y }) { oldValue, newValue in
                     sharedData.mainOffset = newValue
                 }
-                .scrollDisabled(sharedData.isExpanded)
+                .scrollDisabled(sharedData.isExpanded || sharedData.mainOffset < 1 )
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
             }
         }
+//        .overlay {
+//            VStack {
+//                Text("progress: \(sharedData.progress)")
+//                Text("mainoffset: \(sharedData.mainOffset)")
+//            }
+//            .background(.red)
+//        }
     }
 }
 

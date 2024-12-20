@@ -138,13 +138,14 @@ struct RecallCalendarEventView: View {
         VStack {
             HStack {
                 
+                makeMetaDataLabel(icon: event.isFavorite ? "checkmark" : "plus", title: "Favorite") {
+                    event.toggleFavorite()
+                }
+                
                 makeMetaDataLabel(icon: "tag", title: "\(event.getTagLabel())")
                 
                 makeMetaDataLabel(icon: "deskclock", title: event.getDurationString())
                 
-                makeMetaDataLabel(icon: event.isFavorite ? "checkmark" : "plus", title: "Favorite") {
-                    event.toggleFavorite()
-                }
             }
             
             makeCalendarContainer()
@@ -397,6 +398,7 @@ struct RecallCalendarEventView: View {
                         .allowsHitTesting(false)
                         .contentShape(NullContentShape())
                 }
+                .ignoresSafeArea()
                 .frame(width: geo.size.width, height: geo.size.height * 0.5)
             } else {
                 Rectangle()
@@ -424,13 +426,14 @@ struct RecallCalendarEventView: View {
                 
                 makeMetaData()
                     .padding(.bottom)
-                
-                makeRichDataSection()
             }
             .padding(.top)
             .rectangularBackground(style: .primary)
             .clipShape(UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
                                               topTrailingRadius: Constants.UILargeCornerRadius))
+            
+            makeRichDataSection()
+                .rectangularBackground(style: .primary)
             
             VStack {
                 makeActionButtons()
