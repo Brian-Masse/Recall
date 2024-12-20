@@ -42,7 +42,6 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
         self._fullScreenSectionId = fullScreenSectionId
     }
     
-    private let largeCornerRadius: Double = 58
     private let smallCornerRadius: Double = (Constants.UIDefaultCornerRadius - 5)
     
     private var allCases: [Section] {
@@ -94,10 +93,10 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
                                     .padding(.bottom, i == caseCount - 1 ? Constants.UIBottomOfPagePadding : 0)
                                     .animation( .easeInOut(duration: 0.25), value: fullScreenSectionId )
                                     .background {
-                                        UnevenRoundedRectangle(cornerRadii: .init(topLeading: i == 0 ? largeCornerRadius : smallCornerRadius,
-                                                                                  bottomLeading: i == caseCount - 1 ? largeCornerRadius : smallCornerRadius,
-                                                                                  bottomTrailing: i == caseCount - 1 ? largeCornerRadius : smallCornerRadius,
-                                                                                  topTrailing: i == 0 ? largeCornerRadius : smallCornerRadius))
+                                        UnevenRoundedRectangle(cornerRadii: .init(topLeading: i == 0 ? Constants.UILargeCornerRadius : smallCornerRadius,
+                                                                                  bottomLeading: i == caseCount - 1 ? Constants.UILargeCornerRadius : smallCornerRadius,
+                                                                                  bottomTrailing: i == caseCount - 1 ? Constants.UILargeCornerRadius : smallCornerRadius,
+                                                                                  topTrailing: i == 0 ? Constants.UILargeCornerRadius : smallCornerRadius))
                                         .foregroundStyle( Colors.getBase(from: colorScheme) )
                                     }
                                 }
@@ -111,7 +110,7 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
                         .scrollDisabled(fullScreenSectionId != -1)
                     }
                 }
-                .clipShape(RoundedRectangle(cornerRadius: largeCornerRadius))
+                .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
                 
                 LargeRoundedButton("done", icon: "arrow.down") { submit() }
                     .padding(.bottom, 35)

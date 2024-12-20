@@ -39,8 +39,6 @@ struct MonthlyCalendarView: View {
     
     private var arrEvents: [RecallCalendarEvent] { Array(events) }
     
-    private let largeCornerRadius: Double = 58
-    
 //    MARK: Convenience Functions
     private func getDay(of date: Date) -> Int {
         Calendar.current.component(.day, from: date)
@@ -183,21 +181,21 @@ struct MonthlyCalendarView: View {
             makeMonth(month, in: itemWidth)
         }
         .padding(LocalConstants.strokePadding)
-        .clipShape(UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
-                                          bottomLeadingRadius: largeCornerRadius,
-                                          bottomTrailingRadius: largeCornerRadius,
-                                          topTrailingRadius: Constants.UILargeCornerRadius))
+        .clipShape(UnevenRoundedRectangle(topLeadingRadius: Constants.UIDefaultCornerRadius,
+                                          bottomLeadingRadius: Constants.UILargeCornerRadius,
+                                          bottomTrailingRadius: Constants.UILargeCornerRadius,
+                                          topTrailingRadius: Constants.UIDefaultCornerRadius))
         .background {
-            UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
-                                   bottomLeadingRadius: largeCornerRadius,
-                                   bottomTrailingRadius: largeCornerRadius,
-                                   topTrailingRadius: Constants.UILargeCornerRadius)
+            UnevenRoundedRectangle(topLeadingRadius: Constants.UIDefaultCornerRadius,
+                                   bottomLeadingRadius: Constants.UILargeCornerRadius,
+                                   bottomTrailingRadius: Constants.UILargeCornerRadius,
+                                   topTrailingRadius: Constants.UIDefaultCornerRadius)
             .universalStyledBackgrond(.secondary, onForeground: true)
             
-            UnevenRoundedRectangle(topLeadingRadius: Constants.UILargeCornerRadius,
-                                   bottomLeadingRadius: largeCornerRadius,
-                                   bottomTrailingRadius: largeCornerRadius,
-                                   topTrailingRadius: Constants.UILargeCornerRadius)
+            UnevenRoundedRectangle(topLeadingRadius: Constants.UIDefaultCornerRadius,
+                                   bottomLeadingRadius: Constants.UILargeCornerRadius,
+                                   bottomTrailingRadius: Constants.UILargeCornerRadius,
+                                   topTrailingRadius: Constants.UIDefaultCornerRadius)
             .stroke(lineWidth: 1)
         }
         

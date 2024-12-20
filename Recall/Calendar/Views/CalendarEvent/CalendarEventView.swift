@@ -60,7 +60,6 @@ struct RecallCalendarEventView: View {
     @State private var position: MapCameraPosition
     @Namespace private var mapNameSpace
     
-    private let largeCornerRadius: Double = 58
     private let eventTitleMinLength: Int = 24
     
 //    MARK: Init
