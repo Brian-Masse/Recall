@@ -56,8 +56,6 @@ struct GoalsPageView: View {
                             }
                         }.rectangularBackground(7, style: .secondary, stroke: true)
                     }
-                } else {
-                    LoadingView(height: 150)
                 }
             }
             .animation(.easeInOut, value: goals.count)

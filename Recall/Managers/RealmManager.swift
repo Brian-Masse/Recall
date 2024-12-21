@@ -201,6 +201,8 @@ class RealmManager: ObservableObject {
     @MainActor
     func logoutUser() async {
         if let user = self.user {
+            RecallNavigationCoordinator.shared.dismiss()
+            
             try? await user.logOut()
             
             NotificationManager.shared.clearNotifications()

@@ -105,7 +105,10 @@ class RecallGoalDataStore: Object {
 //    MARK: getCurrentGoalProgress
     func getCurrentGoalProgress(goalFrequency: Int) async -> Double {
         let count = goalHistory.count
-        let historySubset = Array(goalHistory[ (count - 7)..<count ])
+        var historySubset: [RecallGoalHistoryNode] = Array(goalHistory)
+        if goalHistory.count > 7 {
+            historySubset = Array(goalHistory[ (count - 7)..<count ] )
+        }
         
 //        get the start of the time period
         let startOfWeek = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: .now).date! - Constants.DayTime

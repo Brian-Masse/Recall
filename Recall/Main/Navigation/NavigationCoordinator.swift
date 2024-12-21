@@ -86,6 +86,14 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     static var shared: RecallNavigationCoordinator = RecallNavigationCoordinator()
     
 //    MARK: - Navigation methods
+    func dismiss() {
+        self.sheet = nil
+        self.sheet2 = nil
+        self.halfScreenSheet = nil
+        self.fullScreenCover = nil
+        path.removeLast()
+    }
+    
     func goTo(_ tab: RecallNavigationTab ) { self.tab = tab }
     
     func push(_ screen: RecallNavigationScreen) { withAnimation { path.append(screen) }}
