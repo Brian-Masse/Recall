@@ -13,9 +13,11 @@ import UIUniversals
 //The dataModel is responsible for computing the data used in the graphs and tables
 //throuhgout the app
 //It does all of this work asyncrounously to not bottleneck UX performance
+//MARK: - RecallDataModel
 class RecallDataModel: ObservableObject {
     
-//    MARK: Event Data Aggregators
+    
+//    MARK: makeData
 //    These are the functions that actually compute / aggregate the data
     private func makeData(dataAggregator: (RecallCalendarEvent) -> Double) async -> [DataNode] {
         events.compactMap { event in
@@ -23,7 +25,8 @@ class RecallDataModel: ObservableObject {
         }.sorted { node1, node2 in node1.category < node2.category }
     }
     
-    //    This merges data points that all have the same tag
+//    MARK: compressData
+//    This merges data points that all have the same tag
     private func compressData(from data: [DataNode]) async -> [DataNode] {
         Array( data.reduce(Dictionary<String, DataNode>()) { partialResult, node in
             let key = node.category
@@ -35,18 +38,19 @@ class RecallDataModel: ObservableObject {
         }.values ).sorted { node1, node2 in node1.count < node2.count }
     }
     
+//    MARK: getTotalHours
     private func getTotalHours(from data: [DataNode]) async -> Double {
         data.reduce(0) { partialResult, node in partialResult + node.count }
     }
     
-    //    period is measured in days
-    //    This is purely convenience
+//    MARK: getRecentData
+//    period is measured in days
+//    This is purely convenience
     private func getRecentData(from data: [DataNode], in period: Double = 7) async -> [DataNode] {
         data.filter { node in node.date >= .now.resetToStartOfDay() - (period * Constants.DayTime) }
     }
     
-    //MARK: Goal Data Aggregators
-    
+    //MARK: - makeGoalsProgressOverTime
     //  The first is the progress over time, the second is the number of times the goal was met, the third is how many goals were met on that day
     private func makeGoalsProgressOverTimeData() async -> ([DataNode], [DataNode], [DataNode]) {
         var iterator = await RecallModel.getEarliestEventDate()
@@ -57,7 +61,7 @@ class RecallDataModel: ObservableObject {
         
         while iterator <= (.now.resetToStartOfDay() + Constants.DayTime) {
             
-            var goalsMetCount: Int = 0
+//            var goalsMetCount: Int = 0
             
 //            for goal in goals {
 //                let progressNum = await 100 * (Double(goal.getProgressTowardsGoal(from: events, on: iterator)) / Double(goal.targetHours))
@@ -75,6 +79,7 @@ class RecallDataModel: ObservableObject {
         return ( progress, timesMet, goalsMet )
     }
     
+//    MARK: countNumberOfTimesMet
     private func countNumberOfTimesMet() async -> [DataNode] {
         var metCount: [DataNode] = []
         
@@ -86,6 +91,7 @@ class RecallDataModel: ObservableObject {
         return metCount
     }
     
+//    MARK: getTotalMetData
     private func getTotalMetData() async -> (Double, Double) {
         let met = metData.filter { node in node.category == "completed" }
         let notMet = metData.filter { node in node.category == "uncompleted" }
@@ -96,6 +102,7 @@ class RecallDataModel: ObservableObject {
         return (totalMet, 100 * (totalMet / totalNotMet))
     }
     
+//    MARK: makeCompletionPercentageData
     private func makeCompletionPercentageData() async -> [DataNode] {
         goals.compactMap { goal in
             let data = goalMetCountIndex[ goal.label ] ?? (0, 0)
@@ -104,6 +111,7 @@ class RecallDataModel: ObservableObject {
         }
     }
     
+//    MARK: indexGoalMetCount
     @MainActor
     private func indexGoalMetCount() async {
 //        for goal in goals {
@@ -113,7 +121,7 @@ class RecallDataModel: ObservableObject {
     }
     
     
-    //    MARK: Event Data
+    //    MARK: - Vars
 //        These are typically used for the charts
     @Published private var hourlyData: [DataNode] = []
 //        in general the compressed data is used for data sumarries, that dont need every individaul node
@@ -129,7 +137,6 @@ class RecallDataModel: ObservableObject {
     @Published private var totalHours: Double = 0
     @Published private var recentTotalHours: Double = 0
     
-    //   MARK: Goal Data
     @Published var goalsMetOverTimeData   : [DataNode] = []
     
     var countsOverTime                : ([DataNode], [DataNode], [DataNode]) = ([], [], [])
@@ -151,7 +158,7 @@ class RecallDataModel: ObservableObject {
     private(set) var events: [RecallCalendarEvent] = []
     private(set) var goals: [RecallGoal] = []
     
-    //    MARK: Data Loaded Functions
+    //    MARK: Data Loaded Vars
     //    This states whether the data needed to present the summary page is loaded
     @Published var overviewDataLoaded: Bool = false
     
@@ -159,8 +166,9 @@ class RecallDataModel: ObservableObject {
     
     @Published var goalsDataLoaded: Bool = false
     
-    //    this simply takes in the most recent events and goals and stores it in the class
-    //    then indexes the goals for use throuhgout most data aggregators
+//    MARK: storeData
+//    this simply takes in the most recent events and goals and stores it in the class
+//    then indexes the goals for use throuhgout most data aggregators
     func storeData( events: [RecallCalendarEvent]? = nil, goals: [RecallGoal]? = nil ) {
         self.events = events ?? self.events
         self.goals = goals ?? self.goals
@@ -168,7 +176,7 @@ class RecallDataModel: ObservableObject {
         Task { await self.indexGoalMetCount() }
     }
     
-//    MARK: Make Data
+//    MARK: - MakeOverviewData
 //    Not every screen in the DataPage needs access to all this data. So where it can be
 //    spared, I wait to compute a certain series of data until it is needed
 //    This makes the charts feel more responsive
@@ -182,20 +190,23 @@ class RecallDataModel: ObservableObject {
             .sorted { event1, event2 in event1.date > event2.date }
         let compressedHourlyData    = await compressData(from: hourlyData)
         
-        let metData                 = await countNumberOfTimesMet()
-        self.countsOverTime         = await makeGoalsProgressOverTimeData()
-        let goalsMetOverTime        = countsOverTime.2
+//        let metData                 = await countNumberOfTimesMet()
+//        self.countsOverTime         = await makeGoalsProgressOverTimeData()
+//        let goalsMetOverTime        = countsOverTime.2
         
         self.hourlyData             = hourlyData
         self.compressedHourlyData   = compressedHourlyData
         self.metData                = metData
-        self.goalsMetOverTimeData   = goalsMetOverTime
-            .sorted { event1, event2 in event1.date > event2.date }
+//        self.goalsMetOverTimeData   = goalsMetOverTime
+//            .sorted { event1, event2 in event1.date > event2.date }
         
         RecallModel.shared.setDataOverviewValidation(to: true)
-        withAnimation { self.overviewDataLoaded = true }
+        withAnimation {
+            self.overviewDataLoaded = true
+        }
     }
     
+//    MARK: makeEventsData
     @MainActor
     func makeEventsData() async {
         
@@ -228,6 +239,7 @@ class RecallDataModel: ObservableObject {
         
     }
     
+//    MARK: makeGoalsData
     @MainActor
     func makeGoalsData() async {
         

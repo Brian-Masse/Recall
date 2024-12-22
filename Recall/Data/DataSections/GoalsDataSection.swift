@@ -18,7 +18,7 @@ struct GoalsDataSection: View {
 //    MARK: Body
     var body: some View {
         
-        DataCollection { data.goalsDataLoaded } makeData: { await data.makeGoalsData() } content: {
+        DataCollection(dataLoaded: $data.goalsDataLoaded) { await data.makeGoalsData() } content: {
 
             Group {
                 GoalsMetPercentageChart(title: "Goals Completion Rates", data: data.metPercentageData, unit: "%")

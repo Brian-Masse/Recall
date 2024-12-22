@@ -58,7 +58,7 @@ struct EventsDataSection: View {
 //    MARK: Body
     var body: some View {
         
-        DataCollection { data.eventsDataLoaded } makeData: { await data.makeEventsData() } content: {
+        DataCollection(dataLoaded: $data.eventsDataLoaded) { await data.makeEventsData() } content: {
             
             makeTimePeriodSelector()
                 .padding(.bottom)

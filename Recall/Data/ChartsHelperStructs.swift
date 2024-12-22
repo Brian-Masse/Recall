@@ -12,22 +12,22 @@ import UIUniversals
 
 //MARK: DataCollection
 struct DataCollection<Content: View>: View {
-    
-    let checkDataLoaded: () -> Bool
+
     let makeData: () async -> Void
     let content: Content
     
+    @Binding private var dataLoaded: Bool
     @State var presentable: Bool = false
     
-    init( checkDataLoaded: @escaping () -> Bool, makeData: @escaping () async -> Void, @ViewBuilder content: ()->Content ) {
-        self.checkDataLoaded = checkDataLoaded
+    init( dataLoaded: Binding<Bool>, makeData: @escaping () async -> Void, @ViewBuilder content: ()->Content ) {
+        self._dataLoaded = dataLoaded
         self.makeData = makeData
         self.content = content()
     }
     
     var body: some View {
         VStack() {
-            if checkDataLoaded() && presentable {
+            if dataLoaded && presentable {
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(alignment: .leading, spacing: 0) {
                         content
