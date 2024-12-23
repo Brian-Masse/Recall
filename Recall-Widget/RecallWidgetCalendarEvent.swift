@@ -236,4 +236,12 @@ class RecallWidgetCalendarEvent: Codable, TimelineEntry {
     var color: Color {
         .init(r * 255, g * 255, b * 255)
     }
+    
+    var timeString: String {
+        let formatter = Date.FormatStyle().hour(.twoDigits(amPM: .omitted)).minute()
+        let startTimeString = startTime.formatted(formatter)
+        let endTimeString = endTime.formatted(formatter)
+        
+        return "\(startTimeString) - \(endTimeString)"
+    }
 }
