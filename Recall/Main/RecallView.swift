@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RecallView: View {
+    
 
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var realmManager = RecallModel.realmManager
@@ -34,7 +35,7 @@ struct RecallView: View {
                 ProfileCreationView()
                     .slideTransition()
                     .environment(\.realmConfiguration, realmManager.configuration)
-                
+                   
             case .tutorial:
                 TutorialViews()
                     .slideTransition()
@@ -44,11 +45,9 @@ struct RecallView: View {
                 Text("An error occoured")
                 
             case .complete:
-                
-                OnBoardingBackgroundView()
-//                MainView()
-//                    .environment(\.realmConfiguration, realmManager.configuration)
-//                    .slideTransition()
+                MainView()
+                    .environment(\.realmConfiguration, realmManager.configuration)
+                    .slideTransition()
             }
         }
     }

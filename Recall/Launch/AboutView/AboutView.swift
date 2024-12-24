@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
-struct AboutScreenView: View {
+struct OnBoardingView: View {
     
 //    private func decomposeString(_ string: String, highlightString: String) -> [String] {
 //        
