@@ -15,7 +15,7 @@ struct OnboardingSceneUIText {
 }
 
 //MARK: - TemplateGoal
-private struct TemplateGoal: Equatable, Identifiable {
+struct TemplateGoal: Equatable, Identifiable {
     var id: String { title }
     
     let title: String
@@ -47,23 +47,14 @@ private let templateGoals: [TemplateGoal] = [
 //MARK: - onBoardingGoalScene
 struct OnboardingGoalScene: View, OnboardingSceneView {
     
-    @State private var selectedTemplateGoals: [TemplateGoal] = []
     var sceneComplete: Binding<Bool>
     
     private let minimumTemplates: Int = 3
     
-    static func onSubmit() {  }
+    @ObservedObject private var viewModel: OnboardingViewModel = OnboardingViewModel.shared
     
-    private func toggleTemplateGoal(_ templateGoal: TemplateGoal) {
-        if let index = selectedTemplateGoals.firstIndex(of: templateGoal) {
-            self.selectedTemplateGoals.remove(at: index)
-        } else {
-            self.selectedTemplateGoals.append(templateGoal)
-        }
-        
-        if selectedTemplateGoals.count >= minimumTemplates {
-            sceneComplete.wrappedValue = true
-        }
+    private var templateCountString: String {
+        "\(viewModel.selectedTemplateGoals.count) / \(minimumTemplates)"
     }
     
 //    MARK: makeHeader
@@ -75,7 +66,7 @@ struct OnboardingGoalScene: View, OnboardingSceneView {
                 
                 Spacer()
                 
-                UniversalText("\(selectedTemplateGoals.count) / \(minimumTemplates)",
+                UniversalText(templateCountString,
                               size: Constants.UIDefaultTextSize,
                               font: Constants.mainFont)
             }
@@ -89,7 +80,7 @@ struct OnboardingGoalScene: View, OnboardingSceneView {
     
 //    MARK: makeTemplateGoalSelector
     private func templateIsSelected(_ template: TemplateGoal) -> Bool {
-        selectedTemplateGoals.firstIndex(of: template) != nil
+        viewModel.selectedTemplateGoals.firstIndex(of: template) != nil
     }
     
     @ViewBuilder
@@ -103,7 +94,11 @@ struct OnboardingGoalScene: View, OnboardingSceneView {
         
         .rectangularBackground(style: templateIsSelected ? .accent : .secondary)
             .onTapGesture { withAnimation {
-                toggleTemplateGoal(templateGoal)
+                viewModel.toggleTemplateGoal(templateGoal)
+                
+                if viewModel.selectedTemplateGoals.count >= minimumTemplates {
+                    sceneComplete.wrappedValue = true
+                }
             } }
     }
 

@@ -11,8 +11,6 @@ import UIUniversals
 
 //MARK: OnboardingSceneView
 protocol OnboardingSceneView {
-    static func onSubmit() -> Void
-    
     var sceneComplete: Binding<Bool> { get }
 }
 
@@ -90,22 +88,12 @@ struct OnBoardingContainerView<C: View>: View {
 
 //MARK: - OnboardingView
 private struct OnboardingView: View {
-    
-    
-//    MARK: onSubmit
-    private func onSubmit(_ scene: OnBoardingScene) {
-        switch scene {
-        case .goalTutorial: OnboardingGoalScene.onSubmit()
-        case .overview: return
-        case .howItWorks: return
-        default: return
-        }
-    }
-    
+
+    @ObservedObject private var viewModel = OnboardingViewModel.shared
     
 //    MARK: Body
     var body: some View {
-        OnBoardingContainerView(onSubmit: onSubmit) { scene, sceneComplete in
+        OnBoardingContainerView(onSubmit: viewModel.onSubmit) { scene, sceneComplete in
             switch scene {
             case .goalTutorial: OnboardingGoalScene(sceneComplete: sceneComplete)
             case .overview: Text("overview")
