@@ -9,8 +9,18 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+//MARK: OnboardingSceneView
+protocol OnboardingSceneView {
+    static func onSubmit() -> Void
+    
+    var sceneComplete: Binding<Bool> { get }
+}
+
 //MARK: - OnBoardingScene
 enum OnBoardingScene: Int, CaseIterable {
+    
+    case goalTutorial
+    
     case overview
     case howItWorks
     
@@ -28,38 +38,84 @@ enum OnBoardingScene: Int, CaseIterable {
 //MARK: - OnBoardingContainerView
 struct OnBoardingContainerView<C: View>: View {
     
-    @State private var scene: OnBoardingScene = .overview
+    @State private var scene: OnBoardingScene = .goalTutorial
+    @State private var sceneComplete: Bool = false
     
     @ViewBuilder
-    private var sceneBuilder: ((OnBoardingScene) -> C)
+    private var sceneBuilder: ((OnBoardingScene, Binding<Bool>) -> C)
+    
+    private var onSubmit: (OnBoardingScene) -> Void
     
 //    MARK: Init
-    init( @ViewBuilder contentBuilder: @escaping (OnBoardingScene) -> C ) {
+    init(
+        onSubmit: @escaping (OnBoardingScene) -> Void,
+        @ViewBuilder contentBuilder: @escaping (OnBoardingScene, Binding<Bool>) -> C
+    ) {
         self.sceneBuilder = contentBuilder
+        self.onSubmit = onSubmit
     }
     
+//    MARK: ContinueButton
+    @ViewBuilder
+    private func makeContinueButton() -> some View {
+        IconButton("arrow.forward",
+                   label: "Continue",
+                   fullWidth: true) { withAnimation {
+            
+            if !self.sceneComplete { return }
+            
+            self.onSubmit(scene)
+            
+            self.scene = scene.incrementScene()
+        } }
+                   .padding()
+                   .opacity(sceneComplete ? 1 : 0.5)
+    }
     
+//    MARK: Body
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                sceneBuilder(scene)
+                sceneBuilder(scene, $sceneComplete)
                     .frame(width: geo.size.width, height: geo.size.height)
                 
-                IconButton("arrow.forward",
-                           label: "Continue",
-                           fullWidth: true) { withAnimation {
-                    self.scene = scene.incrementScene()
-                } }
+                makeContinueButton()
+            }
+        }
+        .background {
+            OnBoardingBackgroundView()
+        }
+    }
+}
+
+//MARK: - OnboardingView
+private struct OnboardingView: View {
+    
+    
+//    MARK: onSubmit
+    private func onSubmit(_ scene: OnBoardingScene) {
+        switch scene {
+        case .goalTutorial: OnboardingGoalScene.onSubmit()
+        case .overview: return
+        case .howItWorks: return
+        default: return
+        }
+    }
+    
+    
+//    MARK: Body
+    var body: some View {
+        OnBoardingContainerView(onSubmit: onSubmit) { scene, sceneComplete in
+            switch scene {
+            case .goalTutorial: OnboardingGoalScene(sceneComplete: sceneComplete)
+            case .overview: Text("overview")
+            case .howItWorks: Text("how it works")
+            default: EmptyView()
             }
         }
     }
 }
 
 #Preview {
-    OnBoardingContainerView { scene in
-        switch scene {
-        case .overview: Text("overview")
-        case .howItWorks: Text("how it works")
-        }
-    }
+    OnboardingView()
 }

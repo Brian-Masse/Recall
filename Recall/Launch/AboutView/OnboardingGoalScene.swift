@@ -45,15 +45,24 @@ private let templateGoals: [TemplateGoal] = [
 ]
 
 //MARK: - onBoardingGoalScene
-struct OnboardingGoalScene: View {
+struct OnboardingGoalScene: View, OnboardingSceneView {
     
     @State private var selectedTemplateGoals: [TemplateGoal] = []
+    var sceneComplete: Binding<Bool>
+    
+    private let minimumTemplates: Int = 3
+    
+    static func onSubmit() {  }
     
     private func toggleTemplateGoal(_ templateGoal: TemplateGoal) {
         if let index = selectedTemplateGoals.firstIndex(of: templateGoal) {
             self.selectedTemplateGoals.remove(at: index)
         } else {
             self.selectedTemplateGoals.append(templateGoal)
+        }
+        
+        if selectedTemplateGoals.count >= minimumTemplates {
+            sceneComplete.wrappedValue = true
         }
     }
     
@@ -65,6 +74,10 @@ struct OnboardingGoalScene: View {
                 UniversalText("Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
                 
                 Spacer()
+                
+                UniversalText("\(selectedTemplateGoals.count) / \(minimumTemplates)",
+                              size: Constants.UIDefaultTextSize,
+                              font: Constants.mainFont)
             }
             
             UniversalText(OnboardingSceneUIText.goalSceneInstructionText1,
@@ -82,9 +95,13 @@ struct OnboardingGoalScene: View {
     @ViewBuilder
     private func makeTemplateGoalSelector(_ templateGoal: TemplateGoal) -> some View {
         
-        UniversalText(templateGoal.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+        let templateIsSelected = templateIsSelected(templateGoal)
         
-            .rectangularBackground(style: templateIsSelected(templateGoal) ? .accent : .secondary)
+        HStack {
+            UniversalText(templateGoal.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+        }
+        
+        .rectangularBackground(style: templateIsSelected ? .accent : .secondary)
             .onTapGesture { withAnimation {
                 toggleTemplateGoal(templateGoal)
             } }
@@ -116,5 +133,5 @@ struct OnboardingGoalScene: View {
 
 
 #Preview {
-    OnboardingGoalScene()
+    OnboardingGoalScene(sceneComplete: .constant(true))
 }
