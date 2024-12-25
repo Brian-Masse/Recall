@@ -98,3 +98,4 @@ Recall is a calendar based app designed around recording daily events to be able
 
 Happy Birthday :)
 Happy Thanksgiving :)
+Happy Christmas :)
