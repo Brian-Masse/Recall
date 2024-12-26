@@ -114,6 +114,8 @@
 		C9DC3F362D1B3DB20021ED79 /* OnBoardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F352D1B3DB20021ED79 /* OnBoardingContainerView.swift */; };
 		C9DC3F382D206B630021ED79 /* OnboardingGoalScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F372D206B630021ED79 /* OnboardingGoalScene.swift */; };
 		C9DC3F3A2D20A6E70021ED79 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F392D20A6E70021ED79 /* OnboardingViewModel.swift */; };
+		C9DC3F3C2D20AED40021ED79 /* OnboardingSplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F3B2D20AED40021ED79 /* OnboardingSplashScreenView.swift */; };
+		C9DC3F3E2D20BD820021ED79 /* OnboardingTagScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F3D2D20BD820021ED79 /* OnboardingTagScene.swift */; };
 		C9E0B17D2B03E5F000318508 /* RecallUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E0B17C2B03E5F000318508 /* RecallUpdate.swift */; };
 		C9E3E01E2C91F099000E0911 /* CreationFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E3E01D2C91F099000E0911 /* CreationFormView.swift */; };
 		C9E3E02F2C9207B5000E0911 /* CactusTimeDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E3E02E2C9207B5000E0911 /* CactusTimeDial.swift */; };
@@ -289,6 +291,8 @@
 		C9DC3F352D1B3DB20021ED79 /* OnBoardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingContainerView.swift; sourceTree = "<group>"; };
 		C9DC3F372D206B630021ED79 /* OnboardingGoalScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGoalScene.swift; sourceTree = "<group>"; };
 		C9DC3F392D20A6E70021ED79 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
+		C9DC3F3B2D20AED40021ED79 /* OnboardingSplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSplashScreenView.swift; sourceTree = "<group>"; };
+		C9DC3F3D2D20BD820021ED79 /* OnboardingTagScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTagScene.swift; sourceTree = "<group>"; };
 		C9E0B17C2B03E5F000318508 /* RecallUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallUpdate.swift; sourceTree = "<group>"; };
 		C9E3E01D2C91F099000E0911 /* CreationFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreationFormView.swift; sourceTree = "<group>"; };
 		C9E3E02E2C9207B5000E0911 /* CactusTimeDial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CactusTimeDial.swift; sourceTree = "<group>"; };
@@ -408,6 +412,7 @@
 				C94F067A2A6AF90600C99EA0 /* Info.plist */,
 				C9EE9EAD2B608AFF0090DB16 /* Resources */,
 				C91BCF2D2A61DD51003C6DD6 /* Universals */,
+				C9DC3F2E2D19F78F0021ED79 /* Onboarding */,
 				C9B8DF612C69072A00B11A38 /* Launch */,
 				C9B8DF632C69076F00B11A38 /* Managers */,
 				C98F2F232A94430A00E92B30 /* Profile */,
@@ -565,7 +570,6 @@
 			isa = PBXGroup;
 			children = (
 				C98F2F242A94435600E92B30 /* SplashScreen.swift */,
-				C9DC3F2E2D19F78F0021ED79 /* Onboarding */,
 				C98F2F212A94134F00E92B30 /* LoginView.swift */,
 				C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */,
 				C98F2F2C2A9D334C00E92B30 /* TutorialViews */,
@@ -703,14 +707,32 @@
 		C9DC3F2E2D19F78F0021ED79 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
-				C9DC3F2C2D19E7770021ED79 /* AboutView.swift */,
-				C9DC3F372D206B630021ED79 /* OnboardingGoalScene.swift */,
 				C9DC3F392D20A6E70021ED79 /* OnboardingViewModel.swift */,
-				C9DC3F312D1A3A550021ED79 /* OnBoardingBackgroundView.swift */,
-				C9DC3F352D1B3DB20021ED79 /* OnBoardingContainerView.swift */,
+				C9DC3F402D20BDA70021ED79 /* Elements */,
+				C9DC3F3F2D20BD8D0021ED79 /* Tutorial */,
+				C9DC3F2C2D19E7770021ED79 /* AboutView.swift */,
 				C9DC3F2F2D19F79D0021ED79 /* AboutScreenEventView.swift */,
 			);
 			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		C9DC3F3F2D20BD8D0021ED79 /* Tutorial */ = {
+			isa = PBXGroup;
+			children = (
+				C9DC3F372D206B630021ED79 /* OnboardingGoalScene.swift */,
+				C9DC3F3D2D20BD820021ED79 /* OnboardingTagScene.swift */,
+			);
+			path = Tutorial;
+			sourceTree = "<group>";
+		};
+		C9DC3F402D20BDA70021ED79 /* Elements */ = {
+			isa = PBXGroup;
+			children = (
+				C9DC3F352D1B3DB20021ED79 /* OnBoardingContainerView.swift */,
+				C9DC3F312D1A3A550021ED79 /* OnBoardingBackgroundView.swift */,
+				C9DC3F3B2D20AED40021ED79 /* OnboardingSplashScreenView.swift */,
+			);
+			path = Elements;
 			sourceTree = "<group>";
 		};
 		C9EA0EE22A6B48CF00E36EF1 /* Categories */ = {
@@ -933,6 +955,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C91E1CFB2AFC789E00029F43 /* FavoritesPageView.swift in Sources */,
+				C9DC3F3E2D20BD820021ED79 /* OnboardingTagScene.swift in Sources */,
 				C91BCEF42A618435003C6DD6 /* RecallView.swift in Sources */,
 				C9C8E0822D0E0CCF009607BE /* RecallDataStore.swift in Sources */,
 				C9E49D162A68AC820023EBC0 /* RecallGoal.swift in Sources */,
@@ -940,6 +963,7 @@
 				C91A812A2C76807400EFF561 /* RecallCalendarContainerViewModel.swift in Sources */,
 				C94F06762A6AD9F200C99EA0 /* GoalPreviewView.swift in Sources */,
 				C92284A02CD2D38700280BFA /* RecallCalendarEventImageStore.swift in Sources */,
+				C9DC3F3C2D20AED40021ED79 /* OnboardingSplashScreenView.swift in Sources */,
 				C91BCF372A61DED5003C6DD6 /* UniversalButtons.swift in Sources */,
 				C9C470FC2CEAA224004AB489 /* CalendarView.swift in Sources */,
 				C9C470FD2CEAA224004AB489 /* CalendarEventCarousel.swift in Sources */,

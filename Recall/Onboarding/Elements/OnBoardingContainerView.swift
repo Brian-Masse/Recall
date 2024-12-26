@@ -9,6 +9,12 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+//MARK: - onBoardingSceneUIText
+struct OnboardingSceneUIText {
+    static let goalSceneIntroductionText = "Goals represent achievements you want to work towards each week."
+    static let goalSceneInstructionText1 = "Pick out some goals you want to work towards. You can always add, remove, or modify goals later "
+}
+
 //MARK: OnboardingSceneView
 protocol OnboardingSceneView {
     var sceneComplete: Binding<Bool> { get }

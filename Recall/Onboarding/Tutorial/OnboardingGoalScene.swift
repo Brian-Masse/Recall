@@ -9,11 +9,6 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
-//MARK: - onBoardingSceneUIText
-struct OnboardingSceneUIText {
-    static let goalSceneInstructionText1 = "Pick out some goals you want to work towards. You can always add, remove, or modify goals later "
-}
-
 //MARK: - TemplateGoal
 struct TemplateGoal: Equatable, Identifiable {
     var id: String { title }
@@ -115,14 +110,19 @@ struct OnboardingGoalScene: View, OnboardingSceneView {
     
 //    MARK: Body
     var body: some View {
-        VStack(alignment: .leading) {
-            makeHeader()
-            
-            makeTemplateGoalSelectors()
-            
-            Spacer()
+        
+        OnboardingSplashScreenView(icon: "flag.pattern.checkered.2.crossed",
+                                   title: "Goals",
+                                   message: OnboardingSceneUIText.goalSceneIntroductionText) {
+            VStack(alignment: .leading) {
+                makeHeader()
+                
+                makeTemplateGoalSelectors()
+                
+                Spacer()
+            }
+            .padding(7)
         }
-        .padding(7)
     }
 }
 
