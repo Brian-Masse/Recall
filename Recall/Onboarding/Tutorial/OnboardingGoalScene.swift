@@ -17,26 +17,29 @@ struct TemplateGoal: Equatable, Identifiable {
     let targetHours: Double
     let frequency: Int
     let priority: String
+    let tagMask: TemplateTagMask
     
     init(
         _ title: String,
         targetHours: Double,
         frequency: RecallGoal.GoalFrequence,
-        priority: RecallGoal.Priority
+        priority: RecallGoal.Priority,
+        tagMask: TemplateTagMask
     ) {
         self.title = title
         self.targetHours = targetHours
         self.frequency = frequency.numericValue
         self.priority = priority.rawValue
+        self.tagMask = tagMask
     }
 }
 
 //MARK: templateGoals
 private let templateGoals: [TemplateGoal] = [
-    .init( "Read a book",    targetHours: 1, frequency: .daily, priority: .low ),
-    .init( "Productvity",    targetHours: 35, frequency: .weekly, priority: .high),
-    .init( "Go for a walk",  targetHours: 1, frequency: .daily, priority: .medium ),
-    .init( "Workout",        targetHours: 7, frequency: .weekly, priority: .high )
+    .init( "Read a book",    targetHours: 1, frequency: .daily, priority: .low, tagMask: .reading),
+    .init( "Productvity",    targetHours: 35, frequency: .weekly, priority: .high, tagMask: .productivity),
+    .init( "Go for a walk",  targetHours: 1, frequency: .daily, priority: .medium, tagMask: .exercising ),
+    .init( "Workout",        targetHours: 7, frequency: .weekly, priority: .high, tagMask: .exercising )
 ]
 
 //MARK: - onBoardingGoalScene
@@ -66,7 +69,7 @@ struct OnboardingGoalScene: View, OnboardingSceneView {
                               font: Constants.mainFont)
             }
             
-            UniversalText(OnboardingSceneUIText.goalSceneInstructionText1,
+            UniversalText(OnboardingSceneUIText.goalSceneInstructionText,
                           size: Constants.UIDefaultTextSize,
                           font: Constants.mainFont)
             .opacity(0.75)

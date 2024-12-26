@@ -11,8 +11,13 @@ import UIUniversals
 
 //MARK: - onBoardingSceneUIText
 struct OnboardingSceneUIText {
+    //goals
     static let goalSceneIntroductionText = "Goals represent achievements you want to work towards each week."
-    static let goalSceneInstructionText1 = "Pick out some goals you want to work towards. You can always add, remove, or modify goals later "
+    static let goalSceneInstructionText = "Pick out some goals you want to work towards. You can always add, remove, or modify goals later "
+    
+    //tags
+    static let tagSceneIntroductionText = "Tags categorize events on your calendar. Each is linked with one or more goals to automatically track progress towards those goals"
+    static let tagSceneInstructionText = "Pick out tags for events you frequently do. You can always add, remove, or modify tags later"
 }
 
 //MARK: OnboardingSceneView
@@ -24,6 +29,7 @@ protocol OnboardingSceneView {
 enum OnBoardingScene: Int, CaseIterable {
     
     case goalTutorial
+    case tagsTutorial
     
     case overview
     case howItWorks
@@ -102,8 +108,8 @@ private struct OnboardingView: View {
         OnBoardingContainerView(onSubmit: viewModel.onSubmit) { scene, sceneComplete in
             switch scene {
             case .goalTutorial: OnboardingGoalScene(sceneComplete: sceneComplete)
-            case .overview: Text("overview")
-            case .howItWorks: Text("how it works")
+            case .tagsTutorial: OnboardingTagScene(sceneComplete: sceneComplete)
+        
             default: EmptyView()
             }
         }

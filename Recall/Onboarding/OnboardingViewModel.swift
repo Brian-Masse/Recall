@@ -12,11 +12,14 @@ class OnboardingViewModel: ObservableObject {
     
     static let shared = OnboardingViewModel()
     
+//    MARK: onSubmit
     @MainActor
     func onSubmit(_ scene: OnBoardingScene) {
         switch scene {
         case .goalTutorial:
             goalSceneSubmitted(self.selectedTemplateGoals)
+        case .tagsTutorial:
+            Task { await tagSceneSubmitted(self.selectedTemplateTags) }
         default: return
         }
     }
@@ -50,6 +53,49 @@ class OnboardingViewModel: ObservableObject {
                                   targetTag: nil)
             
             RealmManager.addObject(goal)
+        }
+    }
+
+//    MARK: - OnboardingTagScene
+    @Published var selectedTemplateTags: [TemplateTag] = []
+    
+    func toggleTemplateTag(_ templateTag: TemplateTag) {
+        if let index = selectedTemplateTags.firstIndex(of: templateTag) {
+            self.selectedTemplateTags.remove(at: index)
+        } else {
+            self.selectedTemplateTags.append(templateTag)
+        }
+    }
+    
+    
+//    MARK: goalSceneSubmitted
+//    translates a list of selected templates into real RecallGoal objects that the user owns
+    private func getGoalRatings(for tag: TemplateTag) async -> Dictionary<String, String> {
+        let goalNames = selectedTemplateGoals.compactMap { goal in
+            if tag.templateMask.contains(goal.tagMask) { return goal.title }
+            return nil
+        }
+        
+        let goals: [RecallGoal] = await RealmManager.retrieveObjectsInList()
+            .filter { goal in goalNames.contains(goal.label) }
+        
+        return goals.reduce(into: [String: String]()) { partialResult, goal in
+            partialResult[goal.key] = "1"
+        }
+    }
+    
+    @MainActor
+    func tagSceneSubmitted( _ selectedTags: [TemplateTag] ) async {
+        if inDev { return }
+
+        for tagTemplate in selectedTags {
+            
+            let goalRatings = await getGoalRatings(for: tagTemplate)
+            
+            let tag = RecallCategory(ownerID: RecallModel.ownerID,
+                                     label: tagTemplate.title,
+                                     goalRatings: goalRatings,
+                                     color: tagTemplate.color)   
         }
     }
 }
