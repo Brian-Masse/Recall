@@ -42,7 +42,7 @@ struct OnboardingSplashScreenView<C: View>: View {
     
     private func handleTimeline(_ context: TimelineViewDefaultContext) {
         if context.date >= startDate + interval { showingMessage = true }
-        if context.date >= startDate + interval * 4 { showingContent = true }
+        if context.date >= startDate + interval * 5.5 { showingContent = true }
     }
     
     var body: some View {

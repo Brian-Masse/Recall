@@ -12,7 +12,7 @@ import UIUniversals
 //MARK: PhotoScrollViewModel
 @Observable
 final class PhotoScrollerViewModel: Sendable {
-    let restHeight: Double = 0.6
+    let restHeight: Double = 0.5
     let peekHeight: Double = 0.92
     
     var isExpanded: Bool
@@ -86,7 +86,7 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                         sharedData.isExpanded = false
                         sharedData.progress = 0
                         
-//                        scrollPosition.scrollTo(y: 1)
+                        scrollPosition.scrollTo(y: 20)
                     }
                 }
                 
@@ -127,6 +127,7 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
         }
     }
 
+    @State private var baseScrollOffset: Double = 0
     @State private var scrollPosition = ScrollPosition()
     
 //    MARK: Body
@@ -137,37 +138,43 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
             let minimisedHeight = (geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom) * sharedData.peekHeight
             
             VStack(spacing: 10) {
-                ScrollView(.vertical, showsIndicators: false) {
+                ScrollView(.vertical, showsIndicators: true) {
                     VStack(spacing: 10) {
-                        makeTopSpacer(in: screenHeight)
-                            .frame(width: geo.size.width)
                         
-//                        This adds a minor scroll ontop of the main scroll, so when pulling down it overrides any other gestures
+//                        This adds a minor scroll ontop of the main scroll
+//                        so when pulling down it overrides any other gestures
 //                        namely the navigation(.zoom) swipe transition
-                        if allowsScroll && !sharedData.isExpanded && sharedData.mainOffset <= 2 {
+                        if allowsScroll && !sharedData.isExpanded && sharedData.mainOffset <= (baseScrollOffset + 20) {
                             Rectangle()
-                                .frame(height: 1)
+                                .frame(height: 20)
                                 .foregroundStyle(.clear)
-                                .onAppear { withAnimation { scrollPosition.scrollTo(y: 1) }}
+                                .onAppear { withAnimation { scrollPosition.scrollTo(y: 20) }}
                         }
                         
+                        makeTopSpacer(in: screenHeight)
+                        
                         bodyContent
-                            .frame(minWidth: geo.size.width, minHeight: geo.size.height)
+                            .frame(minHeight: geo.size.height, alignment: .top)
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
                     }
                 }
                 .animation(.easeInOut, value: sharedData.mainOffset)
                 .scrollPosition($scrollPosition)
                 .gesture( makeGesture(minimisedHeight: minimisedHeight) )
                 .onScrollGeometryChange(for: CGFloat.self, of: { geo in geo.contentOffset.y }) { oldValue, newValue in
+                    if baseScrollOffset == 0 { self.baseScrollOffset = newValue }
                     sharedData.mainOffset = newValue
                 }
-                .scrollDisabled(sharedData.isExpanded || sharedData.mainOffset < 1 )
+                .scrollDisabled(sharedData.isExpanded || sharedData.mainOffset < baseScrollOffset )
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
+                .safeAreaPadding(7)
+                .ignoresSafeArea(edges: .bottom)
             }
         }
 //        .overlay {
 //            VStack {
 //                Text("progress: \(sharedData.progress)")
+//                Text("base offset: \(baseScrollOffset)")
 //                Text("mainoffset: \(sharedData.mainOffset)")
 //            }
 //            .background(.red)
@@ -199,7 +206,7 @@ struct TestPhotoScrollerView: View {
                     
                 } bodyContent: {
                     VStack(spacing: 10) {
-                        ForEach( 0...20, id: \.self ) { i in
+                        ForEach( 0...10, id: \.self ) { i in
                             Rectangle()
                                 .foregroundStyle(.green)
                                 .frame(height: 40)
@@ -208,13 +215,10 @@ struct TestPhotoScrollerView: View {
                                 }
                         }
                     }
-//                    .offset(y: -40)
+                    .border(.green)
                     .padding()
-                    .clipShape(RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius ))
-                    .background {
-                        RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius )
-                            .foregroundStyle(.background)
-                    }
+                    .background(.red)
+//                    .clipShape(RoundedRectangle( cornerRadius: Constants.UILargeCornerRadius ))
                 }
             }
         }

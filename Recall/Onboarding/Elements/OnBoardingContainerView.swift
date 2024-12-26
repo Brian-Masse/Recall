@@ -16,7 +16,7 @@ struct OnboardingSceneUIText {
     static let goalSceneInstructionText = "Pick out some goals you want to work towards. You can always add, remove, or modify goals later "
     
     //tags
-    static let tagSceneIntroductionText = "Tags categorize events on your calendar. Each is linked with one or more goals to automatically track progress towards those goals"
+    static let tagSceneIntroductionText = "Tags categorize events on your calendar. Each is linked with one or more goals"
     static let tagSceneInstructionText = "Pick out tags for events you frequently do. You can always add, remove, or modify tags later"
 }
 

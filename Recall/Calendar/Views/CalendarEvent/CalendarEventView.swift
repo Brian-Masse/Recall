@@ -384,27 +384,35 @@ struct RecallCalendarEventView: View {
         GeometryReader { geo in
             if let image = self.decodedImages.first {
                 Group {
-                    if #available(iOS 18, *) {
-                        makeLargePhotoCarousel(in: geo)
-                    } else {
+//                    if #available(iOS 18, *) {
+//                        makeLargePhotoCarousel(in: geo)
+//                    } else {
                         Image(uiImage: image)
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    }
+                            .aspectRatio(contentMode: .fit)
+                            .clipped()
+//                    }
                 }
-                .overlay {
-                    LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .init(x: 0.5, y: 0.7))
-                        .allowsHitTesting(false)
-                        .contentShape(NullContentShape())
-                }
-                .ignoresSafeArea()
-                .frame(width: geo.size.width, height: geo.size.height * 0.5)
+                .border(.red)
+                .frame(maxWidth: geo.size.width, minHeight: geo.size.height * 0.5, alignment: .top)
+//                .border(.purple)
+//                .frame(height: geo.size.height, alignment: .top)
+//                .overlay(alignment: .bottom) {
+//                    LinearGradient(colors: [.black, .clear],
+//                                   startPoint: .init(x: 0.5, y: 0.75),
+//                                   endPoint: .top)
+//                        .allowsHitTesting(false)
+//                        .contentShape(NullContentShape())
+//                        .frame(height: geo.size.height * 0.5)
+//                }
+                
             } else {
                 Rectangle()
                     .foregroundStyle(event.getColor().gradient)
-                    .ignoresSafeArea()
             }
         }
+//        .border(.green)
+        .ignoresSafeArea()
     }
     
 //    MARK: Content
@@ -445,6 +453,7 @@ struct RecallCalendarEventView: View {
         }
     }
     
+//    MARK: makeRichDataSection
     @ViewBuilder
     private func makeRichDataSection() -> some View {
         VStack(alignment: .leading) {
@@ -496,20 +505,18 @@ struct RecallCalendarEventView: View {
     
 //    MARK: Body
     var body: some View {
+        
         ZStack(alignment: .top) {
             makeBackground()
             
-            if #available(iOS 18, *) {
-                makePhotoScroller()
-                    .padding(5)
-            } else {
-                makeRegularLayout()
-                    .padding(5)
-            }
+//            if #available(iOS 18, *) {
+//                makePhotoScroller()
+//            } else {
+//                makeRegularLayout()
+//                    .padding(5)
+//            }
         }
-        .background(.black)
         .task { await onAppear() }
-        .ignoresSafeArea(edges: .bottom)
         
         .onChange(of: event.images) { Task { await onAppear() } }
         .onChange(of: showEditView) {
