@@ -165,6 +165,7 @@ struct PhotoScrollerView<C1: View, C2: View>: View {
                     if baseScrollOffset == 0 { self.baseScrollOffset = newValue }
                     sharedData.mainOffset = newValue
                 }
+                .contentShape( ContentMask(screenHeight: screenHeight, sharedData: sharedData) )
                 .scrollDisabled(sharedData.isExpanded || sharedData.mainOffset < baseScrollOffset )
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
                 .safeAreaPadding(7)
