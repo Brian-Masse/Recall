@@ -384,27 +384,23 @@ struct RecallCalendarEventView: View {
         GeometryReader { geo in
             if let image = self.decodedImages.first {
                 Group {
-//                    if #available(iOS 18, *) {
-//                        makeLargePhotoCarousel(in: geo)
-//                    } else {
+                    if #available(iOS 18, *) {
+                        makeLargePhotoCarousel(in: geo)
+                    } else {
                         Image(uiImage: image)
                             .resizable()
-                            .aspectRatio(contentMode: .fit)
+                            .aspectRatio(contentMode: .fill)
                             .clipped()
-//                    }
+                    }
                 }
-                .border(.red)
-                .frame(maxWidth: geo.size.width, minHeight: geo.size.height * 0.5, alignment: .top)
-//                .border(.purple)
-//                .frame(height: geo.size.height, alignment: .top)
-//                .overlay(alignment: .bottom) {
-//                    LinearGradient(colors: [.black, .clear],
-//                                   startPoint: .init(x: 0.5, y: 0.75),
-//                                   endPoint: .top)
-//                        .allowsHitTesting(false)
-//                        .contentShape(NullContentShape())
-//                        .frame(height: geo.size.height * 0.5)
-//                }
+                .overlay {
+                    LinearGradient(colors: [Colors.getSecondaryBase(from: colorScheme), .clear],
+                                   startPoint: .bottom,
+                                   endPoint: .init(x: 0.5, y: 0.85))
+                        .allowsHitTesting(false)
+                        .contentShape(NullContentShape())
+                }
+                .frame(width: geo.size.width, height: geo.size.height * 0.5, alignment: .top)
                 
             } else {
                 Rectangle()
@@ -509,13 +505,14 @@ struct RecallCalendarEventView: View {
         ZStack(alignment: .top) {
             makeBackground()
             
-//            if #available(iOS 18, *) {
-//                makePhotoScroller()
-//            } else {
-//                makeRegularLayout()
-//                    .padding(5)
-//            }
+            if #available(iOS 18, *) {
+                makePhotoScroller()
+            } else {
+                makeRegularLayout()
+                    .padding(5)
+            }
         }
+        .background(Colors.getSecondaryBase(from: colorScheme))
         .task { await onAppear() }
         
         .onChange(of: event.images) { Task { await onAppear() } }

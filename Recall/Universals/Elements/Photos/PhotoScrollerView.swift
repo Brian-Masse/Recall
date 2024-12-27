@@ -12,7 +12,7 @@ import UIUniversals
 //MARK: PhotoScrollViewModel
 @Observable
 final class PhotoScrollerViewModel: Sendable {
-    let restHeight: Double = 0.5
+    let restHeight: Double = 0.45
     let peekHeight: Double = 0.92
     
     var isExpanded: Bool
