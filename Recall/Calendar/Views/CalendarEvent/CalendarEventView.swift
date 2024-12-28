@@ -11,9 +11,7 @@ import RealmSwift
 import UIUniversals
 import MapKit
 
-//TODO: Fix Favorites Page
-
-//MARK: DeletableCalendarEvent
+//MARK: - DeletableCalendarEvent
 private struct DeleteableCalendarEvent: ViewModifier {
     
     let event: RecallCalendarEvent
@@ -39,7 +37,7 @@ extension View {
 }
 
 
-//MARK: RecallCalendarEventView
+//MARK: - RecallCalendarEventView
 struct RecallCalendarEventView: View {
      
     @ObservedObject private var calendarViewModel = RecallCalendarContainerViewModel.shared
@@ -74,12 +72,13 @@ struct RecallCalendarEventView: View {
         }
     }
     
+//    MARK: onAppear
     private func onAppear() async {
         let decodedImages = await imageStoreViewModel.decodeImages(for: event, expectedCount: event.images.count)
         withAnimation { self.decodedImages = decodedImages }
     }
     
-//    MARK: Labels
+//    MARK: - Labels
     private var timeLabel: String {
         let formatter = Date.FormatStyle().hour().minute()
         let str1 = event.startTime.formatted(formatter)
@@ -93,7 +92,7 @@ struct RecallCalendarEventView: View {
         return event.startTime.formatted(formatter)
     }
     
-//    MARK: SmallButton
+//    MARK: - SmallButton
     @ViewBuilder
     private func makeSmallButton(_ icon: String, label: String = "", action: @escaping () -> Void) -> some View {
         UniversalButton {
@@ -112,7 +111,7 @@ struct RecallCalendarEventView: View {
     }
     
     
-//    MARK: Header
+//    MARK: - Header
     @ViewBuilder
     private func makeHeader() -> some View {
         let titleColor = event.getColor().safeMix(with: .black, by: 0.6)
@@ -317,7 +316,7 @@ struct RecallCalendarEventView: View {
         .padding(.bottom, 50)
     }
     
-//    MARK: LargePhotoCarousel
+//    MARK: - LargePhotoCarousel
     @State private var photoCarouselIndex: Int = 0
     
     @available(iOS 18.0, *)
@@ -326,7 +325,7 @@ struct RecallCalendarEventView: View {
         if self.decodedImages.count > 0 {
             
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 0) {
+                LazyHStack(alignment: .top, spacing: 0) {
                     ForEach( self.decodedImages, id: \.self ) { image in
                         Image(uiImage: image)
                             .resizable()
@@ -347,6 +346,7 @@ struct RecallCalendarEventView: View {
         }
     }
     
+//    MARK: makePhotoCarouselIndex
     @ViewBuilder
     private func makePhotoCarouselIndex() -> some View {
         if self.decodedImages.count > 1 {
@@ -378,40 +378,51 @@ struct RecallCalendarEventView: View {
         }
     }
     
-//    MARK: Background
+//    MARK: - Background
     @ViewBuilder
     private func makeBackground() -> some View {
         GeometryReader { geo in
             if let image = self.decodedImages.first {
-                Group {
-                    if #available(iOS 18, *) {
-                        makeLargePhotoCarousel(in: geo)
-                    } else {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .clipped()
+                ZStack(alignment: .top) {
+                    Group {
+                        if #available(iOS 18, *) {
+                            makeLargePhotoCarousel(in: geo)
+                        } else {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: geo.size.width)
+                                .clipped()
+                        }
+                    }
+                    .frame(width: geo.size.width, height: geo.size.height * 0.65, alignment: .top)
+                    
+                    VStack(spacing: 0) {
+                        let secondaryColor = Colors.getSecondaryBase(from: .dark)
+                            .safeMix(with: .black, by: 0.2)
+                        
+                        Spacer()
+                        
+                        LinearGradient(colors: [ secondaryColor, .clear],
+                                       startPoint: .bottom,
+                                       endPoint: .init(x: 0.5, y: 0.75))
+                            .allowsHitTesting(false)
+                            .contentShape(NullContentShape())
+                        
+                        Rectangle()
+                            .frame(height: geo.size.height * 0.35)
+                            .foregroundStyle( secondaryColor )
                     }
                 }
-                .overlay {
-                    LinearGradient(colors: [Colors.getSecondaryBase(from: colorScheme), .clear],
-                                   startPoint: .bottom,
-                                   endPoint: .init(x: 0.5, y: 0.85))
-                        .allowsHitTesting(false)
-                        .contentShape(NullContentShape())
-                }
-                .frame(width: geo.size.width, height: geo.size.height * 0.5, alignment: .top)
-                
             } else {
                 Rectangle()
                     .foregroundStyle(event.getColor().gradient)
             }
         }
-//        .border(.green)
         .ignoresSafeArea()
     }
     
-//    MARK: Content
+//    MARK: - Content
     @ViewBuilder
     private func makeContent() -> some View {
         VStack(spacing: 7) {
@@ -449,7 +460,7 @@ struct RecallCalendarEventView: View {
         }
     }
     
-//    MARK: makeRichDataSection
+//    MARK: - makeRichDataSection
     @ViewBuilder
     private func makeRichDataSection() -> some View {
         VStack(alignment: .leading) {
@@ -470,7 +481,7 @@ struct RecallCalendarEventView: View {
         }
     }
     
-//    MARK: PhotoScroller
+//    MARK: - PhotoScroller
     @available(iOS 18, *)
     @ViewBuilder
     private func makePhotoScroller() -> some View {
@@ -499,7 +510,7 @@ struct RecallCalendarEventView: View {
     }
     
     
-//    MARK: Body
+//    MARK: - Body
     var body: some View {
         
         ZStack(alignment: .top) {
@@ -528,6 +539,6 @@ struct RecallCalendarEventView: View {
 }
 
 //
-//#Preview {
-//    RecallCalendarEventView(event: sampleEventNoPhotos )
-//}
+#Preview {
+    RecallCalendarEventView(event: sampleEvent )
+}

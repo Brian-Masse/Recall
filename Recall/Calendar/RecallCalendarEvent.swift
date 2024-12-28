@@ -79,7 +79,7 @@ class RecallCalendarEvent: Object, Identifiable, OwnedRealmObject  {
             self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
         }
         
-        RecallModel.shared.updateEvent(self, updateType: .insert)
+//        RecallModel.shared.updateEvent(self, updateType: .insert)
     }
 
 //    MARK: Override Init
