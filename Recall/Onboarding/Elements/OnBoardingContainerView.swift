@@ -18,6 +18,10 @@ struct OnboardingSceneUIText {
     //tags
     static let tagSceneIntroductionText = "Tags categorize events on your calendar. Each is linked with one or more goals"
     static let tagSceneInstructionText = "Pick out tags for events you frequently do. You can always add, remove, or modify tags later"
+    
+//    events
+    static let eventsSceneIntroductionText = "Events are the driver behind Recall."
+    static let eventsSceneInstructionText = "This is a sample event, it contains lots of ways to help you better log and recall your memories"
 }
 
 //MARK: OnboardingSceneView
@@ -30,6 +34,7 @@ enum OnBoardingScene: Int, CaseIterable {
     
     case goalTutorial
     case tagsTutorial
+    case eventsTutorial
     
     case overview
     case howItWorks
@@ -109,6 +114,7 @@ private struct OnboardingView: View {
             switch scene {
             case .goalTutorial: OnboardingGoalScene(sceneComplete: sceneComplete)
             case .tagsTutorial: OnboardingTagScene(sceneComplete: sceneComplete)
+            case .eventsTutorial: OnboardingEventScene(sceneComplete: sceneComplete)
         
             default: EmptyView()
             }

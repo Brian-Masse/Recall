@@ -116,6 +116,7 @@
 		C9DC3F3A2D20A6E70021ED79 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F392D20A6E70021ED79 /* OnboardingViewModel.swift */; };
 		C9DC3F3C2D20AED40021ED79 /* OnboardingSplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F3B2D20AED40021ED79 /* OnboardingSplashScreenView.swift */; };
 		C9DC3F3E2D20BD820021ED79 /* OnboardingTagScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F3D2D20BD820021ED79 /* OnboardingTagScene.swift */; };
+		C9DC3F422D2434D70021ED79 /* OnboardingEventScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F412D2434D70021ED79 /* OnboardingEventScene.swift */; };
 		C9E0B17D2B03E5F000318508 /* RecallUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E0B17C2B03E5F000318508 /* RecallUpdate.swift */; };
 		C9E3E01E2C91F099000E0911 /* CreationFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E3E01D2C91F099000E0911 /* CreationFormView.swift */; };
 		C9E3E02F2C9207B5000E0911 /* CactusTimeDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E3E02E2C9207B5000E0911 /* CactusTimeDial.swift */; };
@@ -293,6 +294,7 @@
 		C9DC3F392D20A6E70021ED79 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		C9DC3F3B2D20AED40021ED79 /* OnboardingSplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSplashScreenView.swift; sourceTree = "<group>"; };
 		C9DC3F3D2D20BD820021ED79 /* OnboardingTagScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTagScene.swift; sourceTree = "<group>"; };
+		C9DC3F412D2434D70021ED79 /* OnboardingEventScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEventScene.swift; sourceTree = "<group>"; };
 		C9E0B17C2B03E5F000318508 /* RecallUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallUpdate.swift; sourceTree = "<group>"; };
 		C9E3E01D2C91F099000E0911 /* CreationFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreationFormView.swift; sourceTree = "<group>"; };
 		C9E3E02E2C9207B5000E0911 /* CactusTimeDial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CactusTimeDial.swift; sourceTree = "<group>"; };
@@ -720,6 +722,7 @@
 			isa = PBXGroup;
 			children = (
 				C9DC3F372D206B630021ED79 /* OnboardingGoalScene.swift */,
+				C9DC3F412D2434D70021ED79 /* OnboardingEventScene.swift */,
 				C9DC3F3D2D20BD820021ED79 /* OnboardingTagScene.swift */,
 			);
 			path = Tutorial;
@@ -1030,6 +1033,7 @@
 				C9C470D72CE8550D004AB489 /* NavigationCoordinator.swift in Sources */,
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
 				C996CE112D0E2DA80056006D /* RecallIcon.swift in Sources */,
+				C9DC3F422D2434D70021ED79 /* OnboardingEventScene.swift in Sources */,
 				C9F829282CB0C783002342B7 /* LocationManager.swift in Sources */,
 				C94B1F182A68931F007E8537 /* GoalsPageView.swift in Sources */,
 				C9EA0EE72A6B556300E36EF1 /* CategoryCreationView.swift in Sources */,
