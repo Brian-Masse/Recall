@@ -214,3 +214,20 @@ struct YearCalendar: View {
         .defaultScrollAnchor(.trailing)
     }
 }
+
+
+//MARK: - NoiseOverlay
+struct NoiseOverlay: View {
+    
+    private let startDate: Date = .now
+    
+    var body: some View {
+        TimelineView(.animation) { context in
+            Rectangle()
+                .colorEffect(ShaderLibrary.noise(.float(startDate.timeIntervalSinceNow.round(to: 2) )))
+                .blendMode(.softLight)
+                .opacity(0.35)
+                .ignoresSafeArea()
+        }
+    }
+}

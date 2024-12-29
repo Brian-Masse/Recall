@@ -40,6 +40,7 @@ struct ProfileView: View {
     @State var activeIcon: String = UIApplication.shared.alternateIconName ?? "light"
     
     @State var showingError: Bool = false
+    @State private var showingTestView: Bool = false
     
 //    MARK: Methods
     private func saveSettings() {
@@ -547,6 +548,10 @@ struct ProfileView: View {
                     
                     UniversalText( RecallModel.ownerID, size: Constants.UISmallTextSize, font: Constants.mainFont )
                         .padding(.bottom)
+                        .onTapGesture { showingTestView = true }
+                        .fullScreenCover(isPresented: $showingTestView) {
+                            OnboardingView()
+                        }
                 }
             }
         }

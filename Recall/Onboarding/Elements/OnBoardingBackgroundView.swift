@@ -63,8 +63,6 @@ struct OnBoardingBackgroundView: View {
         return midPoint + amplitude * sin(timeScale * t + offset)
     }
     
-    let startDate: Date = .now
-    
 //    MARK: Body
     var body: some View {
         
@@ -74,14 +72,6 @@ struct OnBoardingBackgroundView: View {
                 .onAppear { self.colors = getColors() }
                 .onChange(of: colorScheme) { self.colors = getColors() }
                 .animation(.easeInOut, value: self.colors)
-            
-            TimelineView(.animation) { context in
-                Rectangle()
-//                    .colorEffect(ShaderLibrary.noise(.float(startDate.timeIntervalSinceNow.round(to: 2) )))
-                    .blendMode(.softLight)
-                    .opacity(0.5)
-                    .ignoresSafeArea()
-            }
         }
     }
 }

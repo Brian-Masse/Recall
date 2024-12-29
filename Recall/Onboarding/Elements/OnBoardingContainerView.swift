@@ -97,6 +97,7 @@ struct OnBoardingContainerView<C: View>: View {
                 makeContinueButton()
             }
         }
+        .overlay { NoiseOverlay() }
         .background {
             OnBoardingBackgroundView()
         }
@@ -104,7 +105,7 @@ struct OnBoardingContainerView<C: View>: View {
 }
 
 //MARK: - OnboardingView
-private struct OnboardingView: View {
+struct OnboardingView: View {
 
     @ObservedObject private var viewModel = OnboardingViewModel.shared
     

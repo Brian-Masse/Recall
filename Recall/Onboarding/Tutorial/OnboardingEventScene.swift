@@ -28,7 +28,7 @@ private let sampleEventFoucsses: [OnboardingEventScene.EventFocus] = [
     
     .init(
         2,
-        title: "5.2 miles consistent jog",
+        title: "5.2 miles",
         type: "Notes",
         icon: "text.justify.left",
         description: "Offer additional context and significance to your events"
@@ -149,7 +149,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
         HStack(alignment: .top) {
             RecallIcon(currentFocus.icon)
                 .font(.title3)
-                .padding(.top)
+                .padding(.top, 5)
             
             VStack(alignment: .leading) {
                 UniversalText( currentFocus.title, size: Constants.UIHeaderTextSize, font: Constants.titleFont )
@@ -159,8 +159,10 @@ struct OnboardingEventScene: View, OnboardingSceneView {
                                            properties: .frame,
                                            isSource: true)
                 
-                UniversalText( currentFocus.type, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-                    .opacity(0.75)
+                if !currentFocus.type.isEmpty {
+                    UniversalText( currentFocus.type, size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                        .opacity(0.75)
+                }
                 
                 UniversalText(currentFocus.description, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
                     .opacity(0.75)
@@ -250,7 +252,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
         if currentFocusIndex < eventFocusses.count - 1 {
             UniversalButton {
                 HStack {
-                    UniversalText( "Next", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                    UniversalText( "Next", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
                     RecallIcon("arrow.turn.down.right")
                 }
                 .padding(.horizontal)
