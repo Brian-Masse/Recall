@@ -12,7 +12,7 @@ import UIUniversals
 private let titleEventFocus: OnboardingEventScene.EventFocus = .init(
     0,
     title: "Overview",
-    type: "Events",
+    type: "",
     icon: "calendar",
     description: OnboardingSceneUIText.eventsSceneInstructionText
 )
@@ -23,7 +23,7 @@ private let sampleEventFoucsses: [OnboardingEventScene.EventFocus] = [
         title: "Going for a Run",
         type: "Title",
         icon: "widget.small",
-        description: "You name events just like you name events on your calendar"
+        description: "You name events just like you name events on any other calendar"
     ),
     
     .init(
@@ -31,7 +31,7 @@ private let sampleEventFoucsses: [OnboardingEventScene.EventFocus] = [
         title: "5.2 miles consistent jog",
         type: "Notes",
         icon: "text.justify.left",
-        description: "Notes offer an optional space to add context to your events"
+        description: "Offer additional context and significance to your events"
     ),
     
     .init(
@@ -39,7 +39,7 @@ private let sampleEventFoucsses: [OnboardingEventScene.EventFocus] = [
         title: "7:45 - 8:45 AM",
         type: "Time",
         icon: "clock",
-        description: "The time shows when this event happened"
+        description: "Shows when this event happened"
     ),
     
     .init(
@@ -47,7 +47,7 @@ private let sampleEventFoucsses: [OnboardingEventScene.EventFocus] = [
         title: "Exercise",
         type: "Tag",
         icon: "tag",
-        description: "Tags categorize events, and automatically count them towards your various goals"
+        description: "Categorizes the event and automatically counts it towards your various goals"
     ),
     
     .init(
@@ -56,6 +56,14 @@ private let sampleEventFoucsses: [OnboardingEventScene.EventFocus] = [
         type: "Location",
         icon: "location",
         description: "Events can hold additional information, including photos, locations, or links"
+    ),
+    
+    .init(
+        6,
+        title: "Get Started",
+        type: "",
+        icon: "line.diagonal.arrow",
+        description: "Quickly Recall your first day to get a feel for how Recall works!"
     )
 ]
 
@@ -98,12 +106,12 @@ struct OnboardingEventScene: View, OnboardingSceneView {
     
     @Namespace private var namespace
     
-    private let eventColor: Color = .red
+    private let eventColor: Color = .blue
     
     var sceneComplete: Binding<Bool>
     
     private var blur: Double {
-        currentFocusIndex == -1 ? 0 : 4
+        (currentFocusIndex >= 0 && currentFocusIndex < eventFocusses.count - 1) ? 4 : 0
     }
     
     init(sceneComplete: Binding<Bool>) {
@@ -113,6 +121,10 @@ struct OnboardingEventScene: View, OnboardingSceneView {
     }
     
 //    MARK: ViewMethods
+    private func finishRotation() {
+        eventRotation = 0
+    }
+    
     private func randomizeRotation() {
         xAxisRotation = Double.random(in: 0.75...1)
         yAxisRotation = Double.random(in: 0.75...1)
@@ -125,7 +137,10 @@ struct OnboardingEventScene: View, OnboardingSceneView {
         currentFocus = eventFocusses[min(currentFocusIndex, eventFocusses.count - 1)]
         randomizeRotation()
         
-        if currentFocusIndex == eventFocusses.count { sceneComplete.wrappedValue = true }
+        if currentFocusIndex == eventFocusses.count - 1 {
+            sceneComplete.wrappedValue = true
+            finishRotation()
+        }
     }
     
 //    MARK: makeHeader
@@ -193,7 +208,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
     @ViewBuilder
     private func makeContent() -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            ForEach(0..<eventFocusses.count, id: \.self) { i in
+            ForEach(0..<eventFocusses.count - 1, id: \.self) { i in
                 let focus = eventFocusses[i]
                 makeFocussedText(focus: focus, title: i == 0)
             }
@@ -213,9 +228,11 @@ struct OnboardingEventScene: View, OnboardingSceneView {
         }
             .padding()
             .background {
-                RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                Rectangle()
                     .foregroundStyle(eventColor)
                     .opacity(0.45)
+                    .background()
+                    .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
                     .shadow(color: .black.opacity(0.3), radius: 15, y: 10)
                     .blur(radius: blur)
             }
@@ -230,7 +247,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
 //    MARK: makeContinueButton
     @ViewBuilder
     private func makeContinueButton() -> some View {
-        if currentFocusIndex < eventFocusses.count {
+        if currentFocusIndex < eventFocusses.count - 1 {
             UniversalButton {
                 HStack {
                     UniversalText( "Next", size: Constants.UIDefaultTextSize, font: Constants.mainFont )

@@ -76,6 +76,12 @@ struct OnboardingSplashScreenView<C: View>: View {
                     .onChange(of: context.date ) { withAnimation(.bouncy(duration: 1)) { handleTimeline(context) }}
                     .onAppear { withAnimation(.bouncy(duration: 1)) { showingSplash = true } }
                 }
+                .contentShape(Rectangle())
+                .onTapGesture { withAnimation(.bouncy(duration: 1)) {
+                    showingSplash = true
+                    showingContent = true
+                } }
+                
                 .transition(.asymmetric(insertion: .identity,
                                         removal: .offset(x: 0, y: -100).combined(with: .opacity)))
             } else {
