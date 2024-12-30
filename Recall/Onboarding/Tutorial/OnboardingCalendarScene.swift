@@ -70,7 +70,10 @@ struct OnboardingCalendarScene: View, OnboardingSceneView {
             checkCompletion()
         } }
         .sheet(isPresented: $showingCreationView) {
-            CalendarEventCreationView.makeEventCreationView(editing: false)
+            CalendarEventCreationView.makeEventCreationView(
+                editing: false,
+                formTitle: "What was your first event today?"
+            )
         }
     }
 }

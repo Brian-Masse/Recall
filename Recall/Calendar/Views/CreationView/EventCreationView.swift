@@ -65,11 +65,19 @@ struct CalendarEventCreationView: View {
 //    This creates an instance of the calendarEventCreationView
 //    it automatically populates the information if you are editting an event
     @ViewBuilder
-    static func makeEventCreationView(editing: Bool = false, event: RecallCalendarEvent? = nil, favorite: Bool = false) -> some View {
+    static func makeEventCreationView(
+        editing: Bool = false,
+        event: RecallCalendarEvent? = nil,
+        favorite: Bool = false,
+        formTitle: String = ""
+    ) -> some View {
         if !editing {
             let startTime = RecallModel.index.recallEventsAtEndOfLastRecall ? RecallModel.index.getMostRecentRecallEnd(on: .now) : .now
             
-            CalendarEventCreationView(editing: false,
+            let formTitle = formTitle.isEmpty ? ( editing ? "Edit Event" : "Create Event" ) : formTitle
+            
+            CalendarEventCreationView(formTitle: formTitle,
+                                      editing: false,
                                       event: nil,
                                       favorite: favorite,
                                       title: "",
@@ -80,7 +88,8 @@ struct CalendarEventCreationView: View {
                                       category: RecallCategory(),
                                       goalRatings: Dictionary())
         } else {
-            CalendarEventCreationView(editing: true,
+            CalendarEventCreationView(formTitle: formTitle,
+                                      editing: true,
                                       event: event,
                                       favorite: false,
                                       title: event!.title,
@@ -121,9 +130,10 @@ struct CalendarEventCreationView: View {
     @State private var recallByLength: Bool = !RecallModel.index.recallEventsWithEventTime
     @State private var showingAllTags: Bool = false
     
-    let editing: Bool
-    let event: RecallCalendarEvent?
-    let favorite: Bool
+    private let formTitle: String
+    private let editing: Bool
+    private let event: RecallCalendarEvent?
+    private let favorite: Bool
     
 //    MARK: Event Properties
 //    These are the vars that will be directly or indirectly stored in the event
@@ -368,11 +378,8 @@ struct CalendarEventCreationView: View {
 
 //    MARK: Body
     var body: some View {
-        
-        let title = editing ? "Edit Event" : "Create Event"
-        
         VStack {
-            CreationFormView(title,
+            CreationFormView(formTitle,
                              section: EventCreationFormSection.self,
                              sequence: editing ? [.overview, .tags, .time] : nil,
                              submit: submit) { section in
