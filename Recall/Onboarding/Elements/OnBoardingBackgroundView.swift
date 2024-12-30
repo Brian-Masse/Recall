@@ -20,8 +20,11 @@ struct OnBoardingBackgroundView: View {
     private func getColors() -> [Color] {
         var mixingColors: [Color] = Array(repeating: colorScheme == .light ? .white : .black, count: 9)
         
+        let lightRange = 0.25...0.75
+        let darkRange = 0.65...1
+        
         for i in 0..<mixingColors.count {
-            let mixAmount = Double.random(in: 0.25...0.75)
+            let mixAmount = Double.random(in: colorScheme == .light ? lightRange : darkRange)
             let newColor = Colors.getAccent(from: colorScheme).safeMix(with: mixingColors[i], by: mixAmount)
             mixingColors[i] = newColor
         }

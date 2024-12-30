@@ -18,10 +18,12 @@ struct TapAndHoldAnimation: View {
     @State private var showingHand: Bool = true
     @State private var showingCreationView: Bool = false
     
+    @Binding var continueButtonIsEnabled: Bool
+    
 //    MARK: startAnimation
     @MainActor
     private func startAnimation() async{
-        await RecallModel.wait(for: 0.75)
+        await RecallModel.wait(for: 2)
         
         withAnimation { showingCreationView = true }
         
@@ -31,6 +33,7 @@ struct TapAndHoldAnimation: View {
             withAnimation {
                 showingHand = false
                 showingCreationView = false
+                continueButtonIsEnabled = true
             }
         }
     }

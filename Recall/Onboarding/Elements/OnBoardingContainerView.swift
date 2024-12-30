@@ -22,6 +22,9 @@ struct OnboardingSceneUIText {
 //    events
     static let eventsSceneIntroductionText = "Events are the driver behind Recall."
     static let eventsSceneInstructionText = "This is a sample event, it contains lots of ways to help you better log and recall your memories"
+    
+    static let eventsTapAndHoldGestureInstruction = "You can tap and hold the calendar to quickly create an event"
+    static let eventsContextMenuGestureInstruction = "You can long press on an event to see more options and take quick actions"
 }
 
 //MARK: OnboardingSceneView
@@ -32,10 +35,10 @@ protocol OnboardingSceneView {
 //MARK: - OnBoardingScene
 enum OnBoardingScene: Int, CaseIterable {
     
-    case calendarTutorial
     case goalTutorial
     case tagsTutorial
     case eventsTutorial
+    case calendarTutorial
     
     case overview
     case howItWorks
@@ -54,7 +57,7 @@ enum OnBoardingScene: Int, CaseIterable {
 //MARK: - OnBoardingContainerView
 struct OnBoardingContainerView<C: View>: View {
     
-    @State private var scene: OnBoardingScene = .calendarTutorial
+    @State private var scene: OnBoardingScene = .goalTutorial
     @State private var sceneComplete: Bool = false
     
     @ViewBuilder
@@ -74,6 +77,16 @@ struct OnBoardingContainerView<C: View>: View {
 //    MARK: ContinueButton
     @ViewBuilder
     private func makeContinueButton() -> some View {
+        
+        HStack {
+            Spacer()
+            
+            RecallIcon("arrow.turn.down.right")
+            
+//            UniversalText( "continue", size: Constants.sub )
+            
+            Spacer()
+        }
         IconButton("arrow.forward",
                    label: "Continue",
                    fullWidth: true) { withAnimation {

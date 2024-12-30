@@ -104,6 +104,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
     @State private var yAxisRotation: Double = 0
     @State private var zAxisRotation: Double = 0
     
+    @Environment(\.colorScheme) var colorScheme
     @Namespace private var namespace
     
     private let eventColor: Color = .blue
@@ -199,7 +200,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
                 makeFocussedTextLabel(focus: focus, title: title)
             }
         }
-        .foregroundStyle(eventColor.safeMix(with: .black, by: 0.5))
+        .foregroundStyle(eventColor.safeMix(with: colorScheme == .light ? .black : .white, by: 0.5))
         .onTapGesture { withAnimation(.bouncy) {
             self.currentFocus = focus
         } }
@@ -255,6 +256,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
                     UniversalText( "Next", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
                     RecallIcon("arrow.turn.down.right")
                 }
+                .foregroundStyle(.black)
                 .padding(.horizontal)
                 .rectangularBackground(style: .accent)
                 
