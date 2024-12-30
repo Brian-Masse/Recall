@@ -77,28 +77,26 @@ struct OnBoardingContainerView<C: View>: View {
 //    MARK: ContinueButton
     @ViewBuilder
     private func makeContinueButton() -> some View {
-        
-        HStack {
-            Spacer()
-            
-            RecallIcon("arrow.turn.down.right")
-            
-//            UniversalText( "continue", size: Constants.sub )
-            
-            Spacer()
-        }
-        IconButton("arrow.forward",
-                   label: "Continue",
-                   fullWidth: true) { withAnimation {
-            
+        UniversalButton {
+            HStack {
+                Spacer()
+                
+                RecallIcon("arrow.turn.down.right")
+                
+                UniversalText( "continue", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                
+                Spacer()
+            }
+            .if(sceneComplete) { view in view.foregroundStyle(.black) }
+            .rectangularBackground(style: sceneComplete ? .accent : .primary)
+            .padding()
+        } action: {
             if !self.sceneComplete { return }
             
             self.onSubmit(scene)
             
             self.scene = scene.incrementScene()
-        } }
-                   .padding()
-                   .opacity(sceneComplete ? 1 : 0.5)
+        }
     }
     
 //    MARK: Body

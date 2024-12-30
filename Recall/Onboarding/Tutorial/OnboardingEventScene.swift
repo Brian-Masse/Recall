@@ -200,7 +200,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
                 makeFocussedTextLabel(focus: focus, title: title)
             }
         }
-        .foregroundStyle(eventColor.safeMix(with: colorScheme == .light ? .black : .white, by: 0.5))
+        .foregroundStyle(eventColor.safeMix(with: colorScheme == .light ? .black : .white, by: 0.75))
         .onTapGesture { withAnimation(.bouncy) {
             self.currentFocus = focus
         } }

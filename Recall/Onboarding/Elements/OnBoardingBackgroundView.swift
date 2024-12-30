@@ -21,7 +21,7 @@ struct OnBoardingBackgroundView: View {
         var mixingColors: [Color] = Array(repeating: colorScheme == .light ? .white : .black, count: 9)
         
         let lightRange = 0.25...0.75
-        let darkRange = 0.65...1
+        let darkRange = 0.75...1
         
         for i in 0..<mixingColors.count {
             let mixAmount = Double.random(in: colorScheme == .light ? lightRange : darkRange)
