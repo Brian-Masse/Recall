@@ -46,35 +46,39 @@ struct OnboardingCalendarScene: View, OnboardingSceneView {
         .rectangularBackground(style: .secondary)
     }
     
-//    MARK: Body
+
+    
+//    MARK: - Body
     var body: some View {
         
-        ZStack(alignment: .topTrailing) {
-            
-            CalendarContainer(events: Array(events), summaries: [])
-            
-            makeMinimumEventCounter()
-                .padding()
-        }
-        .background()
-        .overlay {
-            LinearGradient(colors: [.black, .clear],
-                           startPoint: .bottom,
-                           endPoint: .init(x: 0.5, y: 0.75))
-            .contentShape(NullContentShape())
-            .ignoresSafeArea()
-        }
-        .task { await onAppear() }
-        .onChange(of: events.count) { Task {
-            await viewModel.getRecalledEventCount(from: Array(events))
-            checkCompletion()
-        } }
-        .sheet(isPresented: $showingCreationView) {
-            CalendarEventCreationView.makeEventCreationView(
-                editing: false,
-                formTitle: "What was your first event today?"
-            )
-        }
+        TapAndHoldAnimation()
+        
+//        ZStack(alignment: .topTrailing) {
+//            
+//            CalendarContainer(events: Array(events), summaries: [])
+//            
+//            makeMinimumEventCounter()
+//                .padding()
+//        }
+//        .background()
+//        .overlay {
+//            LinearGradient(colors: [.black, .clear],
+//                           startPoint: .bottom,
+//                           endPoint: .init(x: 0.5, y: 0.75))
+//            .contentShape(NullContentShape())
+//            .ignoresSafeArea()
+//        }
+//        .task { await onAppear() }
+//        .onChange(of: events.count) { Task {
+//            await viewModel.getRecalledEventCount(from: Array(events))
+//            checkCompletion()
+//        } }
+//        .sheet(isPresented: $showingCreationView) {
+//            CalendarEventCreationView.makeEventCreationView(
+//                editing: false,
+//                formTitle: "What was your first event today?"
+//            )
+//        }
     }
 }
 
