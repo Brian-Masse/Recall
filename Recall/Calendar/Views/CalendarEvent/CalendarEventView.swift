@@ -369,15 +369,6 @@ struct RecallCalendarEventView: View {
         }
     }
     
-    private struct NullContentShape: Shape {
-        func path(in rect: CGRect) -> Path {
-            var rectCopy = rect
-            rectCopy.size.height = 0
-            
-            return Path(rectCopy)
-        }
-    }
-    
 //    MARK: - Background
     @ViewBuilder
     private func makeBackground() -> some View {

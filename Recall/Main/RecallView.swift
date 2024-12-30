@@ -45,7 +45,7 @@ struct RecallView: View {
                 Text("An error occoured")
                 
             case .complete:
-                MainView()
+                OnboardingView()
                     .environment(\.realmConfiguration, realmManager.configuration)
                     .slideTransition()
             }

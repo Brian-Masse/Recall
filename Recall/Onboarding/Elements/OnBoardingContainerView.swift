@@ -32,6 +32,7 @@ protocol OnboardingSceneView {
 //MARK: - OnBoardingScene
 enum OnBoardingScene: Int, CaseIterable {
     
+    case calendarTutorial
     case goalTutorial
     case tagsTutorial
     case eventsTutorial
@@ -53,7 +54,7 @@ enum OnBoardingScene: Int, CaseIterable {
 //MARK: - OnBoardingContainerView
 struct OnBoardingContainerView<C: View>: View {
     
-    @State private var scene: OnBoardingScene = .goalTutorial
+    @State private var scene: OnBoardingScene = .calendarTutorial
     @State private var sceneComplete: Bool = false
     
     @ViewBuilder
@@ -113,6 +114,8 @@ struct OnboardingView: View {
     var body: some View {
         OnBoardingContainerView(onSubmit: viewModel.onSubmit) { scene, sceneComplete in
             switch scene {
+                
+            case .calendarTutorial: OnboardingCalendarScene(sceneComplete: sceneComplete)
             case .goalTutorial: OnboardingGoalScene(sceneComplete: sceneComplete)
             case .tagsTutorial: OnboardingTagScene(sceneComplete: sceneComplete)
             case .eventsTutorial: OnboardingEventScene(sceneComplete: sceneComplete)

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIUniversals
 
 class OnboardingViewModel: ObservableObject {
     
@@ -97,5 +98,14 @@ class OnboardingViewModel: ObservableObject {
                                      goalRatings: goalRatings,
                                      color: tagTemplate.color)   
         }
+    }
+    
+//    MARK: - OnboardingEventScene
+    @Published var recentRecalledEventCount: Int = 0
+    
+    @MainActor
+    func getRecalledEventCount(from events: [RecallCalendarEvent]) async {
+        let results = events.filter { $0.startTime > Date.now - Constants.DayTime * 7 }
+        self.recentRecalledEventCount = results.count
     }
 }

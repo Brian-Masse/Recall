@@ -231,3 +231,13 @@ struct NoiseOverlay: View {
         }
     }
 }
+
+//MARK: - NullContentShape
+struct NullContentShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var rectCopy = rect
+        rectCopy.size.height = 0
+        
+        return Path(rectCopy)
+    }
+}
