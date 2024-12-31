@@ -100,7 +100,7 @@ struct OnboardingCalendarScene: View, OnboardingSceneView {
     @ObservedObject private var viewModel: OnboardingViewModel = OnboardingViewModel.shared
     
     @State private var showingCreationView: Bool = false
-    @State private var tutorialAnimationsComplete: Bool = false
+    @State private var tutorialAnimationsComplete: Bool = true
     
     private let minimumEvents: Int = 3
     
@@ -165,6 +165,7 @@ struct OnboardingCalendarScene: View, OnboardingSceneView {
                 editing: false,
                 formTitle: "What was your first event today?"
             )
+            .interactiveDismissDisabled()
         }
     }
 }

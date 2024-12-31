@@ -715,8 +715,8 @@
             filePath = "Recall/Main/RecallDataStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "217"
-            endingLineNumber = "217"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "changeEventInMonthLog()"
             landmarkType = "7">
          </BreakpointContent>
@@ -812,22 +812,6 @@
             startingLineNumber = "187"
             endingLineNumber = "187"
             landmarkName = "makeOverviewData()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "34609717-95C4-41CA-8218-4A0697004D29"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Recall/Main/RecallDataStore.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "189"
-            endingLineNumber = "189"
-            landmarkName = "setCurrentMonthLog()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

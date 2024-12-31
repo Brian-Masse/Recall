@@ -34,6 +34,8 @@ struct TapAndHoldAnimation: View {
                 showingHand = false
                 showingCreationView = false
                 continueButtonIsEnabled = true
+                
+                Task { await startAnimation() }
             }
         }
     }

@@ -184,10 +184,6 @@ class RecallDataStore: Object {
         for event in filteredResults {
             let i = floor(event.startTime.timeIntervalSince(startOfMonth) / Constants.DayTime)
             currentMonthLog[min(Int(i), 30)] += 1
-            
-            if i > 31 {
-                print("go")
-            }
         }
         
         if currentMonthLog != Array(self.currentMonthLog) {

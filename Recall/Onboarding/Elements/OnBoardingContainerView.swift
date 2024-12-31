@@ -33,6 +33,7 @@ protocol OnboardingSceneView {
 }
 
 //MARK: - OnBoardingScene
+//TODO: make goal + tag limits more apparent
 enum OnBoardingScene: Int, CaseIterable {
     
     case goalTutorial
@@ -87,9 +88,11 @@ struct OnBoardingContainerView<C: View>: View {
                 
                 Spacer()
             }
+            .opacity(sceneComplete ? 1 : 0.25)
             .if(sceneComplete) { view in view.foregroundStyle(.black) }
             .rectangularBackground(style: sceneComplete ? .accent : .primary)
             .padding()
+            
         } action: {
             if !self.sceneComplete { return }
             
