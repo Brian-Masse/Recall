@@ -193,14 +193,15 @@ struct OnboardingEventScene: View, OnboardingSceneView {
                 makeFocussedTextLabel(focus: focus, title: title)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .matchedGeometryEffect(id: focus.id, in: namespace)
-                    .opacity(0.75)
+                    .opacity(title ? 1 : 0.75)
                     .blur(radius: blur)
                 
             } else {
                 makeFocussedTextLabel(focus: focus, title: title)
             }
         }
-        .foregroundStyle(eventColor.safeMix(with: colorScheme == .light ? .black : .white, by: 0.75))
+        .foregroundStyle(eventColor.safeMix(with: .black,
+                                            by: colorScheme == .light ? 0.5 : 0))
         .onTapGesture { withAnimation(.bouncy) {
             self.currentFocus = focus
         } }
@@ -233,7 +234,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
             .background {
                 Rectangle()
                     .foregroundStyle(eventColor)
-                    .opacity(0.45)
+                    .opacity(0.25)
                     .background()
                     .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
                     .shadow(color: .black.opacity(0.3), radius: 15, y: 10)
@@ -250,18 +251,17 @@ struct OnboardingEventScene: View, OnboardingSceneView {
 //    MARK: makeContinueButton
     @ViewBuilder
     private func makeContinueButton() -> some View {
-        if currentFocusIndex < eventFocusses.count - 1 {
-            UniversalButton {
-                HStack {
-                    UniversalText( "Next", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-                    RecallIcon("arrow.turn.down.right")
-                }
-                .foregroundStyle(.black)
-                .padding(.horizontal)
-                .rectangularBackground(style: .accent)
-                
-            } action: { incrementFocus() }
-        }
+        UniversalButton {
+            HStack {
+                UniversalText( "Next", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                RecallIcon("arrow.turn.down.right")
+            }
+            .foregroundStyle(.black)
+            .padding(.horizontal)
+            .rectangularBackground(style: .accent)
+            
+        } action: { incrementFocus() }
+            .opacity(currentFocusIndex < eventFocusses.count - 1 ? 1 : 0)
     }
     
     
@@ -282,8 +282,8 @@ struct OnboardingEventScene: View, OnboardingSceneView {
                 
                 Spacer()
             }
-            .onAppear { withAnimation { sceneComplete.wrappedValue = false }}
         }
+                                   .onAppear { withAnimation { sceneComplete.wrappedValue = false }}
     }
 }
 
