@@ -89,15 +89,14 @@ struct OnboardingGoalScene: View, OnboardingSceneView {
         HStack {
             UniversalText(templateGoal.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
         }
-        
-        .rectangularBackground(style: templateIsSelected ? .accent : .secondary)
-            .onTapGesture { withAnimation {
-                viewModel.toggleTemplateGoal(templateGoal)
-                
-                if viewModel.selectedTemplateGoals.count >= minimumTemplates {
-                    sceneComplete.wrappedValue = true
-                }
-            } }
+        .highlightedBackground(templateIsSelected)
+        .onTapGesture { withAnimation {
+            viewModel.toggleTemplateGoal(templateGoal)
+            
+            if viewModel.selectedTemplateGoals.count >= minimumTemplates {
+                sceneComplete.wrappedValue = true
+            }
+        } }
     }
 
 //    MARK: makeTemplateGoalSelectors

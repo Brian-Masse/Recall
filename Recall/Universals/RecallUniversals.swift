@@ -241,3 +241,25 @@ struct NullContentShape: Shape {
         return Path(rectCopy)
     }
 }
+
+//MARK: - RecallHiglightedBackgruond
+//used for anything that can be selected
+//when selected it uses the accent color, when not it uses the secondary color
+//this view exists to properly match the foregroundStyle to the background
+struct HiglightedBackground: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    
+    let active: Bool
+    
+    func body(content: Content) -> some View {
+        content
+            .foregroundStyle( active ? .black : ( colorScheme == .light ? .black : .white ) )
+            .rectangularBackground(style: active ? .accent : .secondary )
+    }
+}
+
+extension View {
+    public func highlightedBackground(_ active: Bool) -> some View {
+        modifier(HiglightedBackground(active: active))
+    }
+}

@@ -86,6 +86,10 @@ private struct OnboardingCalendarAnimationHandler: View {
                 makeContinueButton()
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            OnBoardingBackgroundView()
+        }
     }
 }
 
@@ -108,13 +112,14 @@ struct OnboardingCalendarScene: View, OnboardingSceneView {
     @MainActor
     private func onAppear() async {
         self.showingCreationView = true
+        sceneComplete.wrappedValue = false
         await viewModel.getRecalledEventCount(from: Array(events))
         checkCompletion()
     }
     
     private func checkCompletion() {
         if viewModel.recentRecalledEventCount >= minimumEvents {
-            sceneComplete.wrappedValue = true
+//            sceneComplete.wrappedValue = true
         }
     }
 
@@ -127,23 +132,15 @@ struct OnboardingCalendarScene: View, OnboardingSceneView {
         .rectangularBackground(style: .secondary)
     }
     
-
-    
-//    MARK: - Body
-    var body: some View {
-        
+//    MARK: makeCalendar
+    @ViewBuilder
+    private func makeCalendar() -> some View {
         ZStack(alignment: .topTrailing) {
             
             CalendarContainer(events: Array(events), summaries: [])
             
             makeMinimumEventCounter()
                 .padding()
-            
-            if !tutorialAnimationsComplete {
-                OnboardingCalendarAnimationHandler(sceneComplete: $tutorialAnimationsComplete)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(.ultraThinMaterial)
-            }
         }
         .background()
         .overlay {
@@ -153,11 +150,25 @@ struct OnboardingCalendarScene: View, OnboardingSceneView {
             .contentShape(NullContentShape())
             .ignoresSafeArea()
         }
-        .task { await onAppear() }
         .onChange(of: events.count) { Task {
             await viewModel.getRecalledEventCount(from: Array(events))
             checkCompletion()
         } }
+    }
+
+    
+//    MARK: - Body
+    var body: some View {
+        
+        ZStack(alignment: .topTrailing) {
+            
+            makeCalendar()
+            
+            if !tutorialAnimationsComplete {
+                OnboardingCalendarAnimationHandler(sceneComplete: $tutorialAnimationsComplete)
+            }
+        }
+        .task { await onAppear() }
         .sheet(isPresented: $showingCreationView) {
             tutorialAnimationsComplete = false
         } content: {

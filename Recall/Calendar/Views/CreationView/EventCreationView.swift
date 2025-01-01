@@ -71,10 +71,10 @@ struct CalendarEventCreationView: View {
         favorite: Bool = false,
         formTitle: String = ""
     ) -> some View {
+        let formTitle = formTitle.isEmpty ? ( editing ? "Edit Event" : "Create Event" ) : formTitle
+        
         if !editing {
             let startTime = RecallModel.index.recallEventsAtEndOfLastRecall ? RecallModel.index.getMostRecentRecallEnd(on: .now) : .now
-            
-            let formTitle = formTitle.isEmpty ? ( editing ? "Edit Event" : "Create Event" ) : formTitle
             
             CalendarEventCreationView(formTitle: formTitle,
                                       editing: false,

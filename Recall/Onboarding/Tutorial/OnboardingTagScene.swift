@@ -91,15 +91,14 @@ struct OnboardingTagScene: View, OnboardingSceneView {
             
             UniversalText(template.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
         }
-        
-        .rectangularBackground(style: templateIsSelected ? .accent : .secondary)
-            .onTapGesture { withAnimation {
-                viewModel.toggleTemplateTag(template)
-                
-                if viewModel.selectedTemplateTags.count >= minimumTemplates {
-                    sceneComplete.wrappedValue = true
-                }
-            } }
+        .highlightedBackground(templateIsSelected)
+        .onTapGesture { withAnimation {
+            viewModel.toggleTemplateTag(template)
+            
+            if viewModel.selectedTemplateTags.count >= minimumTemplates {
+                sceneComplete.wrappedValue = true
+            }
+        } }
     }
 
 //    MARK: makeTemplateTagSelectors

@@ -23,8 +23,13 @@ struct TapAndHoldAnimation: View {
 //    MARK: startAnimation
     @MainActor
     private func startAnimation() async{
-        await RecallModel.wait(for: 2)
+        withAnimation {
+            showingHand = true
+            showingCreationView = false
+            height = 30
+        }
         
+        await RecallModel.wait(for: 0.75)
         withAnimation { showingCreationView = true }
         
         withAnimation(.easeInOut(duration: 1.5)) {
@@ -35,7 +40,11 @@ struct TapAndHoldAnimation: View {
                 showingCreationView = false
                 continueButtonIsEnabled = true
                 
-                Task { await startAnimation() }
+            } completion: {
+                Task {
+                    await RecallModel.wait(for: 1.5)
+                    await startAnimation()
+                }
             }
         }
     }
@@ -49,14 +58,14 @@ struct TapAndHoldAnimation: View {
             if showingCreationView {
                 ZStack {
                     RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                        .foregroundStyle(.gray)
+                        .opacity(0.3)
                     
                     RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                         .stroke(style: .init(lineWidth: 4, lineCap: .round, dash: [5, 10] ))
                     
                 }
                 .transition(.blurReplace.combined(with: .scale))
-                .opacity(0.4)
+                .opacity(0.3)
                 
             } else if !showingHand {
                 WidgetEventView(event: .init(title: "test",
@@ -66,7 +75,7 @@ struct TapAndHoldAnimation: View {
                                              endTime: .now,
                                              color: .red))
                 .redacted(reason: .placeholder)
-                .transition(.blurReplace)
+                .transition(.opacity.combined(with: .scale(0.75)))
             }
         }
         .overlay(alignment: .bottomTrailing) {
@@ -76,7 +85,7 @@ struct TapAndHoldAnimation: View {
                     .rotationEffect(.degrees(-30))
                     .padding(.trailing)
                     .offset(y: 25)
-                    .transition(.blurReplace)
+                    .transition( .opacity )
             }
         }
         .task { await startAnimation() }
@@ -84,4 +93,8 @@ struct TapAndHoldAnimation: View {
         .frame(width: width, height: height)
         .shadow(color: .black.opacity(0.3), radius: 25, y: 10)
     }
+}
+
+#Preview {
+    TapAndHoldAnimation(continueButtonIsEnabled: .constant(true))
 }
