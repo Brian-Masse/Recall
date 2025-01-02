@@ -58,7 +58,7 @@ struct RecallCalendarEventView: View {
     @State private var position: MapCameraPosition
     @Namespace private var mapNameSpace
     
-    private let eventTitleMinLength: Int = 24
+    private let eventTitleMinLength: Int = 13
     
 //    MARK: Init
     init( event: RecallCalendarEvent, events: [RecallCalendarEvent] = [] ) {

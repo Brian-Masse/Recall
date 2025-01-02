@@ -163,7 +163,8 @@ struct ProfileView: View {
         
         
         VStack(alignment: .leading) {
-            UniversalText( "Overview", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("number", title: "Overview")
+            
             VStack(alignment: .leading) {
                 HStack {
                     makeDemographicLabel(mainText: dayFormatted.string(from: index.dateJoined),
@@ -196,33 +197,33 @@ struct ProfileView: View {
         
         VStack(alignment: .leading) {
             
-            UniversalText( "Calendar Display Options", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("calendar.day.timeline.left", title: "Calendar")
             
             makeCalendarDisplayOptions()
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
                 
             
-            UniversalText( "Event Settings", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("widget.small", title: "Events")
             
             makeEventSettings()
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
-            UniversalText( "Apperance", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("circle.circle", title: "Appearance")
             
             makeAccentColorPicker()
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
             
-            UniversalText( "Reminders", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("app.badge", title: "Notifications")
             
             makeReminderSettings()
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
-            UniversalText( "Account Settings", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("person.bust", title: "Account")
             
             makeActionButtons()
             

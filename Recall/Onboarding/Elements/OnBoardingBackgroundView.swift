@@ -32,6 +32,7 @@ struct OnBoardingBackgroundView: View {
             mixingColors[i] = newColor
         }
         
+        
         return mixingColors
     }
     
