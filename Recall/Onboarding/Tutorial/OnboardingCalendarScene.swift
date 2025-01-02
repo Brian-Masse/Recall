@@ -94,9 +94,7 @@ private struct OnboardingCalendarAnimationHandler: View {
 }
 
 //MARK: - OnboardingCalendarScene
-struct OnboardingCalendarScene: View, OnboardingSceneView {
-    
-    var sceneComplete: Binding<Bool>
+struct OnboardingCalendarScene: View {
     
     @Environment(\.colorScheme) var colorScheme
     @ObservedResults( RecallCalendarEvent.self ) var events
@@ -112,7 +110,7 @@ struct OnboardingCalendarScene: View, OnboardingSceneView {
     @MainActor
     private func onAppear() async {
         self.showingCreationView = true
-        sceneComplete.wrappedValue = false
+        viewModel.setSceneStatus(to: .incomplete)
         await viewModel.getRecalledEventCount(from: Array(events))
         checkCompletion()
     }
@@ -183,5 +181,5 @@ struct OnboardingCalendarScene: View, OnboardingSceneView {
 
 #Preview {
 //    OnboardingCalendarAnimationHandler()
-    OnboardingCalendarScene(sceneComplete: .constant(true))
+    OnboardingCalendarScene()
 }

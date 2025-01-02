@@ -69,7 +69,7 @@ private let sampleEventFoucsses: [OnboardingEventScene.EventFocus] = [
 
 
 //MARK: OnboardingEventScene
-struct OnboardingEventScene: View, OnboardingSceneView {
+struct OnboardingEventScene: View {
     
 //    MARK: EventFocus
     struct EventFocus: Equatable, Identifiable {
@@ -105,20 +105,18 @@ struct OnboardingEventScene: View, OnboardingSceneView {
     @State private var zAxisRotation: Double = 0
     
     @Environment(\.colorScheme) var colorScheme
+    @ObservedObject private var viewModel = OnboardingViewModel.shared
     @Namespace private var namespace
     
     private let eventColor: Color = .blue
-    
-    var sceneComplete: Binding<Bool>
     
     private var blur: Double {
         (currentFocusIndex >= 0 && currentFocusIndex < eventFocusses.count - 1) ? 4 : 0
     }
     
-    init(sceneComplete: Binding<Bool>) {
+    init() {
         self.eventFocusses = sampleEventFoucsses
         self.currentFocus = titleEventFocus
-        self.sceneComplete = sceneComplete
     }
     
 //    MARK: ViewMethods
@@ -139,7 +137,7 @@ struct OnboardingEventScene: View, OnboardingSceneView {
         randomizeRotation()
         
         if currentFocusIndex == eventFocusses.count - 1 {
-            sceneComplete.wrappedValue = true
+            viewModel.setSceneStatus(to: .complete)
             finishRotation()
         }
     }
@@ -283,10 +281,9 @@ struct OnboardingEventScene: View, OnboardingSceneView {
                 Spacer()
             }
         }
-                                   .onAppear { withAnimation { sceneComplete.wrappedValue = false }}
     }
 }
 
 #Preview {
-    OnboardingEventScene(sceneComplete: .constant(true))
+    OnboardingEventScene()
 }

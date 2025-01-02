@@ -13,11 +13,12 @@ import UIUniversals
 
 //MARK: - OnboardingAuthenticationScene
 //This displays after the splash screen and prompts users to sign in / login
-struct OnboardingAuthenticationScene: View, OnboardingSceneView {
+struct OnboardingAuthenticationScene: View {
     @Environment(\.colorScheme) var colorScheme
     
-    
 //    MARK: Vars
+    @ObservedObject private var viewModel = OnboardingViewModel.shared
+    
     @State var email: String = ""
     @State var password: String = ""
     
@@ -26,8 +27,6 @@ struct OnboardingAuthenticationScene: View, OnboardingSceneView {
     @State var alertMessage: String = ""
     
     @State var loggingIn: Bool = false
-    
-    var sceneComplete: Binding<Bool>
     
     private var formsComplete: Bool { !email.isEmpty && !password.isEmpty }
     
@@ -126,10 +125,10 @@ struct OnboardingAuthenticationScene: View, OnboardingSceneView {
         .padding(7)
         
         .onChange(of: password) {
-            withAnimation { sceneComplete.wrappedValue = formsComplete }
+            withAnimation { viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete) }
         }
         .onChange(of: email) {
-            withAnimation { sceneComplete.wrappedValue = formsComplete }
+            withAnimation { viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete) }
         }
         
         
@@ -142,5 +141,5 @@ struct OnboardingAuthenticationScene: View, OnboardingSceneView {
 }
 
 #Preview {
-    OnboardingAuthenticationScene(sceneComplete: .constant(true))
+    OnboardingAuthenticationScene()
 }

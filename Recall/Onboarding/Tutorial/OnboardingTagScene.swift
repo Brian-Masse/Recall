@@ -42,9 +42,7 @@ private let templateTags: [TemplateTag] = [
 ]
 
 //MARK: - onboardingTagScene
-struct OnboardingTagScene: View, OnboardingSceneView {
-    
-    var sceneComplete: Binding<Bool>
+struct OnboardingTagScene: View {
     
     private let minimumTemplates: Int = 5
     
@@ -96,7 +94,7 @@ struct OnboardingTagScene: View, OnboardingSceneView {
             viewModel.toggleTemplateTag(template)
             
             if viewModel.selectedTemplateTags.count >= minimumTemplates {
-                sceneComplete.wrappedValue = true
+                viewModel.setSceneStatus(to: .complete)
             }
         } }
     }
@@ -127,10 +125,13 @@ struct OnboardingTagScene: View, OnboardingSceneView {
             }
             .padding(7)
         }
+                                   .onAppear {
+                                       viewModel.setSceneStatus(to: .complete)
+                                   }
     }
 }
 
 
 #Preview {
-    OnboardingTagScene(sceneComplete: .constant(true))
+    OnboardingTagScene()
 }

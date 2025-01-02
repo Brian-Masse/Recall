@@ -23,7 +23,7 @@ struct RecallView: View {
                     .slideTransition()
                 
             case .authenticating:
-                OnboardingAuthenticationScene(sceneComplete: .constant(true))
+                OnboardingAuthenticationScene()
                     .slideTransition()
                 
             case .openingRealm:

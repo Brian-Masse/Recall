@@ -43,9 +43,7 @@ private let templateGoals: [TemplateGoal] = [
 ]
 
 //MARK: - onBoardingGoalScene
-struct OnboardingGoalScene: View, OnboardingSceneView {
-    
-    var sceneComplete: Binding<Bool>
+struct OnboardingGoalScene: View {
     
     private let minimumTemplates: Int = 3
     
@@ -94,7 +92,7 @@ struct OnboardingGoalScene: View, OnboardingSceneView {
             viewModel.toggleTemplateGoal(templateGoal)
             
             if viewModel.selectedTemplateGoals.count >= minimumTemplates {
-                sceneComplete.wrappedValue = true
+                viewModel.setSceneStatus(to: .complete)
             }
         } }
     }
@@ -130,5 +128,5 @@ struct OnboardingGoalScene: View, OnboardingSceneView {
 
 
 #Preview {
-    OnboardingGoalScene(sceneComplete: .constant(true))
+    OnboardingGoalScene()
 }
