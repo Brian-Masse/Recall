@@ -250,16 +250,17 @@ struct HiglightedBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
     let active: Bool
+    let disabledStyle: UniversalStyle
     
     func body(content: Content) -> some View {
         content
             .foregroundStyle( active ? .black : ( colorScheme == .light ? .black : .white ) )
-            .rectangularBackground(style: active ? .accent : .secondary )
+            .rectangularBackground(style: active ? .accent : disabledStyle )
     }
 }
 
 extension View {
-    public func highlightedBackground(_ active: Bool) -> some View {
-        modifier(HiglightedBackground(active: active))
+    public func highlightedBackground(_ active: Bool, disabledStyle: UniversalStyle = .secondary) -> some View {
+        modifier(HiglightedBackground(active: active, disabledStyle: disabledStyle))
     }
 }

@@ -291,7 +291,8 @@ struct ProfileView: View {
                 Spacer()
                 RecallIcon( icon )
                 Spacer()
-            }.rectangularBackground(style: index.calendarColoumnCount == option ? .accent : .primary)
+            }
+            .highlightedBackground(index.calendarColoumnCount == option, disabledStyle: .primary)
             
         } action: { index.setCalendarColoumnCount(to: option) }
         

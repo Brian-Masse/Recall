@@ -44,19 +44,9 @@ struct MonthlyCalendarView: View {
         Calendar.current.component(.day, from: date)
     }
     
-    private func getStartOfMonthOfffset(for date: Date) -> Int {
-        let startOfMonth = date.getStartOfMonth()
-        return Calendar.current.component(.weekday, from: startOfMonth) - 1
-    }
-    
     private func gridItemWidth(in geo: GeometryProxy) -> Double {
         let space = (LocalConstants.gridSpacing * (LocalConstants.daysPerRow - 1)) + (LocalConstants.strokePadding * 2) + 1
         return (geo.size.width - LocalConstants.strokePadding - space) / ( LocalConstants.daysPerRow )
-    }
-    
-    private func getMonthName(for date: Date) -> String {
-        let format = Date.FormatStyle().month().year()
-        return date.formatted(format)
     }
 
     private func getDayOfWeekTitle(_ day: Int) -> String {
@@ -66,49 +56,79 @@ struct MonthlyCalendarView: View {
         return days[day]
     }
     
-//    MARK: MonthView
-    @MainActor
-    @ViewBuilder
-    private func makeMonth(_ date: Date, in width: CGFloat) -> some View {
+//    MARK: - MonthView
+    private struct MonthView: View {
         
-        let dayCount = date.getDaysInMonth()
-        let startOfMonthOffset = getStartOfMonthOfffset(for: date)
-        let startOfMonth = date.getStartOfMonth()
+        private let date: Date
+        private let width: Double
         
-        VStack(alignment: .leading, spacing: 0) {
-            UniversalText( getMonthName(for: date),
-                           size: Constants.UISubHeaderTextSize,
-                           font: Constants.titleFont)
-            .padding(.top)
-            
-            Line()
-                .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [1, 7]))
-                .frame(height: 1)
-                .padding(.vertical)
-                .opacity(0.25)
-  
-            VStack(alignment: .leading, spacing: LocalConstants.gridSpacing ) {
+        private let daysInMonth: Int
+        private let startOfMonthOffset: Int
+        private let startOfMonth: Date
+        
+        @State private var monthName: String = ""
+        
+        static func getStartOfMonthOfffset(for date: Date) -> Int {
+            let startOfMonth = date.getStartOfMonth()
+            return Calendar.current.component(.weekday, from: startOfMonth) - 1
+        }
+        
+        private func getMonthName(for date: Date) -> String {
+            let format = Date.FormatStyle().month().year()
+            return date.formatted(format)
+        }
+        
+        init(date: Date, in width: Double) {
+            self.date = date
+            self.width = width
+            self.daysInMonth = date.getDaysInMonth()
+            self.startOfMonthOffset = MonthView.getStartOfMonthOfffset(for: date)
+            self.startOfMonth = date.getStartOfMonth()
+        }
+        
+        private func onAppear() async {
+            let monthName = getMonthName(for: date)
+            self.monthName = monthName
+        }
+        
+//        MARK: Body
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                UniversalText( getMonthName(for: date),
+                               size: Constants.UISubHeaderTextSize,
+                               font: Constants.titleFont)
+                .padding(.top)
                 
-                let rowCount = Int(ceil(Double( dayCount + startOfMonthOffset  ) / 7))
-                
-                ForEach( 0..<rowCount, id: \.self ) { i in
-                    HStack(spacing: LocalConstants.gridSpacing ) {
-                        ForEach( 0..<7, id: \.self ) { f in
-                            let day = (i * 7) + f - startOfMonthOffset
-                            
-                            if day <= -1 {Rectangle().foregroundStyle(.clear).frame(width: width)
-                            } else if day < dayCount {
-                                DayView(day: day, startOfMonth: startOfMonth, width: width)
+                Line()
+                    .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [1, 7]))
+                    .frame(height: 1)
+                    .padding(.vertical)
+                    .opacity(0.25)
+      
+                VStack(alignment: .leading, spacing: LocalConstants.gridSpacing ) {
+                    
+                    let rowCount = Int(ceil(Double( daysInMonth + startOfMonthOffset  ) / 7))
+                    
+                    ForEach( 0..<rowCount, id: \.self ) { i in
+                        HStack(spacing: LocalConstants.gridSpacing ) {
+                            ForEach( 0..<7, id: \.self ) { f in
+                                let day = (i * 7) + f - startOfMonthOffset
+    
+                                if day <= -1 {Rectangle().foregroundStyle(.clear).frame(width: width)
+                                } else if day < daysInMonth {
+                                    DayView(day: day, startOfMonth: startOfMonth, width: width)
+                                }
                             }
                         }
+                        .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
                 }
             }
+            .task { await onAppear() }
         }
     }
-    
-//    MARK: DayView
+
+//    MARK: - DayView
     private struct DayView: View {
         
         @Environment(\.colorScheme) var colorScheme
@@ -120,7 +140,7 @@ struct MonthlyCalendarView: View {
         @State private var date: Date = .now
         @State private var recallWasCompleted: Bool = false
         @State private var eventCount: Int = 0
-        @State private var roundRightEdge: Bool = false
+        @State private var dataLoaded: Bool = false
         
         let day: Int
         let startOfMonth: Date
@@ -138,6 +158,7 @@ struct MonthlyCalendarView: View {
             return viewModel.recallWasCompleted(on: previousDay ) == 0
         }
         
+//        MARK: Body
         var  body: some View {
             
             UniversalText("\(Int(day + 1))",
@@ -148,18 +169,18 @@ struct MonthlyCalendarView: View {
                 .opacity( date > .now || !recallWasCompleted ? 0.15 : 1 )
                 .foregroundStyle( recallWasCompleted ? .black : Colors.getBase(from: colorScheme, reversed: true) )
                 .background { if recallWasCompleted {
-                        Rectangle()
-                            .foregroundStyle(Colors.getAccent(from: colorScheme))
-                            .cornerRadius(Constants.UIDefaultCornerRadius - 13)
-                            .transition(.blurReplace)
-                            .opacity( Double(eventCount) / 11 )
+                    RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 13)
+                        .foregroundStyle(Colors.getAccent(from: colorScheme))
+                        .opacity( Double(eventCount) / 11 )
                 } }
                 .task {
+                    if self.dataLoaded { return }
+                        
                     self.date                   = await getDate()
-                    self.roundRightEdge         = await shouldRoundRightEdge()
                     let recallWasCompleted      = await checkCompletion()
-                    
+
                     withAnimation { self.recallWasCompleted = recallWasCompleted }
+                    self.dataLoaded = true
                 }
             
                 .onTapGesture {
@@ -178,7 +199,7 @@ struct MonthlyCalendarView: View {
     private func makeCalendar(itemWidth: Double) -> some View {
         InfiniteScroller { i in
             let month = Calendar.current.date(byAdding: .month, value: i, to: .now)!
-            makeMonth(month, in: itemWidth)
+            MonthView(date: month, in: itemWidth)
         }
         .padding(LocalConstants.strokePadding)
         .clipShape(UnevenRoundedRectangle(topLeadingRadius: Constants.UIDefaultCornerRadius,
@@ -258,6 +279,7 @@ struct MonthlyCalendarView: View {
                 }
             }
         }
+        
         .task { await viewModel.renderCalendar(events: arrEvents) }
         .padding(7)
         .universalBackground()
