@@ -72,6 +72,7 @@
 		C99050482D0E3E8700C800FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C91BCEF52A618437003C6DD6 /* Assets.xcassets */; };
 		C99050492D0E3E8700C800FD /* SF-Pro.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C922848F2CC7747100280BFA /* SF-Pro.ttf */; };
 		C990504A2D0E3E8700C800FD /* Syne-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C92284912CC7755700280BFA /* Syne-Medium.ttf */; };
+		C992B9F02D27382B00D89A81 /* OnboardingProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C992B9EF2D27382B00D89A81 /* OnboardingProfileCreationScene.swift */; };
 		C996CE112D0E2DA80056006D /* RecallIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C996CE102D0E2DA80056006D /* RecallIcon.swift */; };
 		C996CE122D0E2DAD0056006D /* RecallIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C996CE102D0E2DA80056006D /* RecallIcon.swift */; };
 		C9B849342D0E1CF7005B1489 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9B849332D0E1CF7005B1489 /* UIUniversals */; };
@@ -253,6 +254,7 @@
 		C98F2F2D2A9D336200E92B30 /* GoalsCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCreationScene.swift; sourceTree = "<group>"; };
 		C98F2F2F2A9D3F3300E92B30 /* TagsCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsCreationScene.swift; sourceTree = "<group>"; };
 		C98F2F312A9DC49300E92B30 /* EventsCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsCreationScene.swift; sourceTree = "<group>"; };
+		C992B9EF2D27382B00D89A81 /* OnboardingProfileCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProfileCreationScene.swift; sourceTree = "<group>"; };
 		C996CE102D0E2DA80056006D /* RecallIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIcon.swift; sourceTree = "<group>"; };
 		C9B849352D0E26B7005B1489 /* Recall-WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Recall-WidgetExtension.entitlements"; sourceTree = "<group>"; };
 		C9BF38B82C9A0EA200AA8C3F /* dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dark.png; sourceTree = "<group>"; };
@@ -578,6 +580,7 @@
 			isa = PBXGroup;
 			children = (
 				C98F2F212A94134F00E92B30 /* OnboardingAuthenticationScene.swift */,
+				C992B9EF2D27382B00D89A81 /* OnboardingProfileCreationScene.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -1048,6 +1051,7 @@
 				C98CEE112B00246800B75924 /* UpdateView.swift in Sources */,
 				C922849B2CC97CE700280BFA /* StyledPhotoPickerViewModel.swift in Sources */,
 				C9DC3F442D248AA20021ED79 /* OnboardingCalendarScene.swift in Sources */,
+				C992B9F02D27382B00D89A81 /* OnboardingProfileCreationScene.swift in Sources */,
 				C91E1CF92AFC789300029F43 /* TagsPageView.swift in Sources */,
 				C9C470DE2CE98F16004AB489 /* MonthlyCalendarViewModel.swift in Sources */,
 				C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */,

@@ -528,8 +528,3 @@ struct RecallCalendarEventView: View {
         .animation(.easeInOut, value: event)
     }
 }
-
-//
-#Preview {
-    RecallCalendarEventView(event: sampleEvent )
-}

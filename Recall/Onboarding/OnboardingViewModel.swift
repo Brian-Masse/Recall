@@ -54,7 +54,7 @@ class OnboardingViewModel: ObservableObject {
         withAnimation { sceneStatus = status }
     }
     
-//    MARK: IncrementScene
+    //    MARK: IncrementScene
     @MainActor
     func incrementScene() {
         if sceneStatus != .complete { return }
@@ -65,7 +65,7 @@ class OnboardingViewModel: ObservableObject {
         onSubmit()
     }
     
-//    MARK: onSubmit
+    //    MARK: onSubmit
     @MainActor
     private func onSubmit() {
         switch scene {
@@ -77,7 +77,7 @@ class OnboardingViewModel: ObservableObject {
         }
     }
     
-//    MARK: - OnboardingGoalScene
+    //    MARK: - OnboardingGoalScene
     @Published var selectedTemplateGoals: [TemplateGoal] = []
     
     func toggleTemplateGoal(_ templateGoal: TemplateGoal) {
@@ -89,8 +89,8 @@ class OnboardingViewModel: ObservableObject {
     }
     
     
-//    MARK: goalSceneSubmitted
-//    translates a list of selected templates into real RecallGoal objects that the user owns
+    //    MARK: goalSceneSubmitted
+    //    translates a list of selected templates into real RecallGoal objects that the user owns
     @MainActor
     private func goalSceneSubmitted( _ selectedTemplates: [TemplateGoal] ) {
         if inDev { return }
@@ -108,8 +108,8 @@ class OnboardingViewModel: ObservableObject {
             RealmManager.addObject(goal)
         }
     }
-
-//    MARK: - OnboardingTagScene
+    
+    //    MARK: - OnboardingTagScene
     @Published var selectedTemplateTags: [TemplateTag] = []
     
     func toggleTemplateTag(_ templateTag: TemplateTag) {
@@ -121,8 +121,8 @@ class OnboardingViewModel: ObservableObject {
     }
     
     
-//    MARK: goalSceneSubmitted
-//    translates a list of selected templates into real RecallGoal objects that the user owns
+    //    MARK: goalSceneSubmitted
+    //    translates a list of selected templates into real RecallGoal objects that the user owns
     private func getGoalRatings(for tag: TemplateTag) async -> Dictionary<String, String> {
         let goalNames = selectedTemplateGoals.compactMap { goal in
             if tag.templateMask.contains(goal.tagMask) { return goal.title }
@@ -140,7 +140,7 @@ class OnboardingViewModel: ObservableObject {
     @MainActor
     private func tagSceneSubmitted( _ selectedTags: [TemplateTag] ) async {
         if inDev { return }
-
+        
         for tagTemplate in selectedTags {
             
             let goalRatings = await getGoalRatings(for: tagTemplate)
@@ -148,17 +148,33 @@ class OnboardingViewModel: ObservableObject {
             let tag = RecallCategory(ownerID: RecallModel.ownerID,
                                      label: tagTemplate.title,
                                      goalRatings: goalRatings,
-                                     color: tagTemplate.color)   
+                                     color: tagTemplate.color)
         }
     }
     
-//    MARK: - OnboardingEventScene
+    //    MARK: - OnboardingEventScene
     @Published var recentRecalledEventCount: Int = 0
     
     @MainActor
     func getRecalledEventCount(from events: [RecallCalendarEvent]) async {
         let results = events.filter { $0.startTime > Date.now - Constants.DayTime * 7 }
         self.recentRecalledEventCount = results.count
+    }
+    
+    //    MARK: - OnboardingProfileScene
+    
+    @Published var firstName: String = ""
+    @Published var lastName: String = ""
+    @Published var birthday: Date = .now
+    
+    func checkProfileCreationFields() -> Bool {
+        !(firstName.isEmpty || lastName.isEmpty || birthday.timeIntervalSinceNow < (Constants.yearTime * 18))
+    }
+    
+    private func submitProfileCreation() {
+        if !checkProfileCreationFields() { return }
+        
+        
     }
 }
 

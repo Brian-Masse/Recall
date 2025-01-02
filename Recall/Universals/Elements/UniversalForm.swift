@@ -547,19 +547,30 @@ struct StyledDatePicker: View {
     
     @Binding var date: Date
     let title: String
+    let prompt: String
     let fontSize: CGFloat
     
-    init( _ date: Binding<Date>, title: String, fontSize: CGFloat = Constants.formQuestionTitleSize ) {
+    init(
+        _ date: Binding<Date>,
+        title: String,
+        prompt: String = "Select",
+        fontSize: CGFloat = Constants.formQuestionTitleSize
+    ) {
         self._date = date
         self.title = title
+        self.prompt = prompt
         self.fontSize = fontSize
     }
     
     var body: some View {
         VStack(alignment: .leading) {
-            UniversalText( title, size: fontSize, font: Constants.titleFont )
+            if !title.isEmpty {
+                UniversalText( title, size: fontSize, font: Constants.titleFont )
+            }
+            
             DatePicker(selection: $date, displayedComponents: .date) {
-                UniversalText( "select", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
+                UniversalText( prompt, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                    .opacity(0.25)
             }
             .tint(Colors.getAccent(from: colorScheme))
             .rectangularBackground(style: .secondary)
