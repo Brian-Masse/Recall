@@ -54,7 +54,7 @@
 		C98CEE112B00246800B75924 /* UpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98CEE102B00246800B75924 /* UpdateView.swift */; };
 		C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */; };
 		C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033D2A868DEB00729334 /* RecallDataModel.swift */; };
-		C98F2F222A94134F00E92B30 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F212A94134F00E92B30 /* LoginView.swift */; };
+		C98F2F222A94134F00E92B30 /* OnboardingAuthenticationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F212A94134F00E92B30 /* OnboardingAuthenticationScene.swift */; };
 		C98F2F252A94435600E92B30 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F242A94435600E92B30 /* SplashScreen.swift */; };
 		C98F2F272A945B7400E92B30 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F262A945B7400E92B30 /* ProfileView.swift */; };
 		C98F2F292A9859BD00E92B30 /* ProfileViewEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F282A9859BD00E92B30 /* ProfileViewEditor.swift */; };
@@ -245,7 +245,7 @@
 		C98CEE102B00246800B75924 /* UpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateView.swift; sourceTree = "<group>"; };
 		C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartsHelperStructs.swift; sourceTree = "<group>"; };
 		C98D033D2A868DEB00729334 /* RecallDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallDataModel.swift; sourceTree = "<group>"; };
-		C98F2F212A94134F00E92B30 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		C98F2F212A94134F00E92B30 /* OnboardingAuthenticationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAuthenticationScene.swift; sourceTree = "<group>"; };
 		C98F2F242A94435600E92B30 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		C98F2F262A945B7400E92B30 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C98F2F282A9859BD00E92B30 /* ProfileViewEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewEditor.swift; sourceTree = "<group>"; };
@@ -574,11 +574,18 @@
 			path = TutorialViews;
 			sourceTree = "<group>";
 		};
+		C9A70E632D260CB70098F421 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				C98F2F212A94134F00E92B30 /* OnboardingAuthenticationScene.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
 		C9B8DF612C69072A00B11A38 /* Launch */ = {
 			isa = PBXGroup;
 			children = (
 				C98F2F242A94435600E92B30 /* SplashScreen.swift */,
-				C98F2F212A94134F00E92B30 /* LoginView.swift */,
 				C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */,
 				C98F2F2C2A9D334C00E92B30 /* TutorialViews */,
 			);
@@ -719,6 +726,7 @@
 				C9DC3F452D249E760021ED79 /* Animations */,
 				C9DC3F402D20BDA70021ED79 /* Elements */,
 				C9DC3F3F2D20BD8D0021ED79 /* Tutorial */,
+				C9A70E632D260CB70098F421 /* Profile */,
 				C9DC3F2C2D19E7770021ED79 /* AboutView.swift */,
 				C9DC3F2F2D19F79D0021ED79 /* AboutScreenEventView.swift */,
 			);
@@ -1004,7 +1012,7 @@
 				C91BCEF22A618435003C6DD6 /* RecallApp.swift in Sources */,
 				C9D299E62CACB83200814965 /* StyledLocationPicker.swift in Sources */,
 				C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */,
-				C98F2F222A94134F00E92B30 /* LoginView.swift in Sources */,
+				C98F2F222A94134F00E92B30 /* OnboardingAuthenticationScene.swift in Sources */,
 				C98F2F292A9859BD00E92B30 /* ProfileViewEditor.swift in Sources */,
 				C98F2F322A9DC49300E92B30 /* EventsCreationScene.swift in Sources */,
 				C98CEE0F2AFFFC3E00B75924 /* UpdateManager.swift in Sources */,

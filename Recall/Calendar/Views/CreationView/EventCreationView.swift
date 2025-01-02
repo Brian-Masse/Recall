@@ -235,7 +235,7 @@ struct CalendarEventCreationView: View {
     private func makeOverviewQuestions() -> some View {
         VStack(alignment: .leading, spacing: 10) {
             StyledTextField(title: "", binding: $title, prompt: "title", clearable: true)
-            StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, multiLine: true)
+            StyledTextField(title: "", binding: $notes, prompt: "Notes", clearable: true, type: .multiLine)
             
             EventCreationViewTabBar(link: $link, location: $location)
                 .task { await getCurrentLocation() }

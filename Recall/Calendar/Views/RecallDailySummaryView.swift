@@ -98,7 +98,7 @@ struct RecallDailySummaryView: View {
 //    MARK: Layouts
     @ViewBuilder
     private func makeDailySummaryEditor() -> some View {
-        StyledTextField(title: "", binding: $dailySummaryNotes, prompt: "add notes about how the day went", multiLine: true)
+        StyledTextField(title: "", binding: $dailySummaryNotes, prompt: "add notes about how the day went", type: .multiLine)
             .transition(.blurReplace)
         
         if !dailySummaryNotes.isEmpty {

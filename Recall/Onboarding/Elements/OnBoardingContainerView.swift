@@ -36,6 +36,8 @@ protocol OnboardingSceneView {
 //TODO: make goal + tag limits more apparent
 enum OnBoardingScene: Int, CaseIterable {
     
+    case authentication
+    
     case goalTutorial
     case tagsTutorial
     case eventsTutorial
@@ -58,7 +60,7 @@ enum OnBoardingScene: Int, CaseIterable {
 //MARK: - OnBoardingContainerView
 struct OnBoardingContainerView<C: View>: View {
     
-    @State private var scene: OnBoardingScene = .goalTutorial
+    @State private var scene: OnBoardingScene = .authentication
     @State private var sceneComplete: Bool = false
     
     @ViewBuilder
@@ -128,11 +130,13 @@ struct OnboardingView: View {
     var body: some View {
         OnBoardingContainerView(onSubmit: viewModel.onSubmit) { scene, sceneComplete in
             switch scene {
+              
+            case .authentication: OnboardingAuthenticationScene(sceneComplete: sceneComplete)
                 
-            case .calendarTutorial: OnboardingCalendarScene(sceneComplete: sceneComplete)
             case .goalTutorial: OnboardingGoalScene(sceneComplete: sceneComplete)
             case .tagsTutorial: OnboardingTagScene(sceneComplete: sceneComplete)
             case .eventsTutorial: OnboardingEventScene(sceneComplete: sceneComplete)
+            case .calendarTutorial: OnboardingCalendarScene(sceneComplete: sceneComplete)
         
             default: EmptyView()
             }

@@ -146,21 +146,35 @@ struct StyledURLField: View {
 //MARK: StyledTextField
 struct StyledTextField: View {
     
+    enum TextFieldType {
+        case regular
+        case multiLine
+        case secure
+    }
+    
     let title: String
     let binding: Binding<String>
     let prompt: String
     let clearable: Bool
-    let multiLine: Bool
+    let type: TextFieldType
     
     let shouldFocusOnAppear: Bool
     
     @Binding var isFocussed: Bool
     
-    init( title: String, binding: Binding<String>, prompt: String = "", clearable: Bool = false, multiLine: Bool = false, isFocussed: Binding<Bool> = .constant(false), shouldFocusOnAppear: Bool = false ) {
+    init(
+        title: String,
+        binding: Binding<String>,
+        prompt: String = "",
+        clearable: Bool = false,
+        type: TextFieldType = .regular,
+        isFocussed: Binding<Bool> = .constant(false),
+        shouldFocusOnAppear: Bool = false
+    ) {
         self.title = title
         self.binding = binding
         self.clearable = clearable
-        self.multiLine = multiLine
+        self.type = type
         self.prompt = prompt
         self._isFocussed = isFocussed
         self.shouldFocusOnAppear = shouldFocusOnAppear
@@ -172,8 +186,11 @@ struct StyledTextField: View {
     
     @ViewBuilder
     private func makeTextField() -> some View {
-        if multiLine { TextField(prompt, text: binding, axis: .vertical) }
-        else { TextField(prompt, text: binding) }
+        switch type {
+        case .regular: TextField(prompt, text: binding)
+        case .multiLine: TextField(prompt, text: binding, axis: .vertical)
+        case .secure: SecureField(prompt, text: binding)
+        }
     }
     
     @MainActor
@@ -198,7 +215,7 @@ struct StyledTextField: View {
                     .font(Font.custom(SyneMedium.shared.postScriptName, size: Constants.UIDefaultTextSize))
                     .frame(maxWidth: .infinity)
                     .tint(Colors.getAccent(from: colorScheme) )
-                    .padding(.trailing, ( multiLine ? 0 : ( showingClearButton ? 25 : 0 ) ) + 5 )
+                    .padding(.trailing, ( type != .regular ? 0 : ( showingClearButton ? 25 : 0 ) ) + 5 )
                 
                     .rectangularBackground(style: .secondary)
                     .onChange(of: self.focused) {
