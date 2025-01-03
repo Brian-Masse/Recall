@@ -59,9 +59,10 @@ struct OnboardingView: View {
                 sceneBuilder()
                     .frame(width: geo.size.width, height: geo.size.height)
                 
-                makeContinueButton()
+                if viewModel.sceneStatus != .hideButton {
+                    makeContinueButton()
+                }
             }
-//            .padding(7)
         }
         .overlay { NoiseOverlay() }
         .background {

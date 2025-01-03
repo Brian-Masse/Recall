@@ -176,6 +176,8 @@ struct OnboardingCalendarScene: View {
             )
             .interactiveDismissDisabled()
         }
+        
+        .onAppear { viewModel.setSceneStatus(to: .hideButton) }
     }
 }
 

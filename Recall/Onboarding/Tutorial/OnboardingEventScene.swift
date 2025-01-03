@@ -280,6 +280,7 @@ struct OnboardingEventScene: View {
                 
                 Spacer()
             }
+            .onAppear { viewModel.setSceneStatus(to: .hideButton) }
         }
     }
 }

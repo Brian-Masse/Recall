@@ -20,8 +20,8 @@ enum OnBoardingScene: Int, CaseIterable {
     case eventsTutorial
     case calendarTutorial
     
-    case overview
-    case howItWorks
+//    case overview
+//    case howItWorks
     
     func incrementScene() -> OnBoardingScene {
         if let scene = OnBoardingScene(rawValue: self.rawValue + 1) { return scene }

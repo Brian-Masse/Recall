@@ -271,8 +271,13 @@ struct FullScreenProgressBar: View {
     
 //    MARK: ProgressBarShape
     private struct ProgressBarShape: Shape {
-        let progress: Double
+        var progress: Double
         let cornerRadius: Double
+        
+        var animatableData: Double {
+            get { progress }
+            set { progress = newValue }
+        }
         
         func path(in rect: CGRect) -> Path {
             Path { path in
@@ -344,7 +349,7 @@ struct FullScreenProgressBar: View {
     let progress: Double
     private let cornerRadius: Double = 62
     
-    @State private var thickness: Double = 10
+    @State private var thickness: Double = 7
     
     var body: some View {
         ZStack {
@@ -352,12 +357,25 @@ struct FullScreenProgressBar: View {
                              cornerRadius: cornerRadius - (thickness / 2))
             .stroke(style: .init(lineWidth: thickness, lineCap: .round))
             .padding(thickness / 2)
+            .opacity(progress > 0.05 ? 1 : 0)
         }
+        .animation(.spring(duration: 1.5), value: progress)
         .ignoresSafeArea()
+    }
+}
+
+private struct TestView: View {
+    
+    @State private var progress: Double = 0
+    
+    var body: some View {
+        FullScreenProgressBar(progress: progress)
+            .foregroundStyle(.blue)
+            .onAppear { withAnimation(.easeInOut(duration: 2)) { progress = 1 } }
     }
 }
 
 
 #Preview {
-    FullScreenProgressBar(progress: 0.5)
+    TestView()
 }
