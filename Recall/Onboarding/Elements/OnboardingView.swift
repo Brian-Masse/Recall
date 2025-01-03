@@ -61,10 +61,13 @@ struct OnboardingView: View {
                 
                 makeContinueButton()
             }
+//            .padding(7)
         }
         .overlay { NoiseOverlay() }
         .background {
             OnBoardingBackgroundView()
+            FullScreenProgressBar(progress: viewModel.currentSceneProgress)
+                .universalStyledBackgrond(.accent, onForeground: true)
         }
     }
 }

@@ -264,3 +264,100 @@ extension View {
         modifier(HiglightedBackground(active: active, disabledStyle: disabledStyle))
     }
 }
+
+
+//MARK: - FullScreenProgressBar
+struct FullScreenProgressBar: View {
+    
+//    MARK: ProgressBarShape
+    private struct ProgressBarShape: Shape {
+        let progress: Double
+        let cornerRadius: Double
+        
+        func path(in rect: CGRect) -> Path {
+            Path { path in
+
+                let width: Double = rect.width - (cornerRadius * 2)
+                let height: Double = rect.height - (cornerRadius * 2)
+                
+                let arcLength = Double.pi * cornerRadius * 0.5
+                let lengths: [Double] = [ -width, height, width, -height ]
+                let totalLength: Double = (arcLength * 4) + (width * 2) + (height * 2)
+                var currentLength: Double = 0
+                
+                var drawingHorizontally = true
+                
+                path.move(to: .init(x: rect.maxX - cornerRadius,
+                                    y: rect.minY))
+                
+                for i in 0..<4 {
+                    
+//                    determine the length of the current segment
+                    let length = lengths[i]
+                    let lengthDir = length / abs(length)
+                    
+                    var segmentLen = min( progress * totalLength,
+                                                currentLength + abs(length) ) - currentLength
+                    segmentLen *= lengthDir
+                    
+//                    draw the line
+                    let startPoint = path.currentPoint ?? .zero
+                    let endPointX = startPoint.x + (drawingHorizontally ? segmentLen : 0)
+                    let endPointY = startPoint.y + (drawingHorizontally ? 0 : segmentLen)
+                    
+                    path.addLine(to: .init(x: endPointX, y: endPointY))
+                    
+//                    check whether this segement was complete
+                    currentLength += abs(length)
+                    if (currentLength / totalLength) > progress { break }
+                    
+                    
+//                    determine the length of the current arc
+                    let arcLen = min( progress * totalLength, currentLength + arcLength ) - currentLength
+                    let arcPercent = arcLen / arcLength
+                    
+//                    draw the arc
+                    let nextIndex = (i + 1) % 4
+                    let nextLengthDir = lengths[nextIndex] / abs(lengths[nextIndex])
+                    let basePoint = path.currentPoint ?? .zero
+                    
+                    let centerPoint = CGPoint(x: basePoint.x + (drawingHorizontally ? 0 : cornerRadius * nextLengthDir),
+                                              y: basePoint.y + (drawingHorizontally ? cornerRadius * nextLengthDir : 0))
+                    let rotation = -90 * Double(i)
+                    
+                    path.addArc(center: centerPoint,
+                                radius: cornerRadius,
+                                startAngle: .degrees(-90 + rotation),
+                                endAngle: .degrees(-90 - 90 * arcPercent + rotation),
+                                clockwise: true)
+                    
+//                    check whether this segement was complete
+                    currentLength += abs(arcLength)
+                    if (currentLength / totalLength) > progress { break }
+                    
+                    drawingHorizontally.toggle()
+                }
+            }
+        }
+    }
+    
+    let progress: Double
+    private let cornerRadius: Double = 62
+    
+    @State private var thickness: Double = 10
+    
+    var body: some View {
+        ZStack {
+            ProgressBarShape(progress: progress,
+                             cornerRadius: cornerRadius - (thickness / 2))
+            .stroke(style: .init(lineWidth: thickness, lineCap: .round))
+            .padding(thickness / 2)
+        }
+        .ignoresSafeArea()
+    }
+}
+
+
+#Preview {
+    FullScreenProgressBar(progress: 0.5)
+}

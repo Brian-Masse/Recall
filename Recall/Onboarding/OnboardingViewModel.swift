@@ -50,6 +50,8 @@ class OnboardingViewModel: ObservableObject {
     
     var sceneComplete: Bool { sceneStatus == .complete }
     
+    @Published var currentSceneProgress: Double = 0
+    
     func setSceneStatus(to status: SceneStatus) {
         withAnimation { sceneStatus = status }
     }
@@ -61,6 +63,7 @@ class OnboardingViewModel: ObservableObject {
         withAnimation {
             self.scene = scene.incrementScene()
             self.setSceneStatus(to: .incomplete)
+            self.currentSceneProgress =  Double(scene.rawValue) / Double(OnBoardingScene.allCases.count)
         }
         onSubmit()
     }
