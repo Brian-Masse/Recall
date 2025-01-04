@@ -14,6 +14,8 @@ import UIUniversals
 enum OnBoardingScene: Int, CaseIterable {
     
     case authentication
+    case profileSetup1
+//    case profileSetup2
     
     case goalTutorial
     case tagsTutorial
@@ -61,7 +63,6 @@ class OnboardingViewModel: ObservableObject {
     //    MARK: IncrementScene
     @MainActor
     func incrementScene() {
-        if sceneStatus != .complete { return }
         withAnimation {
             self.scene = scene.incrementScene()
             self.setSceneStatus(to: .incomplete)
@@ -131,9 +132,6 @@ class OnboardingViewModel: ObservableObject {
     
     @MainActor
     func tagSceneSubmitted( _ selectedTags: [TemplateTag] ) async {
-        
-        await RecallModel.wait(for: 2)
-        
         if inDev { return }
         
         for tagTemplate in selectedTags {
@@ -156,20 +154,16 @@ class OnboardingViewModel: ObservableObject {
         self.recentRecalledEventCount = results.count
     }
     
-    //    MARK: - OnboardingProfileScene
+//    MARK: - AuthenticationScene
     
-    @Published var firstName: String = ""
-    @Published var lastName: String = ""
-    @Published var birthday: Date = .now
-    
-    func checkProfileCreationFields() -> Bool {
-        !(firstName.isEmpty || lastName.isEmpty || birthday.timeIntervalSinceNow < (Constants.yearTime * 18))
-    }
-    
-    private func submitProfileCreation() {
-        if !checkProfileCreationFields() { return }
+    func submitProfileDemographics( firstName: String, lastName: String, birthday: Date ) {
+        if inDev { return }
         
-        
+        RecallModel.index.update(firstName: firstName,
+                                 lastName: lastName,
+                                 email: RecallModel.realmManager.email,
+                                 phoneNumber: 0,
+                                 dateOfBirth: birthday)
     }
 }
 
@@ -177,6 +171,11 @@ class OnboardingViewModel: ObservableObject {
 
 //MARK: - onBoardingSceneUIText
 struct OnboardingSceneUIText {
+    
+//    profile
+    static let profileSceneIntroductionText =
+        "Your profile privately holds your data and allows you to customize Recall"
+    
     //goals
     static let goalSceneIntroductionText = 
         "Goals represent achievements you want to work towards each week."

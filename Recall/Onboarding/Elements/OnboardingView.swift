@@ -21,6 +21,7 @@ struct OnboardingView: View {
         switch viewModel.scene {
           
         case .authentication:   OnboardingAuthenticationScene()
+        case .profileSetup1:    OnboardingProfileCreationScene()
             
         case .goalTutorial:         OnboardingGoalScene()
         case .tagsTutorial:         OnboardingTagScene()
@@ -35,10 +36,8 @@ struct OnboardingView: View {
 //    MARK: Body
     var body: some View {
         GeometryReader { geo in
-                sceneBuilder()
-                    .padding(7)
-                
-//                OnboardingContinueButton()
+            sceneBuilder()
+                .padding(7)
         }
         .overlay { NoiseOverlay() }
         .background {

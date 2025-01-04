@@ -19,11 +19,15 @@ struct OnboardingProfileCreationScene: View {
     @State private var lastName: String = ""
     @State private var birthday: Date = .now
     
+    private var formsComplete: Bool {
+        !(firstName.isEmpty || lastName.isEmpty || -(birthday.timeIntervalSinceNow) < Constants.yearTime * 18)
+    }
+    
 //    MARK: makeHeader
     @ViewBuilder
     private func makeHeader() -> some View {
         UniversalText( "Setup your Profile",
-                       size: Constants.UISubHeaderTextSize,
+                       size: Constants.UIHeaderTextSize,
                        font: Constants.titleFont )
     }
     
@@ -43,15 +47,35 @@ struct OnboardingProfileCreationScene: View {
     
 //    MARK: Body
     var body: some View {
-        VStack(alignment: .leading) {
-            makeHeader()
+        OnboardingSplashScreenView(icon: "person.bust",
+                                   title: "Profile",
+                                   message: OnboardingSceneUIText.profileSceneIntroductionText) {
+            VStack(alignment: .leading) {
+                makeHeader()
+                
+                makeDemographicsField()
+                
+                Spacer()
+            }
+            .onChange(of: firstName) {
+                viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete)
+            }
+            .onChange(of: lastName) {
+                viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete)
+            }
+            .onChange(of: birthday) {
+                viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete)
+            }
             
-            makeDemographicsField()
-            
-            Spacer()
+            .padding(7)
+            .overlay(alignment: .bottom) {
+                OnboardingContinueButton(preTask: {
+                    viewModel.submitProfileDemographics(firstName: firstName,
+                                                        lastName: lastName,
+                                                        birthday: birthday)
+                })
+            }
         }
-        .padding(7)
-        
     }
 }
 

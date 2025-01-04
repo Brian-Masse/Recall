@@ -67,8 +67,10 @@ struct OnboardingContinueButton: View {
         viewModel.setSceneStatus(to: .async)
         if let asyncPreTask { await asyncPreTask() }
         
-        viewModel.setSceneStatus(to: .complete)
-        if !disableDefaultBehavior { viewModel.incrementScene() }
+        if !disableDefaultBehavior {
+            viewModel.setSceneStatus(to: .complete)
+            viewModel.incrementScene()
+        }
         
         if let asyncPostTask { await asyncPostTask() }
     }
@@ -84,6 +86,8 @@ struct OnboardingContinueButton: View {
     
 //    MARK: handleTap
     private func handleTap() {
+        if viewModel.sceneStatus != .complete { return }
+        
         if isAsync {
             Task { await asyncOnTap() }
         } else {

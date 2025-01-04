@@ -26,25 +26,22 @@ struct OnboardingAuthenticationScene: View {
     @State var alertTitle: String = "Issue Signing In"
     @State var alertMessage: String = ""
     
-    @State var loggingIn: Bool = false
-    
     private var formsComplete: Bool { !email.isEmpty && !password.isEmpty }
     
 //    MARK: Submit
     private func submit() async {
-        loggingIn = true
-        
+
         if formsComplete {
-            if let error = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
-                alertMessage = error
-                showingAlert = true
-                loggingIn = false
-            }
+//            if let error = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
+//                alertMessage = error
+//                showingAlert = true
+//            }
+            
+            viewModel.incrementScene()
             
         } else {
             alertMessage = "please provide a valid email and password before continuing"
             showingAlert = true
-            loggingIn = false
         }
     }
     
@@ -124,7 +121,7 @@ struct OnboardingAuthenticationScene: View {
         }
         .padding(7)
         .overlay(alignment: .bottom) {
-            OnboardingContinueButton()
+            OnboardingContinueButton(disableDefaultBehavior: true, preTask: { await submit() })
         }
         
         .onChange(of: password) {
