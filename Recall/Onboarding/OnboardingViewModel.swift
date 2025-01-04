@@ -42,6 +42,7 @@ class OnboardingViewModel: ObservableObject {
         case incomplete
         case complete
         case hideButton
+        case async
     }
     
     static let shared = OnboardingViewModel()
@@ -66,19 +67,6 @@ class OnboardingViewModel: ObservableObject {
             self.setSceneStatus(to: .incomplete)
             self.currentSceneProgress =  Double(scene.rawValue) / Double(OnBoardingScene.allCases.count)
         }
-        onSubmit()
-    }
-    
-    //    MARK: onSubmit
-    @MainActor
-    private func onSubmit() {
-        switch scene {
-        case .goalTutorial:
-            goalSceneSubmitted(self.selectedTemplateGoals)
-        case .tagsTutorial:
-            Task { await tagSceneSubmitted(self.selectedTemplateTags) }
-        default: return
-        }
     }
     
     //    MARK: - OnboardingGoalScene
@@ -96,7 +84,7 @@ class OnboardingViewModel: ObservableObject {
     //    MARK: goalSceneSubmitted
     //    translates a list of selected templates into real RecallGoal objects that the user owns
     @MainActor
-    private func goalSceneSubmitted( _ selectedTemplates: [TemplateGoal] ) {
+    func goalSceneSubmitted( _ selectedTemplates: [TemplateGoal] ) {
         if inDev { return }
         
         for templateGoal in selectedTemplates {
@@ -142,7 +130,10 @@ class OnboardingViewModel: ObservableObject {
     }
     
     @MainActor
-    private func tagSceneSubmitted( _ selectedTags: [TemplateTag] ) async {
+    func tagSceneSubmitted( _ selectedTags: [TemplateTag] ) async {
+        
+        await RecallModel.wait(for: 2)
+        
         if inDev { return }
         
         for tagTemplate in selectedTags {

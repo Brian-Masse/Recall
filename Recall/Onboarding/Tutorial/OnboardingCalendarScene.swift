@@ -92,6 +92,9 @@ struct OnboardingCalendarAnimationHandler: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay(alignment: .bottom) {
+                OnboardingContinueButton()
+            }
             .onAppear { viewModel.setSceneStatus(to: .hideButton) }
         }
     }
@@ -164,6 +167,9 @@ struct OnboardingCalendarScene: View {
         
         ZStack(alignment: .topTrailing) {
             makeCalendar()
+        }
+        .overlay(alignment: .bottom) {
+            OnboardingContinueButton()
         }
         .task { await onAppear() }
         .sheet(isPresented: $showingCreationView) {

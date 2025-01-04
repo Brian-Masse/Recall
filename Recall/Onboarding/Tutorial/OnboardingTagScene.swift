@@ -126,6 +126,11 @@ struct OnboardingTagScene: View {
                 Spacer()
             }
             .padding(7)
+            .overlay(alignment: .bottom) {
+                OnboardingContinueButton(preTask: {
+                    await viewModel.tagSceneSubmitted(viewModel.selectedTemplateTags)
+                })
+            }
         }
                                    .onAppear {
                                        viewModel.setSceneStatus(to: .complete)

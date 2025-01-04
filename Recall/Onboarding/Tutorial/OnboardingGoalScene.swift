@@ -122,6 +122,11 @@ struct OnboardingGoalScene: View {
                 Spacer()
             }
             .padding(7)
+            .overlay(alignment: .bottom) {
+                OnboardingContinueButton(preTask: {
+                    viewModel.goalSceneSubmitted(viewModel.selectedTemplateGoals)
+                })
+            }
         }
     }
 }

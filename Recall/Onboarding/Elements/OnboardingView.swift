@@ -15,27 +15,6 @@ struct OnboardingView: View {
     
     @ObservedObject private var viewModel = OnboardingViewModel.shared
     
-//    MARK: ContinueButton
-    @ViewBuilder
-    private func makeContinueButton() -> some View {
-        UniversalButton {
-            HStack {
-                Spacer()
-                
-                RecallIcon("arrow.turn.down.right")
-                
-                UniversalText( "continue", size: Constants.UIDefaultTextSize, font: Constants.titleFont )
-                
-                Spacer()
-            }
-            .opacity(viewModel.sceneComplete ? 1 : 0.25)
-            .if(viewModel.sceneComplete) { view in view.foregroundStyle(.black) }
-            .rectangularBackground(style: viewModel.sceneComplete ? .accent : .primary)
-            .padding()
-            
-        } action: { viewModel.incrementScene() }
-    }
-    
 //    MARK: SceneBuilder
     @ViewBuilder
     private func sceneBuilder() -> some View {
@@ -56,15 +35,10 @@ struct OnboardingView: View {
 //    MARK: Body
     var body: some View {
         GeometryReader { geo in
-            ZStack(alignment: .bottom) {
                 sceneBuilder()
                     .padding(7)
-                    .frame(width: geo.size.width, height: geo.size.height)
                 
-                if viewModel.sceneStatus != .hideButton {
-                    makeContinueButton()
-                }
-            }
+//                OnboardingContinueButton()
         }
         .overlay { NoiseOverlay() }
         .background {

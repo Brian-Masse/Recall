@@ -123,6 +123,9 @@ struct OnboardingAuthenticationScene: View {
             Spacer()
         }
         .padding(7)
+        .overlay(alignment: .bottom) {
+            OnboardingContinueButton()
+        }
         
         .onChange(of: password) {
             withAnimation { viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete) }
@@ -130,7 +133,6 @@ struct OnboardingAuthenticationScene: View {
         .onChange(of: email) {
             withAnimation { viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete) }
         }
-        
         
         .alert(alertTitle, isPresented: $showingAlert) {
             Button( "dismiss", role: .cancel ) {}

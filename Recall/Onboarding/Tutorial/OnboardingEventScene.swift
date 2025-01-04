@@ -280,6 +280,10 @@ struct OnboardingEventScene: View {
                 
                 Spacer()
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay(alignment: .bottom) {
+                OnboardingContinueButton()
+            }
             .onAppear { viewModel.setSceneStatus(to: .hideButton) }
         }
     }
