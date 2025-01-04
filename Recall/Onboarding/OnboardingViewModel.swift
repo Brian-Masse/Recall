@@ -18,7 +18,8 @@ enum OnBoardingScene: Int, CaseIterable {
     case goalTutorial
     case tagsTutorial
     case eventsTutorial
-    case calendarTutorial
+    case calendarTutorial1
+    case calendarTutorial2
     
 //    case overview
 //    case howItWorks
@@ -207,4 +208,7 @@ struct OnboardingSceneUIText {
         "You can tap and hold the calendar to quickly create an event"
     static let eventsContextMenuGestureInstruction = 
         "You can long press on an event to see more options and take quick actions"
+    
+    static let calendarSceneIntroductionText =
+        "The calendar lets you browse, create, and edit all your events"
 }

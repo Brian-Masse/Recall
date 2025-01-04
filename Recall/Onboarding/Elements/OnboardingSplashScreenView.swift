@@ -22,6 +22,7 @@ struct OnboardingSplashScreenView<C: View>: View {
     
     private let startDate = Date.now
     private let interval: Double = 0.75
+    private let duration: Double
     
     @State private var showingSplash: Bool = false
     @State private var showingMessage: Bool = false
@@ -31,6 +32,7 @@ struct OnboardingSplashScreenView<C: View>: View {
         icon: String,
         title: String,
         message: String,
+        duration: Double = 4,
         
         @ViewBuilder contentBuilder: @escaping () -> C
     ) {
@@ -38,11 +40,12 @@ struct OnboardingSplashScreenView<C: View>: View {
         self.icon = icon
         self.title = title
         self.message = message
+        self.duration = duration
     }
     
     private func handleTimeline(_ context: TimelineViewDefaultContext) {
         if context.date >= startDate + interval { showingMessage = true }
-        if context.date >= startDate + interval * 5.5 { showingContent = true }
+        if context.date >= startDate + duration { showingContent = true }
     }
     
     var body: some View {

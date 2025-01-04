@@ -11,15 +11,17 @@ import UIUniversals
 import RealmSwift
 
 //MARK: - OnboardingCalendarAnimationHandler
-private struct OnboardingCalendarAnimationHandler: View {
+struct OnboardingCalendarAnimationHandler: View {
     @State private var sceneIndex: Int = 0
-    @Binding var sceneComplete: Bool
     @State private var continueButtonIsEnabled: Bool = false
+    
+    @ObservedObject private var viewModel = OnboardingViewModel.shared
     
     private func incrementScene() {
         sceneIndex += 1
         if sceneIndex > 1 {
-            withAnimation { sceneComplete = true }
+            viewModel.setSceneStatus(to: .complete)
+            viewModel.incrementScene()
         }
     }
     
@@ -75,20 +77,22 @@ private struct OnboardingCalendarAnimationHandler: View {
     
 //    MARK: Body
     var body: some View {
-        VStack {
-            switch sceneIndex {
-            case 0: makeTapAndHoldAnimationView()
-            case 1: makeContextMenuAnimation()
-            default: EmptyView()
+        OnboardingSplashScreenView(icon: "calendar.day.timeline.left",
+                                   title: "calendar",
+                                   message: OnboardingSceneUIText.calendarSceneIntroductionText) {
+            VStack {
+                switch sceneIndex {
+                case 0: makeTapAndHoldAnimationView()
+                case 1: makeContextMenuAnimation()
+                default: EmptyView()
+                }
+                
+                if sceneIndex <= 1 {
+                    makeContinueButton()
+                }
             }
-            
-            if sceneIndex <= 1 {
-                makeContinueButton()
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
-            OnBoardingBackgroundView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .onAppear { viewModel.setSceneStatus(to: .hideButton) }
         }
     }
 }
@@ -102,15 +106,14 @@ struct OnboardingCalendarScene: View {
     @ObservedObject private var viewModel: OnboardingViewModel = OnboardingViewModel.shared
     
     @State private var showingCreationView: Bool = false
-    @State private var tutorialAnimationsComplete: Bool = true
     
     private let minimumEvents: Int = 3
     
 //    MARK: ViewMethods
     @MainActor
     private func onAppear() async {
-        self.showingCreationView = true
-        viewModel.setSceneStatus(to: .incomplete)
+//        self.showingCreationView = true
+        viewModel.setSceneStatus(to: .hideButton)
         await viewModel.getRecalledEventCount(from: Array(events))
         checkCompletion()
     }
@@ -140,13 +143,14 @@ struct OnboardingCalendarScene: View {
             makeMinimumEventCounter()
                 .padding()
         }
-        .background()
         .overlay {
-            LinearGradient(colors: [Colors.getBase(from: colorScheme), .clear],
-                           startPoint: .bottom,
-                           endPoint: .init(x: 0.5, y: 0.75))
-            .contentShape(NullContentShape())
-            .ignoresSafeArea()
+            if viewModel.sceneComplete {
+                LinearGradient(colors: [Colors.getBase(from: colorScheme), .clear],
+                               startPoint: .bottom,
+                               endPoint: .init(x: 0.5, y: 0.75))
+                .contentShape(NullContentShape())
+                .ignoresSafeArea()
+            }
         }
         .onChange(of: events.count) { Task {
             await viewModel.getRecalledEventCount(from: Array(events))
@@ -159,25 +163,16 @@ struct OnboardingCalendarScene: View {
     var body: some View {
         
         ZStack(alignment: .topTrailing) {
-            
             makeCalendar()
-            
-            if !tutorialAnimationsComplete {
-                OnboardingCalendarAnimationHandler(sceneComplete: $tutorialAnimationsComplete)
-            }
         }
         .task { await onAppear() }
         .sheet(isPresented: $showingCreationView) {
-            tutorialAnimationsComplete = false
-        } content: {
             CalendarEventCreationView.makeEventCreationView(
                 editing: false,
                 formTitle: "What was your first event today?"
             )
             .interactiveDismissDisabled()
         }
-        
-        .onAppear { viewModel.setSceneStatus(to: .hideButton) }
     }
 }
 

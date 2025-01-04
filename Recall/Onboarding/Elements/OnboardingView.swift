@@ -43,10 +43,11 @@ struct OnboardingView: View {
           
         case .authentication:   OnboardingAuthenticationScene()
             
-        case .goalTutorial:     OnboardingGoalScene()
-        case .tagsTutorial:     OnboardingTagScene()
-        case .eventsTutorial:   OnboardingEventScene()
-        case .calendarTutorial: OnboardingCalendarScene()
+        case .goalTutorial:         OnboardingGoalScene()
+        case .tagsTutorial:         OnboardingTagScene()
+        case .eventsTutorial:       OnboardingEventScene()
+        case .calendarTutorial1:    OnboardingCalendarAnimationHandler()
+        case .calendarTutorial2:    OnboardingCalendarScene()
     
         default: EmptyView()
         }
@@ -57,6 +58,7 @@ struct OnboardingView: View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
                 sceneBuilder()
+                    .padding(7)
                     .frame(width: geo.size.width, height: geo.size.height)
                 
                 if viewModel.sceneStatus != .hideButton {

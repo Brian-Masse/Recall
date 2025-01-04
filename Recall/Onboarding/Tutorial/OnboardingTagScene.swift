@@ -115,7 +115,9 @@ struct OnboardingTagScene: View {
         
         OnboardingSplashScreenView(icon: "tag",
                                    title: "Tags",
-                                   message: OnboardingSceneUIText.tagSceneIntroductionText) {
+                                   message: OnboardingSceneUIText.tagSceneIntroductionText,
+                                   duration: 5.5)
+        {
             VStack(alignment: .leading) {
                 makeHeader()
                 
