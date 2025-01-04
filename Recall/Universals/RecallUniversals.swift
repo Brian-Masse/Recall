@@ -364,18 +364,14 @@ struct FullScreenProgressBar: View {
     }
 }
 
-private struct TestView: View {
-    
-    @State private var progress: Double = 0
-    
-    var body: some View {
-        FullScreenProgressBar(progress: progress)
-            .foregroundStyle(.blue)
-            .onAppear { withAnimation(.easeInOut(duration: 2)) { progress = 1 } }
+//MARK: - Triangle
+struct Triangle: Shape {
+    func path(in rect: CGRect) -> Path {
+        Path { path in
+            path.move(to: .zero)
+            path.addLine(to: .init(x: rect.width, y: 0))
+            path.addLine(to: .init(x: 0, y: rect.height))
+            path.addLine(to: .zero)
+        }
     }
-}
-
-
-#Preview {
-    TestView()
 }

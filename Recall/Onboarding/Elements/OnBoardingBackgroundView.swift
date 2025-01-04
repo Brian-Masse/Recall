@@ -14,13 +14,15 @@ struct OnBoardingBackgroundView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
+    @ObservedObject private var viewModel = OnboardingViewModel.shared
+    
     @State var t: Float = 0.0
     @State var timer: Timer?
     
     private func getColors() -> [Color] {
         var mixingColors: [Color] = Array(repeating: colorScheme == .light ? .white : .black, count: 9)
         
-        let lightRange = 0.5...0.75
+        let lightRange = 0.75...0.95
         let darkRange = 0.7...0.95
         let range = colorScheme == .light ? lightRange : darkRange
         
@@ -78,6 +80,9 @@ struct OnBoardingBackgroundView: View {
                 .scaleEffect(1.3)
                 .onAppear { self.colors = getColors() }
                 .onChange(of: colorScheme) { self.colors = getColors() }
+                .onChange(of: viewModel.triggerBackgroundUpdate) {
+                    self.colors = getColors()
+                }
                 .animation(.easeInOut, value: self.colors)
         }
     }

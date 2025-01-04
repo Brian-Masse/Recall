@@ -429,16 +429,8 @@ struct ProfileView: View {
     }
     
 //    MARK: Color Preferences
-    private struct Triangle: Shape {
-        func path(in rect: CGRect) -> Path {
-            Path { path in
-                path.move(to: .zero)
-                path.addLine(to: .init(x: rect.width, y: 0))
-                path.addLine(to: .init(x: 0, y: rect.height))
-                path.addLine(to: .zero)
-            }
-        }
-    }
+    
+    
     
 //    MARK: makeAccentColorOption
     @ViewBuilder
@@ -576,5 +568,5 @@ struct ProfileView: View {
             } label: { Text( "delete profile" ) }
         }
     }
-    
 }
+

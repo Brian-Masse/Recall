@@ -15,7 +15,7 @@ enum OnBoardingScene: Int, CaseIterable {
     
     case authentication
     case profileSetup1
-//    case profileSetup2
+    case profileSetup2
     
     case goalTutorial
     case tagsTutorial
@@ -51,6 +51,8 @@ class OnboardingViewModel: ObservableObject {
     
     @Published private(set) var scene: OnBoardingScene = .authentication
     @Published private(set) var sceneStatus: SceneStatus = .incomplete
+    
+    @Published var triggerBackgroundUpdate: Bool = false
     
     var sceneComplete: Bool { sceneStatus == .complete }
     

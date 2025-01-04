@@ -22,6 +22,7 @@ struct OnboardingView: View {
           
         case .authentication:   OnboardingAuthenticationScene()
         case .profileSetup1:    OnboardingProfileCreationScene()
+        case .profileSetup2:    OnboardingProfileSettingsScene()
             
         case .goalTutorial:         OnboardingGoalScene()
         case .tagsTutorial:         OnboardingTagScene()

@@ -12,6 +12,8 @@ import UIUniversals
 //MARK: OnboardingContextMenuAnimation
 struct OnboardingContextMenuAnimation: View {
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     private let contextMenuItemsCount: Int = 5
     
     private let size: CGSize = .init(width: 200, height: 250)
@@ -67,7 +69,7 @@ struct OnboardingContextMenuAnimation: View {
             tag: "tag",
             startTime: .now,
             endTime: .now,
-            color: .blue
+            color: Colors.getAccent(from: colorScheme)
         ))
         .zIndex(0)
         .frame(width: size.width, height: size.height)

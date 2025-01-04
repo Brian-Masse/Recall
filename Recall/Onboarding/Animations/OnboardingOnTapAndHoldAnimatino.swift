@@ -12,6 +12,8 @@ import UIUniversals
 //MARK: - makeTapAndHoldGestureAnimation
 struct TapAndHoldAnimation: View {
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     private let width: Double = 200
     @State private var height: Double = 30
     
@@ -73,7 +75,7 @@ struct TapAndHoldAnimation: View {
                                              tag: "tag",
                                              startTime: .now,
                                              endTime: .now,
-                                             color: .red))
+                                             color: Colors.getAccent(from: colorScheme)))
                 .redacted(reason: .placeholder)
                 .transition(.opacity.combined(with: .scale(0.75)))
             }

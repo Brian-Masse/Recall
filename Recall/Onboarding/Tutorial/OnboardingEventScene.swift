@@ -108,8 +108,6 @@ struct OnboardingEventScene: View {
     @ObservedObject private var viewModel = OnboardingViewModel.shared
     @Namespace private var namespace
     
-    private let eventColor: Color = .blue
-    
     private var blur: Double {
         (currentFocusIndex >= 0 && currentFocusIndex < eventFocusses.count - 1) ? 4 : 0
     }
@@ -198,7 +196,7 @@ struct OnboardingEventScene: View {
                 makeFocussedTextLabel(focus: focus, title: title)
             }
         }
-        .foregroundStyle(eventColor.safeMix(with: .black,
+        .foregroundStyle(Colors.getAccent(from: colorScheme).safeMix(with: .black,
                                             by: colorScheme == .light ? 0.5 : 0))
         .onTapGesture { withAnimation(.bouncy) {
             self.currentFocus = focus
@@ -222,7 +220,7 @@ struct OnboardingEventScene: View {
     private func makeEvent() -> some View {
         HStack(alignment: .top, spacing: 7) {
             RoundedRectangle(cornerRadius: Constants.UIDefaultTextSize)
-                .foregroundStyle(eventColor)
+                .universalStyledBackgrond(.accent, onForeground: true)
                 .frame(width: 5)
                 .blur(radius: blur)
             
@@ -231,7 +229,7 @@ struct OnboardingEventScene: View {
             .padding()
             .background {
                 Rectangle()
-                    .foregroundStyle(eventColor)
+                    .universalStyledBackgrond(.accent, onForeground: true)
                     .opacity(0.25)
                     .background()
                     .clipShape(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius))
