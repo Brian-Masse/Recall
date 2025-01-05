@@ -203,4 +203,6 @@ struct OnboardingSceneUIText {
     
     static let calendarSceneIntroductionText =
         "The calendar lets you browse, create, and edit all your events"
+    static let calendarSceneInstructionText =
+        "Recall a couple of events from your day today to get familiar with the app"
 }

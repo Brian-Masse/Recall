@@ -12,16 +12,28 @@ import RealmSwift
 
 //MARK: - OnboardingCalendarAnimationHandler
 struct OnboardingCalendarAnimationHandler: View {
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var sceneIndex: Int = 0
     @State private var continueButtonIsEnabled: Bool = false
     
     @ObservedObject private var viewModel = OnboardingViewModel.shared
     
+    private let presentedAsSheet: Bool
+    
+    init(presentedAsSheet: Bool = false) {
+        self.presentedAsSheet = presentedAsSheet
+    }
+    
     private func incrementScene() {
         sceneIndex += 1
         if sceneIndex > 1 {
-            viewModel.setSceneStatus(to: .complete)
-            viewModel.incrementScene()
+            if presentedAsSheet {
+                dismiss()
+            } else {
+                viewModel.setSceneStatus(to: .complete)
+                viewModel.incrementScene()
+            }
         }
     }
     
@@ -108,7 +120,7 @@ struct OnboardingCalendarScene: View {
     
     @ObservedObject private var viewModel: OnboardingViewModel = OnboardingViewModel.shared
     
-    @State private var showingCreationView: Bool = false
+    @State private var showingHelpView: Bool = false
     
     private let minimumEvents: Int = 3
     
@@ -126,6 +138,19 @@ struct OnboardingCalendarScene: View {
 //            sceneComplete.wrappedValue = true
         }
     }
+    
+//    MARK: makeHeader
+    @ViewBuilder
+    private func makeHeader() -> some View {
+        HStack {
+            VStack(alignment: .leading) {
+                UniversalText( "Calendar", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
+                
+                UniversalText( OnboardingSceneUIText.calendarSceneInstructionText, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                    .opacity(0.75)
+            }
+        }
+    }
 
 //    MARK: makeMinimumEventCounter
     @ViewBuilder
@@ -136,6 +161,16 @@ struct OnboardingCalendarScene: View {
         .rectangularBackground(style: .secondary)
     }
     
+//    MARK: makeHelpButton
+    @ViewBuilder
+    private func makeHelpButton() -> some View {
+        UniversalButton {
+            UniversalText("?", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                .rectangularBackground(style: .secondary)
+        } action: { showingHelpView = true }
+
+    }
+    
 //    MARK: makeCalendar
     @ViewBuilder
     private func makeCalendar() -> some View {
@@ -143,7 +178,10 @@ struct OnboardingCalendarScene: View {
             
             CalendarContainer(events: Array(events), summaries: [])
             
-            makeMinimumEventCounter()
+            HStack {
+                makeMinimumEventCounter()
+                makeHelpButton()
+            }
                 .padding()
         }
         .overlay {
@@ -165,19 +203,19 @@ struct OnboardingCalendarScene: View {
 //    MARK: - Body
     var body: some View {
         
-        ZStack(alignment: .topTrailing) {
+        VStack(alignment: .leading) {
+            makeHeader()
+                .padding(7)
+            
             makeCalendar()
         }
         .overlay(alignment: .bottom) {
             OnboardingContinueButton()
         }
         .task { await onAppear() }
-        .sheet(isPresented: $showingCreationView) {
-            CalendarEventCreationView.makeEventCreationView(
-                editing: false,
-                formTitle: "What was your first event today?"
-            )
-            .interactiveDismissDisabled()
+        .sheet(isPresented: $showingHelpView) {
+            OnboardingCalendarAnimationHandler(presentedAsSheet: true)
+                .background( OnBoardingBackgroundView() )
         }
     }
 }
