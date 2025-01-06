@@ -87,27 +87,37 @@ struct OnboardingCalendarAnimationHandler: View {
         }
     }
     
+//    MARK: makeContent
+    @ViewBuilder
+    private func makeContent() -> some View {
+        VStack {
+            switch sceneIndex {
+            case 0: makeTapAndHoldAnimationView()
+            case 1: makeContextMenuAnimation()
+            default: EmptyView()
+            }
+            
+            if sceneIndex <= 1 {
+                makeContinueButton()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(alignment: .bottom) {
+            OnboardingContinueButton()
+        }
+        .onAppear { viewModel.setSceneStatus(to: .hideButton) }
+    }
+    
 //    MARK: Body
     var body: some View {
-        OnboardingSplashScreenView(icon: "calendar.day.timeline.left",
-                                   title: "calendar",
-                                   message: OnboardingSceneUIText.calendarSceneIntroductionText) {
-            VStack {
-                switch sceneIndex {
-                case 0: makeTapAndHoldAnimationView()
-                case 1: makeContextMenuAnimation()
-                default: EmptyView()
-                }
-                
-                if sceneIndex <= 1 {
-                    makeContinueButton()
-                }
+        if !presentedAsSheet {
+            OnboardingSplashScreenView(icon: "calendar.day.timeline.left",
+                                       title: "calendar",
+                                       message: OnboardingSceneUIText.calendarSceneIntroductionText) {
+                makeContent()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .overlay(alignment: .bottom) {
-                OnboardingContinueButton()
-            }
-            .onAppear { viewModel.setSceneStatus(to: .hideButton) }
+        } else {
+            makeContent()
         }
     }
 }
