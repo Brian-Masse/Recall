@@ -152,13 +152,18 @@ struct OnboardingCalendarScene: View {
 //    MARK: makeHeader
     @ViewBuilder
     private func makeHeader() -> some View {
-        HStack {
-            VStack(alignment: .leading) {
+        VStack(alignment: .leading) {
+            HStack {
                 UniversalText( "Calendar", size: Constants.UIHeaderTextSize, font: Constants.titleFont )
                 
-                UniversalText( OnboardingSceneUIText.calendarSceneInstructionText, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
-                    .opacity(0.75)
+                Spacer()
+                
+                makeMinimumEventCounter()
+                makeHelpButton()
             }
+            
+            UniversalText( OnboardingSceneUIText.calendarSceneInstructionText, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
+                .opacity(0.75)
         }
     }
 
@@ -176,6 +181,7 @@ struct OnboardingCalendarScene: View {
     private func makeHelpButton() -> some View {
         UniversalButton {
             UniversalText("?", size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+                .frame(width: 35)
                 .rectangularBackground(style: .secondary)
         } action: { showingHelpView = true }
 
@@ -188,11 +194,10 @@ struct OnboardingCalendarScene: View {
             
             CalendarContainer(events: Array(events), summaries: [])
             
-            HStack {
-                makeMinimumEventCounter()
-                makeHelpButton()
-            }
-                .padding()
+//            HStack {
+//                
+//            }
+//                .padding()
         }
         .overlay {
             if viewModel.sceneComplete {

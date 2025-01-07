@@ -331,8 +331,11 @@ struct CalendarContainer: View {
             }
         }
         .padding(.vertical, 7)
-        .background()
-        .opacity(0.75)
+        .background(
+            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                .foregroundStyle(.background)
+                .opacity(0.75)
+        )
     }
     
 //    MARK: CalendarCarousel
