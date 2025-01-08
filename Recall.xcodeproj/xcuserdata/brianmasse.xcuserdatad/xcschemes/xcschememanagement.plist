@@ -46,6 +46,11 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
+		<key>Recall-WidgetExtension.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 		<key>Recall.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -65,6 +70,11 @@
 			<true/>
 		</dict>
 		<key>C91BCF082A618437003C6DD6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C9C8E0552D0CF248009607BE</key>
 		<dict>
 			<key>primary</key>
 			<true/>

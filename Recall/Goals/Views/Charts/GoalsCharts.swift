@@ -32,8 +32,9 @@ struct DataNode: Identifiable {
     
 //    MARK: Conveineince Functions
     
+    @MainActor
     private func getGoal() -> RecallGoal? {
-        RealmManager.retrieveObject { goal in
+        RealmManager.retrieveObjectsInResults { goal in
              goal.label.equals(self.goal)
         }.first
     }
@@ -43,7 +44,7 @@ struct DataNode: Identifiable {
         if let goal = self.getGoal() {
             return Double(Date.now.timeIntervalSince(goal.creationDate)) / Constants.DayTime
         } else {
-            return RecallModel.getDaysSinceFirstEvent()
+            return Double(RecallModel.index.daysSinceFirstEvent())
         }
     }
 }
@@ -123,7 +124,7 @@ struct ActivityPerDay: View {
             if recentData {
                 makeChart()
             } else {
-                ScrollChart(Int(RecallModel.getDaysSinceFirstEvent())) {
+                ScrollChart(Int(RecallModel.index.daysSinceFirstEvent())) {
                     makeChart()
                 }
             }
@@ -163,7 +164,7 @@ struct TotalActivites: View {
         
         VStack(alignment: .leading) {
             UniversalText(title, size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-            ScrollChart(Int(RecallModel.getDaysSinceFirstEvent())) {
+            ScrollChart(Int(RecallModel.index.daysSinceFirstEvent())) {
                 Chart {
                     ForEach(data) { datum in
                         LineMark(x: .value("date", datum.date, unit: .day ),

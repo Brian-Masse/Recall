@@ -54,17 +54,31 @@ struct IconButton: View {
     let icon: String
     
     let full: Bool
-    let action: () -> Void
+    
+    let action: (() -> Void)?
+    let asyncAction: (() async -> Void)?
+    let isAsync: Bool
     
     init( _ icon: String, label: String = "", fullWidth: Bool = false, action: @escaping () -> Void ) {
         self.icon = icon
         self.title = label
         self.full = fullWidth
         self.action = action
+        self.asyncAction = nil
+        self.isAsync = false
+    }
+    
+    init( _ icon: String, label: String = "", fullWidth: Bool = false, action: @escaping () async -> Void ) {
+        self.icon = icon
+        self.title = label
+        self.full = fullWidth
+        self.action = nil
+        self.asyncAction = action
+        self.isAsync = true
     }
     
     var body: some View {
-        UniversalButton {
+        UniversalButton(labelBuilder: {
             HStack {
                 if full { Spacer() }
                 
@@ -78,8 +92,9 @@ struct IconButton: View {
                 if full { Spacer() }
             }
             .rectangularBackground(style: .secondary)
-            
-        } action: { action() }
+        },
+                        action: isAsync ? asyncAction! : action!)
+
     }
 }
 

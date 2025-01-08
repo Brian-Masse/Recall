@@ -23,7 +23,7 @@ struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @ObservedResults( RecallCalendarEvent.self,
-                      where: { event in event.startTime > RecallModel.getEarliestEventDate() && event.ownerID == RecallModel.ownerID } ) var events
+                      where: { event in event.ownerID == RecallModel.ownerID } ) var events
     @ObservedResults( RecallGoal.self,
                       where: { goal in goal.ownerID == RecallModel.ownerID } ) var goals
     @ObservedResults( RecallCategory.self,
@@ -40,8 +40,13 @@ struct MainView: View {
             .task {
                 Constants.setupConstants()
                 RecallModel.dataModel.storeData( events: data.events, goals: data.goals )
+                await RecallModel.dataStore.initalizeDataStore()
             }
-            .onChange(of: events) { RecallModel.dataModel.storeData( events: Array(events)) }
+//            .onChange(of: events) { RecallModel.shared.updateEvents(Array(events)) }
+        
             .universalBackground()
     }
 }
+
+
+

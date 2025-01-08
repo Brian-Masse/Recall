@@ -98,47 +98,8 @@ extension Constants {
     static let UIScrollableBarWidthDouble: Double = 18
     
 //    exta
-    static let UILargeCornerRadius: CGFloat = 30
+    static let UILargeCornerRadius: CGFloat = 58
     static let subPadding: CGFloat = 7
-    
-//    if there are any variables that need to be computed at the start, run their setup code here
-    @MainActor
-    static func setupConstants() {
-        Constants.setTagColorsDic()
-        Constants.setGoalColorsDic()
-    }
-    
-//    This is put in constants to avoid being computed every time a colored graph is displayed on screen
-    static var tagColorsDic: Dictionary<String, Color> = Dictionary()
-    static var goalColorsDic: Dictionary<String, Color> = Dictionary()
-    
-    @MainActor
-    static private func setTagColorsDic() {
-        let tags: [RecallCategory] = RealmManager.retrieveObjects()
-        
-        var dic: Dictionary<String, Color> = Dictionary()
-        if tags.count == 0 { return }
-        dic["?"] = .white
-        for i in 0..<tags.count  {
-            let key: String =  tags[i].label
-            dic[key] = tags[i].getColor()
-        }
-        Constants.tagColorsDic = dic
-    }
-    
-    @MainActor
-    static private func setGoalColorsDic() {
-        let goals: [RecallGoal] = RealmManager.retrieveObjects()
-        
-        var dic: Dictionary<String, Color> = Dictionary()
-        if goals.count == 0 { return }
-        dic["?"] = .white
-        for i in 0..<goals.count  {
-            let key: String =  goals[i].label
-            dic[key] = Colors.colorOptions[min( Colors.colorOptions.count - 1, i)]
-        }
-        Constants.goalColorsDic = dic
-    }
     
     //    texts
         static let tagSplashPurpose: String = "Tags are a way to organize similar types of events in your life, as well as label how those activites contribute to your goals."

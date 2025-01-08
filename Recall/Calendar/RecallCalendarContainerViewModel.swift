@@ -14,8 +14,9 @@ class RecallCalendarContainerViewModel: ObservableObject {
     
     static let shared = RecallCalendarContainerViewModel()
     
-    //    MARK: Vars
+//    MARK: - Vars
     var filteredEvents: [String:[RecallCalendarEvent]] = [:]
+    @Published private(set) var filteredEventsTrigger: Bool = false
     
     @Published private(set) var currentDay: Date = Date.now
     //    this will be toggled whenever the view should scroll to the currentDay
@@ -44,13 +45,14 @@ class RecallCalendarContainerViewModel: ObservableObject {
     @Published var selecting: Bool = false
     @Published var selection: [ RecallCalendarEvent ] = []
     
+//    MARK: init
     init() {
         self.getScale(from: RecallModel.index.calendarDensity)
         self.daysPerView = RecallModel.index.calendarColoumnCount
         self.initialDaysPerView = daysPerView
     }
     
-//    MARK: Setters
+//    MARK: - setCurrentDay
     func setCurrentDay(to day: Date, scrollToDay: Bool = true) {
     
         withAnimation { self.currentDay = day }
@@ -66,18 +68,18 @@ class RecallCalendarContainerViewModel: ObservableObject {
         }
     }
     
+//    MARK: setDaysPerView
     func setDaysPerView(to count: Int) { withAnimation {
-        let dayOffset = count - daysPerView
-//        self.currentDay += Double(dayOffset) * Constants.DayTime
-        
         self.daysPerView = count
         self.subDayIndex = 0
     }}
 
+//    MARK: setSubDayIndex
     func setSubDayIndex(to index: Int) {
         self.subDayIndex = index
     }
     
+//    MARK: setBaseCalendarOffset
     func setBaseCalendarOffset(to offset: Double) {
         let index = Int( floor( Date.now.timeIntervalSince(currentDay) ) / Constants.DayTime  )
         let dayOffset = daysPerView - initialDaysPerView
@@ -85,17 +87,20 @@ class RecallCalendarContainerViewModel: ObservableObject {
         self.baseCalendarOffset = offset
     }
     
+//    MARK: setInitialWidth
     func setInitialWidth( _ width: Double ) {
         if self.initialCalendarWidthSet { return }
         self.initialCalendarWidth = width
         self.initialCalendarWidthSet = true
     }
     
+//    MARK: setScale
     func setScale(to scale: Double) {
         let scale = min( 200, max( 40, scale ) )
         self.scale = scale
     }
     
+//    MARK: getScale
     func getScale(from density: Int) {
         switch density {
         case 0: self.scale = 120
@@ -105,6 +110,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
         }
     }
     
+//    MARK: getDensity
     func getDensity() -> Int {
         switch self.scale {
         case 120: return 0
@@ -114,7 +120,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
         }
     }
     
-//    MARK: Positioning Functions
+//    MARK: - Positioning Functions
 //    this translates a position into a date
 //    it is involved in placing events on the timeline correctly
     func getTime(from position: CGFloat, on date: Date) -> Date {
@@ -132,10 +138,11 @@ class RecallCalendarContainerViewModel: ObservableObject {
     func roundPosition(_ position: Double, to timeRounding: TimeRounding) -> Double {
         let hoursInPosition = (position * scale) / Constants.HourTime
         let roundedHours = (hoursInPosition * Double(timeRounding.rawValue)).rounded(.down) / Double(timeRounding.rawValue)
+        
         return (roundedHours * Constants.HourTime) / scale
     }
     
-//    MARK: Selecting
+//    MARK: selectEvent
     func selectEvent(_ event: RecallCalendarEvent) { withAnimation {
         if let index = selection.firstIndex(where: {$0 == event} ) {
             selection.remove(at: index)
@@ -149,10 +156,8 @@ class RecallCalendarContainerViewModel: ObservableObject {
         self.selecting = false
     } }
     
-//    MARK: Event Filtering
-    func loadEvents( for day: Date, in events: [RecallCalendarEvent] ) async {
-//        if abs(currentDay.timeIntervalSince(day) / Constants.DayTime) > 4 { return }
-        
+//    MARK: - loadEvents
+    func loadEvents( for day: Date, in events: [RecallCalendarEvent], autoSendChanges: Bool = true ) async {
         let key = day.getDayKey()
         if filteredEvents[key] != nil { return }
         
@@ -166,42 +171,37 @@ class RecallCalendarContainerViewModel: ObservableObject {
         DispatchQueue.main.sync {
             withAnimation {
                 self.filteredEvents[key] = filteredEvents
-                self.objectWillChange.send()
+                if autoSendChanges {
+                    self.objectWillChange.send()
+                }
             }
         }
     }
     
+//    MARK: getEvents
     func getEvents(on day: Date) -> [RecallCalendarEvent] {
-        let key = day.getDayKey()
-        
-        if let events = filteredEvents[key] {
-            return events
-        }
-        
-        return []
-    }
-    
-    func getEvents(on day: Date, in events: [RecallCalendarEvent]) async -> [RecallCalendarEvent] {
         let key = day.getDayKey()
         
         if let events = filteredEvents[key] { return events }
         
-        await loadEvents(for: day, in: events)
-        return getEvents(on: day)
+        return []
     }
     
-    
+//    MARK: invalidateEvents
 //    called when the events refresh remotely from the server
-    func invalidateEvents(newEvents: [RecallCalendarEvent]) {
+    func invalidateEvents(events: [RecallCalendarEvent]) async {
+
         self.filteredEvents = [:]
-        Task {
-//            render the day to the left
-            await loadEvents(for: currentDay + Constants.DayTime, in: newEvents )
-            
-            for i in 0..<daysPerView {
-                await loadEvents(for: currentDay - (Constants.DayTime * Double(i)), in: newEvents )
-            }
+        
+//        render the day to the left
+        await loadEvents(for: currentDay + Constants.DayTime, in: events, autoSendChanges: false )
+        
+        for i in 0..<daysPerView {
+            await loadEvents(for: currentDay - (Constants.DayTime * Double(i)), in: events, autoSendChanges: false )
+        }
+        
+        DispatchQueue.main.sync {
+            self.objectWillChange.send()
         }
     }
-    
 }

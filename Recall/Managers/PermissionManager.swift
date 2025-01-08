@@ -11,11 +11,15 @@ import RealmSwift
 enum QuerySubKey: String, CaseIterable {
     case calendarComponent
     case category
+    
     case goal
     case goalNode
+    case goalHistoryNode
+    case goalDataStore
+    
     case index
-    case dictionary
     case summary
+    case dataStore
 }
 
 

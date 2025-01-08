@@ -9,6 +9,7 @@ import Foundation
 import RealmSwift
 import UIUniversals
 import SwiftUI
+import WidgetKit
 
 
 //Each user will have one of these objects stored under their profile in the database
@@ -62,20 +63,14 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         self.lastName = lastName
         
         
-        Task {
-            await initializeIndex()
-            await indexEvents()
-        }
+        Task { await initializeIndex() }
     }
     
 //    MARK: OnAppear
     @MainActor
     func onAppear() {
         self.toggleNotifcations(to: self.notificationsEnabled, time: self.notificationsTime)
-        
-        Task {
-            await indexEvents()
-        }
+        if self.calendarColoumnCount == 0 { setCalendarColoumnCount(to: 2) }
     }
     
 //    MARK: UpdateEarliestEventData
@@ -271,8 +266,8 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @MainActor
     func initializeIndex() async {
     
-        let goals: [RecallGoal] = RealmManager.retrieveObjects()
-        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList()
         
         let startDate = earliestEventDate
         
@@ -286,101 +281,54 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
 //    MARK: reindexGoalWasMetHistory
 //    This should be run as little as possible, since it is so computationally expensive.
     func reindexGoalWasMetHistory(startDate: Date, events: [RecallCalendarEvent], goals: [RecallGoal]) async {
-        var iterator = startDate
-        var dateCounter: Int = 0
-        
-        while iterator <= ( Date.now.resetToStartOfDay() + Constants.DayTime ) {
-            for goal in goals {
-                let progress = await goal.computeGoalProgress(on: iterator, from: events)
-                if let _ = await goal.retrieveProgressIndex(on: iterator) {
-                    await goal.updateProgressIndex(to: progress, on: iterator)
-                    
-                } else {
-                    await goal.makeNewProgressIndex(with: progress, on: iterator)
-                }
-                
-                
-            }
-            iterator += Constants.DayTime
-            dateCounter += 1
-        }
+//        var iterator = startDate
+//        var dateCounter: Int = 0
+//        
+//        while iterator <= ( Date.now.resetToStartOfDay() + Constants.DayTime ) {
+//            for goal in goals {
+//                let progress = await goal.computeGoalProgress(on: iterator, from: events)
+//                if let _ = await goal.retrieveProgressIndex(on: iterator) {
+//                    await goal.updateProgressIndex(to: progress, on: iterator)
+//                    
+//                } else {
+//                    await goal.makeNewProgressIndex(with: progress, on: iterator)
+//                }
+//                
+//                
+//            }
+//            iterator += Constants.DayTime
+//            dateCounter += 1
+//        }
     }
     
 //    MARK: EraseGoalIndex
     @MainActor
     private func eraseGoalIndex(_ goal: RecallGoal) {
-        RealmManager.updateObject(goal) { thawed in
-            goal.indexedGoalProgressHistory = List()
-        }
+//        RealmManager.updateObject(goal) { thawed in
+//            goal.indexedGoalProgressHistory = List()
+//        }
     }
     
 //    MARK: Color
     func updateAccentColor(to index: Int? = nil) {
         let accentColor = Colors.accentColorOptions[index ?? self.recallAccentColorIndex]
         let mixValue = accentColor.mixValue
+
         
         Colors.setColors(secondaryLight: Colors.defaultSecondaryLight.safeMix(with: accentColor.lightAccent, by: mixValue),
                          secondaryDark: Colors.defaultSecondaryDark.safeMix(with: accentColor.darkAccent, by: mixValue),
                          lightAccent: accentColor.lightAccent,
                          darkAccent: accentColor.darkAccent)
+        
+//        signal to the widgets that the accent color has chagned
+        WidgetStorage.shared.saveColor(accentColor.lightAccent, for: WidgetStorageKeys.ligthAccent)
+        WidgetStorage.shared.saveColor(accentColor.darkAccent, for: WidgetStorageKeys.darkAccent)
+        WidgetStorage.shared.saveBasicValue(value: accentColor.mixValue, key: WidgetStorageKeys.mixValue)
+        WidgetStorage.shared.saveBasicValue(value: true, key: WidgetStorageKeys.updateAccentColorTrigger)
+        
+        WidgetCenter.shared.reloadAllTimelines()
     }
-    
-    
-//    MARK: EventsIndex
-//    This stores how many events were created on a given day, indexed by their date
-    @Persisted private var eventsIndexUpToDate: Bool = false
-    @Persisted var eventsIndex = Map<String, Int>()
-    
-    @MainActor
-    func addEventToIndex( on date: Date ) {
-        let key = date.getDayKey()
-        let count = eventsIndex[key] ?? 0
-        
-        RealmManager.updateObject(self) { thawed in
-            thawed.eventsIndex[key] = count + 1
-        }
-    }
-    
-//    MARK: RemoveEventFromIndex
-    @MainActor
-    func removeEventFromIndex( on date: Date ) {
-        let key = date.getDayKey()
-        let count = eventsIndex[key] ?? 0
-        
-        if count > 0 {
-            RealmManager.updateObject(self) { thawed in
-                thawed.eventsIndex[key] = count - 1
-            }
-        }
-    }
-    
-//    MARK: UpdateEventIndex
-    @MainActor
-    func updateEventsIndex( oldDate: Date, newDate: Date ) {
-        removeEventFromIndex(on: oldDate)
-        removeEventFromIndex(on: newDate)
-    }
-    
-//    MARK: IndexEvents
-    @MainActor
-    func indexEvents() async {
-        if eventsIndexUpToDate { return }
-        
-        RealmManager.updateObject(self) { thawed in
-            thawed.eventsIndex = Map<String, Int>()
-        }
-        
-        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
-        
-        for event in events {
-            addEventToIndex(on: event.startTime)
-        }
-        
-        RealmManager.updateObject(self) { thawed in
-            thawed.eventsIndexUpToDate = true
-        }
-    }
-    
+
     
 //    MARK: reindex
 //    these sets of functions react to the ways an event can be updated, and consequently effect the goalProgress index
@@ -393,17 +341,17 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         let endDate = iterator + (7 * Constants.DayTime)
         
         let goals = await event.getGoals()
-        let events: [RecallCalendarEvent] = await RealmManager.retrieveObjects()
+        let events: [RecallCalendarEvent] = await RealmManager.retrieveObjectsInList()
         
-        while iterator <= endDate {
-            
-            for goal in goals {
-                
-                let newProgress = await goal.computeGoalProgress(on: iterator, from: events)
-                await goal.updateProgressIndex(to: newProgress, on: iterator)
-            }
-            iterator += Constants.DayTime
-        }
-        print("finished updating goal Index")
+//        while iterator <= endDate {
+//            
+//            for goal in goals {
+//                
+//                let newProgress = await goal.computeGoalProgress(on: iterator, from: events)
+//                await goal.updateProgressIndex(to: newProgress, on: iterator)
+//            }
+//            iterator += Constants.DayTime
+//        }
+//        print("finished updating goal Index")
     }
 }

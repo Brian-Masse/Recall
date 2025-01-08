@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import UIUniversals
-
+import WidgetKit
 
 let inDev = true
 
@@ -22,14 +22,15 @@ struct RecallModel {
     
     static let realmManager: RealmManager = RealmManager()
     static var index: RecallIndex { RecallModel.realmManager.index  }
+    static var dataStore: RecallDataStore { RecallModel.realmManager.dataStore  }
 
     
 //    MARK: Methods
-    @MainActor
-    static func getDaysSinceFirstEvent() -> Double {
-        (Date.now.timeIntervalSince(getEarliestEventDate() )) / Constants.DayTime
-    }
-    
+//    @MainActor
+//    static func getDaysSinceFirstEvent() -> Double {
+//        (Date.now.timeIntervalSince(getEarliestEventDate() )) / Constants.DayTime
+//    }
+//    
     @MainActor
     static func getEarliestEventDate() -> Date {
         RecallModel.index.earliestEventDate
@@ -72,27 +73,75 @@ struct RecallModel {
         self.dataGoalsValidated = validated
     }
     
-//    This gets called anytime an event is created, modified, or deleted
-//    Any standard update behavior should be included in this function
-    func updateEvent(_ event: RecallCalendarEvent) {
-        RecallModel.shared.setGoalDataValidation(to: false)
-        RecallModel.shared.setDataOverviewValidation(to: false)
-        RecallModel.shared.setDataEventsValidated(to: false)
-        
-        Task { await RecallModel.index.updateEvent(event) }
+//    MARK: Updates
+    enum UpdateType {
+        case insert
+        case delete
+        case changeDate
+        case changeTime
+        case changeGoals
+        case update
     }
     
+//    MARK: - UpdateEvent
+//    This gets called anytime an event is created, modified, or deleted
+//    Any standard update behavior should be included in this function
+    func updateEvent(_ event: RecallCalendarEvent, updateType: UpdateType, completion: (() -> Void)? = nil) {
+        if updateType == .changeDate || updateType == .changeTime || updateType == .insert {
+            checkUpdateEarliestEvent(event: event)
+            updateRecentRecallEventEndTime(to: event.endTime)
+        }
+        
+        Task {
+            await RecallGoalDataStore.handleEventUpdate(event, updateType: updateType)
+//            
+            if updateType == .insert || updateType == .delete {
+                await RecallModel.dataStore.insertOrRemoveEventFromMonthLog(event, inserted: updateType == .insert)
+            } else if updateType == .changeDate {
+                await RecallModel.dataStore.changeEventInMonthLog()
+            }
+            
+            DispatchQueue.main.sync {
+                if let completion { completion() } 
+            }
+        }
+    }
+    
+//    MARK: UpdateEarliestEvent
+//    When updating the date compnents for the event, check if it is the earliest event the user has
+    private func checkUpdateEarliestEvent(event: RecallCalendarEvent) {
+        if Calendar.current.component(.year, from: event.startTime) == 2005 { return }
+        if event.startTime < RecallModel.realmManager.index.earliestEventDate {
+            RecallModel.realmManager.index.updateEarliestEventDate(with: event.startTime)
+        }
+    }
+    
+    private func updateRecentRecallEventEndTime(to time: Date) {
+        RecallModel.index.setMostRecentRecallEvent(to: time)
+    }
+    
+//    MARK: - UpdateGoal
     func updateGoal(_ goal: RecallGoal) {
         RecallModel.shared.setGoalDataValidation(to: false)
         RecallModel.shared.setDataOverviewValidation(to: false)
         RecallModel.shared.setDataGoalsValidated(to: false)
     }
     
+//    MARK: - UpdateTag
     func updateTag(_ tag: RecallCategory) {
         RecallModel.shared.setGoalDataValidation(to: false)
         RecallModel.shared.setDataOverviewValidation(to: false)
         RecallModel.shared.setDataOverviewValidation(to: false)
         RecallModel.shared.setDataGoalsValidated(to: false)
+    }
+    
+//    MARK: - UpdateEvents
+//    This function is called anytime there is a change to the events
+    @MainActor
+    func updateEvents(_ events: [RecallCalendarEvent]) {
+        
+        // update the stored data with the new values of events
+//        RecallModel.dataModel.storeData( events: events)
     }
     
 }

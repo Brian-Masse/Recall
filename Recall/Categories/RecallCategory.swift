@@ -23,11 +23,15 @@ class RecallCategoryStore {
         self.tagColors[tag.label] = color
         return color
     }
+    
+    func updateColor(for tag: RecallCategory, color: Color) {
+        self.tagColors[tag.label] = color
+    }
 }
 
-//MARK: RecallCategory
+//MARK: - RecallCategory
 class RecallCategory: Object, Identifiable, OwnedRealmObject {
-    
+
     @Persisted(primaryKey: true) var _id: ObjectId
     
     @Persisted var ownerID: String  = ""
@@ -42,38 +46,57 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
     
     @Persisted var goalRatings: RealmSwift.List<GoalNode> = List()
     
+//    MARK: Init
     @MainActor
     convenience init(ownerID: String, label: String, goalRatings: Dictionary<String, String>, color: Color, previewTag: Bool = false) {
         self.init()
         
         self.ownerID = ownerID
         self.label = label
-        
-        self.setColor(with: color)
+        self.updateColor(with: color)
         
         if !previewTag {
             self.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
         }
     }
     
-    enum TagUpdatingOption: String {
-        case completeOverride
-        case nameOnly
-        case preserveCustom
-    }
-    
+//    MARK: - Update
     @MainActor
     func update(label: String, goalRatings: Dictionary<String, String>, color: Color ) async {
-        RealmManager.updateObject(self) { thawed in
-            thawed.label = label
-            thawed.setColor(with: color)
-            thawed.goalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+        
+        let newGoalRatings = RecallCalendarEvent.translateGoalRatingDictionary(goalRatings)
+        if newGoalRatings != self.goalRatings {
+            self.updateGoalRatings(with: newGoalRatings)
         }
         
-        await updateEvents(preference: .preserveCustom, newLabel: label, newRatings: goalRatings)
+        RealmManager.updateObject(self) { thawed in
+            thawed.label = label
+            thawed.updateColor(with: color)
+        }
     }
     
-//    MARK: Class Methods:
+//    MARK: UpdateGoalRatings
+    @MainActor
+    private func updateGoalRatings(with list: RealmSwift.List<GoalNode>) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.goalRatings = list
+        }
+        
+//        await event.updateGoalRatings(with: newGoalRatings)
+    }
+    
+//    MARK: UpdateColor
+    @MainActor
+    private func updateColor(with color: Color) {
+        let components = color.components
+        self.r = components.red
+        self.g = components.green
+        self.b = components.blue
+        
+        RecallCategoryStore.shared.updateColor(for: self, color: color)
+    }
+    
+//    MARK: ToggleFavorite
     @MainActor
     func toggleFavorite() {
         RealmManager.updateObject(self) { thawed in
@@ -81,70 +104,12 @@ class RecallCategory: Object, Identifiable, OwnedRealmObject {
         }
     }
     
-    @MainActor
-    private func updateEvents(preference: TagUpdatingOption, newLabel: String, newRatings: Dictionary<String, String>) async {
-        
-        let filteredEvents: [RecallCalendarEvent] = RealmManager.retrieveObjects() { event in event.getTagLabel() == newLabel }
-        
-        let oldRatingsDic = RecallCalendarEvent.translateGoalRatingList(self.goalRatings)
-
-        for event in filteredEvents {
-
-            switch preference {
-            case .nameOnly: return
-            case .completeOverride: await completeOverride(for: event, newRatings: newRatings)
-            case .preserveCustom:  await preserveCustom(for: event, oldRatings: oldRatingsDic, newRatings: newRatings)
-            }
-
-        }
-        
-    }
-    
-    private func preserveCustom(for event: RecallCalendarEvent, oldRatings: Dictionary<String, String>, newRatings: Dictionary<String, String>) async {
-        
-        var newGoalRatings = await event.getRatingsDictionary()
-
-//        This handles updating the already present goal ratings
-        for rating in newGoalRatings {
-//            the event had a certain goalRating before it was updated, now simply give it the new value
-//            this handles changing the goal multiplier, as well as removing a goal rating alltogether
-//            checking to make sure the old rating and the event have the same value means that custom multipliers will be preserved
-            if oldRatings[rating.key] == rating.value {
-                newGoalRatings[ rating.key ] = newRatings[ rating.key ]
-            }
-        }
-        
-//        this handles adding new ones, as long as they don't override custom preferences
-        for rating in newRatings {
-//            if the new rating has the same rating as the oldRatings, then that case should be handled above
-//            Handling it here may cause it to add a rating to an event that customly chose not to include a certain rating
-//            thus only ratings new to the tag will be added to the event
-            if oldRatings[rating.key] == nil {
-                newGoalRatings[rating.key] = rating.value
-            }
-        }
-        
-        await event.updateGoalRatings(with: newGoalRatings)
-    }
-    
-    private func completeOverride(for event: RecallCalendarEvent, newRatings: Dictionary<String, String>) async {
-        await event.updateGoalRatings(with: newRatings)
-    }
-    
-    
-    
 //    MARK: Convenience Functions
+    @MainActor
     static func getCategoryObject(from id: ObjectId) -> RecallCategory? {
-        let results: Results<RecallCategory> = RealmManager.retrieveObject { query in query._id == id }
+        let results: Results<RecallCategory> = RealmManager.retrieveObjectsInResults { query in query._id == id }
         guard let first = results.first else { print("no Category exists with given id: \(id.stringValue)"); return nil }
         return first
-    }
-    
-    func setColor(with color: Color) {
-        let comps = color.components
-        self.r = comps.red
-        self.g = comps.green
-        self.b = comps.blue
     }
     
     var color: Color? = nil

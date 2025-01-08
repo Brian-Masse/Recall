@@ -10,64 +10,98 @@ import SwiftUI
 import RealmSwift
 import UIUniversals
 
+//MARK: GoalsPageView
 struct GoalsPageView: View {
-    
-//    MARK: Vars
-    let goals: [RecallGoal]
-    let events: [RecallCalendarEvent]
-    let tags: [RecallCategory]
-    
+
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
-    @State var scrollPositionBinding: CGPoint = .zero
+    let goals: [RecallGoal]
     
-    @ViewBuilder
-    private func makeGoalsSection(priority: RecallGoal.Priority) -> some View {
-        let filtered = goals.filter { goal in goal.priority == priority.rawValue }
-
-        if filtered.count != 0 {
-            VStack(alignment: .leading) {
-                UniversalText( priority.rawValue + " priority",
-                               size: Constants.UISubHeaderTextSize,
-                               font: Constants.titleFont )
-
-                ForEach( Array(filtered), id: \.label ) { goal in
-                    GoalPreviewView(goal: goal, events: events)
-                        .padding(.bottom, 5)
+//    MARK: makeGoalsSection
+    private struct GoalsSection: View {
+        private func getGoals() async {
+            if !self.goals.isEmpty { return }
+            
+            let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
+                .filter { goal in goal.priority == priority.rawValue }
+            
+            self.goals = goals
+        }
+        
+        @State private var goals: [RecallGoal] = []
+        @State var showingSection: Bool
+        
+        let priority: RecallGoal.Priority
+        
+        var body: some View {
+            VStack {
+                if goals.count != 0 {
+                    UniversalButton {
+                        HStack {
+                            UniversalText( priority.rawValue + " priority",
+                                           size: Constants.UISubHeaderTextSize,
+                                           font: Constants.titleFont )
+                            
+                            Spacer()
+                            
+                            RecallIcon(showingSection ? "chevron.down" : "chevron.up")
+                        }
+                    } action: { showingSection.toggle() }
+                    
+                    if showingSection {
+                        VStack {
+                            ForEach( goals, id: \.self ) { goal in
+                                GoalPreviewView(goal: goal)
+                                    .transition(.blurReplace)
+                            }
+                        }.rectangularBackground(7, style: .secondary, stroke: true)
+                    }
                 }
-            }.padding(.bottom)
+            }
+            .animation(.easeInOut, value: goals.count)
+            .task { await getGoals() }
+        }
+    }
+    
+//    MARK: makeHeader
+    @ViewBuilder
+    private func makeHeader() -> some View {
+        HStack {
+            UniversalText( "Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+            Spacer()
+            
+            IconButton("plus", label: "Add Goal") { coordinator.presentSheet(.goalCreationView(editting: false)) }
         }
     }
     
 //    MARK: Body
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                UniversalText( "Goals", size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-                Spacer()
+        GeometryReader { geo in
+            VStack(alignment: .leading) {
+                makeHeader()
                 
-                IconButton("plus", label: "Add Goal") { coordinator.presentSheet(.goalCreationView(editting: false)) }
-            }
-            
-            TabView {
-                if goals.count != 0 {
+                if goals.count != 0{
                     ScrollView(.vertical, showsIndicators: false) {
-                        VStack(alignment: .leading) {
+                        VStack {
                             ForEach( RecallGoal.Priority.allCases) { priority in
-                                makeGoalsSection(priority: priority)
+                                let showSection: Bool = priority == RecallGoal.Priority.high
+                                GoalsSection(showingSection: showSection,
+                                             priority: priority)
+                                    .padding(.bottom, 30)
                             }
                         }
-                        .padding(.bottom, Constants.UIBottomOfPagePadding)
+    
+                        Rectangle()
+                            .foregroundStyle(.clear)
+                            .frame(height: 140)
                     }
+                    
                 } else {
                     UniversalText( Constants.goalsSplashPurpose,
                                    size: Constants.UIDefaultTextSize,
                                    font: Constants.mainFont)
                 }
             }
-            .ignoresSafeArea()
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            
         }
         .padding(7)
         .universalBackground()

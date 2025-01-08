@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RecallView: View {
+    
 
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var realmManager = RecallModel.realmManager
@@ -22,7 +23,7 @@ struct RecallView: View {
                     .slideTransition()
                 
             case .authenticating:
-                LoginView()
+                OnboardingAuthenticationScene()
                     .slideTransition()
                 
             case .openingRealm:
@@ -34,7 +35,7 @@ struct RecallView: View {
                 ProfileCreationView()
                     .slideTransition()
                     .environment(\.realmConfiguration, realmManager.configuration)
-                
+                   
             case .tutorial:
                 TutorialViews()
                     .slideTransition()

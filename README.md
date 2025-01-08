@@ -28,6 +28,19 @@ New Ways to Customize:
 - Personalized Color Pallets
 - More Event, Goal, and Data settings
 
+## **Known Bugs**
+
+- Updating the goal contributions of tags causes every event to individually recompile its goal contributions, which takes over 4 minutes on the main thread
+> This is a symptom of a large issue: Events independently count their goal contirbutions (so that they can be custom), meaning it can't just read the contributions from the tag
+
+- Updating goal target hours or goal frequency has undefined behavior.
+- GoalViews do not have an edit / action buttons
+- GoalDataStore does not compile, store, and update goal completion history. 
+- The Data page does not show any information related to goals
+
+- Signning Out and signing back in does not redownload events
+- Signning Out does not clear the data stored on widgets
+
 ## **Package Dependencies**
 
 [**UIUniversals**](https://github.com/Brian-Masse/UIUniversals)
@@ -97,3 +110,4 @@ Recall is a calendar based app designed around recording daily events to be able
 
 Happy Birthday :)
 Happy Thanksgiving :)
+Happy Christmas :)

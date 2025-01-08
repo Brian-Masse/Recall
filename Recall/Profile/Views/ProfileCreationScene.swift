@@ -113,13 +113,13 @@ struct ProfileCreationView: View {
                 UniversalText( "back", size: Constants.UIDefaultTextSize, font: Constants.mainFont )
                 Spacer()
             }
-            .onTapGesture { withAnimation {
-                if activeScene.rawValue == 0 {
-                    RecallModel.realmManager.logoutUser()
-                    RecallModel.realmManager.setState(.splashScreen)
-                }
-                activeScene = activeScene.returnScene()
-            } }
+//            .onTapGesture { withAnimation {
+//                if activeScene.rawValue == 0 {
+//                    RecallModel.realmManager.logoutUser()
+//                    RecallModel.realmManager.setState(.splashScreen)
+//                }
+//                activeScene = activeScene.returnScene()
+//            } }
             
             HStack {
                 Spacer()

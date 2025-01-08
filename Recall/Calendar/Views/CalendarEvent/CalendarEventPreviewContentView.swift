@@ -128,7 +128,7 @@ struct CalendarEventPreviewContentView: View {
                 .padding(.leading, 10)
                 .padding(.horizontal, 12)
                 .padding(.vertical, verticalPadding())
-                .frame(maxHeight: height, alignment: .top)
+                .frame(maxHeight: max(height,0), alignment: .top)
             
             if viewModel.selecting && !isSelected {
                 Rectangle()

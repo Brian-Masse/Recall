@@ -66,6 +66,7 @@ struct CalendarEventPreviewView: View {
     @State private var moving: Bool = false //local variables
     @State private var resizing: Bool = false //used to block the movement gesture while resizing
 
+    @State private var beingDeleted: Bool = false
     @State private var showingDeletionAlert: Bool = false
     @State private var indexOfEventInEvents: Int = 0
     
@@ -121,7 +122,7 @@ struct CalendarEventPreviewView: View {
                     let roundedStartTime = viewModel.getTime(from: self.moveOffset, on: event.startTime)
                     let roundedEndTime = roundedStartTime + event.getLengthInHours() * Constants.HourTime
                     
-                    event.updateDate(startDate: roundedStartTime, endDate: roundedEndTime )
+                    event.updateTime(startDate: roundedStartTime, endDate: roundedEndTime )
                 }
                 self.resetEditingControls()
             }
@@ -140,20 +141,17 @@ struct CalendarEventPreviewView: View {
                 
                 let roundedTime = viewModel.getTime(from: self.resizeOffset, on: event.startTime)
                 
-                if direction == .up { event.updateDate(startDate: roundedTime) }
-                if direction == .down { event.updateDate(endDate: roundedTime) }
+                if direction == .up { event.updateTime(startDate: roundedTime) }
+                if direction == .down { event.updateTime(endDate: roundedTime) }
 
                 self.resetEditingControls()
             }
     }
     
 //    MARK: Input Response
-//    this function runs anyitme a user selects any option from the context menu
-//    its meant to disable any features that may be incmpatible with the currently performered action
-    @MainActor
-    private func defaultContextMenuAction() { }
     
     private func onTap() {
+//        viewModel.gestureInProgress = false
         Task { await findEvent() }
         
         if viewModel.selecting { viewModel.selectEvent(event) }
@@ -208,6 +206,7 @@ struct CalendarEventPreviewView: View {
             .frame(height: 20)
             .offset(y: direction == .up ? -30 : 30)
             .gesture(resizeGesture( direction ) )
+            .padding(7)
         }
     }
 
@@ -216,74 +215,73 @@ struct CalendarEventPreviewView: View {
             
             CalendarEventPreviewContentView(event: event, events: events, height: geo.size.height - 4)
                 .safeZoomMatch(id: indexOfEventInEvents, namespace: namespace)
+                .opacity(beingDeleted ? 0 : 1)
+                .opacity(resizing || moving ? 0.65 : 1)
+            
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
                         ZStack {
                             RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
                                 .stroke(style: .init(lineWidth: 3, lineCap: .round, dash: [5, 10], dashPhase: 15))
                             RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                                .opacity(0.3)
+                                .opacity(0.15)
                         }
                             .foregroundStyle(event.getColor())
                             .overlay(makeLengthHandles())
-
-                            .onAppear { resetOffsets(in: geo)  }
+                        
                             .offset(y: getPreviewOffset(in: geo) )
                             .frame(height: getPreviewHeight(in: geo) )
+                    }
+                }
+                .onChange(of: viewModel.gestureInProgress) {
+                    if (moving || resizing) && !viewModel.gestureInProgress {
+                        resetEditingControls()
                     }
                 }
             
                 .contextMenu { if includeGestures {
                     ContextMenuButton("move", icon: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left") {
-                        print("\(event.id)")
-                        defaultContextMenuAction()
+                        resetOffsets(in: geo)
                         beginMoving()
                     }
                     
                     ContextMenuButton("resize", icon: "rectangle.expand.vertical") {
-                        defaultContextMenuAction()
+                        resetOffsets(in: geo)
                         beginResizing()
                     }
                     
                     ContextMenuButton("edit", icon: "slider.horizontal.below.rectangle") {
-                        defaultContextMenuAction()
                         coordinator.presentSheet( .eventEdittingView(event: event) )
                     }
                     
                     ContextMenuButton("duplicate", icon: "rectangle.on.rectangle") {
-                        defaultContextMenuAction()
                         duplicate()
                     }
                     
                     ContextMenuButton("favorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
-                        defaultContextMenuAction()
                         event.toggleFavorite()
                     }
                     
+                    
                     ContextMenuButton("select", icon: "selection.pin.in.out") {
-                        defaultContextMenuAction()
                         viewModel.selecting = true
                         coordinator.presentSheet(.selectionView) { viewModel.stopSelecting() }
                         viewModel.selectEvent(event)
                     }
                     
                     ContextMenuButton("delete", icon: "trash", role: .destructive) {
-                        defaultContextMenuAction()
+                        withAnimation { beingDeleted = true }
                         if event.isTemplate { showingDeletionAlert = true }
                         else { event.delete() }
                     }
                 } }
                 .onTapGesture { if includeGestures { onTap() }}
             
-                .opacity(resizing || moving ? 0.5 : 1)
                 .padding(2)
                 .simultaneousGesture(drag, including: includeGestures ? .all : .none)
                 .task { await findEvent() }
 
                 .deleteableCalendarEvent(deletionBool: $showingDeletionAlert, event: event)
         }
-        .zIndex( resizing || moving ? 5 : 0 )
-        
-        
     }
 }

@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
+//MARK: ScrollPreferenceKey
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
     
     static var defaultValue: CGPoint = .zero
@@ -16,7 +17,7 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) { }
 }
 
-//MARK: Calendar
+//MARK: - Calendar
 struct EmptyCalendarView: View {
     
     private func getCalendarMarkLabel(hour: Int) -> String {
@@ -29,6 +30,7 @@ struct EmptyCalendarView: View {
         return date.formatted(format)
     }
     
+//    MARK: makeCalendarMark
     @ViewBuilder
     private func makeCalendarMark(hour: Int, minute: Int = 0, includeLabel: Bool = true, opacity: Double = 0.15) -> some View {
         HStack(alignment: .top) {
@@ -51,7 +53,8 @@ struct EmptyCalendarView: View {
         }
     }
     
-    @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
+//    MARK: CalendarView Vars
+    private var viewModel = RecallCalendarContainerViewModel.shared
     
     private let startHour: Int
     private let endHour: Int
@@ -66,6 +69,7 @@ struct EmptyCalendarView: View {
         self.includeCurrentTimeMark = includeCurrentTimeMark
     }
     
+//    MARK: CalendarView Body
     var body: some View {
         ZStack(alignment: .top) {
             ForEach( startHour...endHour, id: \.self ) { i in
@@ -84,10 +88,11 @@ struct EmptyCalendarView: View {
 }
 
 
-//MARK: CalendarContainer
+//MARK: - CalendarContainer
 struct CalendarContainer: View {
     
-//    MARK: Initialization
+    
+//    MARK: Vars
     @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     @ObservedObject private var coordinator = RecallNavigationCoordinator.shared
     
@@ -103,6 +108,9 @@ struct CalendarContainer: View {
     
     @State private var scrolledToEvents: Bool = false
     
+    @State private var invalidatingEvents: Bool = false
+    private let dispatchGroup = DispatchGroup()
+    
     init(events: [RecallCalendarEvent], summaries: [RecallDailySummary]) {
         self.events = events
         self.summaries = summaries
@@ -110,7 +118,7 @@ struct CalendarContainer: View {
     
     @State private var previousScrollOffset: Double = 0
     
-//    MARK: Struct Methods
+//    MARK: - setCurrentPostIndex
     private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy, dayCount: Int) {
 
         if viewModel.scrollingCalendar { return }
@@ -138,6 +146,7 @@ struct CalendarContainer: View {
         
     }
     
+//    MARK: setSubDayIndex
     private func setSubDayIndex(from scrollPosition: Double, in geo: GeometryProxy) {
         let proposedIndex: Int = Int(floor((abs(scrollPosition) / geo.size.width) * Double(viewModel.daysPerView)))
         let index = min(max( 0, proposedIndex ), viewModel.daysPerView)
@@ -168,7 +177,31 @@ struct CalendarContainer: View {
             }
     }
     
-//    MARK: EventCreationGesture
+//    MARK: - InvalidateEvents
+    @State private var queuedEventChanges: [RecallCalendarEvent]? = nil
+    
+    private func invalidateEvents(events: [RecallCalendarEvent]) {
+        Task {
+            invalidatingEvents = true
+            await viewModel.invalidateEvents(events: events)
+            invalidatingEvents = false
+            self.clearInvalidatingEventsQueue()
+        }
+    }
+    
+//    MARK: clearInvalidatingEventsQueue
+//    When in the (async) process of invalidating events, it is possible another update to events will come through
+//    In such cases, those changes will be queued, and once the first changes are finished, will be executed here
+//    This is NOT a major sync issue however, it only pertains to the current session of UI
+    private func clearInvalidatingEventsQueue() {
+        if let queuedEventChanges {
+            
+            invalidateEvents(events: queuedEventChanges)
+            self.queuedEventChanges = nil
+        }
+    }
+    
+//    MARK: - EventCreationGesture
     @State private var newEvent: RecallCalendarEvent? = nil
     @State private var creatingEvent: Bool = false
     
@@ -177,6 +210,7 @@ struct CalendarContainer: View {
     
     private func cleanEvent() {
         if let newEvent {
+            if newEvent.isInvalidated { return }
             if newEvent.title.isEmpty || newEvent.getTagLabel().isEmpty {
                 RealmManager.deleteObject(newEvent) { event in
                     newEvent.title.isEmpty
@@ -185,6 +219,7 @@ struct CalendarContainer: View {
         }
     }
     
+//    MARK: createEvent
     private func createEvent() {
         let subDayOffset = Double(1 - viewModel.subDayIndex) * Constants.DayTime
         
@@ -207,9 +242,11 @@ struct CalendarContainer: View {
         RealmManager.addObject(event)
     }
     
+//    MARK: createEventHoldGesture
     private func createEventHoldGesture(in geo: GeometryProxy) -> some Gesture {
         LongPressGesture(minimumDuration: 1)
             .onEnded { value in withAnimation {
+                if viewModel.gestureInProgress { return }
                 self.creatingEvent = true
                 viewModel.gestureInProgress = true
             } }
@@ -275,7 +312,7 @@ struct CalendarContainer: View {
         }
     }
     
-//    MARK: CalendarLabels
+//    MARK: - CalendarLabels
     @ViewBuilder
     private func makeCalendarLabels() -> some View {
         let format = Date.FormatStyle().weekday(.abbreviated).month().day()
@@ -294,8 +331,11 @@ struct CalendarContainer: View {
             }
         }
         .padding(.vertical, 7)
-        .background()
-        .opacity(0.75)
+        .background(
+            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                .foregroundStyle(.background)
+                .opacity(0.75)
+        )
     }
     
 //    MARK: CalendarCarousel
@@ -324,7 +364,9 @@ struct CalendarContainer: View {
                         }
                         .padding(.horizontal, 2)
                         .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
-                        .task { await viewModel.loadEvents(for: day, in: events) }
+                        .task {
+                            await viewModel.loadEvents(for: day, in: events)
+                        }
                     }
                 }
                 .scrollTargetLayout()
@@ -336,9 +378,6 @@ struct CalendarContainer: View {
                 })
                 
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo, dayCount: dayCount) }
-                .onChange(of: events) { oldValue, newValue in
-                    viewModel.invalidateEvents(newEvents: newValue)
-                }
             }
             .defaultScrollAnchor(.trailing)
             .scrollTargetBehavior(.viewAligned)
@@ -351,49 +390,50 @@ struct CalendarContainer: View {
     
 //    MARK: Body
     var body: some View {
-        VStack {
-            GeometryReader { geo in
-                VStack {
-                    ScrollViewReader { proxy in
+        GeometryReader { geo in
+            ScrollViewReader { proxy in
+                
+                ScrollView(.vertical, showsIndicators: false) {
+                    
+                    ZStack(alignment: .top) {
+                        EmptyCalendarView(startHour: 0, endHour: 26, labelWidth: calendarLabelWidth)
                         
-                        ScrollView(.vertical, showsIndicators: false) {
+                        makeCalendarCarousel(in: geo)
+                        
+                        VStack {
+                            Rectangle()
+                                .frame(height: (9 * Constants.HourTime) / viewModel.scale)
                             
-                            ZStack(alignment: .top) {
-                                EmptyCalendarView(startHour: 0, endHour: 26, labelWidth: calendarLabelWidth)
-                                
-                                makeCalendarCarousel(in: geo)
-                                
-                                VStack {
-                                    Rectangle()
-                                        .frame(height: (9 * Constants.HourTime) / viewModel.scale)
-                                    
-                                    Rectangle()
-                                        .id("scrollTarget")
-                                }
-                                .allowsHitTesting(false)
-                                .foregroundStyle(.clear)
-                            }
-                            .padding(.top)
-                            .simultaneousGesture(createEventHoldGesture(in: geo))
-                            
-                            .coordinateSpace(name: coordinateSpaceName)
-                            
-                            RecallDailySummaryView(summaries: summaries)
-                                .padding(.bottom, 400)
+                            Rectangle()
+                                .id("scrollTarget")
                         }
-                        .simultaneousGesture(scaleGesture)
-                        .scrollDisabled(viewModel.gestureInProgress)
-                        .onAppear { if !scrolledToEvents {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                proxy.scrollTo("scrollTarget", anchor: .top) }
-                                scrolledToEvents = true
-                        } }
-                        .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
-                            makeCalendarLabels()
-                                .padding(.leading, calendarLabelWidth)
-                        } }
+                        .allowsHitTesting(false)
+                        .foregroundStyle(.clear)
                     }
+                    .simultaneousGesture(createEventHoldGesture(in: geo))
+                    .onTapGesture { viewModel.gestureInProgress = false }
+                    
+                    .coordinateSpace(name: coordinateSpaceName)
+                    .padding(.top, 30)
+                    
+                    RecallDailySummaryView(summaries: summaries)
+                        .padding(.bottom, 400)
                 }
+                .simultaneousGesture(scaleGesture)
+                .scrollDisabled(viewModel.gestureInProgress)
+                .onAppear { if !scrolledToEvents {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        proxy.scrollTo("scrollTarget", anchor: .top) }
+                        scrolledToEvents = true
+                } }
+                .onChange(of: events) { oldValue, newValue in
+                    if invalidatingEvents { queuedEventChanges = newValue }
+                    else { invalidateEvents(events: events) }
+                }
+                .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
+                    makeCalendarLabels()
+                        .padding(.leading, calendarLabelWidth)
+                } }
             }
         }
     }

@@ -13,13 +13,6 @@ import UIUniversals
 struct EventSelectionEditorView: View {
 
 //    MARK: Vars
-//    this will likely not be used, its the var stored in the calendar container that says whether or not
-//    the user is selecting events
-//    it shouldnt be set here though, because thatll kinda fuck with the halfscreen presentation
-//    @Binding var selecting: Bool
-//    
-//    @Binding var selection: [ RecallCalendarEvent ]
-    
     @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
     
     @State private var date: Date = Date.now
@@ -34,16 +27,7 @@ struct EventSelectionEditorView: View {
     
     @MainActor
     private func submit() {
-        for event in viewModel.selection { event.updateDateComponent(to: date) }
-        withAnimation { viewModel.selecting = false }
-    }
-    
-    @MainActor
-    private func template() {
-        for event in viewModel.selection {
-            if !event.isTemplate { event.toggleTemplate() }
-        }
-        
+        for event in viewModel.selection { event.updateDate(to: date) }
         withAnimation { viewModel.selecting = false }
     }
     
@@ -133,7 +117,6 @@ struct EventSelectionEditorView: View {
                         .padding(.bottom)
                     
                     UniversalText("actions", size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
-                    makeSubButton("template", icon: "viewfinder.rectangular") { template() }
                     makeSubButton("favorite", icon: "arrow.up.right") {  }
                     makeSubButton("delete", icon: "trash") { showingDeletetionAlert = true }
                  

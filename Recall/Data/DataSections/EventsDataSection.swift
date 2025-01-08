@@ -20,7 +20,7 @@ struct EventsDataSection: View {
     @State var timePeriod: RecallDataModel.TimePeriod = .allTime
     
     private var daysInTimePeriod: Double {
-        timePeriod == .recent ? 7 : RecallModel.getDaysSinceFirstEvent()
+        timePeriod == .recent ? 7 : Double(RecallModel.index.daysSinceFirstEvent())
     }
     
 //    MARK: ViewBuilder
@@ -58,7 +58,7 @@ struct EventsDataSection: View {
 //    MARK: Body
     var body: some View {
         
-        DataCollection { data.eventsDataLoaded } makeData: { await data.makeEventsData() } content: {
+        DataCollection(dataLoaded: $data.eventsDataLoaded) { await data.makeEventsData() } content: {
             
             makeTimePeriodSelector()
                 .padding(.bottom)

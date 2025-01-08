@@ -12,7 +12,7 @@ import UIUniversals
 
 struct GoalCreationView: View {
     
-//    MARK: ViewBuilders
+//    MARK: makeGoalCreationView
     @ViewBuilder
     static func makeGoalCreationView(editing: Bool, goal: RecallGoal? = nil) -> some View {
         if editing {
@@ -42,6 +42,7 @@ struct GoalCreationView: View {
     
     
 //    TODO: These two should likley be one function, but for now I've seperated them into two for conveinience
+//    MARK: makePickerOptions
     @ViewBuilder func makePickerOptions(label: String, selection: RecallGoal.GoalFrequence) -> some View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { frequence = selection }
@@ -55,6 +56,7 @@ struct GoalCreationView: View {
             }
     }
     
+//    MARK: makePriorityPickerOptions
     @ViewBuilder func makePriorityPickerOptions(label: String, selection: RecallGoal.Priority) -> some View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { priority = selection }
@@ -68,6 +70,7 @@ struct GoalCreationView: View {
             }
     }
     
+//    MARK: makeTypePickerOption
     @ViewBuilder func makeTypePickerOption(label: String, selection: RecallGoal.GoalType) -> some View {
         UniversalText(label, size: Constants.UIDefaultTextSize, font: Constants.mainFont )
             .onTapGesture { type = selection }
@@ -79,12 +82,13 @@ struct GoalCreationView: View {
             }
     }
     
+//    MARK: hoursBinding
     private var hoursBinding: Binding<String> {
         Binding { "\(Int(targetHours))"
         } set: { newValue, _ in targetHours = Float(newValue) ?? 0 }
     }
     
-//    MARK: submit
+//    MARK: - submit
     @MainActor
     private func submit() {
         if !checkCompletion() {
@@ -101,6 +105,7 @@ struct GoalCreationView: View {
                                   priority: priority,
                                   type: type,
                                   targetTag: targetTag)
+            goal.updateColor(color)
             RealmManager.addObject(goal)
         } else {
             goal!.update(label: label,
@@ -111,7 +116,9 @@ struct GoalCreationView: View {
                          type: type,
                          targetTag: targetTag,
                          creationDate: creationDate)
+            goal!.updateColor(color)
         }
+        
         presentationMode.wrappedValue.dismiss()
     }
     
@@ -120,7 +127,8 @@ struct GoalCreationView: View {
     }
     
 //    MARK: Vars
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedResults(RecallCategory.self,
                      where: { tag in tag.ownerID == RecallModel.ownerID }) var tags
     
@@ -129,6 +137,8 @@ struct GoalCreationView: View {
     
     @State var label: String
     @State var description: String
+    @State private var color: Color = .blue
+    
     @State var frequence: RecallGoal.GoalFrequence
     @State var targetHours: Float
     @State var priority: RecallGoal.Priority
@@ -139,16 +149,20 @@ struct GoalCreationView: View {
     
     @State var showingAlert: Bool = false
     
-//    MARK: sectionBuilders
+//    MARK: makeOverviewSection
     @ViewBuilder
     private func makeOverviewSection() -> some View {
         VStack(alignment: .leading) {
             StyledTextField(title: "What's the name of this goal?", binding: $label)
             StyledTextField(title: "What's the purpose of this goal?", binding: $description)
                 .padding(.bottom)
+            
+            StyledColorPicker(label: "Goal Color", color: $color)
         }
+        .onAppear { self.color = Colors.getAccent(from: colorScheme) }
     }
     
+//    MARK: makeTagSelection
     @ViewBuilder
     private func makeTagSelection() -> some View {
         UniversalText("How frequently do you want to meet this goal?", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
@@ -183,6 +197,7 @@ struct GoalCreationView: View {
         }
     }
     
+//    MARK: makeTargetSelector
     @ViewBuilder
     private func makeTargetSelector() -> some View {
         SliderWithPrompt(label: type == .byTag ? "How many tagged events would you like to complete this goal?" : "How many hours do you want to spend on this goal?",
@@ -194,6 +209,7 @@ struct GoalCreationView: View {
         .padding(.bottom)
     }
     
+//    MARK: makePrioritySelector
     @ViewBuilder
     private func makePrioritySelector() -> some View {
         UniversalText("How would you like to prioritize this goal?", size: Constants.formQuestionTitleSize, font: Constants.titleFont)
@@ -216,7 +232,6 @@ struct GoalCreationView: View {
     var body: some View {
         
         let title = editing ? "Edit Goal" : "Create Goal"
-        
         
         CreationFormView(title, section: GoalCreationFormSection.self, submit: submit) { section in
             switch section {

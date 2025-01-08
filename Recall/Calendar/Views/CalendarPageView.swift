@@ -170,7 +170,7 @@ private struct CalendarPageToolBar: View {
 //MARK: CalendarPageView
 struct CalendarPageView: View {
     
-//   MARK: vars
+    //   MARK: vars
     let events: [RecallCalendarEvent]
     let goals: [RecallGoal]
     let dailySummaries: [RecallDailySummary]
@@ -198,10 +198,10 @@ struct CalendarPageView: View {
             } action: { viewModel.setCurrentDay(to: .now) }
 
             Spacer()
-            
-            
+           
             RecallIcon("calendar")
                 .rectangularBackground(style: .secondary)
+            
                 .safeZoomMatch(id: RecallnavigationMatchKeys.monthlyCalendarView, namespace: calendarPageViewNameSpace)
                 .onTapGesture { coordinator.push(.monthlyCalendarView(namespace: calendarPageViewNameSpace)) }
             

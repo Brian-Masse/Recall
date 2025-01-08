@@ -19,9 +19,7 @@ struct OverviewDataSection: View {
 //    MARK: Body
     var body: some View {
         
-        DataCollection { data.overviewDataLoaded } makeData: { 
-            await data.makeOverviewData()
-        } content: {
+        DataCollection(dataLoaded: $data.overviewDataLoaded) { await data.makeOverviewData() } content: {
 
             ActivitiesPerDay("Daily Recalls",
                              data: data.getHourlData(from: .allTime),
@@ -30,9 +28,9 @@ struct OverviewDataSection: View {
             )
             EventsDataSummaries.SuperlativeEvents(data:     data.getCompressedHourlData(from: .allTime), unit: "HR")
             
-            GoalAverages(title: "Goal Completions", data: data.metData, unit: "")
-            GoalCompletionOverTime(data: data.goalsMetOverTimeData, unit: "")
-                .frame(height: 250)
+//            GoalAverages(title: "Goal Completions", data: data.metData, unit: "")
+//            GoalCompletionOverTime(data: data.goalsMetOverTimeData, unit: "")
+//                .frame(height: 250)
         }
     }
 }

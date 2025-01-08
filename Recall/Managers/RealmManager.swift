@@ -36,6 +36,7 @@ class RealmManager: ObservableObject {
     var configuration: Realm.Configuration!
     
     var index: RecallIndex!
+    var dataStore: RecallDataStore!
     
 //    These variables are just temporary storage until the realm is initialized, and can be put in the database
     var firstName: String = ""
@@ -50,32 +51,40 @@ class RealmManager: ObservableObject {
     
 //    MARK: Subscriptions
 //    These can add, remove, and return compounded queries. During the app lifecycle, they'll need to change based on the current view
-    var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) {
+    static var calendarEventQuery: (QueryPermission<RecallCalendarEvent>) {
         .init(named: QuerySubKey.calendarComponent.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var categoryQuery: (QueryPermission<RecallCategory>) {
+    static var categoryQuery: (QueryPermission<RecallCategory>) {
         .init(named: QuerySubKey.category.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var goalsQuery: (QueryPermission<RecallGoal>) {
+    static var goalsQuery: (QueryPermission<RecallGoal>) {
         .init(named: QuerySubKey.goal.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var goalsNodeQuery: (QueryPermission<GoalNode>) {
+    static var goalsNodeQuery: (QueryPermission<GoalNode>) {
         .init(named: QuerySubKey.goalNode.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var indexQuery: (QueryPermission<RecallIndex>) {
+    static var indexQuery: (QueryPermission<RecallIndex>) {
         .init(named: QuerySubKey.index.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var dicQuery: (QueryPermission<DictionaryNode>) {
-        .init(named: QuerySubKey.dictionary.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    static var goalHistoryNodeQuery: (QueryPermission<RecallGoalHistoryNode>) {
+        .init(named: QuerySubKey.goalHistoryNode.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
-    var summaryQuery: (QueryPermission<RecallDailySummary>) {
+    static var goalDataStore: (QueryPermission<RecallGoalDataStore>) {
+        .init(named: QuerySubKey.goalDataStore.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
+    
+    static var summaryQuery: (QueryPermission<RecallDailySummary>) {
         .init(named: QuerySubKey.summary.rawValue) { query in query.ownerID == RecallModel.ownerID }
+    }
+    
+    static var dataStoreQuery: (QueryPermission<RecallDataStore>) {
+        .init(named: QuerySubKey.dataStore.rawValue) { query in query.ownerID == RecallModel.ownerID }
     }
     
 //    MARK: Initialization
@@ -190,16 +199,15 @@ class RealmManager: ObservableObject {
     
 //    MARK: Logout
     @MainActor
-    func logoutUser() {
+    func logoutUser() async {
         if let user = self.user {
-            user.logOut { error in
-                if let err = error { print("error logging out: \(err.localizedDescription)") }
-                
-                DispatchQueue.main.async {
-                    NotificationManager.shared.clearNotifications()
-                    self.setState(.authenticating)
-                }
-            }
+            RecallNavigationCoordinator.shared.dismiss()
+            
+            try? await user.logOut()
+            
+            NotificationManager.shared.clearNotifications()
+            self.setState(.authenticating)
+            
         }
         Task { await self.removeAllNonBaseSubscriptions() }
         
@@ -207,7 +215,7 @@ class RealmManager: ObservableObject {
     }
     
 //    MARK: SetConfiguration
-    private func addInitialSubscription<T: Object>(_ query: QueryPermission<T>, to subs: SyncSubscriptionSet ) {
+    static func addInitialSubscription<T: Object>(_ query: QueryPermission<T>, to subs: SyncSubscriptionSet ) {
         let subscription = query.getSubscription()
         
         if subs.first(named: query.name) == nil {
@@ -218,38 +226,44 @@ class RealmManager: ObservableObject {
     @MainActor
     private func setConfiguration() {
         self.configuration = user!.flexibleSyncConfiguration(initialSubscriptions: { subs in
+            RealmManager.addInitialSubscription(RealmManager.calendarEventQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.categoryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalsQuery, to: subs)
             
-            self.addInitialSubscription(self.calendarEventQuery, to: subs)
-            self.addInitialSubscription(self.categoryQuery, to: subs)
-            self.addInitialSubscription(self.goalsQuery, to: subs)
-            self.addInitialSubscription(self.indexQuery, to: subs)
-            self.addInitialSubscription(self.goalsNodeQuery, to: subs)
-            self.addInitialSubscription(self.dicQuery, to: subs)
-            self.addInitialSubscription(self.summaryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.indexQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.summaryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.dataStoreQuery, to: subs)
             
+            RealmManager.addInitialSubscription(RealmManager.goalsNodeQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalHistoryNodeQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalDataStore, to: subs)
         })
         
         self.configuration.objectTypes = [ RecallCalendarEvent.self,
                                            RecallCategory.self,
                                            RecallGoal.self,
+                                           
                                            RecallIndex.self,
-                                           GoalNode.self,
-                                           DictionaryNode.self,
                                            RecallRecentUpdate.self,
-                                           RecallDailySummary.self
+                                           RecallDailySummary.self,
+                                           RecallDataStore.self,
+                                           
+                                           GoalNode.self,
+                                           RecallGoalHistoryNode.self,
+                                           RecallGoalDataStore.self
         ]
     }
     
     
 //    MARK: Profile Functions
     @MainActor
-    func deleteProfile() async { self.logoutUser() }
+    func deleteProfile() async { await self.logoutUser() }
     
 //    This checks the user has created a profile with Recall already
 //    if not it will trigger the ProfileCreationScene
     @MainActor
     func checkProfile() async {
-        let results: Results<RecallIndex> = RealmManager.retrieveObject()
+        let results: Results<RecallIndex> = RealmManager.retrieveObjectsInResults()
         
         if let index = results.first(where: { index in index.ownerID == RecallModel.ownerID }) {
             self.index = index
@@ -272,7 +286,23 @@ class RealmManager: ObservableObject {
         RealmManager.addObject(index)
         
         self.index = index
+        self.index.onAppear()
         self.setState(.creatingProfile)
+    }
+    
+//    MARK: DataStore Functions
+    @MainActor
+    func checkDataStore() async {
+        let results: Results<RecallDataStore> = RealmManager.retrieveObjectsInResults()
+        
+        if let dataStore = results.first(where: { store in store.ownerID == RecallModel.ownerID }) {
+            self.dataStore = dataStore
+        } else {
+            let dataStore = RecallDataStore()
+            dataStore.ownerID = RecallModel.ownerID
+            RealmManager.addObject(dataStore)
+            self.dataStore = dataStore
+        }
     }
 
 //    MARK: Realm Loading Functions
@@ -282,12 +312,32 @@ class RealmManager: ObservableObject {
         self.realm = realm
         await RecallModel.updateManager.initialize()
         await self.checkProfile()
+        await self.checkDataStore()
+        self.addNonInitialSubscriptions()
         RecallModel.index.updateAccentColor()
     }
     
 //    MARK: Subscription Functions
-//    Subscriptions are only used when the app is online
-//    otherwise you are able to retrieve all the data from the Realm by default
+    func addNonInitialSubscriptions() {
+//        after updating an app with new subscriptions, the initial subs closure isn't run, the following ensures the app
+//       has all its susbcriptions
+        let subs = realm.subscriptions
+        
+        subs.update {
+            RealmManager.addInitialSubscription(RealmManager.calendarEventQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.categoryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalsQuery, to: subs)
+            
+            RealmManager.addInitialSubscription(RealmManager.indexQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.summaryQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.dataStoreQuery, to: subs)
+            
+            RealmManager.addInitialSubscription(RealmManager.goalsNodeQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalHistoryNodeQuery, to: subs)
+            RealmManager.addInitialSubscription(RealmManager.goalDataStore, to: subs)
+        }
+    }
+    
     func removeSubscription(name: String) async {
         let subscriptions = self.realm.subscriptions
         let foundSubscriptions = subscriptions.first(named: name)
@@ -338,16 +388,16 @@ class RealmManager: ObservableObject {
         
         if ownerID.isEmpty { return }
         
-        let goals: [RecallGoal] = RealmManager.retrieveObjects()
+        let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
         for goal in goals { RealmManager.transferOwnership(of: goal, to: ownerID) }
         
-        let events: [RecallCalendarEvent] = RealmManager.retrieveObjects()
+        let events: [RecallCalendarEvent] = RealmManager.retrieveObjectsInList()
         for event in events { RealmManager.transferOwnership(of: event, to: ownerID) }
         
-        let tags: [RecallCategory] = RealmManager.retrieveObjects()
+        let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
         for tag in tags { RealmManager.transferOwnership(of: tag, to: ownerID) }
         
-        let dataNodes: [GoalNode] = RealmManager.retrieveObjects()
+        let dataNodes: [GoalNode] = RealmManager.retrieveObjectsInList()
         for node in dataNodes { RealmManager.transferOwnership(of: node, to: ownerID) }
         
     }
@@ -393,16 +443,18 @@ class RealmManager: ObservableObject {
             getRealm(from: realm).add(object) }
     }
     
-    static func retrieveObject<T:Object>( realm: Realm? = nil, where query: ( (Query<T>) -> Query<Bool> )? = nil ) -> Results<T> {
+    @MainActor
+    static func retrieveObjectsInResults<T:Object>( realm: Realm? = nil, where query: ( (Query<T>) -> Query<Bool> )? = nil ) -> Results<T> {
         if query == nil { return getRealm(from: realm).objects(T.self) }
         else { return getRealm(from: realm).objects(T.self).where(query!) }
     }
     
     @MainActor
-    static func retrieveObjects<T: Object>(realm: Realm? = nil, where query: ( (T) -> Bool )? = nil) -> [T] {
+    static func retrieveObjectsInList<T: Object>(realm: Realm? = nil, where query: ( (T) -> Bool )? = nil) -> [T] {
         if query == nil { return Array(getRealm(from: realm).objects(T.self)) }
         else { return Array(getRealm(from: realm).objects(T.self).filter(query!)  ) }
     }
+
 
     static func deleteObject<T: RealmSwiftObject>( _ object: T, where query: @escaping (T) -> Bool, realm: Realm? = nil ) where T: Identifiable {
         

@@ -40,6 +40,7 @@ struct ProfileView: View {
     @State var activeIcon: String = UIApplication.shared.alternateIconName ?? "light"
     
     @State var showingError: Bool = false
+    @State private var showingTestView: Bool = false
     
 //    MARK: Methods
     private func saveSettings() {
@@ -162,7 +163,8 @@ struct ProfileView: View {
         
         
         VStack(alignment: .leading) {
-            UniversalText( "Overview", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("number", title: "Overview")
+            
             VStack(alignment: .leading) {
                 HStack {
                     makeDemographicLabel(mainText: dayFormatted.string(from: index.dateJoined),
@@ -195,33 +197,33 @@ struct ProfileView: View {
         
         VStack(alignment: .leading) {
             
-            UniversalText( "Calendar Display Options", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("calendar.day.timeline.left", title: "Calendar")
             
             makeCalendarDisplayOptions()
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
                 
             
-            UniversalText( "Event Settings", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("widget.small", title: "Events")
             
             makeEventSettings()
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
-            UniversalText( "Apperance", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("circle.circle", title: "Appearance")
             
             makeAccentColorPicker()
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
             
-            UniversalText( "Reminders", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("app.badge", title: "Notifications")
             
             makeReminderSettings()
                 .rectangularBackground(style: .secondary, stroke: true, strokeWidth: 1)
                 .padding(.bottom, 20)
             
-            UniversalText( "Account Settings", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+            makeSectionHeader("person.bust", title: "Account")
             
             makeActionButtons()
             
@@ -289,7 +291,8 @@ struct ProfileView: View {
                 Spacer()
                 RecallIcon( icon )
                 Spacer()
-            }.rectangularBackground(style: index.calendarColoumnCount == option ? .accent : .primary)
+            }
+            .highlightedBackground(index.calendarColoumnCount == option, disabledStyle: .primary)
             
         } action: { index.setCalendarColoumnCount(to: option) }
         
@@ -426,16 +429,8 @@ struct ProfileView: View {
     }
     
 //    MARK: Color Preferences
-    private struct Triangle: Shape {
-        func path(in rect: CGRect) -> Path {
-            Path { path in
-                path.move(to: .zero)
-                path.addLine(to: .init(x: rect.width, y: 0))
-                path.addLine(to: .init(x: 0, y: rect.height))
-                path.addLine(to: .zero)
-            }
-        }
-    }
+    
+    
     
 //    MARK: makeAccentColorOption
     @ViewBuilder
@@ -500,7 +495,7 @@ struct ProfileView: View {
             HStack {
                 IconButton("pencil", label: "Edit", fullWidth: true) { coordinator.presentSheet(.indexEditingView(index: index)) }
                 IconButton("arrow.down", label: "Signout", fullWidth: true) {
-                    RecallModel.realmManager.logoutUser()
+                    await RecallModel.realmManager.logoutUser()
                     RecallModel.realmManager.setState(.splashScreen)
                 }
             }
@@ -547,6 +542,10 @@ struct ProfileView: View {
                     
                     UniversalText( RecallModel.ownerID, size: Constants.UISmallTextSize, font: Constants.mainFont )
                         .padding(.bottom)
+                        .onTapGesture { showingTestView = true }
+                        .fullScreenCover(isPresented: $showingTestView) {
+                            OnboardingView()
+                        }
                 }
             }
         }
@@ -563,11 +562,11 @@ struct ProfileView: View {
         .alert(SettingsConstants.deletionWarning, isPresented: $showingError) {
             Button(role: .destructive) {
                 Task {
-                    RecallModel.realmManager.logoutUser()
+                    await RecallModel.realmManager.logoutUser()
                     await RecallModel.realmManager.deleteProfile()
                 }
             } label: { Text( "delete profile" ) }
         }
     }
-    
 }
+
