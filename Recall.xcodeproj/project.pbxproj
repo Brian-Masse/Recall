@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C90438D62D3053960045BFFC /* OnboardingOverviewScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90438D52D3053960045BFFC /* OnboardingOverviewScene.swift */; };
 		C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */; };
 		C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0062A67213F009F6C84 /* RecallCategory.swift */; };
 		C9186A962A789B9B00398BF8 /* DataPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9186A952A789B9B00398BF8 /* DataPageView.swift */; };
@@ -192,6 +193,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C90438D52D3053960045BFFC /* OnboardingOverviewScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingOverviewScene.swift; sourceTree = "<group>"; };
 		C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalCharts.swift; sourceTree = "<group>"; };
 		C915A0062A67213F009F6C84 /* RecallCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCategory.swift; sourceTree = "<group>"; };
 		C9186A952A789B9B00398BF8 /* DataPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPageView.swift; sourceTree = "<group>"; };
@@ -378,6 +380,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C90438D42D3053830045BFFC /* Overview */ = {
+			isa = PBXGroup;
+			children = (
+				C90438D52D3053960045BFFC /* OnboardingOverviewScene.swift */,
+			);
+			path = Overview;
+			sourceTree = "<group>";
+		};
 		C9186A942A789B8600398BF8 /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -425,6 +435,7 @@
 				C9EE9EAD2B608AFF0090DB16 /* Resources */,
 				C91BCF2D2A61DD51003C6DD6 /* Universals */,
 				C9DC3F2E2D19F78F0021ED79 /* Onboarding */,
+				C90438D42D3053830045BFFC /* Overview */,
 				C9B8DF612C69072A00B11A38 /* Launch */,
 				C9B8DF632C69076F00B11A38 /* Managers */,
 				C98F2F232A94430A00E92B30 /* Profile */,
@@ -1017,6 +1028,7 @@
 				C985EB5D2CACBDE6003186BD /* LocationService.swift in Sources */,
 				C91BCEF22A618435003C6DD6 /* RecallApp.swift in Sources */,
 				C9D299E62CACB83200814965 /* StyledLocationPicker.swift in Sources */,
+				C90438D62D3053960045BFFC /* OnboardingOverviewScene.swift in Sources */,
 				C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */,
 				C98F2F222A94134F00E92B30 /* OnboardingAuthenticationScene.swift in Sources */,
 				C98F2F292A9859BD00E92B30 /* ProfileViewEditor.swift in Sources */,
