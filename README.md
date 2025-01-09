@@ -61,6 +61,12 @@ Recall is a calendar based app designed around recording daily events to be able
 
 **ADDITIONS**
 
+**Onboarding**
+
+- Added a new onboarding experience
+- Added a new authentication / login flow
+- Added new "About Recall" introduction screen 
+
 **Calendar Page**
 
 - Added controls for calendar density
@@ -78,6 +84,12 @@ Recall is a calendar based app designed around recording daily events to be able
 - Added hyperlinks to events
 - Added photo carousel to events
 - Added a rich event view
+
+**Other**
+
+- Added Calendar Widget
+- Added Events Widget
+- Added Favorites Event Widget
 
 **CHANGES**
 
