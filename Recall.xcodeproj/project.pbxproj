@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C90438D62D3053960045BFFC /* OnboardingOverviewScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90438D52D3053960045BFFC /* OnboardingOverviewScene.swift */; };
+		C90438D82D324D220045BFFC /* LifeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90438D72D324D220045BFFC /* LifeView.swift */; };
 		C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */; };
 		C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0062A67213F009F6C84 /* RecallCategory.swift */; };
 		C9186A962A789B9B00398BF8 /* DataPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9186A952A789B9B00398BF8 /* DataPageView.swift */; };
@@ -194,6 +195,7 @@
 
 /* Begin PBXFileReference section */
 		C90438D52D3053960045BFFC /* OnboardingOverviewScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingOverviewScene.swift; sourceTree = "<group>"; };
+		C90438D72D324D220045BFFC /* LifeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeView.swift; sourceTree = "<group>"; };
 		C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalCharts.swift; sourceTree = "<group>"; };
 		C915A0062A67213F009F6C84 /* RecallCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCategory.swift; sourceTree = "<group>"; };
 		C9186A952A789B9B00398BF8 /* DataPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPageView.swift; sourceTree = "<group>"; };
@@ -705,6 +707,7 @@
 				C9C470F82CEAA224004AB489 /* EventSelectionEditorView.swift */,
 				C9C470F92CEAA224004AB489 /* MonthlyCalendarView.swift */,
 				C9C470FA2CEAA224004AB489 /* RecallDailySummaryView.swift */,
+				C90438D72D324D220045BFFC /* LifeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1034,6 +1037,7 @@
 				C98F2F292A9859BD00E92B30 /* ProfileViewEditor.swift in Sources */,
 				C98F2F322A9DC49300E92B30 /* EventsCreationScene.swift in Sources */,
 				C98CEE0F2AFFFC3E00B75924 /* UpdateManager.swift in Sources */,
+				C90438D82D324D220045BFFC /* LifeView.swift in Sources */,
 				C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */,
 				C91BCF252A61D0B9003C6DD6 /* PermissionManager.swift in Sources */,
 				C989AEC72D14D2EF00B307C0 /* RecallUniversals.swift in Sources */,
