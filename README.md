@@ -77,6 +77,8 @@ Recall is a calendar based app designed around recording daily events to be able
 - Added the ability to create events in between days
 - Changed the scroll direction of the calendar
 - Added a monthly calendar page view
+- Added a Life Calendar Page
+
 
 **Events**
 
