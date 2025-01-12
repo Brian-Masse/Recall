@@ -79,14 +79,6 @@ struct LifeCalendarView: View {
                 .universalStyledBackgrond(.accent, onForeground: true)
         }
         .padding()
-        .task { setup() }
-        
-        
+        .task { setup() }   
     }
-    
-}
-
-
-#Preview {
-    LifeCalendarView()
 }

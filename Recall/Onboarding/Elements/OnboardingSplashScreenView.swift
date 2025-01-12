@@ -59,7 +59,7 @@ struct OnboardingSplashScreenView<C: View>: View {
                                 RecallIcon(icon)
                                     .font(.largeTitle)
                                 
-                                UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont)
+                                UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont, textAlignment: .center)
                                     .padding(.bottom)
                                 
                                 if showingMessage {
