@@ -13,6 +13,9 @@ import UIUniversals
 //TODO: make goal + tag limits more apparent
 enum OnBoardingScene: Int, CaseIterable {
     
+    case overview
+    case howItWorks
+    
     case authentication
     case profileSetup1
     case profileSetup2
@@ -49,7 +52,7 @@ class OnboardingViewModel: ObservableObject {
     
     static let shared = OnboardingViewModel()
     
-    @Published private(set) var scene: OnBoardingScene = .authentication
+    @Published private(set) var scene: OnBoardingScene = .overview
     @Published private(set) var sceneStatus: SceneStatus = .incomplete
     
     @Published var triggerBackgroundUpdate: Bool = false

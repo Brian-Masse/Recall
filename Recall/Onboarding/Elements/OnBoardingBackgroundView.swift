@@ -22,7 +22,7 @@ struct OnBoardingBackgroundView: View {
     private func getColors() -> [Color] {
         var mixingColors: [Color] = Array(repeating: colorScheme == .light ? .white : .black, count: 9)
         
-        let lightRange = 0.75...0.95
+        let lightRange = 0.85...1
         let darkRange = 0.7...0.95
         let range = colorScheme == .light ? lightRange : darkRange
         

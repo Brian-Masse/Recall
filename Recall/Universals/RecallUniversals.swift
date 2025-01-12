@@ -375,3 +375,50 @@ struct Triangle: Shape {
         }
     }
 }
+
+//MARK: - GradientText
+private struct GradientText: View {
+    
+    @State private var t: Double = 0
+    @State private var timer: Timer?
+    
+    private let text: String
+    
+    init(_ text: String) {
+        self.text = text
+    }
+    
+    private func getTitleGradientOffset(in width: Double) -> Double {
+        t.truncatingRemainder(dividingBy: width)
+    }
+    
+    @ViewBuilder
+    private func makeTitleText(_ text: String) -> some View {
+        UniversalText( text, size: Constants.UIHeaderTextSize + 5, font: Constants.titleFont )
+    }
+    
+    @ViewBuilder
+    private func makeGradient() -> some View {
+        LinearGradient(colors: [.red, .blue, .red], startPoint: .leading, endPoint: .trailing)
+    }
+
+    
+    var body: some View {
+        makeTitleText(text)
+            .overlay(alignment: .leading) {
+                GeometryReader { geo in
+                    HStack(spacing: 0) {
+                        makeGradient()
+                        makeGradient()
+                    }
+                        .frame(width: 2 * geo.size.width)
+                        .offset(x: getTitleGradientOffset(in: geo.size.width))
+                    
+                        .onAppear {
+                            timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in t -= 0.5 }
+                        }
+                }
+                .mask { makeTitleText(text) }
+            }
+    }
+}

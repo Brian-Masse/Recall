@@ -20,6 +20,9 @@ struct OnboardingView: View {
     private func sceneBuilder() -> some View {
         switch viewModel.scene {
           
+        case .overview:         OnboardingOverviewScene()
+        case .howItWorks:       OnboardingOverviewScene()
+            
         case .authentication:   OnboardingAuthenticationScene()
         case .profileSetup1:    OnboardingProfileCreationScene()
         case .profileSetup2:    OnboardingProfileSettingsScene()
@@ -30,7 +33,7 @@ struct OnboardingView: View {
         case .calendarTutorial1:    OnboardingCalendarAnimationHandler()
         case .calendarTutorial2:    OnboardingCalendarScene()
     
-        default: EmptyView()
+//        default: EmptyView()
         }
     }
     
