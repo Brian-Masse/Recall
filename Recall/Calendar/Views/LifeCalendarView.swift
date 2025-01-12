@@ -1,5 +1,5 @@
 //
-//  LifeView.swift
+//  LifeCalendarView.swift
 //  Recall
 //
 //  Created by Brian Masse on 1/10/25.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
-struct LifeView: View {
+struct LifeCalendarView: View {
     @State private var referenceDate: Date = .now
     
     @State private var currentMonth: Int = 0
@@ -23,9 +23,7 @@ struct LifeView: View {
 //    MARK: setup
     private func setup() {
         
-        let componets = DateComponents(year: 2005, month: 5, day: 18)
-        let date = Calendar.current.date(from: componets)!
-        self.referenceDate = date
+        self.referenceDate = RecallModel.index.dateOfBirth
         
         self.numberOfCells = Int(expectedYears * 12)
         self.currentMonth = Int(Date.now.timeIntervalSince( referenceDate ) / (Constants.yearTime) * 12)
@@ -90,5 +88,5 @@ struct LifeView: View {
 
 
 #Preview {
-    LifeView()
+    LifeCalendarView()
 }

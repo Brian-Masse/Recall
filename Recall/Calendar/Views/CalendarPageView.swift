@@ -198,7 +198,7 @@ struct CalendarPageView: View {
             } action: { viewModel.setCurrentDay(to: .now) }
 
             Spacer()
-           
+            
             RecallIcon("calendar")
                 .rectangularBackground(style: .secondary)
             
@@ -209,6 +209,8 @@ struct CalendarPageView: View {
                 .rectangularBackground(style: .secondary)
                 .safeZoomMatch(id: RecallnavigationMatchKeys.profileView, namespace: calendarPageViewNameSpace)
                 .onTapGesture { coordinator.push(.profileView(namespace: calendarPageViewNameSpace)) }
+            
+
         }
     }
     
@@ -225,7 +227,6 @@ struct CalendarPageView: View {
         }
         .padding(7)
         .universalBackground()
-        
     }
 }
 

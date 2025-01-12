@@ -37,6 +37,8 @@ struct MonthlyCalendarView: View {
     
     @ObservedResults(RecallCalendarEvent.self) var events
     
+    @State private var showingLifeCalendar: Bool = false
+    
     private var arrEvents: [RecallCalendarEvent] { Array(events) }
     
 //    MARK: Convenience Functions
@@ -239,7 +241,12 @@ struct MonthlyCalendarView: View {
             
             Spacer()
             
+            RecallIcon("staroflife")
+                .rectangularBackground(7, style: .transparent, cornerRadius: 100)
+                .onTapGesture { showingLifeCalendar = true}
+            
             DismissButton()
+            
         }
     }
     
@@ -278,6 +285,9 @@ struct MonthlyCalendarView: View {
                     makeCalendar(itemWidth: width)
                 }
             }
+        }
+        .sheet(isPresented: $showingLifeCalendar) {
+            LifeCalendarView()
         }
         
         .task { await viewModel.renderCalendar(events: arrEvents) }
