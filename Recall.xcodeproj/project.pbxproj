@@ -10,6 +10,7 @@
 		C90438D62D3053960045BFFC /* OnboardingOverviewScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90438D52D3053960045BFFC /* OnboardingOverviewScene.swift */; };
 		C90438D82D324D220045BFFC /* LifeCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90438D72D324D220045BFFC /* LifeCalendarView.swift */; };
 		C90438DA2D347C070045BFFC /* OnboardingOverviewContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90438D92D347C070045BFFC /* OnboardingOverviewContainerView.swift */; };
+		C90438DC2D3482BC0045BFFC /* OnboardingOverviewEventAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90438DB2D3482BC0045BFFC /* OnboardingOverviewEventAnimation.swift */; };
 		C908FFFA2A8BC32B00E3BBEA /* UniversalCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */; };
 		C915A0072A67213F009F6C84 /* RecallCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C915A0062A67213F009F6C84 /* RecallCategory.swift */; };
 		C9186A962A789B9B00398BF8 /* DataPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9186A952A789B9B00398BF8 /* DataPageView.swift */; };
@@ -198,6 +199,7 @@
 		C90438D52D3053960045BFFC /* OnboardingOverviewScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingOverviewScene.swift; sourceTree = "<group>"; };
 		C90438D72D324D220045BFFC /* LifeCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeCalendarView.swift; sourceTree = "<group>"; };
 		C90438D92D347C070045BFFC /* OnboardingOverviewContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingOverviewContainerView.swift; sourceTree = "<group>"; };
+		C90438DB2D3482BC0045BFFC /* OnboardingOverviewEventAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingOverviewEventAnimation.swift; sourceTree = "<group>"; };
 		C908FFF92A8BC32B00E3BBEA /* UniversalCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalCharts.swift; sourceTree = "<group>"; };
 		C915A0062A67213F009F6C84 /* RecallCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallCategory.swift; sourceTree = "<group>"; };
 		C9186A952A789B9B00398BF8 /* DataPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPageView.swift; sourceTree = "<group>"; };
@@ -781,6 +783,7 @@
 			isa = PBXGroup;
 			children = (
 				C9DC3F462D249E940021ED79 /* OnboardingOnTapAndHoldAnimatino.swift */,
+				C90438DB2D3482BC0045BFFC /* OnboardingOverviewEventAnimation.swift */,
 				C9DC3F482D249EE80021ED79 /* OnboardingContextMenuAnimation.swift */,
 			);
 			path = Animations;
@@ -1079,6 +1082,7 @@
 				C9C470DE2CE98F16004AB489 /* MonthlyCalendarViewModel.swift in Sources */,
 				C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */,
 				C92284952CC85C8B00280BFA /* StyledPhotoPicker.swift in Sources */,
+				C90438DC2D3482BC0045BFFC /* OnboardingOverviewEventAnimation.swift in Sources */,
 				C9186A982A78A2EE00398BF8 /* Charts.swift in Sources */,
 				C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */,
 				C9C470D92CE85578004AB489 /* NavgiationStyle.swift in Sources */,

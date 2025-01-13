@@ -23,8 +23,8 @@ struct OnboardingOverviewScene: View {
         .init(icon: "flag.pattern.checkered.2.crossed",
               description: "Recall also intelligently uses the events you record to accurately track your progress towards the goals you have set for yourself "),
         
-        .init(icon: "checkmark.circle",
-              description: "Recall keeps you present in the details of your life, while enabling you to look ahead to its future")
+        .init(icon: "checkmark",
+              description: "In short, Recall keeps you present in the details of your life, while helping you look towards to its future")
     ]
     
     private let howItWorksScenes: [OnboardingOverviewContainerView.OnboardingOverviewScene] = [
@@ -38,20 +38,40 @@ struct OnboardingOverviewScene: View {
                   description: "Goals use your events to record your progress and identify trends in your life"),
         
             .init(icon: "fireworks",
-                  description: "Quickly setup a profile, and begin recalling your life")
+                  description: "Quickly setup a profile, and jump into Recall")
         ]
     
     @ObservedObject private var viewModel = OnboardingViewModel.shared
+    
+    @State private var currentOverviewScene: Int = 0
+    @State private var currentHowitWorksScene: Int = 0
+    
+    @State private var currentMaxTime: Double = 0
     
 //    MARK: - Body
     var body: some View {
         
         if viewModel.scene == .overview {
             OnboardingOverviewContainerView(overviewScenes,
+                                            currentSceneIndex: $currentOverviewScene,
+                                            textBackground: true,
                                             splashScreen: .init(icon: "Calendar",
                                                                 description: "What is Recall?"))
+            .task {
+                await RecallModel.wait(for: 3)
+                currentMaxTime = 4 * OnboardingOverviewEventAnimation.animationDelay
+            }
+            .onChange(of: currentOverviewScene) {
+                if currentOverviewScene == overviewScenes.count - 1 { withAnimation { currentMaxTime = 0 } }
+                else { currentMaxTime = Double(currentOverviewScene + 1) * 4 * OnboardingOverviewEventAnimation.animationDelay }
+            }
+            .background {
+                OnboardingOverviewEventAnimation(currentMaxTime: $currentMaxTime)
+            }
+            
         } else if viewModel.scene == .howItWorks {
             OnboardingOverviewContainerView(howItWorksScenes,
+                                            currentSceneIndex: $currentHowitWorksScene,
                                             splashScreen: .init(icon: "gearshape.2",
                                                                 description: "How does it work?"))
         }

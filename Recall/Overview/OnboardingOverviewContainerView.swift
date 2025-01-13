@@ -18,11 +18,12 @@ struct OnboardingOverviewContainerView: View {
         let description: String
     }
     
-    @State private var currentSceneIndex: Int = 0
+    @Binding private var currentSceneIndex: Int
     
     private let scenes: [OnboardingOverviewScene]
     private let splashIcon: String
     private let splashText: String
+    private let textBackground: Bool
     
     private func incrementScene() {
         withAnimation(.spring) {
@@ -32,12 +33,23 @@ struct OnboardingOverviewContainerView: View {
     
     @ObservedObject private var viewModel = OnboardingViewModel.shared
     
+    private var onFinalScene: Bool {
+        currentSceneIndex >= scenes.count - 1
+    }
+    
     
 //    MARK: Init
-    init( _ scenes: [OnboardingOverviewScene], splashScreen: OnboardingOverviewScene ) {
+    init(
+        _ scenes: [OnboardingOverviewScene],
+        currentSceneIndex: Binding<Int>,
+        textBackground: Bool = false,
+        splashScreen: OnboardingOverviewScene
+    ) {
         self.scenes = scenes
         self.splashIcon = splashScreen.icon
         self.splashText = splashScreen.description
+        self.textBackground = textBackground
+        self._currentSceneIndex = currentSceneIndex
     }
     
 //    MARK: - makeDescription
@@ -81,24 +93,32 @@ struct OnboardingOverviewContainerView: View {
         OnboardingSplashScreenView(icon: splashIcon,
                                    title: splashText,
                                    message: "",
-                                   duration: 4) {
+                                   duration: 2.5) {
             VStack {
                 VStack {
                     
                     Spacer()
                     
-                    if currentSceneIndex < scenes.count - 1 {
-                        ForEach( 0..<scenes.count, id: \.self ) { i in
-                            let index = scenes.count - 1 - i
-                            
-                            if index <= currentSceneIndex {
-                                makeDescription(index: index)
-                                    .padding(.vertical, 7)
+                    VStack {
+                        if !onFinalScene {
+                            ForEach( 0..<scenes.count, id: \.self ) { i in
+                                let index = scenes.count - 1 - i
+                                
+                                if index <= currentSceneIndex {
+                                    makeDescription(index: index)
+                                        .padding(.vertical, 7)
+                                }
                             }
+                            
+                        } else  { makeDescription(index: scenes.count - 1) }
+                    }
+                    .frame(width: 250)
+                    .padding(20)
+                    .background {
+                        if !onFinalScene && currentSceneIndex > 0 && textBackground {
+                            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
+                                .foregroundStyle(.ultraThinMaterial)
                         }
-                        
-                    } else  {
-                        makeDescription(index: scenes.count - 1)
                     }
                     
                     Spacer()
@@ -107,11 +127,10 @@ struct OnboardingOverviewContainerView: View {
                         makeContinueButton()
                     }
                 }
-                .frame(width: 250)
             }
             .onAppear { viewModel.setSceneStatus(to: .hideButton) }
             .onChange(of: currentSceneIndex) {
-                viewModel.setSceneStatus(to: currentSceneIndex < scenes.count - 1 ? .hideButton : .complete  )
+                viewModel.setSceneStatus(to: !onFinalScene ? .hideButton : .complete  )
             }
             
             .frame(maxWidth: .infinity)
