@@ -23,6 +23,12 @@ struct OnboardingProfileCreationScene: View {
         !(firstName.isEmpty || lastName.isEmpty || -(birthday.timeIntervalSinceNow) < Constants.yearTime * 18)
     }
     
+    private func loadProfileInfo() {
+        self.firstName = RecallModel.index.firstName
+        self.lastName = RecallModel.index.lastName
+        self.birthday = RecallModel.index.dateOfBirth
+    }
+    
 //    MARK: makeHeader
     @ViewBuilder
     private func makeHeader() -> some View {
@@ -57,6 +63,7 @@ struct OnboardingProfileCreationScene: View {
                 
                 Spacer()
             }
+            .onAppear { loadProfileInfo() }
             .onChange(of: firstName) {
                 viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete)
             }

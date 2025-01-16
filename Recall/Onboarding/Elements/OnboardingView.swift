@@ -31,7 +31,7 @@ struct OnboardingView: View {
         case .tagsTutorial:         OnboardingTagScene()
         case .eventsTutorial:       OnboardingEventScene()
         case .calendarTutorial1:    OnboardingCalendarAnimationHandler()
-        case .calendarTutorial2:    OnboardingCalendarScene()
+        case .calendarTutorial2:    OnboardingCalendarScene().environment(\.realmConfiguration, RecallModel.realmManager.configuration)
     
 //        default: EmptyView()
         }
@@ -43,6 +43,7 @@ struct OnboardingView: View {
             sceneBuilder()
                 .padding(7)
         }
+        .onAppear { viewModel.setOnboardingStatus(to: true) }
         .overlay { NoiseOverlay() }
         .background {
             OnBoardingBackgroundView()

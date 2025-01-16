@@ -22,7 +22,7 @@ class RealmManager: ObservableObject {
         case authenticating
         case openingRealm
         case creatingProfile
-        case tutorial
+        case onboarding
         case error
         case complete
     }
@@ -94,7 +94,8 @@ class RealmManager: ObservableObject {
     
     @MainActor
     func setState( _ newState: AuthenticationState ) {
-        let newState: AuthenticationState = newState == .tutorial && self.index.finishedTutorial ? .complete : newState
+//        let newState: AuthenticationState = newState == .onboarding && self.index.finishedTutorial ? .complete : newState
+        if OnboardingViewModel.shared.inOnboarding { return }
         withAnimation { self.authenticationState = newState }
     }
     
@@ -194,7 +195,22 @@ class RealmManager: ObservableObject {
     @MainActor
     private func postAuthenticationInit() {
         self.setConfiguration()
-        self.setState(.openingRealm)
+        
+//        if you are onboarding, manually load the realm, and call authRealm
+//        otherwise, let the UI handle that
+        if OnboardingViewModel.shared.inOnboarding {
+            if self.realm != nil { return }
+            guard let realm = try? Realm(configuration: self.configuration) else {
+                OnboardingViewModel.shared.setOnboardingStatus(to: false)
+                self.setState(.error)
+                return
+            }
+            
+            Task { await self.authRealm(realm: realm) }
+            
+        } else {
+            self.setState(.openingRealm)
+        }
     }
     
 //    MARK: Logout
@@ -260,7 +276,7 @@ class RealmManager: ObservableObject {
     func deleteProfile() async { await self.logoutUser() }
     
 //    This checks the user has created a profile with Recall already
-//    if not it will trigger the ProfileCreationScene
+//    if not it will trigger onBoarding
     @MainActor
     func checkProfile() async {
         let results: Results<RecallIndex> = RealmManager.retrieveObjectsInResults()
@@ -268,7 +284,12 @@ class RealmManager: ObservableObject {
         if let index = results.first(where: { index in index.ownerID == RecallModel.ownerID }) {
             self.index = index
             self.index.onAppear()
-            self.setState(.tutorial)
+            
+            if !self.index.checkCompletion() {
+                self.setState(.onboarding)
+            } else {
+                self.setState(.complete)
+            }
             
         } else {
             createIndex()
@@ -287,7 +308,7 @@ class RealmManager: ObservableObject {
         
         self.index = index
         self.index.onAppear()
-        self.setState(.creatingProfile)
+        self.setState(.onboarding)
     }
     
 //    MARK: DataStore Functions
@@ -310,10 +331,10 @@ class RealmManager: ObservableObject {
     @MainActor
     func authRealm(realm: Realm) async {
         self.realm = realm
+        self.addNonInitialSubscriptions()
         await RecallModel.updateManager.initialize()
         await self.checkProfile()
         await self.checkDataStore()
-        self.addNonInitialSubscriptions()
         RecallModel.index.updateAccentColor()
     }
     

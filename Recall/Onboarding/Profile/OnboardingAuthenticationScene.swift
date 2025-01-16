@@ -28,11 +28,21 @@ struct OnboardingAuthenticationScene: View {
     
     private var formsComplete: Bool { !email.isEmpty && !password.isEmpty }
     
+//    MARK: CheckSignInStatus
+    private func checkSignInStatus() {
+        if RecallModel.realmManager.user != nil {
+            viewModel.incrementScene()
+        }
+    }
+    
 //    MARK: Submit
     private func submit() async {
 
         if formsComplete {
-//             
+            if let error = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
+                alertMessage = error
+                showingAlert = true
+            }
             
             viewModel.incrementScene()
             
@@ -117,6 +127,7 @@ struct OnboardingAuthenticationScene: View {
             Spacer()
         }
         .padding(7)
+        .onAppear { checkSignInStatus() }
         .overlay(alignment: .bottom) {
             OnboardingContinueButton(disableDefaultBehavior: true, preTask: { await submit() })
         }

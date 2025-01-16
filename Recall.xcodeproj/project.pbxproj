@@ -60,7 +60,6 @@
 		C98D033C2A846D8100729334 /* ChartsHelperStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */; };
 		C98D033E2A868DEB00729334 /* RecallDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D033D2A868DEB00729334 /* RecallDataModel.swift */; };
 		C98F2F222A94134F00E92B30 /* OnboardingAuthenticationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F212A94134F00E92B30 /* OnboardingAuthenticationScene.swift */; };
-		C98F2F252A94435600E92B30 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F242A94435600E92B30 /* SplashScreen.swift */; };
 		C98F2F272A945B7400E92B30 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F262A945B7400E92B30 /* ProfileView.swift */; };
 		C98F2F292A9859BD00E92B30 /* ProfileViewEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F282A9859BD00E92B30 /* ProfileViewEditor.swift */; };
 		C98F2F2B2A9D216700E92B30 /* TutorialViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F2F2A2A9D216700E92B30 /* TutorialViews.swift */; };
@@ -80,7 +79,7 @@
 		C992B9F02D27382B00D89A81 /* OnboardingProfileCreationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C992B9EF2D27382B00D89A81 /* OnboardingProfileCreationScene.swift */; };
 		C996CE112D0E2DA80056006D /* RecallIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C996CE102D0E2DA80056006D /* RecallIcon.swift */; };
 		C996CE122D0E2DAD0056006D /* RecallIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C996CE102D0E2DA80056006D /* RecallIcon.swift */; };
-		C9A0A18F2D38B62B008EB075 /* RecallSplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A0A18E2D38B62B008EB075 /* RecallSplashScreenView.swift */; };
+		C9A0A18F2D38B62B008EB075 /* SplashSreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A0A18E2D38B62B008EB075 /* SplashSreen.swift */; };
 		C9B849342D0E1CF7005B1489 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9B849332D0E1CF7005B1489 /* UIUniversals */; };
 		C9BF38C12C9B56CA00AA8C3F /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38C02C9B56CA00AA8C3F /* UIUniversals */; };
 		C9BFBC932CB4D6FF00ADC110 /* InfiniteScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BFBC922CB4D6FF00ADC110 /* InfiniteScroller.swift */; };
@@ -114,8 +113,6 @@
 		C9D299E62CACB83200814965 /* StyledLocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D299E52CACB83200814965 /* StyledLocationPicker.swift */; };
 		C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */; };
 		C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */; };
-		C9DC3F2D2D19E7770021ED79 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F2C2D19E7770021ED79 /* AboutView.swift */; };
-		C9DC3F302D19F79D0021ED79 /* AboutScreenEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F2F2D19F79D0021ED79 /* AboutScreenEventView.swift */; };
 		C9DC3F322D1A3A550021ED79 /* OnBoardingBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F312D1A3A550021ED79 /* OnBoardingBackgroundView.swift */; };
 		C9DC3F342D1B3B580021ED79 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F332D1B3B580021ED79 /* Shaders.metal */; };
 		C9DC3F362D1B3DB20021ED79 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DC3F352D1B3DB20021ED79 /* OnboardingView.swift */; };
@@ -258,7 +255,6 @@
 		C98D033B2A846D8100729334 /* ChartsHelperStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartsHelperStructs.swift; sourceTree = "<group>"; };
 		C98D033D2A868DEB00729334 /* RecallDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallDataModel.swift; sourceTree = "<group>"; };
 		C98F2F212A94134F00E92B30 /* OnboardingAuthenticationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAuthenticationScene.swift; sourceTree = "<group>"; };
-		C98F2F242A94435600E92B30 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		C98F2F262A945B7400E92B30 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C98F2F282A9859BD00E92B30 /* ProfileViewEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewEditor.swift; sourceTree = "<group>"; };
 		C98F2F2A2A9D216700E92B30 /* TutorialViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialViews.swift; sourceTree = "<group>"; };
@@ -267,7 +263,7 @@
 		C98F2F312A9DC49300E92B30 /* EventsCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsCreationScene.swift; sourceTree = "<group>"; };
 		C992B9EF2D27382B00D89A81 /* OnboardingProfileCreationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProfileCreationScene.swift; sourceTree = "<group>"; };
 		C996CE102D0E2DA80056006D /* RecallIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIcon.swift; sourceTree = "<group>"; };
-		C9A0A18E2D38B62B008EB075 /* RecallSplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallSplashScreenView.swift; sourceTree = "<group>"; };
+		C9A0A18E2D38B62B008EB075 /* SplashSreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashSreen.swift; sourceTree = "<group>"; };
 		C9B849352D0E26B7005B1489 /* Recall-WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Recall-WidgetExtension.entitlements"; sourceTree = "<group>"; };
 		C9BF38B82C9A0EA200AA8C3F /* dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dark.png; sourceTree = "<group>"; };
 		C9BF38B92C9A0EA200AA8C3F /* light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = light.png; sourceTree = "<group>"; };
@@ -302,8 +298,6 @@
 		C9D299E52CACB83200814965 /* StyledLocationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyledLocationPicker.swift; sourceTree = "<group>"; };
 		C9D8C5062A69BC88005ADA0B /* GoalsCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCharts.swift; sourceTree = "<group>"; };
 		C9D8C5082A69C3B3005ADA0B /* RecallIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecallIndex.swift; sourceTree = "<group>"; };
-		C9DC3F2C2D19E7770021ED79 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
-		C9DC3F2F2D19F79D0021ED79 /* AboutScreenEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutScreenEventView.swift; sourceTree = "<group>"; };
 		C9DC3F312D1A3A550021ED79 /* OnBoardingBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingBackgroundView.swift; sourceTree = "<group>"; };
 		C9DC3F332D1B3B580021ED79 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		C9DC3F352D1B3DB20021ED79 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -393,7 +387,6 @@
 			children = (
 				C90438D52D3053960045BFFC /* OnboardingOverviewScene.swift */,
 				C90438D92D347C070045BFFC /* OnboardingOverviewContainerView.swift */,
-				C9A0A18E2D38B62B008EB075 /* RecallSplashScreenView.swift */,
 			);
 			path = Overview;
 			sourceTree = "<group>";
@@ -445,7 +438,6 @@
 				C9EE9EAD2B608AFF0090DB16 /* Resources */,
 				C91BCF2D2A61DD51003C6DD6 /* Universals */,
 				C9DC3F2E2D19F78F0021ED79 /* Onboarding */,
-				C90438D42D3053830045BFFC /* Overview */,
 				C9B8DF612C69072A00B11A38 /* Launch */,
 				C9B8DF632C69076F00B11A38 /* Managers */,
 				C98F2F232A94430A00E92B30 /* Profile */,
@@ -611,7 +603,7 @@
 		C9B8DF612C69072A00B11A38 /* Launch */ = {
 			isa = PBXGroup;
 			children = (
-				C98F2F242A94435600E92B30 /* SplashScreen.swift */,
+				C9A0A18E2D38B62B008EB075 /* SplashSreen.swift */,
 				C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */,
 				C98F2F2C2A9D334C00E92B30 /* TutorialViews */,
 			);
@@ -751,11 +743,10 @@
 			children = (
 				C9DC3F392D20A6E70021ED79 /* OnboardingViewModel.swift */,
 				C9DC3F452D249E760021ED79 /* Animations */,
+				C90438D42D3053830045BFFC /* Overview */,
 				C9DC3F402D20BDA70021ED79 /* Elements */,
 				C9DC3F3F2D20BD8D0021ED79 /* Tutorial */,
 				C9A70E632D260CB70098F421 /* Profile */,
-				C9DC3F2C2D19E7770021ED79 /* AboutView.swift */,
-				C9DC3F2F2D19F79D0021ED79 /* AboutScreenEventView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -1035,7 +1026,6 @@
 				C9C471052CEAA224004AB489 /* MonthlyCalendarView.swift in Sources */,
 				C9C471062CEAA224004AB489 /* CalendarPageView.swift in Sources */,
 				C9C471072CEAA224004AB489 /* EventSelectionEditorView.swift in Sources */,
-				C9DC3F2D2D19E7770021ED79 /* AboutView.swift in Sources */,
 				C91BCF392A61E0EB003C6DD6 /* RecallCalendarEvent.swift in Sources */,
 				C985EB5D2CACBDE6003186BD /* LocationService.swift in Sources */,
 				C91BCEF22A618435003C6DD6 /* RecallApp.swift in Sources */,
@@ -1087,11 +1077,10 @@
 				C92284952CC85C8B00280BFA /* StyledPhotoPicker.swift in Sources */,
 				C90438DC2D3482BC0045BFFC /* OnboardingOverviewEventAnimation.swift in Sources */,
 				C9186A982A78A2EE00398BF8 /* Charts.swift in Sources */,
-				C9A0A18F2D38B62B008EB075 /* RecallSplashScreenView.swift in Sources */,
+				C9A0A18F2D38B62B008EB075 /* SplashSreen.swift in Sources */,
 				C9D8C5092A69C3B3005ADA0B /* RecallIndex.swift in Sources */,
 				C9C470D92CE85578004AB489 /* NavgiationStyle.swift in Sources */,
 				C91BCF222A61C374003C6DD6 /* RealmManager.swift in Sources */,
-				C98F2F252A94435600E92B30 /* SplashScreen.swift in Sources */,
 				C9C470D72CE8550D004AB489 /* NavigationCoordinator.swift in Sources */,
 				C9D8C5072A69BC88005ADA0B /* GoalsCharts.swift in Sources */,
 				C996CE112D0E2DA80056006D /* RecallIcon.swift in Sources */,
@@ -1108,7 +1097,6 @@
 				C91BCF272A61D0DB003C6DD6 /* RecallModel.swift in Sources */,
 				C9186A962A789B9B00398BF8 /* DataPageView.swift in Sources */,
 				C9C470DB2CE858B1004AB489 /* NavigationCoordinatorView.swift in Sources */,
-				C9DC3F302D19F79D0021ED79 /* AboutScreenEventView.swift in Sources */,
 				C954AAD12A76FA4E00897BCE /* Animations.swift in Sources */,
 				C9E0B17D2B03E5F000318508 /* RecallUpdate.swift in Sources */,
 				C9CB1FB12AAA048B0071AD58 /* ProfileCreationScene.swift in Sources */,

@@ -45,12 +45,10 @@ private let templateGoals: [TemplateGoal] = [
 //MARK: - onBoardingGoalScene
 struct OnboardingGoalScene: View {
     
-    private let minimumTemplates: Int = 3
-    
     @ObservedObject private var viewModel: OnboardingViewModel = OnboardingViewModel.shared
     
     private var templateCountString: String {
-        "\(viewModel.selectedTemplateGoals.count) / \(minimumTemplates)"
+        "\(viewModel.selectedTemplateGoals.count) / \(viewModel.minimumGoalTemplates)"
     }
     
 //    MARK: makeHeader
@@ -90,10 +88,6 @@ struct OnboardingGoalScene: View {
         .highlightedBackground(templateIsSelected)
         .onTapGesture { withAnimation {
             viewModel.toggleTemplateGoal(templateGoal)
-            
-            if viewModel.selectedTemplateGoals.count >= minimumTemplates {
-                viewModel.setSceneStatus(to: .complete)
-            }
         } }
     }
 
@@ -127,6 +121,8 @@ struct OnboardingGoalScene: View {
                     viewModel.goalSceneSubmitted(viewModel.selectedTemplateGoals)
                 })
             }
+            
+            .onAppear { viewModel.checkInitialGoals() }
         }
     }
 }

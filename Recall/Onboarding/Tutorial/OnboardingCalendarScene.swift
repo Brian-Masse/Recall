@@ -145,7 +145,7 @@ struct OnboardingCalendarScene: View {
     
     private func checkCompletion() {
         if viewModel.recentRecalledEventCount >= minimumEvents {
-//            sceneComplete.wrappedValue = true
+            viewModel.setSceneStatus(to: .complete)
         }
     }
     
@@ -193,20 +193,7 @@ struct OnboardingCalendarScene: View {
         ZStack(alignment: .topTrailing) {
             
             CalendarContainer(events: Array(events), summaries: [])
-            
-//            HStack {
-//                
-//            }
-//                .padding()
-        }
-        .overlay {
-            if viewModel.sceneComplete {
-                LinearGradient(colors: [Colors.getBase(from: colorScheme), .clear],
-                               startPoint: .bottom,
-                               endPoint: .init(x: 0.5, y: 0.75))
-                .contentShape(NullContentShape())
-                .ignoresSafeArea()
-            }
+
         }
         .onChange(of: events.count) { Task {
             await viewModel.getRecalledEventCount(from: Array(events))
@@ -232,6 +219,13 @@ struct OnboardingCalendarScene: View {
             OnboardingCalendarAnimationHandler(presentedAsSheet: true)
                 .background( OnBoardingBackgroundView() )
         }
+    }
+}
+
+struct OnboardingContainerView: View {
+    var body: some View {
+        CoordinatorView(data: .init(events: [], goals: [], tags: [], summaries: []),
+                        defaultScreen: .onBoarding)
     }
 }
 

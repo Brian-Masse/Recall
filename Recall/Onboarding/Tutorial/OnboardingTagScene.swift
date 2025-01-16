@@ -44,12 +44,10 @@ private let templateTags: [TemplateTag] = [
 //MARK: - onboardingTagScene
 struct OnboardingTagScene: View {
     
-    private let minimumTemplates: Int = 5
-    
     @ObservedObject private var viewModel: OnboardingViewModel = OnboardingViewModel.shared
     
     private var templateCountString: String {
-        "\(viewModel.selectedTemplateTags.count) / \(minimumTemplates)"
+        "\(viewModel.selectedTemplateTags.count) / \(viewModel.minimumTagTemplates)"
     }
     
 //    MARK: makeHeader
@@ -93,7 +91,7 @@ struct OnboardingTagScene: View {
         .onTapGesture { withAnimation {
             viewModel.toggleTemplateTag(template)
             
-            if viewModel.selectedTemplateTags.count >= minimumTemplates {
+            if viewModel.selectedTemplateTags.count >= viewModel.minimumTagTemplates {
                 viewModel.setSceneStatus(to: .complete)
             }
         } }
@@ -133,6 +131,7 @@ struct OnboardingTagScene: View {
             }
         }
                                    .onAppear {
+                                       viewModel.checkInitialTags()
                                        viewModel.setSceneStatus(to: .complete)
                                    }
     }

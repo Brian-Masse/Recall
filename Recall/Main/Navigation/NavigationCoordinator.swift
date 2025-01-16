@@ -143,6 +143,9 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
     @ViewBuilder
     func build(_ screen: RecallNavigationScreen, data: MainView.RecallData) -> some View {
         switch screen {
+        case .onBoarding:
+            OnboardingView()
+            
         case .home:
             MainTabView(data: data)
         

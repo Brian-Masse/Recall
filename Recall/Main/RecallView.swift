@@ -25,10 +25,11 @@ struct RecallView: View {
             case .authenticating:
                 OnboardingAuthenticationScene()
                     .slideTransition()
+                    .environment(\.realmConfiguration, realmManager.configuration)
                 
             case .openingRealm:
                 OpenFlexibleSyncRealmView()
-                    .environment(\.realmConfiguration, realmManager.configuration)
+//                    .environment(\.realmConfiguration, realmManager.configuration)
                     .slideTransition()
                 
             case .creatingProfile:
@@ -36,10 +37,9 @@ struct RecallView: View {
                     .slideTransition()
                     .environment(\.realmConfiguration, realmManager.configuration)
                    
-            case .tutorial:
-                TutorialViews()
+            case .onboarding:
+                OnboardingContainerView()
                     .slideTransition()
-                    .environment(\.realmConfiguration, realmManager.configuration)
                 
             case .error:
                 Text("An error occoured")

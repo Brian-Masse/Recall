@@ -10,7 +10,7 @@ import SwiftUI
 import UIUniversals
 import WidgetKit
 
-let inDev = true
+let inDev = false
 
 struct RecallModel {
 //    MARK: Vars

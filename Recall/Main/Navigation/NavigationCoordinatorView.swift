@@ -20,11 +20,18 @@ struct CoordinatorView: View {
     
     let data: MainView.RecallData
     
+    let defaultScreen: RecallNavigationScreen
+    
+    init(data: MainView.RecallData, defaultScreen: RecallNavigationScreen = .home) {
+        self.data = data
+        self.defaultScreen = defaultScreen
+    }
+    
     var body: some View {
         
         NavigationStack(path: $appCoordinator.path) {
             
-            appCoordinator.build(.home, data: data)
+            appCoordinator.build(defaultScreen, data: data)
                 .navigationDestination(for: RecallNavigationScreen.self) { screen in
                     appCoordinator.build(screen, data: data)
                         .navigationTitle("")

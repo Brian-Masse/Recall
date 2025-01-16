@@ -94,7 +94,7 @@ struct ProfileCreationView: View {
                 RecallModel.index.finishTutorial()
                 RecallModel.realmManager.setState(.complete)
             }
-            if !skipTutorial { RecallModel.realmManager.setState(.tutorial) }
+//            if !skipTutorial { RecallModel.realmManager.setState(.tutorial) }
         }
     }
     

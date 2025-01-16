@@ -52,7 +52,9 @@ class OnboardingViewModel: ObservableObject {
     
     static let shared = OnboardingViewModel()
     
-    @Published private(set) var scene: OnBoardingScene = .overview
+    private(set) var inOnboarding: Bool = false
+    
+    @Published private(set) var scene: OnBoardingScene = .calendarTutorial2
     @Published private(set) var sceneStatus: SceneStatus = .incomplete
     
     @Published var triggerBackgroundUpdate: Bool = false
@@ -75,14 +77,35 @@ class OnboardingViewModel: ObservableObject {
         }
     }
     
+    func setOnboardingStatus(to status: Bool) {
+        self.inOnboarding = status
+    }
+    
     //    MARK: - OnboardingGoalScene
     @Published var selectedTemplateGoals: [TemplateGoal] = []
+    
+    let minimumGoalTemplates: Int = 3
+    
+//    if the user already has 3+ goals, allow them to continue
+    @MainActor
+    func checkInitialGoals() {
+        if inDev { return }
+        
+        let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
+        if goals.count >= minimumGoalTemplates {
+            self.setSceneStatus(to: .complete)
+        }
+    }
     
     func toggleTemplateGoal(_ templateGoal: TemplateGoal) {
         if let index = selectedTemplateGoals.firstIndex(of: templateGoal) {
             self.selectedTemplateGoals.remove(at: index)
         } else {
             self.selectedTemplateGoals.append(templateGoal)
+        }
+        
+        if selectedTemplateGoals.count >= minimumGoalTemplates {
+            self.setSceneStatus(to: .complete)
         }
     }
     
@@ -110,24 +133,42 @@ class OnboardingViewModel: ObservableObject {
     //    MARK: - OnboardingTagScene
     @Published var selectedTemplateTags: [TemplateTag] = []
     
+    let minimumTagTemplates: Int = 3
+    
+//    if the user already has 3+ goals, allow them to continue
+    @MainActor
+    func checkInitialTags() {
+        if inDev { return }
+        
+        let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
+        if tags.count >= minimumTagTemplates {
+            self.setSceneStatus(to: .complete)
+        }
+    }
+    
     func toggleTemplateTag(_ templateTag: TemplateTag) {
         if let index = selectedTemplateTags.firstIndex(of: templateTag) {
             self.selectedTemplateTags.remove(at: index)
         } else {
             self.selectedTemplateTags.append(templateTag)
         }
+        
+        if selectedTemplateTags.count >= minimumTagTemplates {
+            self.setSceneStatus(to: .complete)
+        }
     }
     
     
     //    MARK: goalSceneSubmitted
     //    translates a list of selected templates into real RecallGoal objects that the user owns
+    @MainActor
     private func getGoalRatings(for tag: TemplateTag) async -> Dictionary<String, String> {
         let goalNames = selectedTemplateGoals.compactMap { goal in
             if tag.templateMask.contains(goal.tagMask) { return goal.title }
             return nil
         }
         
-        let goals: [RecallGoal] = await RealmManager.retrieveObjectsInList()
+        let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
             .filter { goal in goalNames.contains(goal.label) }
         
         return goals.reduce(into: [String: String]()) { partialResult, goal in
@@ -147,6 +188,8 @@ class OnboardingViewModel: ObservableObject {
                                      label: tagTemplate.title,
                                      goalRatings: goalRatings,
                                      color: tagTemplate.color)
+            
+            RealmManager.addObject(tag)
         }
     }
     

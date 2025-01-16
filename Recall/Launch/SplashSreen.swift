@@ -10,7 +10,7 @@ import SwiftUI
 import UIUniversals
 
 //MARK: - RecallSplashScreenView
-struct RecallSplashScreenView: View {
+struct SplashScreen: View {
     
     @Environment(\.colorScheme) private var colorScheme
     
@@ -113,7 +113,6 @@ struct RecallSplashScreenView: View {
     private func makeContent() -> some View {
         
         VStack {
-//            UniversalText( "Welcome to", size: Constants.UIHeaderTextSize + 10, font: Constants.titleFont, textAlignment: .center )
             GradientText("Recall")
                 .scaleEffect(2)
                 .padding(.bottom, 7)
@@ -134,14 +133,14 @@ struct RecallSplashScreenView: View {
                 Spacer()
             }.rectangularBackground(10, style: .primary)
             
-        } action: {  }
+        } action: { RecallModel.realmManager.setState(.onboarding) }
             .padding(.bottom, 7)
         
         UniversalButton {
             HStack {
                 UniversalText( "I already have a Recall account", size: Constants.UISmallTextSize, font: Constants.mainFont )
             }.opacity(0.75)
-        } action: { }
+        } action: { RecallModel.realmManager.setState(.authenticating) }
     }
     
 //    MARK: - Body
@@ -191,5 +190,5 @@ struct RecallSplashScreenView: View {
 }
 
 #Preview {
-    RecallSplashScreenView()
+    SplashScreen()
 }

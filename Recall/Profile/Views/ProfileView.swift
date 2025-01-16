@@ -509,7 +509,7 @@ struct ProfileView: View {
         VStack {
             IconButton("arrow.clockwise", label: "Replay Tutoria", fullWidth: true) {
                 index.replayTutorial()
-                RecallModel.realmManager.setState(.tutorial)
+                RecallModel.realmManager.setState(.onboarding)
             }
             
             IconButton("tray.2", label: "Reindex Data", fullWidth: true) {
