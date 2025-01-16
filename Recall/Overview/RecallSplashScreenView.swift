@@ -29,6 +29,7 @@ struct RecallSplashScreenView: View {
     
 //    MARK: Vars
     @State private var progress: Double = 0
+    @State private var showingLogo: Bool = false
     @State private var screenComplete: Bool = false
     @State private var showingButtons: Bool = false
     
@@ -75,7 +76,7 @@ struct RecallSplashScreenView: View {
 //    MARK: makeIndividualTagLine
     @ViewBuilder
     private func makeIndividualTagLine() -> some View {
-        UniversalText( tagLines[currentTagLine], size: tagLineFontSize, font: Constants.mainFont )
+        UniversalText( tagLines[currentTagLine], size: tagLineFontSize, font: Constants.titleFont )
             .overlay(alignment: .bottom) {
                 Rectangle()
                     .frame(height: 3)
@@ -89,18 +90,20 @@ struct RecallSplashScreenView: View {
     private func makeTagLine() -> some View {
         VStack {
             HStack {
+                Spacer()
                 UniversalText( "Find the", size: tagLineFontSize, font: Constants.mainFont )
-                    .opacity(0.75)
+                    .opacity(0.65)
                 
                 if currentTagLine & 1 == 0 {
                     makeIndividualTagLine()
                 } else {
                     makeIndividualTagLine()
                 }
+                Spacer()
             }
         
             UniversalText( "in your life.", size: tagLineFontSize, font: Constants.mainFont )
-                .opacity(0.75)
+                .opacity(0.65)
         }
         .task { await incrementTagLine() }
     }
@@ -110,10 +113,10 @@ struct RecallSplashScreenView: View {
     private func makeContent() -> some View {
         
         VStack {
-            UniversalText( "Welcome to", size: Constants.UIHeaderTextSize + 10, font: Constants.titleFont, textAlignment: .center )
+//            UniversalText( "Welcome to", size: Constants.UIHeaderTextSize + 10, font: Constants.titleFont, textAlignment: .center )
             GradientText("Recall")
-                .scaleEffect(1.3)
-                .padding(.bottom)
+                .scaleEffect(2)
+                .padding(.bottom, 7)
             
             makeTagLine()
         }
@@ -151,10 +154,10 @@ struct RecallSplashScreenView: View {
             VStack {
                 Spacer()
                 
-                if !screenComplete {
+                if showingLogo && !screenComplete {
                     LogoAnimation(duration: logoAnimationDuration)
                         .transition(.scale(1.5).combined(with: .opacity) )
-                } else {
+                } else if screenComplete {
                     makeContent()
                         .transition(.blurReplace)
                 }
@@ -171,6 +174,7 @@ struct RecallSplashScreenView: View {
         .background { makeBackground() }
         .task {
             await RecallModel.wait(for: 0.5)
+            showingLogo = true
             
             withAnimation(.spring(duration: logoAnimationDuration)) {
                 progress = 1
