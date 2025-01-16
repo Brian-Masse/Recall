@@ -32,10 +32,7 @@ struct OnboardingAuthenticationScene: View {
     private func submit() async {
 
         if formsComplete {
-//            if let error = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
-//                alertMessage = error
-//                showingAlert = true
-//            }
+//             
             
             viewModel.incrementScene()
             

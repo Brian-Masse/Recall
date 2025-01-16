@@ -377,15 +377,21 @@ struct Triangle: Shape {
 }
 
 //MARK: - GradientText
-private struct GradientText: View {
+struct GradientText: View {
     
     @State private var t: Double = 0
     @State private var timer: Timer?
+    
+    @Environment(\.colorScheme) private var colorScheme
     
     private let text: String
     
     init(_ text: String) {
         self.text = text
+    }
+    
+    private func getColors() -> [Color] {
+        [ Colors.getAccent(from: .light), Colors.getAccent(from: .dark), Colors.getAccent(from: .light) ]
     }
     
     private func getTitleGradientOffset(in width: Double) -> Double {
@@ -399,12 +405,13 @@ private struct GradientText: View {
     
     @ViewBuilder
     private func makeGradient() -> some View {
-        LinearGradient(colors: [.red, .blue, .red], startPoint: .leading, endPoint: .trailing)
+        LinearGradient(colors: getColors(), startPoint: .leading, endPoint: .trailing)
     }
 
     
     var body: some View {
         makeTitleText(text)
+            .opacity(0)
             .overlay(alignment: .leading) {
                 GeometryReader { geo in
                     HStack(spacing: 0) {

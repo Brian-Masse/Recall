@@ -19,11 +19,20 @@ struct OnBoardingBackgroundView: View {
     @State var t: Float = 0.0
     @State var timer: Timer?
     
+    private let boostColor: Bool
+    
+    init(boostColor: Bool = false) {
+        self.boostColor = boostColor
+    }
+    
     private func getColors() -> [Color] {
         var mixingColors: [Color] = Array(repeating: colorScheme == .light ? .white : .black, count: 9)
         
-        let lightRange = 0.85...1
-        let darkRange = 0.7...0.95
+        let lightModifier = (boostColor ? 0.15 : 0)
+        let darkModifier = (boostColor ? 0.15 : 0)
+        
+        let lightRange = (0.7 - lightModifier)...(1 - lightModifier)
+        let darkRange = (0.7 - darkModifier)...(0.95 - darkModifier)
         let range = colorScheme == .light ? lightRange : darkRange
         
         let increment: Double = (range.upperBound - range.lowerBound) / 9
@@ -90,5 +99,5 @@ struct OnBoardingBackgroundView: View {
 
 
 #Preview {
-    OnBoardingBackgroundView()
+    OnBoardingBackgroundView(boostColor: true)
 }

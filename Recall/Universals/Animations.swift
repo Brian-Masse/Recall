@@ -65,10 +65,17 @@ extension View {
 struct LogoAnimation: View {
     @State var imageName: String = "logoAnimation1"
     @State var inReverse: Bool = false
+    
+    private let duration: Double
+    
+    init( duration: Double = 1.2 ) {
+        self.duration = duration
+    }
 
     private func timer() {
         var index = 1
-        let _ = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { (Timer) in
+        let interval: Double = duration / 40
+        let _ = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { (Timer) in
             
             imageName = "logoAnimation\( min(max(index, 1), 40) )"
             
