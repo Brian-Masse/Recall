@@ -15,6 +15,8 @@ struct ProfileView: View {
     
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.dismiss) var dismiss
+    
     @Namespace var profileNamespace
     
     @ObservedObject private var colors = Colors.shared
@@ -227,8 +229,6 @@ struct ProfileView: View {
                 .padding(.bottom, 20)
             
             makeSectionHeader("person.bust", title: "Account")
-            
-            makeActionButtons()
             
             makePageFooter()
                 .padding(.bottom)
@@ -502,21 +502,10 @@ struct ProfileView: View {
                     RecallModel.realmManager.setState(.splashScreen)
                 }
             }
-            .padding(.bottom)
-        }
-    }
-    
-//    MARK: ActionButtons
-    @ViewBuilder
-    private func makeActionButtons() -> some View {
-        VStack {
-            IconButton("arrow.clockwise", label: "Replay Tutoria", fullWidth: true) {
-                index.replayTutorial()
-                RecallModel.realmManager.setState(.onboarding)
-            }
             
-            IconButton("tray.2", label: "Reindex Data", fullWidth: true) {
-                Task { await RecallModel.index.initializeIndex() }
+            IconButton("arrow.clockwise", label: "Replay Tutoria", fullWidth: true) {
+                dismiss()
+                index.replayTutorial()
             }
             
             IconButton("shippingbox.and.arrow.backward", label: "Delete Account", fullWidth: true) {
@@ -524,7 +513,7 @@ struct ProfileView: View {
             }
             .foregroundStyle(.red)
         }
-     }
+    }
     
 //    MARK: Body
     var body: some View {
