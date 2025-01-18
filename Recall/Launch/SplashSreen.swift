@@ -35,9 +35,9 @@ struct SplashScreen: View {
     
     @State private var currentTagLine: Int = 0
         
-    private let logoAnimationDuration: Double = 1.5
+    private let logoAnimationDuration: Double = 1.75
     
-    private let tagLineFontSize: Double = (Constants.UISubHeaderTextSize + 5)
+    private let tagLineFontSize: Double = (Constants.UISubHeaderTextSize + 3)
     private let tagLineInterval: Double = 2
     
 //    MARK: makeBackground
@@ -113,7 +113,7 @@ struct SplashScreen: View {
     private func makeContent() -> some View {
         
         VStack {
-            GradientText("Recall")
+            UniversalText( "Recall", size: Constants.UIHeaderTextSize + 2, font: Constants.titleFont )
                 .scaleEffect(2)
                 .padding(.bottom, 7)
             
