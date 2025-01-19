@@ -82,6 +82,12 @@ class OnboardingViewModel: ObservableObject {
         }
     }
     
+//    MARK: startOnboarding
+    func startOnboarding() {
+        self.scene = .overview
+        self.setOnboardingStatus(to: true)
+    }
+    
     func setOnboardingStatus(to status: Bool) {
         self.inOnboarding = status
     }
@@ -90,7 +96,7 @@ class OnboardingViewModel: ObservableObject {
     @MainActor
     private func submit() {
         inOnboarding = false
-        RecallModel.index.finishTutorial()
+        RecallModel.index.completeOnboarding()
         RecallModel.realmManager.setState(.complete)
     }
     

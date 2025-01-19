@@ -43,7 +43,7 @@ struct OnboardingView: View {
             sceneBuilder()
                 .padding(7)
         }
-        .onAppear { viewModel.setOnboardingStatus(to: true) }
+        .onAppear { viewModel.startOnboarding() }
         .overlay { NoiseOverlay() }
         .background {
             OnBoardingBackgroundView()

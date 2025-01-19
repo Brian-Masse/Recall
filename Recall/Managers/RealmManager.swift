@@ -11,10 +11,10 @@ import Realm
 import AuthenticationServices
 import SwiftUI
 
-//TODO: Update the Checks to profileCompletion
-//TODO: Make sure the tutroialComplete flag works
 //TODO: Make sure people returning to the app are taken through the onboarding flow
 //TODO: Corner Radius for other phones
+//TODO: Fix Scroll Issues
+
 
 //RealmManager is responsible for signing/logging in users, opening a realm, and any other
 //high level function.
@@ -99,7 +99,6 @@ class RealmManager: ObservableObject {
     
     @MainActor
     func setState( _ newState: AuthenticationState ) {
-//        let newState: AuthenticationState = newState == .onboarding && self.index.finishedTutorial ? .complete : newState
         if OnboardingViewModel.shared.inOnboarding { return }
         withAnimation { self.authenticationState = newState }
     }

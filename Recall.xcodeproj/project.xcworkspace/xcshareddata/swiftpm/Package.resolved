@@ -1,5 +1,5 @@
 {
-  "originHash" : "094ddaf43bff0c06ad944cadc5733ca0061ae193ec2f967a078dffa937df6b5d",
+  "originHash" : "2174eaf93f622d57be865cd78b51b72620c12528f1f0957292620977c4d69891",
   "pins" : [
     {
       "identity" : "realm-core",
@@ -17,15 +17,6 @@
       "state" : {
         "branch" : "master",
         "revision" : "76d79455a3d736ec01d4ef1864aa62cc5f0fc2cb"
-      }
-    },
-    {
-      "identity" : "symbolpicker",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/xnth97/SymbolPicker.git",
-      "state" : {
-        "revision" : "e0601230feea4289760c0e5b68dbafa15aa59bfb",
-        "version" : "1.5.1"
       }
     }
   ],

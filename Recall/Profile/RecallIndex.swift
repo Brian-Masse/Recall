@@ -36,7 +36,12 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
     
     //  Settings
-    @Persisted var finishedTutorial: Bool = false
+    @Persisted private var finishedTutorial: Bool = false
+    @Persisted private var finishedOnboarding: Bool = false
+    
+    var onboardingComplete: Bool {
+        self.finishedTutorial && self.finishedOnboarding
+    }
     
     ///measured in miliseconds (able to directly be added to dates)
     @Persisted var defaultEventLength: Double = Constants.HourTime * 0.75
@@ -102,7 +107,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         !self.firstName.isEmpty &&
         !self.lastName.isEmpty &&
         !self.email.isEmpty &&
-        self.finishedTutorial
+        self.onboardingComplete
     }
     
 //    MARK: SetupDefaultProfile
@@ -117,18 +122,18 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     }
     
 //    MARK: Tutorial
-    func finishTutorial() {
+    func completeOnboarding() {
         RealmManager.updateObject(self) { thawed in
             thawed.finishedTutorial = true
+            thawed.finishedOnboarding = true
         }
     }
     
-    func replayTutorial() {
+    func replayOnboarding() {
         RealmManager.updateObject(self) { thawed in
             thawed.finishedTutorial = false
+            thawed.finishedOnboarding = false
         }
-        
-        
         
         Task { await RecallModel.realmManager.setState(.onboarding) }
     }

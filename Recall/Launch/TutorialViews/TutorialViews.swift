@@ -128,7 +128,7 @@ struct TutorialViews: View {
             }
             
             if scene == .complete {
-                RecallModel.index.finishTutorial()
+                RecallModel.index.completeOnboarding()
                 RecallModel.realmManager.setState(.complete)
             }
         }

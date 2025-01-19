@@ -21,7 +21,7 @@ struct OnboardingOverviewScene: View {
               description: "It helps you recall meaningful memories that otherwise get lost in the shuffle of daily life"),
         
         .init(icon: "flag.pattern.checkered.2.crossed",
-              description: "Intelligently combing through thousands of events, it identifies hard-to-find trends and delivers clarity from complexity."),
+              description: "It intelligently combs through thousands of events, identifying hard-to-find trends and delivering clarity from complexity."),
         
         .init(icon: "checkmark",
               description: "In short, Recall keeps you present in the details of your life, while helping you look towards to its future")

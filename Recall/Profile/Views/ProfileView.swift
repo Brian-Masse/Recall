@@ -505,7 +505,7 @@ struct ProfileView: View {
             
             IconButton("arrow.clockwise", label: "Replay Tutoria", fullWidth: true) {
                 dismiss()
-                index.replayTutorial()
+                index.replayOnboarding()
             }
             
             IconButton("shippingbox.and.arrow.backward", label: "Delete Account", fullWidth: true) {

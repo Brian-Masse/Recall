@@ -193,7 +193,7 @@ struct OnboardingOverviewEventAnimation: View {
                 ForEach( 0..<events.count, id: \.self ) { i in
                     
                     let event = events[i]
-                    let transitionOffset: Double = event.position.x < 200 ? -200 : 200
+                    let transitionOffset: Double = event.position.x < 200 ? -250 : 250
                     
                     if event.appearanceDelay < t && event.appearanceDelay < currentMaxTime {
                         WidgetEventView(event: event.event,
@@ -201,8 +201,10 @@ struct OnboardingOverviewEventAnimation: View {
                                         showContent: true)
                         .frame(width: event.size.width)
                         
-                        .alignmentGuide(.leading) { _ in -event.position.x }
-                        .alignmentGuide(.top) { _ in -event.position.y }
+                        .offset(x: event.position.x, y: event.position.y)
+                        
+//                        .alignmentGuide(.leading) { _ in -event.position.x }
+//                        .alignmentGuide(.top) { _ in -event.position.y }
                         
                         .opacity(selectedEventIndex == i ? 1 : 0.95)
                         .onTapGesture {
@@ -210,11 +212,10 @@ struct OnboardingOverviewEventAnimation: View {
                         }
                         
                         .transition( .asymmetric(insertion: .offset(y: 100).combined(with: .scale(scale: 0.75)).combined(with: .opacity),
-                                                 removal: .opacity.combined(with: .offset(x: transitionOffset)) ) )
+                                                 removal: .opacity.combined(with: .offset(x: transitionOffset)).combined(with: .scale(scale: 0.9))  ) )
                     }
                 }
             }
-            .frame(maxWidth: geo.size.width, maxHeight: geo.size.height)
         }
         
         .task {
