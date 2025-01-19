@@ -92,6 +92,8 @@ struct CalendarContainerScrollView<C: View>: View {
         
         .scrollPosition($scrollPosition)
         .defaultScrollAnchor(.trailing)
+        
+        .scrollDisabled(viewModel.gestureInProgress)
     }
     
 //    MARK: - Body
