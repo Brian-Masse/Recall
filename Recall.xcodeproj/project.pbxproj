@@ -52,6 +52,7 @@
 		C9685B1C2D45830600C6F413 /* OnboardingTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9685B1B2D45830600C6F413 /* OnboardingTemplates.swift */; };
 		C9685B202D45901700C6F413 /* goalTemplates.csv in Resources */ = {isa = PBXBuildFile; fileRef = C9685B1F2D45901700C6F413 /* goalTemplates.csv */; };
 		C9685B262D45A0DE00C6F413 /* tagTemplates.csv in Resources */ = {isa = PBXBuildFile; fileRef = C9685B252D45A0DE00C6F413 /* tagTemplates.csv */; };
+		C9685B282D47313000C6F413 /* OnboardingCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9685B272D47313000C6F413 /* OnboardingCompleteView.swift */; };
 		C9741CFD2D0E9AC8004CA458 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38BD2C9B568400AA8C3F /* UIUniversals */; };
 		C9741CFE2D0E9AC8004CA458 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9C470CD2CE6EC84004AB489 /* UIUniversals */; };
 		C9741D162D0F899C004CA458 /* UniversalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9741D152D0F899C004CA458 /* UniversalExtensions.swift */; };
@@ -253,6 +254,7 @@
 		C9685B1B2D45830600C6F413 /* OnboardingTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTemplates.swift; sourceTree = "<group>"; };
 		C9685B1F2D45901700C6F413 /* goalTemplates.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = goalTemplates.csv; sourceTree = "<group>"; };
 		C9685B252D45A0DE00C6F413 /* tagTemplates.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = tagTemplates.csv; sourceTree = "<group>"; };
+		C9685B272D47313000C6F413 /* OnboardingCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCompleteView.swift; sourceTree = "<group>"; };
 		C9741D152D0F899C004CA458 /* UniversalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalExtensions.swift; sourceTree = "<group>"; };
 		C98573432B8936AE001D9895 /* AndaleMono.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AndaleMono.ttf; sourceTree = "<group>"; };
 		C985EB5C2CACBDE6003186BD /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
@@ -612,6 +614,7 @@
 			isa = PBXGroup;
 			children = (
 				C9A0A18E2D38B62B008EB075 /* SplashSreen.swift */,
+				C9685B272D47313000C6F413 /* OnboardingCompleteView.swift */,
 				C91BCF2B2A61DCFF003C6DD6 /* OpenFlexibleRealmView.swift */,
 				C98F2F2C2A9D334C00E92B30 /* TutorialViews */,
 			);
@@ -1050,6 +1053,7 @@
 				C94B1F112A688855007E8537 /* UniversalForm.swift in Sources */,
 				C98F2F222A94134F00E92B30 /* OnboardingAuthenticationScene.swift in Sources */,
 				C98F2F292A9859BD00E92B30 /* ProfileViewEditor.swift in Sources */,
+				C9685B282D47313000C6F413 /* OnboardingCompleteView.swift in Sources */,
 				C98F2F322A9DC49300E92B30 /* EventsCreationScene.swift in Sources */,
 				C98CEE0F2AFFFC3E00B75924 /* UpdateManager.swift in Sources */,
 				C90438D82D324D220045BFFC /* LifeCalendarView.swift in Sources */,

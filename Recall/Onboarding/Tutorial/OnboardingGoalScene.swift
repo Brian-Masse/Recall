@@ -83,7 +83,7 @@ struct OnboardingGoalScene: View {
         let templateIsSelected = templateIsSelected(templateGoal)
         
         UniversalText(templateGoal.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            .highlightedBackground(templateIsSelected, disabledStyle: .primary)
+            .highlightedBackground(templateIsSelected, disabledStyle: .transparent)
             .onTapGesture { withAnimation {
                 viewModel.toggleTemplateGoal(templateGoal)
             } }

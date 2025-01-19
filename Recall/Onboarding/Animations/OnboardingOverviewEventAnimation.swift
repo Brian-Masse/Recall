@@ -18,7 +18,7 @@ private let sampleEvents : [RecallWidgetCalendarEvent] = [
     
     .init(title: "Board Meeting", notes: "incredibly boring", tag: "meeting", color: .yellow),
     .init(title: "Listened to music", notes: "", tag: "extra", color: .red),
-    .init(title: "Skipped math", notes: "", tag: "extra", color: .black),
+    .init(title: "Skipped math", notes: "", tag: "extra", color: .gray),
     .init(title: "Debate practice", notes: "", tag: "debate", color: .green),
     
     .init(title: "Work on Recall", notes: "", tag: "code", color: .orange),
@@ -100,7 +100,7 @@ struct OnboardingOverviewEventAnimation: View {
         .init(0, position: .init(262.3333282470703, 491.6666564941406),
               size: .init(width: 120, height: 100)),
         
-        .init(1, position: .init(22.666656494140625, 667.6666564941406),
+        .init(1, position: .init(22.666656494140625, 637.6666564941406),
               size: .init(width: 150, height: 50)),
         
         .init(2, position: .init(23, 131),
@@ -183,36 +183,40 @@ struct OnboardingOverviewEventAnimation: View {
 //    MARK: - Body
     var body: some View {
         
-        ZStack(alignment: .topLeading) {
-            
-            
-            Rectangle()
-                .foregroundStyle(.clear)
-            
-            ForEach( 0..<events.count, id: \.self ) { i in
+        GeometryReader { geo in
+            ZStack(alignment: .topLeading) {
                 
-                let event = events[i]
-                let transitionOffset: Double = event.position.x < 200 ? -200 : 200
                 
-                if event.appearanceDelay < t && event.appearanceDelay < currentMaxTime {
-                    WidgetEventView(event: event.event,
-                                    height: event.size.height,
-                                    showContent: true)
-                    .frame(width: event.size.width)
+                Rectangle()
+                    .foregroundStyle(.clear)
+                
+                ForEach( 0..<events.count, id: \.self ) { i in
                     
-                    .alignmentGuide(.leading) { _ in -event.position.x }
-                    .alignmentGuide(.top) { _ in -event.position.y }
+                    let event = events[i]
+                    let transitionOffset: Double = event.position.x < 200 ? -200 : 200
                     
-                    .opacity(selectedEventIndex == i ? 1 : 0.95)
-                    .onTapGesture {
-                        selectedEventIndex = i
+                    if event.appearanceDelay < t && event.appearanceDelay < currentMaxTime {
+                        WidgetEventView(event: event.event,
+                                        height: event.size.height,
+                                        showContent: true)
+                        .frame(width: event.size.width)
+                        
+                        .alignmentGuide(.leading) { _ in -event.position.x }
+                        .alignmentGuide(.top) { _ in -event.position.y }
+                        
+                        .opacity(selectedEventIndex == i ? 1 : 0.95)
+                        .onTapGesture {
+                            selectedEventIndex = i
+                        }
+                        
+                        .transition( .asymmetric(insertion: .offset(y: 100).combined(with: .scale(scale: 0.75)).combined(with: .opacity),
+                                                 removal: .opacity.combined(with: .offset(x: transitionOffset)) ) )
                     }
-                    
-                    .transition( .asymmetric(insertion: .offset(y: 100).combined(with: .scale(scale: 0.75)).combined(with: .opacity),
-                                             removal: .opacity.combined(with: .offset(x: transitionOffset)) ) )
                 }
             }
+            .frame(maxWidth: geo.size.width, maxHeight: geo.size.height)
         }
+        
         .task {
             await appendEvents()
             await appendEvents()

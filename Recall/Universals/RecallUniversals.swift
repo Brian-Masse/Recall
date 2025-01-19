@@ -348,9 +348,14 @@ struct FullScreenProgressBar: View {
     }
     
     let progress: Double
-    private let cornerRadius: Double = 62
+    private let cornerRadius: Double
     
     @State private var thickness: Double = 7
+    
+    init( progress: Double, cornerRadius: Double = 62 ) {
+        self.progress = progress
+        self.cornerRadius = max(cornerRadius, 5)
+    }
     
     var body: some View {
         ZStack {

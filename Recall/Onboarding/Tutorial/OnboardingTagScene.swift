@@ -80,7 +80,7 @@ struct OnboardingTagScene: View {
             
             UniversalText(template.title, size: Constants.UIDefaultTextSize - 1, font: Constants.mainFont)
         }
-        .highlightedBackground(templateIsSelected, padding: 11, disabledStyle: .primary)
+        .highlightedBackground(templateIsSelected, padding: 11, disabledStyle: .transparent)
         .onTapGesture { withAnimation {
             viewModel.toggleTemplateTag(template)
             

@@ -32,8 +32,8 @@ struct OnboardingView: View {
         case .eventsTutorial:       OnboardingEventScene()
         case .calendarTutorial1:    OnboardingCalendarAnimationHandler()
         case .calendarTutorial2:    OnboardingCalendarScene()
-    
-        default: EmptyView()
+            
+        case .complete:             OnboardingCompleteView()
         }
     }
     

@@ -71,9 +71,11 @@ struct LogoAnimation: View {
     @State var inReverse: Bool = false
     
     private let duration: Double
+    private let autoReverse: Bool
     
-    init( duration: Double = 1.2 ) {
+    init( duration: Double = 1.2, autoReverse: Bool = true ) {
         self.duration = duration
+        self.autoReverse = autoReverse
     }
 
     private func timer() {
@@ -83,14 +85,16 @@ struct LogoAnimation: View {
             
             imageName = "logoAnimation\( min(max(index, 1), 40) )"
             
-            index += inReverse ? -1 : 1
-            
-            if (index > 50){
-                inReverse = true
-            }
-            if (index < -10) {
-                index = 1
-                inReverse = false
+            if index < 40 || autoReverse {
+                index += inReverse ? -1 : 1
+                
+                if (index > 50){
+                    inReverse =  true
+                }
+                if (index < -10) {
+                    index = 1
+                    inReverse = false
+                }
             }
         }
     }

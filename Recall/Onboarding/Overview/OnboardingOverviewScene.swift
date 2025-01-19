@@ -15,13 +15,13 @@ struct OnboardingOverviewScene: View {
     
     private let overviewScenes: [OnboardingOverviewContainerView.OnboardingOverviewScene] = [
         .init(icon: "calendar",
-              description: "Recall is a calendar app designed for remembering, recording, and saving all the events that go into your life"),
+              description: "Recall is a calendar app designed for remembering the many events in your life"),
         
         .init(icon: "memories",
-              description: "You can browse the events you log to look back on meaningful memories, remember important days, and celebrate progress"),
+              description: "It helps you recall meaningful memories that otherwise get lost in the shuffle of daily life"),
         
         .init(icon: "flag.pattern.checkered.2.crossed",
-              description: "Recall also intelligently uses the events you record to accurately track your progress towards the goals you have set for yourself "),
+              description: "Intelligently combing through thousands of events, it identifies hard-to-find trends and delivers clarity from complexity."),
         
         .init(icon: "checkmark",
               description: "In short, Recall keeps you present in the details of your life, while helping you look towards to its future")
@@ -35,7 +35,7 @@ struct OnboardingOverviewScene: View {
               description: "Each event gets tagged to easily group and color related events"),
         
             .init(icon: "flag.pattern.checkered.2.crossed",
-                  description: "Goals use your events to record your progress and identify trends in your life"),
+                  description: "Goals then analyze those tags to identify progress and trends in your life"),
         
             .init(icon: "fireworks",
                   description: "Thats it! \n\nRecall is an easy tool that helps you find progress, success, and presence in your life.")

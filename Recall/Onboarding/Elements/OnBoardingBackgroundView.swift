@@ -32,7 +32,7 @@ struct OnBoardingBackgroundView: View {
         let darkModifier = (boostColor ? 0.35 : 0)
         
         let lightRange = (0.7 - lightModifier)...(1 - lightModifier)
-        let darkRange = (0.7 - darkModifier)...(0.95 - darkModifier)
+        let darkRange = (0.8 - darkModifier)...(0.9 - darkModifier)
         let range = colorScheme == .light ? lightRange : darkRange
         
         let increment: Double = (range.upperBound - range.lowerBound) / 9
