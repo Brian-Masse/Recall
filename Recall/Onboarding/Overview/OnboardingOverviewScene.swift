@@ -38,7 +38,7 @@ struct OnboardingOverviewScene: View {
                   description: "Goals use your events to record your progress and identify trends in your life"),
         
             .init(icon: "fireworks",
-                  description: "Quickly setup a profile, and jump into Recall")
+                  description: "Thats it! \n\nRecall is an easy tool that helps you find progress, success, and presence in your life.")
         ]
     
     @ObservedObject private var viewModel = OnboardingViewModel.shared

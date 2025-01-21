@@ -37,7 +37,7 @@ struct SplashScreen: View {
         
     private let logoAnimationDuration: Double = 1.75
     
-    private let tagLineFontSize: Double = (Constants.UISubHeaderTextSize + 3)
+    private let tagLineFontSize: Double = (Constants.UISubHeaderTextSize + 3)   
     private let tagLineInterval: Double = 2
     
 //    MARK: makeBackground
