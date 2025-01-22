@@ -33,7 +33,7 @@ struct OnboardingView: View {
         case .calendarTutorial1:    OnboardingCalendarAnimationHandler()
         case .calendarTutorial2:    OnboardingCalendarScene().environment(\.realmConfiguration, RecallModel.realmManager.configuration)
     
-//        default: EmptyView()
+        default: EmptyView()
         }
     }
     

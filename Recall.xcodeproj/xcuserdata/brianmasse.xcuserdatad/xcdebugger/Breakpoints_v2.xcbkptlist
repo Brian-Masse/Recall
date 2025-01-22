@@ -825,8 +825,8 @@
             filePath = "Recall/Onboarding/OnboardingViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "201"
-            endingLineNumber = "201"
+            startingLineNumber = "212"
+            endingLineNumber = "212"
             landmarkName = "getRecalledEventCount(from:)"
             landmarkType = "7">
          </BreakpointContent>

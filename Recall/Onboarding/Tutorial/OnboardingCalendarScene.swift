@@ -138,7 +138,7 @@ struct OnboardingCalendarScene: View {
     @MainActor
     private func onAppear() async {
 //        self.showingCreationView = true
-        viewModel.setSceneStatus(to: .hideButton)
+        viewModel.setSceneStatus(to: .complete)
         await viewModel.getRecalledEventCount(from: Array(events))
         checkCompletion()
     }

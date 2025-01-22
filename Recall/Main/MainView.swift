@@ -34,8 +34,8 @@ struct MainView: View {
     var body: some View {
         
         let data = RecallData(events: Array(events), goals: Array(goals), tags: Array(tags), summaries: Array(summaries))
-    
-        CoordinatorView(data: data)
+        
+        CoordinatorView(data: data, defaultScreen: .home)
             .ignoresSafeArea(.keyboard)
             .task {
                 Constants.setupConstants()

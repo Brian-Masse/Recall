@@ -26,6 +26,8 @@ enum OnBoardingScene: Int, CaseIterable {
     case calendarTutorial1
     case calendarTutorial2
     
+    case complete
+    
 //    case overview
 //    case howItWorks
     
@@ -54,7 +56,7 @@ class OnboardingViewModel: ObservableObject {
     
     private(set) var inOnboarding: Bool = false
     
-    @Published private(set) var scene: OnBoardingScene = .overview
+    @Published private(set) var scene: OnBoardingScene = .calendarTutorial2
     @Published private(set) var sceneStatus: SceneStatus = .incomplete
     
     @Published var triggerBackgroundUpdate: Bool = false
@@ -75,10 +77,19 @@ class OnboardingViewModel: ObservableObject {
             self.setSceneStatus(to: .incomplete)
             self.currentSceneProgress =  Double(scene.rawValue) / Double(OnBoardingScene.allCases.count)
         }
+        
+        if self.scene == .complete { submit() }
     }
     
     func setOnboardingStatus(to status: Bool) {
         self.inOnboarding = status
+    }
+    
+    @MainActor
+    private func submit() {
+        inOnboarding = false
+        RecallModel.index.finishTutorial()
+        RecallModel.realmManager.setState(.complete)
     }
     
     //    MARK: - OnboardingGoalScene
