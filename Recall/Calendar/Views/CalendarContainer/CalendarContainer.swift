@@ -121,28 +121,28 @@ struct CalendarContainer: View {
 //    MARK: - setCurrentPostIndex
     private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy, dayCount: Int) {
 
-        if viewModel.scrollingCalendar { return }
-        if !viewModel.initialCalendarWidthSet { viewModel.setInitialWidth(abs(scrollPosition.x)) }
-        
-        let x = viewModel.initialCalendarWidth - abs(scrollPosition.x)
-        
-//        set both the baseOffset and baseIndex for the calendarContainer
-//        this has is so that when the user changes a preview size, the offset and index are "zero'd", and the scorlling happens properly
-        if viewModel.initialDaysPerView != viewModel.daysPerView {
-            viewModel.setBaseCalendarOffset(to: x)
-            viewModel.initialDaysPerView = viewModel.daysPerView
-        }
-        
-        let daysPerView = Double(viewModel.daysPerView)
-        
-        let calendarWidth = (geo.size.width - calendarLabelWidth) / daysPerView
-        
-        let scrollDetectionPadding = calendarWidth / 2
-        let proposedIndex = Int(floor( (x - viewModel.baseCalendarOffset + scrollDetectionPadding) / calendarWidth) ) + viewModel.baseCalendarIndex
-        let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
-
-        if proposedDate.matches(viewModel.currentDay, to: .day) { return }
-        self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
+//        if viewModel.scrollingCalendar { return }
+//        if !viewModel.initialCalendarWidthSet { viewModel.setInitialWidth(abs(scrollPosition.x)) }
+//        
+//        let x = viewModel.initialCalendarWidth - abs(scrollPosition.x)
+//        
+////        set both the baseOffset and baseIndex for the calendarContainer
+////        this has is so that when the user changes a preview size, the offset and index are "zero'd", and the scorlling happens properly
+//        if viewModel.initialDaysPerView != viewModel.daysPerView {
+//            viewModel.setBaseCalendarOffset(to: x)
+//            viewModel.initialDaysPerView = viewModel.daysPerView
+//        }
+//        
+//        let daysPerView = Double(viewModel.daysPerView)
+//        
+//        let calendarWidth = (geo.size.width - calendarLabelWidth) / daysPerView
+//        
+//        let scrollDetectionPadding = calendarWidth / 2
+//        let proposedIndex = Int(floor( (x - viewModel.baseCalendarOffset + scrollDetectionPadding) / calendarWidth) ) + viewModel.baseCalendarIndex
+//        let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
+//
+//        if proposedDate.matches(viewModel.currentDay, to: .day) { return }
+//        self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
         
     }
     
@@ -349,41 +349,19 @@ struct CalendarContainer: View {
     private func makeCalendarCarousel(in geo: GeometryProxy) -> some View {
         let dayCount = RecallModel.index.daysSinceFirstEvent()
         
-        ScrollViewReader { proxy in
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 0) {
-                    
-                    ForEach(0...dayCount, id: \.self) { i in
-                        
-                        let day = Date.now.resetToStartOfDay() + Double(i - dayCount) * Constants.DayTime
-                        
-                        ZStack(alignment: .top) {
-                            CalendarView(events: viewModel.getEvents(on: day), on: day)
-                            
-                            makeEventCreationPreview(on: 1 - calculateSubDayIndex(on: day))
-                        }
-                        .padding(.horizontal, 2)
-                        .frame(width: (geo.size.width - calendarLabelWidth) / Double(viewModel.daysPerView))
-                        .task {
-                            await viewModel.loadEvents(for: day, in: events)
-                        }
-                    }
-                }
-                .scrollTargetLayout()
-                .onChange(of: viewModel.shouldScrollCalendar) { scrollToCurrentDay(proxy: proxy) }
+        CalendarContainerScrollView(itemCount: dayCount) { index in
+            
+            let day = Date.now.resetToStartOfDay() - Double(index + 1) * Constants.DayTime
+            
+            ZStack(alignment: .top) {
+                CalendarView(events: viewModel.getEvents(on: day), on: day)
                 
-                .background(GeometryReader { geo in
-                    Color.clear
-                        .preference(key: ScrollOffsetPreferenceKey.self, value: geo.frame(in: .named(coordinateSpaceName)).origin)
-                })
+                makeEventCreationPreview(on: 1 - calculateSubDayIndex(on: day))
                 
-                .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in setCurrentPostIndex(from: value, in: geo, dayCount: dayCount) }
             }
-            .defaultScrollAnchor(.trailing)
-            .scrollTargetBehavior(.viewAligned)
-            .scrollDisabled(viewModel.gestureInProgress)
-            
-            
+            .task {
+                await viewModel.loadEvents(for: day, in: events)
+            }
         }
         .padding(.leading, calendarLabelWidth)
     }

@@ -19,25 +19,13 @@ class RecallCalendarContainerViewModel: ObservableObject {
     @Published private(set) var filteredEventsTrigger: Bool = false
     
     @Published private(set) var currentDay: Date = Date.now
-    //    this will be toggled whenever the view should scroll to the currentDay
-    @Published private(set) var shouldScrollCalendar: Bool = false
-    @Published private(set) var scrollingCalendar: Bool = false
+    @Published var scrollCalendar: Bool = false
     
 //    if the calendar is split into two days, then this indicates which of the day the user is interacting with
     @Published private(set) var subDayIndex: Int = 0
     @Published private(set) var daysPerView: Int = 2
     
     var initialDaysPerView: Int = 2
-    
-//    This is the scrollPosition when a user changes the daysPerView variable
-//    It allows the offset / index calculation to work regardless of when the user switched to the new layout
-    var baseCalendarOffset: Double = 0
-    var baseCalendarIndex: Int = 0
-    
-//    This is the initialWidth of the calendarContainer
-//    it is subtracted from all offsets to effectivly 0 it. Its not really necessary, but makes the offset code more readable
-    var initialCalendarWidth: Double = 0
-    var initialCalendarWidthSet: Bool = false
     
     @Published var scale: Double = 100
     @Published var gestureInProgress: Bool = false
@@ -59,13 +47,18 @@ class RecallCalendarContainerViewModel: ObservableObject {
         objectWillChange.send()
         
         if scrollToDay {
-            shouldScrollCalendar.toggle()
-            scrollingCalendar = true
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.scrollingCalendar = false
-            }
+            scrollCalendar.toggle()
+//            scrollingCalendar = true
+//            
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                self.scrollingCalendar = false
+//            }
         }
+    }
+    
+//    MARK: getIndexFromCurrentDay
+    func getIndexFromCurrentDay() -> Int {
+        Int(abs( Date.now.timeIntervalSince( currentDay ) ) / Constants.DayTime)
     }
     
 //    MARK: setDaysPerView
@@ -83,15 +76,15 @@ class RecallCalendarContainerViewModel: ObservableObject {
     func setBaseCalendarOffset(to offset: Double) {
         let index = Int( floor( Date.now.timeIntervalSince(currentDay) ) / Constants.DayTime  )
         let dayOffset = daysPerView - initialDaysPerView
-        self.baseCalendarIndex = index - dayOffset
-        self.baseCalendarOffset = offset
+//        self.baseCalendarIndex = index - dayOffset
+//        self.baseCalendarOffset = offset
     }
     
 //    MARK: setInitialWidth
     func setInitialWidth( _ width: Double ) {
-        if self.initialCalendarWidthSet { return }
-        self.initialCalendarWidth = width
-        self.initialCalendarWidthSet = true
+//        if self.initialCalendarWidthSet { return }
+//        self.initialCalendarWidth = width
+//        self.initialCalendarWidthSet = true
     }
     
 //    MARK: setScale
