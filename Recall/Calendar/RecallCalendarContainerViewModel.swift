@@ -49,7 +49,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
     init() {
         self.getScale(from: RecallModel.index.calendarDensity)
         self.daysPerView = RecallModel.index.calendarColoumnCount
-        self.initialDaysPerView = -1
+        self.initialDaysPerView = daysPerView
     }
     
 //    MARK: - setCurrentDay

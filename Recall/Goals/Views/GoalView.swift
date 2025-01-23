@@ -89,17 +89,28 @@ struct GoalView: View {
         
         private let goal: RecallGoal
         
+//        when using this view for preview, when you're done presenting it, the loaded data is invalidated
+        private let forPreview: Bool
         private let includeFiltering: Bool
         
-        init( filteringTag: Binding<RecallCategory?> = .constant(nil), goal: RecallGoal, includingFiltering: Bool = true) {
+        init( filteringTag: Binding<RecallCategory?> = .constant(nil), goal: RecallGoal, forPreview: Bool = false) {
             self._filteringTag = filteringTag
             self.goal = goal
-            self.includeFiltering = includingFiltering
+            self.includeFiltering = !forPreview
+            self.forPreview = forPreview
         }
         
         private func toggleFilteringTag(tag: RecallCategory) {
             if filteringTag == tag { filteringTag = nil }
             else { filteringTag = tag }
+        }
+        
+        private func freeData() {
+            if !forPreview { return }
+            if RecallNavigationCoordinator.shared.tab == .goals { return }
+            
+            self.tags = []
+            self.goalHistory = [:]
         }
         
         private func getTags() async {
@@ -154,6 +165,7 @@ struct GoalView: View {
                 await getGoalHistory()
             }
             .onChange(of: filteringTag) { Task { await getGoalHistory() } }
+            .onDisappear { freeData() }
         }
     }
     

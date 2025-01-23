@@ -53,7 +53,7 @@ struct GoalPreviewView: View {
             VStack(alignment: .leading) {
                 makeHeader()
                 
-                GoalView.GoalAnnualProgressView(goal: goal, includingFiltering: false)
+                GoalView.GoalAnnualProgressView(goal: goal, forPreview: true)
                 
 //                makeSectionHeader("flag.pattern.checkered", title: "Current Progress")
 //                GoalView.ProgressBarView(goal: goal)

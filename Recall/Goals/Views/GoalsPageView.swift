@@ -28,10 +28,17 @@ struct GoalsPageView: View {
             self.goals = goals
         }
         
-        @State private var goals: [RecallGoal] = []
-        @State var showingSection: Bool
+        init( showingSection: Bool, priority: RecallGoal.Priority ) {
+            self.showingSection = showingSection
+            self.defaultShowingStatus = showingSection
+            self.priority = priority
+        }
         
-        let priority: RecallGoal.Priority
+        @State private var goals: [RecallGoal] = []
+        @State private var showingSection: Bool
+        
+        private let defaultShowingStatus: Bool
+        private let priority: RecallGoal.Priority
         
         var body: some View {
             VStack {
@@ -60,6 +67,7 @@ struct GoalsPageView: View {
             }
             .animation(.easeInOut, value: goals.count)
             .task { await getGoals() }
+            .onDisappear { showingSection = defaultShowingStatus }
         }
     }
     
