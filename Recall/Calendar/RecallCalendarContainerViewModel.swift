@@ -46,21 +46,9 @@ class RecallCalendarContainerViewModel: ObservableObject {
         withAnimation { self.currentDay = day }
         objectWillChange.send()
         
-        if scrollToDay {
-            scrollCalendar.toggle()
-//            scrollingCalendar = true
-//            
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//                self.scrollingCalendar = false
-//            }
-        }
+        if scrollToDay { scrollCalendar.toggle() }
     }
-    
-//    MARK: getIndexFromCurrentDay
-    func getIndexFromCurrentDay() -> Int {
-        Int(abs( Date.now.timeIntervalSince( currentDay ) ) / Constants.DayTime)
-    }
-    
+  
 //    MARK: setDaysPerView
     func setDaysPerView(to count: Int) { withAnimation {
         self.daysPerView = count
@@ -71,22 +59,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
     func setSubDayIndex(to index: Int) {
         self.subDayIndex = index
     }
-    
-//    MARK: setBaseCalendarOffset
-    func setBaseCalendarOffset(to offset: Double) {
-        let index = Int( floor( Date.now.timeIntervalSince(currentDay) ) / Constants.DayTime  )
-        let dayOffset = daysPerView - initialDaysPerView
-//        self.baseCalendarIndex = index - dayOffset
-//        self.baseCalendarOffset = offset
-    }
-    
-//    MARK: setInitialWidth
-    func setInitialWidth( _ width: Double ) {
-//        if self.initialCalendarWidthSet { return }
-//        self.initialCalendarWidth = width
-//        self.initialCalendarWidthSet = true
-    }
-    
+
 //    MARK: setScale
     func setScale(to scale: Double) {
         let scale = min( 200, max( 40, scale ) )

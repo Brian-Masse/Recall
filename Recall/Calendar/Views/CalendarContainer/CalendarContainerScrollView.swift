@@ -15,11 +15,9 @@ struct CalendarContainerScrollView<C: View>: View {
     @ObservedObject private var viewModel = RecallCalendarContainerViewModel.shared
     
     private let itemCount: Int
-    @State private var coloumnCount: Double = 2
     
     @State private var currentIndex: Int = 0
-    
-    @State private var scrollPosition: ScrollPosition = .init(idType: Int.self)
+    @State private var scrollPosition: ScrollPosition = .init(idType: Int.self, edge: .trailing)
     
     private let calendarCycleCount: Int = 5
     @State private var currentCalendarCycle: Int = 0
@@ -31,13 +29,13 @@ struct CalendarContainerScrollView<C: View>: View {
         self.contentBuilder = contentBuilder
     }
     
-//    MARK: convertFromLeadingIndexSystemToTrailing
+//    MARK: convertFromLTrailingIndexSystemToLeading
 //    the views, from left to right are indexed 0 to itemCount
 //    however, because the calendar is pinned to the right, it makes sense for the right most view to be 0-indexed.
 //    the currentIndex uses this trailingAlignment index system.
-//    to scroll properly and display the index properly, a leadingIndexSystem needs to be translated into a TrailingIndexSystem
-    private func convertFromLeadingIndexSystemToTrailing(from index: Int) -> Int {
-        self.itemCount - 2 - index
+//    to scroll properly and display the index properly, a TrailingIndexSystem needs to be translated into a leadingIndexSystem
+    private func convertBetweenLeadingAndTrailingIndexSystems(from index: Int) -> Int {
+        self.itemCount - 1 - index
     }
     
 //    MARK: setCurrentIndex
@@ -46,7 +44,7 @@ struct CalendarContainerScrollView<C: View>: View {
     private func setCurrentIndex(to index: Int) {
         if index == self.currentIndex { return }
         
-        self.currentIndex = convertFromLeadingIndexSystemToTrailing(from: index)
+        self.currentIndex = index
         let date = Date.now - Double(currentIndex) * Constants.DayTime
         
         viewModel.setCurrentDay(to: date, scrollToDay: false)
@@ -58,8 +56,8 @@ struct CalendarContainerScrollView<C: View>: View {
 //    the id passed into this function should be leadingAligned
     private func scrollTo(id: Int, in width: Double, shouldAnimate: Bool = true) {
         setCurrentIndex(to: id)
-        let trailingIndex = convertFromLeadingIndexSystemToTrailing(from: id)
-        let position = Double(trailingIndex) * width / coloumnCount
+        let leadingIndex = convertBetweenLeadingAndTrailingIndexSystems(from: id)
+        let position = Double(leadingIndex - viewModel.daysPerView + 1) * width / Double(viewModel.daysPerView)
         
         if shouldAnimate { withAnimation {
             scrollPosition.scrollTo( x: position)
@@ -68,15 +66,21 @@ struct CalendarContainerScrollView<C: View>: View {
         }
     }
     
+//    MARK: getIndexFromCurrentDay
+    func getIndexFromCurrentDay() -> Int {
+        Int(abs( Date.now.timeIntervalSince( viewModel.currentDay ) ) / Constants.DayTime)
+    }
+    
+    
     @ViewBuilder
     private func makeScrollView(in width: Double) -> some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 0) {
                 
                 ForEach( 0..<itemCount, id: \.self ) { index in
-                    contentBuilder(convertFromLeadingIndexSystemToTrailing(from: index))
+                    contentBuilder(convertBetweenLeadingAndTrailingIndexSystems(from: index))
                         .padding(.horizontal, 2)
-                    .frame(width: width / coloumnCount)
+                        .frame(width: width / Double(viewModel.daysPerView))
                 }
             }
             .scrollTargetLayout()
@@ -93,45 +97,17 @@ struct CalendarContainerScrollView<C: View>: View {
         
         GeometryReader { geo in
             VStack {
-//                Text( "\(scrollPosition.viewID(type: Int.self))" )
-//                Text( "\(currentIndex)" )
-//                Text( "\(itemCount)" )
-//                
-//                Text("Jump")
-//                    .onTapGesture {
-//                        let index = Int.random(in: 0..<itemCount)
-//                        
-////                        print("\(index)")
-//                        
-//                        let modifier = 0
-////                        abs(index - currentIndex) >= 10 ? 1 : 0
-//                        
-//                        
-//                        print(index)
-//                        scrollTo(id: index, in: geo.size.width)
-//                        
-//                    }
-//                
-//                Text("Toggle")
-//                    .onTapGesture {
-//                        
-//                        coloumnCount = coloumnCount == 2 ? 1 : 2
-//                        
-//                        withAnimation {
-//                            currentCalendarCycle = (currentCalendarCycle + 1) % calendarCycleCount
-//                        }
-//                    }
-//                        
-//                        
                 ForEach( 0..<calendarCycleCount, id: \.self ) { i in
                     if i == currentCalendarCycle {
                         makeScrollView(in: geo.size.width)
                     }
                 }
             }
-            .onChange(of: viewModel.scrollCalendar) { self.scrollTo(id: viewModel.getIndexFromCurrentDay(), in: geo.size.width) }
+            .onChange(of: viewModel.daysPerView) { withAnimation { currentCalendarCycle = (currentCalendarCycle + 1) % calendarCycleCount } }
+            
+            .onChange(of: viewModel.scrollCalendar) { self.scrollTo(id: getIndexFromCurrentDay(), in: geo.size.width) }
             .onChange(of: scrollPosition) { oldValue, newValue in
-                if let id = newValue.viewID(type: Int.self) { setCurrentIndex(to: id) }
+                if let id = newValue.viewID(type: Int.self) { setCurrentIndex(to: convertBetweenLeadingAndTrailingIndexSystems(from: id + viewModel.daysPerView - 1 )) }
             }
         }
     }

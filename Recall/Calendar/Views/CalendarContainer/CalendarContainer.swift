@@ -351,7 +351,7 @@ struct CalendarContainer: View {
         
         CalendarContainerScrollView(itemCount: dayCount) { index in
             
-            let day = Date.now.resetToStartOfDay() - Double(index + 1) * Constants.DayTime
+            let day = Date.now.resetToStartOfDay() - Double(index) * Constants.DayTime
             
             ZStack(alignment: .top) {
                 CalendarView(events: viewModel.getEvents(on: day), on: day)
