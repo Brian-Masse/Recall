@@ -20,34 +20,33 @@ struct RecallView: View {
             switch realmManager.authenticationState {
             case .splashScreen:
                 SplashScreen()
-                    .slideTransition()
+                    .mainScreenTransition()
                 
             case .authenticating:
                 OnboardingAuthenticationScene()
-                    .slideTransition()
-                    .environment(\.realmConfiguration, realmManager.configuration)
+                    .mainScreenTransition()
                 
             case .openingRealm:
                 OpenFlexibleSyncRealmView()
-//                    .environment(\.realmConfiguration, realmManager.configuration)
-                    .slideTransition()
+                    .mainScreenTransition()
+                    .environment(\.realmConfiguration, realmManager.configuration)
                 
             case .creatingProfile:
                 ProfileCreationView()
-                    .slideTransition()
+                    .mainScreenTransition()
                     .environment(\.realmConfiguration, realmManager.configuration)
                    
             case .onboarding:
                 OnboardingContainerView()
-                    .slideTransition()
+                    .mainScreenTransition()
                 
             case .error:
                 Text("An error occoured")
                 
             case .complete:
-                MainView()
+                MainView()  
                     .environment(\.realmConfiguration, realmManager.configuration)
-                    .slideTransition()
+                    .mainScreenTransition()
             }
         }
     }

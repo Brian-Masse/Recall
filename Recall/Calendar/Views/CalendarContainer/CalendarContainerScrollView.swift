@@ -72,6 +72,7 @@ struct CalendarContainerScrollView<C: View>: View {
     }
     
     
+//    MARK: - makeScrollView
     @ViewBuilder
     private func makeScrollView(in width: Double) -> some View {
         ScrollView(.horizontal) {
@@ -93,8 +94,8 @@ struct CalendarContainerScrollView<C: View>: View {
         .defaultScrollAnchor(.trailing)
     }
     
+//    MARK: - Body
     var body: some View {
-        
         GeometryReader { geo in
             VStack {
                 ForEach( 0..<calendarCycleCount, id: \.self ) { i in

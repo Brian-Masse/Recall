@@ -55,9 +55,17 @@ struct OnboardingAuthenticationScene: View {
 //    MARK: - makeHeader
     @ViewBuilder
     private func makeHeader() -> some View {
-        UniversalText("Create a Recall account",
-                      size: Constants.UIHeaderTextSize,
-                      font: Constants.titleFont)
+        HStack {
+            UniversalText("Create a Recall account",
+                          size: Constants.UIHeaderTextSize,
+                          font: Constants.titleFont)
+            
+            Spacer()
+            
+            DismissButton() {
+                RecallModel.realmManager.setState(.splashScreen)
+            }
+        }
     }
     
 //    MARK: makeEmailPasswordSection

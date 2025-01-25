@@ -103,6 +103,12 @@ struct DismissButton: View {
     
     @Environment( \.dismiss ) var dismiss
     
+    private var onSubmit: (() -> Void)?
+    
+    init( onSubmit: (() -> Void)? = nil ) {
+        self.onSubmit = onSubmit
+    }
+    
     private var icon: String {
         if #available(iOS 18.0, *) {
             return "chevron.down"
@@ -120,7 +126,12 @@ struct DismissButton: View {
             .frame(height: 10)
             .font(.callout)
             .rectangularBackground(12, style: .transparent)
-        } action: { dismiss() }
+        } action: {
+            if let onSubmit {
+                onSubmit()
+            } else {
+                dismiss()
+            }
+        }
     }
-    
 }

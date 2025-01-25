@@ -40,6 +40,13 @@ struct SplashScreen: View {
     private let tagLineFontSize: Double = (Constants.UISubHeaderTextSize + 3)   
     private let tagLineInterval: Double = 2
     
+    private func resetView() {
+        self.progress = 0
+        self.showingLogo = false
+        self.screenComplete = false
+        self.showingButtons = false
+    }
+    
 //    MARK: makeBackground
     @ViewBuilder
     private func makeBackground() -> some View {
@@ -147,8 +154,10 @@ struct SplashScreen: View {
     var body: some View {
         
         ZStack {
-            FullScreenProgressBar(progress: progress)
-                .universalStyledBackgrond(.accent, onForeground: true)
+            if !screenComplete {
+                FullScreenProgressBar(progress: progress)
+                    .universalStyledBackgrond(.accent, onForeground: true)
+            }
             
             VStack {
                 Spacer()
@@ -169,10 +178,11 @@ struct SplashScreen: View {
                 }
             }
         }
+        .overlay { if showingLogo { NoiseOverlay() } }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background { makeBackground() }
         .task {
-            await RecallModel.wait(for: 0.5)
+            await RecallModel.wait(for: 1.5)
             showingLogo = true
             
             withAnimation(.spring(duration: logoAnimationDuration)) {
@@ -186,6 +196,7 @@ struct SplashScreen: View {
                 }
             }
         }
+        .onDisappear { resetView() }
     }
 }
 

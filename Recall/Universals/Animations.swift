@@ -59,6 +59,10 @@ extension View {
     func slideTransition() -> some View {
         modifier( SlideTransition() )
     }
+    
+    func mainScreenTransition() -> some View {
+        self.transition(.opacity)
+    }
 }
 
 

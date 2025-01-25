@@ -137,9 +137,11 @@ struct OnboardingCalendarScene: View {
 //    MARK: ViewMethods
     @MainActor
     private func onAppear() async {
-//        self.showingCreationView = true
         viewModel.setSceneStatus(to: .complete)
+        
         await viewModel.getRecalledEventCount(from: Array(events))
+        await RecallModel.dataStore.initalizeDataStore()
+        
         checkCompletion()
     }
     
@@ -219,13 +221,6 @@ struct OnboardingCalendarScene: View {
             OnboardingCalendarAnimationHandler(presentedAsSheet: true)
                 .background( OnBoardingBackgroundView() )
         }
-    }
-}
-
-struct OnboardingContainerView: View {
-    var body: some View {
-        CoordinatorView(data: .init(events: [], goals: [], tags: [], summaries: []),
-                        defaultScreen: .onBoarding)
     }
 }
 

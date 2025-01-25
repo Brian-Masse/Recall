@@ -104,7 +104,19 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     func checkCompletion() -> Bool {
         !self.firstName.isEmpty &&
         !self.lastName.isEmpty &&
-        !self.email.isEmpty
+        !self.email.isEmpty &&
+        self.finishedTutorial
+    }
+    
+//    MARK: SetupDefaultProfile
+//    Called during the creation of an index, before the index has been stored to realm
+    func setupDefaultProfile(email: String) {
+        self.ownerID = RecallModel.ownerID
+        self.dateJoined = .now
+        self.email = email
+        
+        self.calendarColoumnCount = 2
+        self.calendarDensity = 2
     }
     
 //    MARK: Tutorial

@@ -31,7 +31,7 @@ struct OnboardingView: View {
         case .tagsTutorial:         OnboardingTagScene()
         case .eventsTutorial:       OnboardingEventScene()
         case .calendarTutorial1:    OnboardingCalendarAnimationHandler()
-        case .calendarTutorial2:    OnboardingCalendarScene().environment(\.realmConfiguration, RecallModel.realmManager.configuration)
+        case .calendarTutorial2:    OnboardingCalendarScene()
     
         default: EmptyView()
         }
@@ -50,6 +50,15 @@ struct OnboardingView: View {
             FullScreenProgressBar(progress: viewModel.currentSceneProgress)
                 .universalStyledBackgrond(.accent, onForeground: true)
         }
+    }
+}
+
+//MARK: - OnboardingContainerView
+struct OnboardingContainerView: View {
+    var body: some View {
+        CoordinatorView(data: .init(events: [], goals: [], tags: [], summaries: []),
+                        defaultScreen: .onBoarding)
+        .environment(\.realmConfiguration, RecallModel.realmManager.configuration ?? .init())
     }
 }
 

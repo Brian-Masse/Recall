@@ -11,6 +11,11 @@ import Realm
 import AuthenticationServices
 import SwiftUI
 
+//TODO: Update the Checks to profileCompletion
+//TODO: Make sure the tutroialComplete flag works
+//TODO: Make sure people returning to the app are taken through the onboarding flow
+//TODO: Corner Radius for other phones
+
 //RealmManager is responsible for signing/logging in users, opening a realm, and any other
 //high level function.
 //it functions both online and offline, but does not yet switch between them automatically
@@ -300,9 +305,7 @@ class RealmManager: ObservableObject {
     @MainActor
     private func createIndex() {
         let index = RecallIndex()
-        index.ownerID = RecallModel.ownerID
-        index.dateJoined = .now
-        index.email = self.email
+        index.setupDefaultProfile(email: email)
         
         RealmManager.addObject(index)
         
