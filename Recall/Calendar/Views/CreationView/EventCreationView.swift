@@ -310,20 +310,22 @@ struct CalendarEventCreationView: View {
         let favorites = Array( categories.filter({ tag in tag.isFavorite }) )
         let allTags = Array( categories.filter({ tag in !tag.isFavorite }) )
         
-        makeTagList(favorites)
-            .padding(.bottom)
-        
-        HStack {
-            UniversalText("All Tags", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
-        
-            Spacer()
+        if !favorites.isEmpty {
+            makeTagList(favorites)
+                .padding(.bottom)
             
-            LargeRoundedButton("", to: "", icon: "arrow.down", to: "arrow.up", wide: false, small: true, foregroundColor: nil, style: .secondary) {
-                showingAllTags
-            } action: { showingAllTags.toggle() }
+            HStack {
+                UniversalText("All Tags", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+            
+                Spacer()
+                
+                LargeRoundedButton("", to: "", icon: "arrow.down", to: "arrow.up", wide: false, small: true, foregroundColor: nil, style: .secondary) {
+                    showingAllTags
+                } action: { showingAllTags.toggle() }
+            }
         }
         
-        if showingAllTags {
+        if showingAllTags || favorites.isEmpty {
             makeTagList(allTags)
             LargeRoundedButton("create another tag", icon: "arrow.up", wide: true, foregroundColor: nil, style: .secondary) { coordinator.presentSheet(.tagCreationView(editting: false)) }
         }

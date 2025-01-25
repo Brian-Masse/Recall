@@ -177,7 +177,10 @@ struct ProfileView: View {
                 }.padding(.bottom)
                 
                 makeContactLabel(title: "email", content: index.email)
-                makeContactLabel(title: "phone number", content: "\(index.phoneNumber.formatIntoPhoneNumber())")
+                
+                if index.phoneNumber != 0 {
+                    makeContactLabel(title: "phone number", content: "\(index.phoneNumber.formatIntoPhoneNumber())")
+                }
             }
             .rectangularBackground(7, style: .secondary, stroke: true, strokeWidth: 1)
         }

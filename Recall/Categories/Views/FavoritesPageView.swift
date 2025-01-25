@@ -23,9 +23,6 @@ struct FavoritesPageView: View {
     
     @State var dataLoaded: Bool = false
     
-//    For the BlurScroll View
-    @State var scrollPosition: CGPoint = .zero
-    
 //    MARK: Class Methods
 //    Group events goes throughs the events and collects them into data categories based on the filter selected;
 //    ie. collecting al favorite events that happened in the same month
@@ -118,26 +115,25 @@ struct FavoritesPageView: View {
                 if showingFullSection {
                     ForEach( groupedEvents ) { event in
                         CalendarEventPreviewContentView(event: event, events: events)
-                        .contextMenu {
-                            ContextMenuButton("unfavorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
-                                event.toggleFavorite()
+                            .contextMenu {
+                                ContextMenuButton("unfavorite", icon: "circle.rectangle.filled.pattern.diagonalline") {
+                                    event.toggleFavorite()
+                                }
+                                
+                                ContextMenuButton("delete", icon: "trash", role: .destructive) {
+                                    showingDeletionAlert = true
+                                }
                             }
-                            
-                            ContextMenuButton("delete", icon: "trash", role: .destructive) {
-                                showingDeletionAlert = true
+                            .alert("delete favorite event", isPresented: $showingDeletionAlert, actions: {
+                                ContextMenuButton("delete", icon: "trash", role: .destructive) { event.delete() }
+                            }, message: {
+                                Text("This action cannot be undone.")
+                            })
+                        
+                            .safeZoomMatch(id: event.identifier(), namespace: namespace)
+                            .onTapGesture {
+                                coordinator.push( .recallEventView(id: event.identifier(), event: event, events: [event], Namespace: namespace) )
                             }
-                        }
-                        .alert("delete favorite event", isPresented: $showingDeletionAlert, actions: {
-                            ContextMenuButton("delete", icon: "trash", role: .destructive) { event.delete() }
-                        }, message: {
-                            Text("This action cannot be undone.")
-                        })
-                        
-                        .safeZoomMatch(id: event.identifier(), namespace: namespace)
-                        .onTapGesture {
-                            coordinator.push( .recallEventView(id: event.identifier(), event: event, events: [event], Namespace: namespace) )
-                        }
-                        
                     }
                 }
             }
@@ -179,16 +175,21 @@ struct FavoritesPageView: View {
                         .padding(.bottom, 7)
                         
                     if dataLoaded {
-                        ForEach( dates, id: \.self ) { date in
-                            
-                            DateCategory(date: date,
-                                         groupedEvents: groupedEvents[date]!,
-                                         events: events,
-                                         geo: geo,
-                                         grouping: grouping)
-                            
-                            Divider()
-                                .padding(.bottom, 7)
+                        if !dates.isEmpty {
+                            ForEach( dates, id: \.self ) { date in
+                                
+                                DateCategory(date: date,
+                                             groupedEvents: groupedEvents[date]!,
+                                             events: events,
+                                             geo: geo,
+                                             grouping: grouping)
+                                
+                                Divider()
+                                    .padding(.bottom, 7)
+                            }
+                        } else {
+                            makeSectionFiller(icon: "circle.rectangle.filled.pattern.diagonalline",
+                                              message: "No Favorites yet. Favorite an event on your calendar to view it here") { }
                         }
                     } else {
                         CollectionLoadingView(count: 5, height: 100)

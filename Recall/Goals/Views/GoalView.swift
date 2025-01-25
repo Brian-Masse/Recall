@@ -147,16 +147,8 @@ struct GoalView: View {
 //    MARK: GoalAnnualProgressViewBody
         var body: some View {
             VStack(alignment: .trailing) {
-                
-                if !goalHistory.isEmpty {
-                    YearCalendar(maxSaturation: maxSaturation, color: goal.getColor(), forPreview: !includeFiltering) { date in
-                        goalHistory[ date.formatted(date: .numeric, time: .omitted) ] ?? 0
-                    }
-                } else {
-                    RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                        .universalStyledBackgrond(.secondary, onForeground: true)
-                        .frame(height: 50)
-                    
+                YearCalendar(maxSaturation: maxSaturation, color: goal.getColor(), forPreview: !includeFiltering) { date in
+                    goalHistory[ date.formatted(date: .numeric, time: .omitted) ] ?? 0
                 }
             }
             .animation(.easeInOut, value: filteringTag)

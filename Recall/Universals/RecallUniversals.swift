@@ -35,7 +35,7 @@ func makeSectionHeader(
 
 //    MARK: makeSectionFiller
 @ViewBuilder
-private func makeSectionFiller(icon: String, message: String, action: (() -> Void)?) -> some View {
+func makeSectionFiller(icon: String, message: String, action: (() -> Void)?) -> some View {
     UniversalButton {
         VStack {
             HStack { Spacer() }
