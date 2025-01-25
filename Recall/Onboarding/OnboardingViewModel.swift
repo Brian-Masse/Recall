@@ -85,6 +85,7 @@ class OnboardingViewModel: ObservableObject {
         self.inOnboarding = status
     }
     
+//    MARK: Submit
     @MainActor
     private func submit() {
         inOnboarding = false
@@ -215,12 +216,12 @@ class OnboardingViewModel: ObservableObject {
     
 //    MARK: - AuthenticationScene
     
-    func submitProfileDemographics( firstName: String, lastName: String, birthday: Date ) {
+    func submitProfileDemographics( firstName: String, lastName: String, email: String, birthday: Date ) {
         if inDev { return }
         
         RecallModel.index.update(firstName: firstName,
                                  lastName: lastName,
-                                 email: RecallModel.realmManager.email,
+                                 email: email,
                                  phoneNumber: 0,
                                  dateOfBirth: birthday)
     }

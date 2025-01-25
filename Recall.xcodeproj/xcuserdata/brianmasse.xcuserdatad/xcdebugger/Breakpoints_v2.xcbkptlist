@@ -825,8 +825,8 @@
             filePath = "Recall/Onboarding/OnboardingViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "212"
-            endingLineNumber = "212"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "getRecalledEventCount(from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -860,6 +860,22 @@
             startingLineNumber = "145"
             endingLineNumber = "145"
             landmarkName = "setCurrentPostIndex(from:in:dayCount:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F92FCDE8-2F89-4EEF-8A55-485305443712"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Recall/Managers/RealmManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "293"
+            endingLineNumber = "293"
+            landmarkName = "checkProfile()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

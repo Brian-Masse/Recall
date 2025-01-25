@@ -58,7 +58,6 @@ struct OnboardingContainerView: View {
     var body: some View {
         CoordinatorView(data: .init(events: [], goals: [], tags: [], summaries: []),
                         defaultScreen: .onBoarding)
-        .environment(\.realmConfiguration, RecallModel.realmManager.configuration ?? .init())
     }
 }
 

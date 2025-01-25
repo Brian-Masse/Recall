@@ -17,15 +17,17 @@ struct OnboardingProfileCreationScene: View {
     
     @State private var firstName: String = ""
     @State private var lastName: String = ""
+    @State private var email: String = ""
     @State private var birthday: Date = .now
     
     private var formsComplete: Bool {
-        !(firstName.isEmpty || lastName.isEmpty || -(birthday.timeIntervalSinceNow) < Constants.yearTime * 18)
+        !(firstName.isEmpty || lastName.isEmpty || -(birthday.timeIntervalSinceNow) < Constants.yearTime * 18 || email.isEmpty)
     }
     
     private func loadProfileInfo() {
         self.firstName = RecallModel.index.firstName
         self.lastName = RecallModel.index.lastName
+        self.email = RecallModel.index.email
         self.birthday = RecallModel.index.dateOfBirth
     }
     
@@ -47,6 +49,12 @@ struct OnboardingProfileCreationScene: View {
         StyledTextField(title: "",
                         binding: $lastName,
                         prompt: "Last Name")
+        
+        if RecallModel.index.email.isEmpty {
+            StyledTextField(title: "",
+                            binding: $email,
+                            prompt: "email")
+        }
         
         StyledDatePicker($birthday, title: "", prompt: "birthday")
     }
@@ -70,6 +78,9 @@ struct OnboardingProfileCreationScene: View {
             .onChange(of: lastName) {
                 viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete)
             }
+            .onChange(of: email) {
+                viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete)
+            }
             .onChange(of: birthday) {
                 viewModel.setSceneStatus(to: formsComplete ? .complete : .incomplete)
             }
@@ -79,6 +90,7 @@ struct OnboardingProfileCreationScene: View {
                 OnboardingContinueButton(preTask: {
                     viewModel.submitProfileDemographics(firstName: firstName,
                                                         lastName: lastName,
+                                                        email: email,
                                                         birthday: birthday)
                 })
             }
