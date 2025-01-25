@@ -15,16 +15,16 @@ struct TemplateTag: Equatable, Identifiable {
     
     let title: String
     let color: Color
-    let templateMask: [ TemplateTagMask ]
+    let goals: [ String ]
     
     init(
         _ title: String,
         color: Color,
-        templateMask: [ TemplateTagMask ]
+        goals: [ String ]
     ) {
         self.title = title
         self.color = color
-        self.templateMask = templateMask
+        self.goals = goals
     }
 }
 
@@ -35,6 +35,12 @@ struct OnboardingTagScene: View {
     
     private var templateCountString: String {
         "\(viewModel.selectedTemplateTags.count) / \(viewModel.minimumTagTemplates)"
+    }
+    
+    private let tagTemplates: [TemplateTag]
+    
+    init() {
+        self.tagTemplates = TemplateManager().getTagTemplates()
     }
     
 //    MARK: makeHeader
@@ -72,9 +78,9 @@ struct OnboardingTagScene: View {
             RecallIcon("tag.fill")
                 .foregroundStyle(template.color)
             
-            UniversalText(template.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            UniversalText(template.title, size: Constants.UIDefaultTextSize - 1, font: Constants.mainFont)
         }
-        .highlightedBackground(templateIsSelected)
+        .highlightedBackground(templateIsSelected, padding: 11, disabledStyle: .primary)
         .onTapGesture { withAnimation {
             viewModel.toggleTemplateTag(template)
             
@@ -88,11 +94,11 @@ struct OnboardingTagScene: View {
     @ViewBuilder
     private func makeTemplateTagSelectors() -> some View {
         ScrollView(.vertical, showsIndicators: false) {
-            WrappedHStack(collection: templateTags) { template in
+            WrappedHStack(collection: tagTemplates, spacing: 7) { template in
                 makeTemplateTagSelector(template)
             }
-            
         }
+        .safeAreaPadding(.bottom, 100)
     }
     
 //    MARK: Body

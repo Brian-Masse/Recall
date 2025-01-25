@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import SwiftUI
+import UIUniversals
 
 //MARK: - TemplateTagMask
 enum TemplateTagMask: String {
@@ -25,10 +27,14 @@ enum TemplateTagMask: String {
 struct TemplateManager {
     
     private let goalTempaltesFileName: String = "goalTemplates"
+    private let tagTemplatesFileName: String = "tagTemplates"
     
-//    MARK: GetGoalTemplates
+    private enum TagColor {
+//        case
+    }
+    
+//    MARK: - GetGoalTemplates
     func getGoalTemplates() -> [TemplateGoal] {
-        
         let path = Bundle.main.path(forResource: goalTempaltesFileName, ofType: "csv", inDirectory: "")
         
         do {
@@ -56,18 +62,54 @@ struct TemplateManager {
             return []
         }
     }
+    
+//    MARK: - getTagTemplates
+    func getTagTemplates() -> [TemplateTag] {
+        let path = Bundle.main.path(forResource: tagTemplatesFileName, ofType: "csv", inDirectory: "")
+        
+        do {
+            let contents = try String(contentsOfFile: path!, encoding: .utf8)
+            
+            let parsedCSV: [TemplateTag] = contents.components(separatedBy: "\n")
+                .compactMap { str in
+                    let components = str.components(separatedBy: ",")
+                    let color = getTagColor(from: components[1].trimmingCharacters(in: .newlines).lowercased())
+                    var goals: [String] = []
+                    
+//                    get all the contributing goals
+                    for i in 2..<components.count {
+                        let goal = components[i].trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                        
+                        if !goal.isEmpty { goals.append(goal) }
+                    }
+                    
+                    return TemplateTag(components[0],
+                                       color: color,
+                                       goals: goals)
+                }
+                .sorted { tag1, tag2 in
+                    return tag1.color.hex >= tag2.color.hex
+                }
+            
+            return parsedCSV
+            
+        } catch {
+            print(error.localizedDescription)
+            return []
+        }
+    }
+    
+//    MARK: getTagColor
+    func getTagColor(from descriptor: String) -> Color {
+        if descriptor == "dark green"   { return Colors.classicLightAccent }
+        if descriptor == "tangerine"    { return Colors.tangerine }
+        if descriptor == "grey"         { return Color.gray }
+        
+        let colorOption = Colors.accentColorOptions.first { color in
+            color.title.lowercased() == descriptor
+        } ?? Colors.accentColorOptions.first
+        
+        return colorOption!.darkAccent
+    }
+    
 }
-
-
-
-
-
-
-
-//MARK: - templateTags
-let templateTags: [TemplateTag] = [
-    .init("programming", color: .blue, templateMask: [.productivity]),
-    .init("went to gym", color: .yellow, templateMask: [.productivity, .exercising]),
-]
-
-

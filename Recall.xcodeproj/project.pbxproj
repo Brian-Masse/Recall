@@ -51,6 +51,7 @@
 		C9685B1A2D4215EB00C6F413 /* CalendarContainerScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9685B192D4215EB00C6F413 /* CalendarContainerScrollView.swift */; };
 		C9685B1C2D45830600C6F413 /* OnboardingTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9685B1B2D45830600C6F413 /* OnboardingTemplates.swift */; };
 		C9685B202D45901700C6F413 /* goalTemplates.csv in Resources */ = {isa = PBXBuildFile; fileRef = C9685B1F2D45901700C6F413 /* goalTemplates.csv */; };
+		C9685B262D45A0DE00C6F413 /* tagTemplates.csv in Resources */ = {isa = PBXBuildFile; fileRef = C9685B252D45A0DE00C6F413 /* tagTemplates.csv */; };
 		C9741CFD2D0E9AC8004CA458 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9BF38BD2C9B568400AA8C3F /* UIUniversals */; };
 		C9741CFE2D0E9AC8004CA458 /* UIUniversals in Frameworks */ = {isa = PBXBuildFile; productRef = C9C470CD2CE6EC84004AB489 /* UIUniversals */; };
 		C9741D162D0F899C004CA458 /* UniversalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9741D152D0F899C004CA458 /* UniversalExtensions.swift */; };
@@ -251,6 +252,7 @@
 		C9685B192D4215EB00C6F413 /* CalendarContainerScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarContainerScrollView.swift; sourceTree = "<group>"; };
 		C9685B1B2D45830600C6F413 /* OnboardingTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTemplates.swift; sourceTree = "<group>"; };
 		C9685B1F2D45901700C6F413 /* goalTemplates.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = goalTemplates.csv; sourceTree = "<group>"; };
+		C9685B252D45A0DE00C6F413 /* tagTemplates.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = tagTemplates.csv; sourceTree = "<group>"; };
 		C9741D152D0F899C004CA458 /* UniversalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalExtensions.swift; sourceTree = "<group>"; };
 		C98573432B8936AE001D9895 /* AndaleMono.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AndaleMono.ttf; sourceTree = "<group>"; };
 		C985EB5C2CACBDE6003186BD /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
@@ -762,6 +764,7 @@
 			isa = PBXGroup;
 			children = (
 				C9685B1F2D45901700C6F413 /* goalTemplates.csv */,
+				C9685B252D45A0DE00C6F413 /* tagTemplates.csv */,
 				C9DC3F372D206B630021ED79 /* OnboardingGoalScene.swift */,
 				C9DC3F412D2434D70021ED79 /* OnboardingEventScene.swift */,
 				C9DC3F432D248AA20021ED79 /* OnboardingCalendarScene.swift */,
@@ -987,6 +990,7 @@
 			files = (
 				C99050462D0E3E8700C800FD /* AndaleMono.ttf in Resources */,
 				C99050472D0E3E8700C800FD /* SF-Mono-Medium.otf in Resources */,
+				C9685B262D45A0DE00C6F413 /* tagTemplates.csv in Resources */,
 				C99050482D0E3E8700C800FD /* Assets.xcassets in Resources */,
 				C99050492D0E3E8700C800FD /* SF-Pro.ttf in Resources */,
 				C990504A2D0E3E8700C800FD /* Syne-Medium.ttf in Resources */,

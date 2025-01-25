@@ -56,7 +56,7 @@ class OnboardingViewModel: ObservableObject {
     
     private(set) var inOnboarding: Bool = false
     
-    @Published private(set) var scene: OnBoardingScene = .goalTutorial
+    @Published private(set) var scene: OnBoardingScene = .tagsTutorial
     @Published private(set) var sceneStatus: SceneStatus = .incomplete
     
     @Published var triggerBackgroundUpdate: Bool = false
@@ -175,13 +175,8 @@ class OnboardingViewModel: ObservableObject {
     //    translates a list of selected templates into real RecallGoal objects that the user owns
     @MainActor
     private func getGoalRatings(for tag: TemplateTag) async -> Dictionary<String, String> {
-        let goalNames = selectedTemplateGoals.compactMap { goal in
-            if tag.templateMask.contains(goal.tagMask) { return goal.title }
-            return nil
-        }
-        
         let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
-            .filter { goal in goalNames.contains(goal.label) }
+            .filter { goal in tag.goals.contains(goal.label.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) ) }
         
         return goals.reduce(into: [String: String]()) { partialResult, goal in
             partialResult[goal.key] = "1"

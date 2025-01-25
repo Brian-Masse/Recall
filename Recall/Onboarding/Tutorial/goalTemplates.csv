@@ -1,11 +1,11 @@
-﻿GoalName,Target Hours,Frequency,Priority,Tag Mask
-Read a book,1,daily,low,reading
+﻿Read a book,1,daily,low,reading
 Productivity,35,weekly,high,productivity
-Go for a walk,1,daily,medium,exercising
+Go for a walk,1,daily,medium,Walking
 Exercise,7,weekly,high,exercising
-Cook meals,10,weekly,medium,creativity
-Study,15,weekly,high,learning
-Practice music,5,weekly,medium,creativity
+Social,20,weekly,high,social
+Cook meals,10,weekly,medium,cooking
+Study,15,weekly,high,studying
+Practice music,5,weekly,medium,music
 Call family,1,weekly,low,social
 Volunteer,3,weekly,high,social
 Play a sport,2,weekly,medium,exercising
@@ -30,4 +30,5 @@ Call friends,4,weekly ,medium,social
 Meetings,3,weekly,low,productivity
 Spend time with Loved Ones,6,weekly,medium,social
 Debate,14,weekly,high,productivity
-Relax,7,Week,medium,mentalHealth
+Relax,7,weekly,medium,mentalHealth
+Artistic Work,5,weekly,medium,creativity
