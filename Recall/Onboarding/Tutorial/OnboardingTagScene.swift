@@ -9,13 +9,6 @@ import Foundation
 import SwiftUI
 import UIUniversals
 
-//MARK: - TemplateTagMask
-enum TemplateTagMask: Int {
-    case productivity
-    case reading
-    case exercising
-}
-
 //MARK: - TemplateTag
 struct TemplateTag: Equatable, Identifiable {
     var id: String { title }
@@ -34,12 +27,6 @@ struct TemplateTag: Equatable, Identifiable {
         self.templateMask = templateMask
     }
 }
-
-//MARK: templateTags
-private let templateTags: [TemplateTag] = [
-    .init("programming", color: .blue, templateMask: [.productivity]),
-    .init("went to gym", color: .yellow, templateMask: [.productivity, .exercising]),
-]
 
 //MARK: - onboardingTagScene
 struct OnboardingTagScene: View {

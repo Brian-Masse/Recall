@@ -249,19 +249,20 @@ struct NullContentShape: Shape {
 struct HiglightedBackground: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
     
+    let padding: Double
     let active: Bool
     let disabledStyle: UniversalStyle
     
     func body(content: Content) -> some View {
         content
             .foregroundStyle( active ? .black : ( colorScheme == .light ? .black : .white ) )
-            .rectangularBackground(style: active ? .accent : disabledStyle )
+            .rectangularBackground(padding, style: active ? .accent : disabledStyle )
     }
 }
 
 extension View {
-    public func highlightedBackground(_ active: Bool, disabledStyle: UniversalStyle = .secondary) -> some View {
-        modifier(HiglightedBackground(active: active, disabledStyle: disabledStyle))
+    public func highlightedBackground(_ active: Bool, padding: Double = 15, disabledStyle: UniversalStyle = .secondary) -> some View {
+        modifier(HiglightedBackground(padding: padding, active: active, disabledStyle: disabledStyle))
     }
 }
 

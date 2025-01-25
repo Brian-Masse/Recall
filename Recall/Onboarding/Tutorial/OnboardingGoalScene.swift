@@ -34,13 +34,7 @@ struct TemplateGoal: Equatable, Identifiable {
     }
 }
 
-//MARK: templateGoals
-private let templateGoals: [TemplateGoal] = [
-    .init( "Read a book",    targetHours: 1, frequency: .daily, priority: .low, tagMask: .reading),
-    .init( "Productvity",    targetHours: 35, frequency: .weekly, priority: .high, tagMask: .productivity),
-    .init( "Go for a walk",  targetHours: 1, frequency: .daily, priority: .medium, tagMask: .exercising ),
-    .init( "Workout",        targetHours: 7, frequency: .weekly, priority: .high, tagMask: .exercising )
-]
+
 
 //MARK: - onBoardingGoalScene
 struct OnboardingGoalScene: View {
@@ -49,6 +43,12 @@ struct OnboardingGoalScene: View {
     
     private var templateCountString: String {
         "\(viewModel.selectedTemplateGoals.count) / \(viewModel.minimumGoalTemplates)"
+    }
+    
+    private let goalTemplates: [TemplateGoal]
+    
+    init() {
+        self.goalTemplates = TemplateManager().getGoalTemplates()
     }
     
 //    MARK: makeHeader
@@ -82,24 +82,23 @@ struct OnboardingGoalScene: View {
         
         let templateIsSelected = templateIsSelected(templateGoal)
         
-        HStack {
-            UniversalText(templateGoal.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-        }
-        .highlightedBackground(templateIsSelected)
-        .onTapGesture { withAnimation {
-            viewModel.toggleTemplateGoal(templateGoal)
-        } }
+        UniversalText(templateGoal.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
+            .highlightedBackground(templateIsSelected, disabledStyle: .primary)
+            .onTapGesture { withAnimation {
+                viewModel.toggleTemplateGoal(templateGoal)
+            } }
     }
 
 //    MARK: makeTemplateGoalSelectors
     @ViewBuilder
     private func makeTemplateGoalSelectors() -> some View {
         ScrollView(.vertical, showsIndicators: false) {
-            WrappedHStack(collection: templateGoals) { templateGoal in
+            WrappedHStack(collection: goalTemplates, spacing: 7) { templateGoal in
                 makeTemplateGoalSelector(templateGoal)
             }
             
         }
+        .safeAreaPadding(.bottom, 100)
     }
     
 //    MARK: Body
@@ -122,7 +121,9 @@ struct OnboardingGoalScene: View {
                 })
             }
             
-            .onAppear { viewModel.checkInitialGoals() }
+            .onAppear {
+                viewModel.checkInitialGoals()
+            }
         }
     }
 }

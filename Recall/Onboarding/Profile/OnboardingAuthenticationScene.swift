@@ -42,6 +42,7 @@ struct OnboardingAuthenticationScene: View {
             if let error = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
                 alertMessage = error
                 showingAlert = true
+                return
             }
             
             viewModel.incrementScene()
@@ -62,8 +63,10 @@ struct OnboardingAuthenticationScene: View {
             
             Spacer()
             
-            DismissButton() {
-                RecallModel.realmManager.setState(.splashScreen)
+            if !OnboardingViewModel.shared.inOnboarding {
+                DismissButton() {
+                    RecallModel.realmManager.setState(.splashScreen)
+                }
             }
         }
     }

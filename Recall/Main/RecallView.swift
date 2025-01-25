@@ -50,5 +50,8 @@ struct RecallView: View {
                     .mainScreenTransition()
             }
         }
+        .onAppear {
+//            TemplateManager().getCSVData()
+        }
     }
 }
