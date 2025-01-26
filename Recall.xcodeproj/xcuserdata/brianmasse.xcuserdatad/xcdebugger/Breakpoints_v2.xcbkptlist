@@ -873,8 +873,8 @@
             filePath = "Recall/Managers/RealmManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "293"
-            endingLineNumber = "293"
+            startingLineNumber = "295"
+            endingLineNumber = "295"
             landmarkName = "checkProfile()"
             landmarkType = "7">
          </BreakpointContent>

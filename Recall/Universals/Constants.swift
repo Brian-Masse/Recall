@@ -45,7 +45,10 @@ extension Colors {
     
     static let classicLightAccent   = Color(66, 122, 69)
     static let classicDarkAccent    = Color(95, 255, 135)
-    static let beige                = Color( 73, 27, 29 )
+    
+    static let lightBeige           = Color( 185, 106, 89 )
+    static let darkBeige            = Color( 116, 58, 54 )
+    
     static let tangerine            = Color(255, 140, 97)
     
     static let accentColorOptions: [AccentColor] = [
@@ -54,33 +57,33 @@ extension Colors {
                   lightAccent: .init(130, 130, 100),
                   darkAccent: .init(178, 196, 128)),
             
-            .init(title: "red",
-                  lightAccent: Colors.red.safeMix(with: .white, by: 0.15),
-                  darkAccent: Colors.red),
+            .init(title: "Classic",
+                  lightAccent: classicLightAccent,
+                  darkAccent: classicDarkAccent),
+        
+            .init(title: "purple",
+                  lightAccent: Colors.grape.safeMix(with: .white, by: 0.15),
+                  darkAccent: Colors.grape),
+            
+            .init(title: "blue",
+                  lightAccent: Colors.blue.safeMix(with: .white, by: 0.15),
+                  darkAccent: Colors.blue),
         
             .init(title: "yellow",
                   lightAccent: Colors.yellow.safeMix(with: .white, by: 0.15),
                   darkAccent: Colors.yellow),
             
-            .init(title: "blue",
-                  lightAccent: Colors.blue.safeMix(with: .white, by: 0.15),
-                  darkAccent: Colors.blue),
-            
-            .init(title: "purple",
-                  lightAccent: Colors.grape.safeMix(with: .white, by: 0.15),
-                  darkAccent: Colors.grape),
+            .init(title: "red",
+                  lightAccent: Colors.red.safeMix(with: .white, by: 0.15),
+                  darkAccent: Colors.red),
             
             .init(title: "pink",
                   lightAccent: Colors.pink.safeMix(with: .white, by: 0.15),
                   darkAccent: Colors.pink),
             
             .init(title: "beige",
-                  lightAccent: Colors.beige.safeMix(with: .white, by: 0.15),
-                  darkAccent: Colors.beige),
-            
-            .init(title: "Classic",
-                  lightAccent: classicLightAccent,
-                  darkAccent: classicDarkAccent)
+                  lightAccent: Colors.darkBeige,
+                  darkAccent: Colors.lightBeige),
             
     ]
 }

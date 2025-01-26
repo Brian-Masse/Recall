@@ -56,7 +56,7 @@ class OnboardingViewModel: ObservableObject {
     
     private(set) var inOnboarding: Bool = false
     
-    @Published private(set) var scene: OnBoardingScene = .tagsTutorial
+    @Published private(set) var scene: OnBoardingScene = .overview
     @Published private(set) var sceneStatus: SceneStatus = .incomplete
     
     @Published var triggerBackgroundUpdate: Bool = false

@@ -75,7 +75,7 @@ struct CalendarContainerScrollView<C: View>: View {
 //    MARK: - makeScrollView
     @ViewBuilder
     private func makeScrollView(in width: Double) -> some View {
-        ScrollView(.horizontal) {
+        ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 0) {
                 
                 ForEach( 0..<itemCount, id: \.self ) { index in

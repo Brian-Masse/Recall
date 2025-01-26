@@ -224,6 +224,8 @@ class RealmManager: ObservableObject {
         if let user = self.user {
             RecallNavigationCoordinator.shared.dismiss()
             
+            RecallModel.index.setAccentColor(to: 0 )
+            
             try? await user.logOut()
             
             NotificationManager.shared.clearNotifications()
