@@ -360,7 +360,7 @@ struct FullScreenProgressBar: View {
     var body: some View {
         ZStack {
             ProgressBarShape(progress: progress,
-                             cornerRadius: cornerRadius - (thickness / 2))
+                             cornerRadius: UIScreen.main.displayCornerRadius - (thickness / 2))
             .stroke(style: .init(lineWidth: thickness, lineCap: .round))
             .padding(thickness / 2)
             .opacity(progress > 0.05 ? 1 : 0)

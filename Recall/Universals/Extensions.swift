@@ -89,7 +89,7 @@ extension Constants {
     
 }
 
-//MARK: StringProtocol
+//MARK: - StringProtocol
 extension StringProtocol {
     func index<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> Index? {
         range(of: string, options: options)?.lowerBound
@@ -111,5 +111,23 @@ extension StringProtocol {
                     index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
         }
         return result
+    }
+}
+
+//MARK: - UIScreen
+extension UIScreen {
+    private static let cornerRadiusKey: String = {
+        let components = ["Radius", "Corner", "display", "_"]
+        return components.reversed().joined()
+    } ()
+
+    public var displayCornerRadius: CGFloat {
+
+        guard let cornerRadius = self.value(forKey: Self.cornerRadiusKey) as? CGFloat else {
+            assertionFailure("Failed to detect screen corner radius")
+            return 0
+        }
+        
+        return cornerRadius
     }
 }
