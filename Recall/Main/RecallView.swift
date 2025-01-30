@@ -38,7 +38,7 @@ struct RecallView: View {
                    
             case .onboarding:
                 OnboardingContainerView()
-                    .environment(\.realmConfiguration, RecallModel.realmManager.configuration ?? .init())
+                    .environment(\.realmConfiguration, realmManager.configuration  ?? .init())
                     .mainScreenTransition()
                 
             case .error:

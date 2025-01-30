@@ -302,5 +302,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         WidgetStorage.shared.saveBasicValue(value: true, key: WidgetStorageKeys.updateAccentColorTrigger)
         
         WidgetCenter.shared.reloadAllTimelines()
+        
+        OnboardingViewModel.shared.triggerBackgroundUpdate.toggle()
     }
 }

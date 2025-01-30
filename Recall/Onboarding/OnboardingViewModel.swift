@@ -17,6 +17,7 @@ enum OnBoardingScene: Int, CaseIterable {
 //    case howItWorks
     
     case authentication
+    case loadingRealm
     case profileSetup1
     case profileSetup2
     
@@ -65,6 +66,7 @@ class OnboardingViewModel: ObservableObject {
     
     @Published var currentSceneProgress: Double = 0
     
+//    MARK: setSceneStatus
     func setSceneStatus(to status: SceneStatus) {
         withAnimation { sceneStatus = status }
     }

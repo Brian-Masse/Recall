@@ -24,6 +24,7 @@ struct OnboardingView: View {
 //        case .howItWorks:       OnboardingOverviewScene()
             
         case .authentication:   OnboardingAuthenticationScene()
+        case .loadingRealm:     OpenFlexibleSyncRealmView()
         case .profileSetup1:    OnboardingProfileCreationScene()
         case .profileSetup2:    OnboardingProfileSettingsScene()
             
@@ -42,6 +43,7 @@ struct OnboardingView: View {
         GeometryReader { geo in
             sceneBuilder()
                 .padding(7)
+//                .environment(\.realmConfiguration, ( viewModel.scene.rawValue > OnBoardingScene.authentication.rawValue ) ? RecallModel.realmManager.configuration : .init())
         }
         .onAppear { viewModel.startOnboarding() }
         .overlay { NoiseOverlay() }

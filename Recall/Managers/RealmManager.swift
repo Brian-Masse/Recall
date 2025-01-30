@@ -38,7 +38,7 @@ class RealmManager: ObservableObject {
     var realm: Realm!
     var app = RealmSwift.App(id: RealmManager.appID)
     var user: User?
-    var configuration: Realm.Configuration!
+    @Published var configuration: Realm.Configuration!
     
     var index: RecallIndex!
     var dataStore: RecallDataStore!
@@ -189,30 +189,19 @@ class RealmManager: ObservableObject {
 //    If there is a user already signed in, skip the user authentication system
 //    the method for checking if a user is signedIn is different whether you're online or offline
     @MainActor
-    func checkLogin() {
+    func checkLogin() async {
         if let user = app.currentUser {
             self.user = user
-            self.postAuthenticationInit()
+            await self.postAuthenticationInit()
         }
     }
     
+//    MARK: postAuthenticationInit
     @MainActor
-    private func postAuthenticationInit() {
+    private func postAuthenticationInit() async {
         self.setConfiguration()
         
-//        if you are onboarding, manually load the realm, and call authRealm
-//        otherwise, let the UI handle that
-        if OnboardingViewModel.shared.inOnboarding {
-            if self.realm != nil { return }
-            guard let realm = try? Realm(configuration: self.configuration) else {
-                OnboardingViewModel.shared.setOnboardingStatus(to: false)
-                self.setState(.error)
-                return
-            }
-            
-            Task { await self.authRealm(realm: realm) }
-            
-        } else {
+        if !OnboardingViewModel.shared.inOnboarding {
             self.setState(.openingRealm)
         }
     }
@@ -336,10 +325,18 @@ class RealmManager: ObservableObject {
     func authRealm(realm: Realm) async {
         self.realm = realm
         self.addNonInitialSubscriptions()
+        
         await RecallModel.updateManager.initialize()
+        
         await self.checkProfile()
         await self.checkDataStore()
+        
         RecallModel.index.updateAccentColor()
+        
+        if OnboardingViewModel.shared.inOnboarding {
+            OnboardingViewModel.shared.incrementScene()
+            OnboardingViewModel.shared.setSceneStatus(to: .complete)
+        }
     }
     
 //    MARK: Subscription Functions

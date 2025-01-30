@@ -263,7 +263,7 @@ struct OnboardingProfileSettingsScene: View {
         .overlay(alignment: .bottom) {
             OnboardingContinueButton()
         }
-        .onAppear() { viewModel.setSceneStatus(to: .complete) }
+        .onAppear() { viewModel.setSceneStatus(to: .complete)}
     }
 }
 

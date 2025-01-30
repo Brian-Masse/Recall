@@ -91,6 +91,6 @@ struct OpenFlexibleSyncRealmView: View {
             }
             .frame(width: geo.size.width, height: geo.size.height)
             
-        }.universalBackground()
+        }
     }
 }
