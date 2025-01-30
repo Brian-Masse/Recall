@@ -76,10 +76,10 @@ struct TagPageView: View {
 //    MARK: ViewBuilders
    @ViewBuilder
    private func makeTagList(from tags: [RecallCategory], title: String) -> some View {
-       if tags.count != 0 {
-           LazyVStack(alignment: .leading, spacing: 5) {
-               UniversalText(title, size: Constants.UIHeaderTextSize, font: Constants.titleFont)
-               
+       LazyVStack(alignment: .leading, spacing: 5) {
+           UniversalText(title, size: Constants.UISubHeaderTextSize, font: Constants.titleFont)
+           
+           if !tags.isEmpty {
                LazyVStack(alignment: .leading) {
                    ForEach(tags) { tag in
                        
@@ -87,9 +87,13 @@ struct TagPageView: View {
                    }
                }
                .rectangularBackground(7, style: .primary, stroke: true)
+           } else {
+               
+               makeSectionFiller(icon: "tag.slash.fill",
+                                 message: "No Favorite Tags. Tap and hold on one of your tags to favorite it.") { }
            }
-           .padding(.bottom)
        }
+       .padding(.bottom)
    }
     
 //    MARK: Vars
@@ -99,6 +103,16 @@ struct TagPageView: View {
     @State var nonFavoriteTags: [RecallCategory] = []
     
     @State var scrollViewPosition: CGPoint = .zero
+    
+    func filterTags() async {
+        let favoriteTags = await makeFavoriteTags()
+        let nonFavoriteTags = await makeNonFavoriteTags()
+        
+        withAnimation {
+            self.favoriteTags = favoriteTags
+            self.nonFavoriteTags = nonFavoriteTags
+        }
+    }
     
 //    MARK: Body
     var body: some View {
@@ -112,18 +126,8 @@ struct TagPageView: View {
                 }
                 .padding(.bottom, Constants.UIBottomOfPagePadding)
             }
-            .task {
-                favoriteTags = await makeFavoriteTags()
-                nonFavoriteTags = await makeNonFavoriteTags()
-            }
-        } else {
-            VStack {
-                UniversalText( Constants.tagSplashPurpose,
-                               size: Constants.UIDefaultTextSize,
-                               font: Constants.mainFont)
-                
-                Spacer()
-            }
+            .task { await filterTags() }
+            .onChange(of: tags) { Task { await filterTags() } }
         }
     }
 }
