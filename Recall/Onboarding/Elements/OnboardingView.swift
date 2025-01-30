@@ -21,7 +21,7 @@ struct OnboardingView: View {
         switch viewModel.scene {
           
         case .overview:         OnboardingOverviewScene()
-        case .howItWorks:       OnboardingOverviewScene()
+//        case .howItWorks:       OnboardingOverviewScene()
             
         case .authentication:   OnboardingAuthenticationScene()
         case .profileSetup1:    OnboardingProfileCreationScene()

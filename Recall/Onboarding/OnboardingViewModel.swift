@@ -14,7 +14,7 @@ import UIUniversals
 enum OnBoardingScene: Int, CaseIterable {
     
     case overview
-    case howItWorks
+//    case howItWorks
     
     case authentication
     case profileSetup1

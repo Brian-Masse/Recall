@@ -15,13 +15,13 @@ struct OnboardingOverviewScene: View {
     
     private let overviewScenes: [OnboardingOverviewContainerView.OnboardingOverviewScene] = [
         .init(icon: "calendar",
-              description: "Recall is a calendar app designed for remembering the many events in your life"),
+              description: "Recall is a calendar app designed for remembering the many events in your day"),
         
         .init(icon: "memories",
               description: "It helps you recall meaningful memories that otherwise get lost in the shuffle of daily life"),
         
         .init(icon: "flag.pattern.checkered.2.crossed",
-              description: "It intelligently combs through thousands of events, identifying hard-to-find trends and delivering clarity from complexity."),
+              description: "It also intelligently combs through thousands of events, to reveal hard-to-find trends and insights."),
         
         .init(icon: "checkmark",
               description: "In short, Recall keeps you present in the details of your life, while helping you look towards to its future")
@@ -69,13 +69,13 @@ struct OnboardingOverviewScene: View {
                 OnboardingOverviewEventAnimation(currentMaxTime: $currentMaxTime)
             }
             
-        } else if viewModel.scene == .howItWorks {
-            OnboardingOverviewContainerView(howItWorksScenes,
-                                            currentSceneIndex: $currentHowitWorksScene,
-                                            splashScreen: .init(icon: "gearshape.2",
-                                                                description: "How does it work?"))
         }
-        
+//        else if viewModel.scene == .howItWorks {
+//            OnboardingOverviewContainerView(howItWorksScenes,
+//                                            currentSceneIndex: $currentHowitWorksScene,
+//                                            splashScreen: .init(icon: "gearshape.2",
+//                                                                description: "How does it work?"))
+//        }
     }
 }
 
