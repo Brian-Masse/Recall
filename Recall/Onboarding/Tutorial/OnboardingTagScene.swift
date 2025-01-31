@@ -32,6 +32,7 @@ struct TemplateTag: Equatable, Identifiable {
 struct OnboardingTagScene: View {
     
     @ObservedObject private var viewModel: OnboardingViewModel = OnboardingViewModel.shared
+    @Environment(\.colorScheme) private var colorScheme
     
     private var templateCountString: String {
         "\(viewModel.selectedTemplateTags.count) / \(viewModel.minimumTagTemplates)"
@@ -80,7 +81,7 @@ struct OnboardingTagScene: View {
             
             UniversalText(template.title, size: Constants.UIDefaultTextSize - 1, font: Constants.mainFont)
         }
-        .highlightedBackground(templateIsSelected, padding: 11, disabledStyle: .transparent)
+        .highlightedBackground(templateIsSelected, padding: 11, disabledStyle: colorScheme == .light ? .primary : .transparent)
         .onTapGesture { withAnimation {
             viewModel.toggleTemplateTag(template)
             

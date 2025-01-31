@@ -40,7 +40,7 @@ struct OnboardingAuthenticationScene: View {
 
         if formsComplete {
             if let error = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
-                alertMessage = error
+                alertMessage = "Incorrect Email or Password"
                 showingAlert = true
                 return
             }

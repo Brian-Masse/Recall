@@ -42,26 +42,29 @@ struct GoalsPageView: View {
         
         var body: some View {
             VStack {
-                if goals.count != 0 {
-                    UniversalButton {
-                        HStack {
-                            UniversalText( priority.rawValue + " priority",
-                                           size: Constants.UISubHeaderTextSize,
-                                           font: Constants.titleFont )
-                            
-                            Spacer()
-                            
-                            RecallIcon(showingSection ? "chevron.down" : "chevron.up")
-                        }
-                    } action: { showingSection.toggle() }
-                    
-                    if showingSection {
+                UniversalButton {
+                    HStack {
+                        UniversalText( priority.rawValue + " priority",
+                                       size: Constants.UISubHeaderTextSize,
+                                       font: Constants.titleFont )
+                        
+                        Spacer()
+                        
+                        RecallIcon(showingSection ? "chevron.down" : "chevron.up")
+                    }
+                } action: { showingSection.toggle() }
+                
+                if showingSection  {
+                    if goals.count > 0 {
                         VStack {
                             ForEach( goals, id: \.self ) { goal in
                                 GoalPreviewView(goal: goal)
                                     .transition(.blurReplace)
                             }
                         }.rectangularBackground(7, style: .secondary, stroke: true)
+                    } else {
+                        makeSectionFiller(icon: "flag.slash",
+                                          message: "No \(priority.rawValue) priority goals. Create or edit a goal's priorty to see it here.") {}
                     }
                 }
             }

@@ -333,9 +333,8 @@ class RealmManager: ObservableObject {
         
         RecallModel.index.updateAccentColor()
         
-        if OnboardingViewModel.shared.inOnboarding {
+        if OnboardingViewModel.shared.scene == .loadingRealm {
             OnboardingViewModel.shared.incrementScene()
-            OnboardingViewModel.shared.setSceneStatus(to: .complete)
         }
     }
     

@@ -74,13 +74,15 @@ class OnboardingViewModel: ObservableObject {
     //    MARK: IncrementScene
     @MainActor
     func incrementScene() {
-        
-        if self.scene == .complete { submit() }
-        
-        withAnimation {
-            self.scene = scene.incrementScene()
-            self.setSceneStatus(to: .incomplete)
-            self.currentSceneProgress =  Double(scene.rawValue) / Double(OnBoardingScene.allCases.count - 1)
+        if self.inOnboarding {
+            
+            if self.scene == .complete { submit() }
+            
+            withAnimation {
+                self.scene = scene.incrementScene()
+                self.setSceneStatus(to: .incomplete)
+                self.currentSceneProgress =  Double(scene.rawValue) / Double(OnBoardingScene.allCases.count - 1)
+            }
         }
     }
     

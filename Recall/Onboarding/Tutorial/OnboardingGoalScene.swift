@@ -40,6 +40,7 @@ struct TemplateGoal: Equatable, Identifiable {
 struct OnboardingGoalScene: View {
     
     @ObservedObject private var viewModel: OnboardingViewModel = OnboardingViewModel.shared
+    @Environment(\.colorScheme) private var colorScheme
     
     private var templateCountString: String {
         "\(viewModel.selectedTemplateGoals.count) / \(viewModel.minimumGoalTemplates)"
@@ -83,7 +84,7 @@ struct OnboardingGoalScene: View {
         let templateIsSelected = templateIsSelected(templateGoal)
         
         UniversalText(templateGoal.title, size: Constants.UIDefaultTextSize, font: Constants.mainFont)
-            .highlightedBackground(templateIsSelected, disabledStyle: .transparent)
+            .highlightedBackground(templateIsSelected, disabledStyle: colorScheme == .light ? .primary : .transparent)
             .onTapGesture { withAnimation {
                 viewModel.toggleTemplateGoal(templateGoal)
             } }
