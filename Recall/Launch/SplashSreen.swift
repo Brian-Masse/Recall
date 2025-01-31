@@ -120,8 +120,7 @@ struct SplashScreen: View {
     private func makeContent() -> some View {
         
         VStack {
-            UniversalText( "Recall", size: Constants.UIHeaderTextSize + 2, font: Constants.titleFont )
-                .scaleEffect(2)
+            UniversalText( "Recall", size: Constants.UIHeaderTextSize * 2, font: Constants.titleFont )
                 .padding(.bottom, 7)
             
             makeTagLine()
