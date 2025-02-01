@@ -152,6 +152,8 @@ struct CalendarEventCreationView: View {
     @State private var goalRatings: Dictionary<String, String>
     @State private var updatedGoalRatings: Bool = false
 
+    @State private var formComplete: Bool = false
+    
 //    MARK: Init
     @MainActor
     private func onAppear() {
@@ -184,7 +186,8 @@ struct CalendarEventCreationView: View {
         self.alertTitle = "Incomplete Form"
         self.alertMessage = "Please provide a title, start and end times, and a tag before creating the event"
         
-        return !self.title.isEmpty && !self.category.label.isEmpty
+        self.formComplete = !self.title.isEmpty && !self.category.label.isEmpty
+        return formComplete
     }
     
 //    MARK: Submit
@@ -384,6 +387,7 @@ struct CalendarEventCreationView: View {
             CreationFormView(formTitle,
                              section: EventCreationFormSection.self,
                              sequence: editing ? [.overview, .tags, .time] : nil,
+                             sceneComplete: $formComplete,
                              submit: submit) { section in
                 switch section {
                 case .overview: makeOverviewQuestions()
@@ -393,8 +397,15 @@ struct CalendarEventCreationView: View {
             }
         }
         .onAppear { onAppear() }
-        .onChange(of: category) { goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings) }
+        
+        .onChange(of: category) {
+            goalRatings = RecallCalendarEvent.translateGoalRatingList(category.goalRatings)
+            let _ = self.checkCompletion()
+        }
         .onChange(of: goalRatings) { updatedGoalRatings = true }
+        .onChange(of: title) { let _ = self.checkCompletion() }
+
+        
         .alert(alertTitle,
                isPresented: $showingAlert) {
             Button("dimiss", role: .cancel) { }

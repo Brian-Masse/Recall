@@ -22,7 +22,7 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
     @ViewBuilder var contentBuilder: (Section) -> C
     private let submit: () -> Void
     
-    @Binding private var fullScreenSectionId: Int
+    @Binding private var sceneComplete: Bool
     
     private let title: String
     private let sequence: [Section]?
@@ -30,7 +30,7 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
     init( _ title: String,
           section: Section.Type,
           sequence: [Section]? = nil,
-          fullScreenSectionId: Binding<Int> = Binding { -1 } set: { _ in },
+          sceneComplete: Binding<Bool> = .constant(true),
           submit: @escaping () -> Void,
           @ViewBuilder contentBuilder: @escaping (Section) -> C ) {
         
@@ -39,7 +39,7 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
         self.submit = submit
         self.section = section
         self.sequence = sequence
-        self._fullScreenSectionId = fullScreenSectionId
+        self._sceneComplete = sceneComplete
     }
     
     private let smallCornerRadius: Double = (Constants.UIDefaultCornerRadius - 5)
@@ -60,6 +60,21 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
             
             Spacer()
         }
+    }
+    
+//    MARK: MakeSubmitButton
+    @ViewBuilder
+    private func makeSubmitButton() -> some View {
+        UniversalButton {
+            HStack {
+                UniversalText( "done", size: Constants.UISubHeaderTextSize, font: Constants.titleFont )
+                RecallIcon("checkmark")
+            }
+            .opacity(sceneComplete ? 1 : 0.65)
+            .highlightedBackground(sceneComplete)
+            
+        } action: { submit() }
+            .padding(.bottom, 35)
     }
     
 //    MARK: Body
@@ -88,10 +103,8 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
                                         Spacer()
                                     }
                                     .id(section.rawValue)
-                                    .frame(minHeight: section.rawValue == fullScreenSectionId ? geo.size.height : 0)
                                     .padding()
                                     .padding(.bottom, i == caseCount - 1 ? Constants.UIBottomOfPagePadding : 0)
-                                    .animation( .easeInOut(duration: 0.25), value: fullScreenSectionId )
                                     .background {
                                         UnevenRoundedRectangle(cornerRadii: .init(topLeading: i == 0 ? Constants.UILargeCornerRadius : smallCornerRadius,
                                                                                   bottomLeading: i == caseCount - 1 ? Constants.UILargeCornerRadius : smallCornerRadius,
@@ -101,20 +114,14 @@ struct CreationFormView<Section: CreationFormEnumProtocol, C: View>: View {
                                     }
                                 }
                             }
-                            .onChange(of: fullScreenSectionId) {
-                                if fullScreenSectionId != -1 { withAnimation {
-                                    proxy.scrollTo(self.fullScreenSectionId, anchor: .top)
-                                } }
-                            }
                         }
-                        .scrollDisabled(fullScreenSectionId != -1)
                     }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: Constants.UILargeCornerRadius))
                 
-                LargeRoundedButton("done", icon: "arrow.down") { submit() }
-                    .padding(.bottom, 35)
+                makeSubmitButton()
             }
+            .animation(.spring, value: sceneComplete)
             .padding(.bottom, Constants.UIFormPagePadding)
             .ignoresSafeArea()
         }
@@ -152,7 +159,7 @@ struct CreationFormDemoView: View {
     
     var body: some View {
             
-        CreationFormView("hello", section: DemoSection.self, fullScreenSectionId: $fullScreenBinding) {
+        CreationFormView("hello", section: DemoSection.self) {
             
         } contentBuilder: { section in
             switch section {
