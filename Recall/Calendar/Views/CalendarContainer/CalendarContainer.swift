@@ -118,46 +118,11 @@ struct CalendarContainer: View {
     
     @State private var previousScrollOffset: Double = 0
     
-//    MARK: - setCurrentPostIndex
-    private func setCurrentPostIndex(from scrollPosition: CGPoint, in geo: GeometryProxy, dayCount: Int) {
-
-//        if viewModel.scrollingCalendar { return }
-//        if !viewModel.initialCalendarWidthSet { viewModel.setInitialWidth(abs(scrollPosition.x)) }
-//        
-//        let x = viewModel.initialCalendarWidth - abs(scrollPosition.x)
-//        
-////        set both the baseOffset and baseIndex for the calendarContainer
-////        this has is so that when the user changes a preview size, the offset and index are "zero'd", and the scorlling happens properly
-//        if viewModel.initialDaysPerView != viewModel.daysPerView {
-//            viewModel.setBaseCalendarOffset(to: x)
-//            viewModel.initialDaysPerView = viewModel.daysPerView
-//        }
-//        
-//        let daysPerView = Double(viewModel.daysPerView)
-//        
-//        let calendarWidth = (geo.size.width - calendarLabelWidth) / daysPerView
-//        
-//        let scrollDetectionPadding = calendarWidth / 2
-//        let proposedIndex = Int(floor( (x - viewModel.baseCalendarOffset + scrollDetectionPadding) / calendarWidth) ) + viewModel.baseCalendarIndex
-//        let proposedDate = Date.now - (Double(proposedIndex) * Constants.DayTime)
-//
-//        if proposedDate.matches(viewModel.currentDay, to: .day) { return }
-//        self.viewModel.setCurrentDay(to: proposedDate, scrollToDay: false)
-        
-    }
-    
 //    MARK: setSubDayIndex
     private func setSubDayIndex(from scrollPosition: Double, in geo: GeometryProxy) {
         let proposedIndex: Int = Int(floor((abs(scrollPosition) / geo.size.width) * Double(viewModel.daysPerView)))
         let index = min(max( 0, proposedIndex ), viewModel.daysPerView)
         viewModel.setSubDayIndex(to: index)
-    }
-    
-//    MARK: ScrollToCurrentDay
-    private func scrollToCurrentDay(proxy: ScrollViewProxy) {
-        let dayCount = RecallModel.index.daysSinceFirstEvent()
-        let index = floor(Date.now.timeIntervalSince(viewModel.currentDay) / Constants.DayTime)
-        withAnimation { proxy.scrollTo(dayCount - Int(index), anchor: .leading) }
     }
     
 //    MARK: ScaleGesture
@@ -221,7 +186,7 @@ struct CalendarContainer: View {
     
 //    MARK: createEvent
     private func createEvent() {
-        let subDayOffset = Double(1 - viewModel.subDayIndex) * Constants.DayTime
+        let subDayOffset = Double(viewModel.daysPerView - viewModel.subDayIndex - 1) * Constants.DayTime
         
         let startTime = viewModel.getTime(from: newEventoffset, on: viewModel.currentDay) - subDayOffset
         let endTime = startTime + ( newEventResizeOffset * viewModel.scale )
@@ -342,7 +307,7 @@ struct CalendarContainer: View {
     private func calculateSubDayIndex(on day: Date) -> Int {
         let difference = abs(viewModel.currentDay.timeIntervalSince(day))
         let proposedIndex = Int(floor( difference / Constants.DayTime ))
-        return proposedIndex % viewModel.daysPerView
+        return  viewModel.daysPerView - proposedIndex - 1
     }
 
     @ViewBuilder
@@ -356,7 +321,7 @@ struct CalendarContainer: View {
             ZStack(alignment: .top) {
                 CalendarView(events: viewModel.getEvents(on: day), on: day)
                 
-                makeEventCreationPreview(on: 1 - calculateSubDayIndex(on: day))
+                makeEventCreationPreview(on: calculateSubDayIndex(on: day) )
                 
             }
             .task {

@@ -834,32 +834,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2AF5CCB5-E5DB-4665-BFF5-D0FB4FB51B15"
+            uuid = "305E8941-0375-4641-BCF5-06B0B2211E56"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Recall/Calendar/Views/CalendarContainer/CalendarContainer.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
-            landmarkName = "setCurrentPostIndex(from:in:dayCount:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A7E0E813-5556-459B-9836-0582C86A0ECC"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Recall/Calendar/Views/CalendarContainer/CalendarContainer.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "145"
-            endingLineNumber = "145"
-            landmarkName = "setCurrentPostIndex(from:in:dayCount:)"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "setSubDayIndex(from:in:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
