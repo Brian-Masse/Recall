@@ -207,9 +207,6 @@ struct OnboardingOverviewEventAnimation: View {
 //                        .alignmentGuide(.top) { _ in -event.position.y }
                         
                         .opacity(selectedEventIndex == i ? 1 : 0.95)
-                        .onTapGesture {
-                            selectedEventIndex = i
-                        }
                         
                         .transition( .asymmetric(insertion: .offset(y: 100).combined(with: .scale(scale: 0.75)).combined(with: .opacity),
                                                  removal: .opacity.combined(with: .offset(x: transitionOffset)).combined(with: .scale(scale: 0.9))  ) )
@@ -229,6 +226,5 @@ struct OnboardingOverviewEventAnimation: View {
         }
         
         .contentShape(Rectangle())
-        .gesture(moveGesture)
     }
 }

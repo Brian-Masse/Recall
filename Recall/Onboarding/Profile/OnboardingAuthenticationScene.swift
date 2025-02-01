@@ -39,7 +39,7 @@ struct OnboardingAuthenticationScene: View {
     private func submit() async {
 
         if formsComplete {
-            if let error = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
+            if let _ = await RecallModel.realmManager.signInWithPassword(email: email, password: password) {
                 alertMessage = "Incorrect Email or Password"
                 showingAlert = true
                 return
