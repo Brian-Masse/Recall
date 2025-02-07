@@ -79,9 +79,14 @@ struct CalendarContainerScrollView<C: View>: View {
             LazyHStack(spacing: 0) {
                 
                 ForEach( 0..<itemCount, id: \.self ) { index in
-                    contentBuilder(convertBetweenLeadingAndTrailingIndexSystems(from: index))
-                        .padding(.horizontal, 2)
-                        .frame(width: width / Double(viewModel.daysPerView))
+                    ZStack {
+                        Rectangle()
+                            .foregroundStyle(.clear)
+                        
+                        contentBuilder(convertBetweenLeadingAndTrailingIndexSystems(from: index))
+                            .padding(.horizontal, 2)
+                    }
+                    .frame(width: width / Double(viewModel.daysPerView))
                 }
             }
             .scrollTargetLayout()

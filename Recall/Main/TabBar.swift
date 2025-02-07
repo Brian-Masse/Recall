@@ -19,6 +19,8 @@ struct TabBar: View {
     @Namespace private var tabBarNamespace
     @State private var showingRecallButton: Bool = true
     
+    @State private var showing: Bool = true
+    
     private let buttonPadding: Double = 15
 //
     private let buttonRadius: Double = 42.5

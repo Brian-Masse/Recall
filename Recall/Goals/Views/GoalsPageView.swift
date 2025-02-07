@@ -57,8 +57,8 @@ struct GoalsPageView: View {
                 if showingSection  {
                     if goals.count > 0 {
                         VStack {
-                            ForEach( goals, id: \.self ) { goal in
-                                GoalPreviewView(goal: goal)
+                            ForEach( 0..<goals.count, id: \.self ) { i in
+                                GoalPreviewView(goal: goals[goals.count - 1 - i])
                                     .transition(.blurReplace)
                             }
                         }.rectangularBackground(7, style: .secondary, stroke: true)

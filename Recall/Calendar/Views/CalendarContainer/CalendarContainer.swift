@@ -295,11 +295,11 @@ struct CalendarContainer: View {
                 }
             }
         }
+        .padding(.leading, calendarLabelWidth)
         .padding(.vertical, 7)
-        .background(
-            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
-                .foregroundStyle(.background)
-                .opacity(0.75)
+        .background(Rectangle()
+            .foregroundStyle(.background)
+            .opacity(0.75)
         )
     }
     
@@ -375,7 +375,6 @@ struct CalendarContainer: View {
                 }
                 .overlay(alignment: .top) { if viewModel.daysPerView > 1 {
                     makeCalendarLabels()
-                        .padding(.leading, calendarLabelWidth)
                 } }
             }
         }

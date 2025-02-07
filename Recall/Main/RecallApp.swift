@@ -29,8 +29,8 @@ struct RecallApp: App {
                                UITitleTextSize: 45,
                                UIMainHeaderTextSize: 35,
                                UIHeaderTextSize: 25,
-                               UISubHeaderTextSize: 16,
-                               UIDefeaultTextSize: 15,
+                               UISubHeaderTextSize: 14,
+                               UIDefeaultTextSize: 13,
                                UISmallTextSize: 11)
         
 //        This registers all the fonts provided by UIUniversals

@@ -121,18 +121,7 @@ private struct CalendarPageToolBar: View {
                         .combined(with: .opacity)
                     )
             }
-//
-            HStack {
-                Spacer()
-                
-                RecallIcon(showingToolBar ? "chevron.up" : "chevron.down")
-                    .padding(.vertical, 5)
-                    .opacity(0.65)
-                
-                Spacer()
-            }
-            .contentShape(Rectangle())
-            .onTapGesture { withAnimation { showingToolBar.toggle() } }
+            
         }.contentShape(Rectangle())
     }
     
@@ -200,13 +189,16 @@ struct CalendarPageView: View {
             Spacer()
             
             RecallIcon("calendar")
-                .rectangularBackground(style: .secondary)
+                .font(.title3)
+//                .rectangularBackground(style: .secondary)
             
                 .safeZoomMatch(id: RecallnavigationMatchKeys.monthlyCalendarView, namespace: calendarPageViewNameSpace)
                 .onTapGesture { coordinator.push(.monthlyCalendarView(namespace: calendarPageViewNameSpace)) }
             
             RecallIcon("person")
-                .rectangularBackground(style: .secondary)
+                .padding(.horizontal)
+                .font(.title3)
+//                .rectangularBackground(style: .secondary)
                 .safeZoomMatch(id: RecallnavigationMatchKeys.profileView, namespace: calendarPageViewNameSpace)
                 .onTapGesture { coordinator.push(.profileView(namespace: calendarPageViewNameSpace)) }
             
