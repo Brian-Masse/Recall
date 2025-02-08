@@ -189,16 +189,18 @@ struct CalendarPageView: View {
             Spacer()
             
             RecallIcon("calendar")
-                .font(.title3)
-//                .rectangularBackground(style: .secondary)
+//                .font(.title3)
+//                .contentShape(Rectangle())
+                .rectangularBackground(style: .secondary)
             
                 .safeZoomMatch(id: RecallnavigationMatchKeys.monthlyCalendarView, namespace: calendarPageViewNameSpace)
                 .onTapGesture { coordinator.push(.monthlyCalendarView(namespace: calendarPageViewNameSpace)) }
             
             RecallIcon("person")
-                .padding(.horizontal)
-                .font(.title3)
-//                .rectangularBackground(style: .secondary)
+//                .padding(.horizontal)
+//                .font(.title3)
+//                .contentShape(Rectangle())
+                .rectangularBackground(style: .secondary)
                 .safeZoomMatch(id: RecallnavigationMatchKeys.profileView, namespace: calendarPageViewNameSpace)
                 .onTapGesture { coordinator.push(.profileView(namespace: calendarPageViewNameSpace)) }
             

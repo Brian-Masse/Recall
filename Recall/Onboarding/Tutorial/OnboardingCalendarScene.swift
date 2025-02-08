@@ -137,8 +137,6 @@ struct OnboardingCalendarScene: View {
 //    MARK: ViewMethods
     @MainActor
     private func onAppear() async {
-        viewModel.setSceneStatus(to: .complete)
-        
         await viewModel.getRecalledEventCount(from: Array(events))
         await RecallModel.dataStore.initalizeDataStore()
         

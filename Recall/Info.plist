@@ -2,26 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleIcons</key>
-	<dict>
-		<key>CFBundleAlternateIcons</key>
-		<dict>
-			<key>dark</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>dark</string>
-				</array>
-			</dict>
-			<key>light</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>light</string>
-				</array>
-			</dict>
-		</dict>
-	</dict>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -31,7 +11,7 @@
 			<string>com.recall.favoriteEvent</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>recall/favoriteEvent</string>
+				<string>recall.favoriteEvent</string>
 			</array>
 		</dict>
 	</array>

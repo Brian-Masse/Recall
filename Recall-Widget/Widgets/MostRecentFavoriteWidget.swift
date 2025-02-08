@@ -80,7 +80,7 @@ struct MostRecentFavoriteWidgetView : View {
         }
         .padding(7)
         .background()
-        .widgetURL(URL(string: "recall/favoriteEvent/\(event.id)"))
+        .widgetURL(URL(string: "recall.favoriteEvent/\(event.id)"))
     }
 }
 
