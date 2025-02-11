@@ -160,6 +160,8 @@ struct CalendarEventCreationView: View {
         if self.editing {
             Task { viewModel.selectedImages = await RecallCalendarEventImageStore.shared.decodeImages(for: event!, expectedCount: event!.images.count) }
         }
+        
+        self.checkCompletion()
     }
 
     
@@ -178,7 +180,7 @@ struct CalendarEventCreationView: View {
     
 //    MARK: CheckCompletion
 //    Makes sure a user can't fill out the form until all fields are complete
-    private func checkCompletion() -> Bool {
+    private func checkCompletion() {
         if endTime < startTime {
             endTime += Constants.DayTime
         }
@@ -187,16 +189,19 @@ struct CalendarEventCreationView: View {
         self.alertMessage = "Please provide a title, start and end times, and a tag before creating the event"
         
         self.formComplete = !self.title.isEmpty && !self.category.label.isEmpty
-        return formComplete
     }
     
 //    MARK: Submit
     private func submit() {
         setDay()
-        if !checkCompletion() {
+        checkCompletion()
+        
+        if !formComplete {
             showingAlert = true
             return
         }
+        
+        presentationMode.wrappedValue.dismiss()
         
         if !editing {
             let event = RecallCalendarEvent(ownerID: RecallModel.ownerID,
@@ -222,7 +227,6 @@ struct CalendarEventCreationView: View {
                           tagID: category._id,
                           goalRatings: updatedGoalRatings ? goalRatings : nil)
         }
-        presentationMode.wrappedValue.dismiss()
     }
     
     private func fillInformation(from event: RecallCalendarEvent) {
