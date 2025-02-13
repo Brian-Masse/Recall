@@ -731,8 +731,8 @@
             filePath = "Recall/Calendar/Views/CalendarContainer/CalendarView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
+            startingLineNumber = "192"
+            endingLineNumber = "192"
             landmarkName = "makeEventCollection(from:in:)"
             landmarkType = "7">
             <Actions>

@@ -131,7 +131,8 @@ struct CalendarView: View {
     private func getLength(of event: RecallCalendarEvent) -> Double {
         
         let difference =  event.endTime.timeIntervalSince(event.startTime)
-        return difference / viewModel.scale
+        
+        return abs(difference / viewModel.scale)
         
     }
     
