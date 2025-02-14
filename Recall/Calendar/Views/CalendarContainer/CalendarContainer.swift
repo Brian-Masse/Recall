@@ -322,6 +322,7 @@ struct CalendarContainer: View {
                 CalendarView(events: viewModel.getEvents(on: day), on: day)
                 
                 makeEventCreationPreview(on: calculateSubDayIndex(on: day) )
+                    .padding(.leading, 2)
                 
             }
             .task {

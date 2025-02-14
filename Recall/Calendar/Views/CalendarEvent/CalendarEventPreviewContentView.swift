@@ -12,6 +12,8 @@ import UIUniversals
 
 struct CalendarEventPreviewContentView: View {
     
+    private let eventPreveiwCornerRadius: Double = (Constants.UIDefaultCornerRadius - 10)
+    
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject private var viewModel: RecallCalendarContainerViewModel = RecallCalendarContainerViewModel.shared
@@ -113,11 +115,7 @@ struct CalendarEventPreviewContentView: View {
             Rectangle()
                 .opacity(0.25)
                 .background()
-            
-//            RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5)
-//                .stroke(style: .init(lineWidth: 2))
-//                .opacity(0.5)
-            
+
             makeBody()
                 .overlay(alignment: .leading) {
                     RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius)
@@ -138,6 +136,6 @@ struct CalendarEventPreviewContentView: View {
                 
         }
         .foregroundStyle(event.getColor() )
-        .mask(RoundedRectangle(cornerRadius: Constants.UIDefaultCornerRadius - 5))
+        .mask(RoundedRectangle(cornerRadius: eventPreveiwCornerRadius))
     }
 }

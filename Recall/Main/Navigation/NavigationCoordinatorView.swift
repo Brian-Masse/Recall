@@ -78,5 +78,6 @@ struct CoordinatorView: View {
                     }
                 }
         }
+        .toolbar(.hidden, for: .tabBar)
     }
 }

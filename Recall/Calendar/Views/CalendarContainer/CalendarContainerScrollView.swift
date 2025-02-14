@@ -84,7 +84,6 @@ struct CalendarContainerScrollView<C: View>: View {
                             .foregroundStyle(.clear)
                         
                         contentBuilder(convertBetweenLeadingAndTrailingIndexSystems(from: index))
-                            .padding(.horizontal, 2)
                     }
                     .frame(width: width / Double(viewModel.daysPerView))
                 }

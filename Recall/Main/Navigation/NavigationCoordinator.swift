@@ -129,8 +129,10 @@ class RecallNavigationCoordinator: RecallNavigationCoordinatorProtocol {
                 TabView(selection: $coordinator.tab) {
                     ForEach( RecallNavigationTab.allCases ) { tab in
                         coordinator.build(tab, data: data)
+                            .toolbar(.hidden, for: .tabBar)
                     }
                 }
+                .toolbar(.hidden, for: .tabBar)
                 
                 TabBar()
                     .padding(.bottom, 35)
