@@ -102,6 +102,9 @@ struct CalendarContainer: View {
     private let calendarLabelWidth: Double = 25
     private let scrollDetectionPadding: Double = 200
     
+    private let startHour: Int = 0
+    private let endHour: Int = 26
+    
     private let coordinateSpaceName = "CalendarContainerCoordinateSpace"
     
     @State private var showingSummaryView: Bool = false
@@ -340,7 +343,7 @@ struct CalendarContainer: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     
                     ZStack(alignment: .top) {
-                        EmptyCalendarView(startHour: 0, endHour: 26, labelWidth: calendarLabelWidth)
+                        EmptyCalendarView(startHour: startHour, endHour: endHour, labelWidth: calendarLabelWidth)
                         
                         makeCalendarCarousel(in: geo)
                         
@@ -354,6 +357,8 @@ struct CalendarContainer: View {
                         .allowsHitTesting(false)
                         .foregroundStyle(.clear)
                     }
+                    .frame(height: Double(endHour - startHour) * Constants.HourTime / viewModel.scale)
+                        
                     .simultaneousGesture(createEventHoldGesture(in: geo))
                     .onTapGesture { viewModel.gestureInProgress = false }
                     
