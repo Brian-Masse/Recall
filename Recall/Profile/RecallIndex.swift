@@ -25,6 +25,7 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     
     @Persisted private(set) var earliestEventDate: Date = .now - (7 * Constants.DayTime)
     
+//    MARK: Credentials
 //    credentials
     @Persisted var email: String = ""
     @Persisted var firstName: String = ""
@@ -35,14 +36,17 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
     @Persisted var dateJoined: Date = .now
     
     
+//    MARK: Tutorial
     //  Settings
     @Persisted private var finishedTutorial: Bool = false
     @Persisted private var finishedOnboarding: Bool = false
+    @Persisted private(set) var onBoardingState: Int = 0
     
     var onboardingComplete: Bool {
         self.finishedTutorial && self.finishedOnboarding
     }
     
+//    MARK: Preferences
     ///measured in miliseconds (able to directly be added to dates)
     @Persisted var defaultEventLength: Double = Constants.HourTime * 0.75
     @Persisted var showNotesOnPreview: Bool = true
@@ -126,16 +130,26 @@ class RecallIndex: Object, Identifiable, OwnedRealmObject {
         RealmManager.updateObject(self) { thawed in
             thawed.finishedTutorial = true
             thawed.finishedOnboarding = true
+            thawed.onBoardingState = OnBoardingScene.allCases.count
         }
     }
     
+//    MARK: Replay Onboarding
     func replayOnboarding() {
         RealmManager.updateObject(self) { thawed in
             thawed.finishedTutorial = false
             thawed.finishedOnboarding = false
+            thawed.onBoardingState = 0
         }
         
         Task { await RecallModel.realmManager.setState(.onboarding) }
+    }
+    
+//    MARK: setOnboardingScene
+    func setOnboardingScene(to sceneIndex: Int) {
+        RealmManager.updateObject(self) { thawed in
+            thawed.onBoardingState = sceneIndex
+        }
     }
     
 //    MARK: MostRecentRecall

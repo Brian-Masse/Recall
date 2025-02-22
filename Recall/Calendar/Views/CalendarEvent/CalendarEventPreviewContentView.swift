@@ -12,7 +12,7 @@ import UIUniversals
 
 struct CalendarEventPreviewContentView: View {
     
-    private let eventPreveiwCornerRadius: Double = (Constants.UIDefaultCornerRadius - 10)
+    private let eventPreveiwCornerRadius: Double = (Constants.UIDefaultCornerRadius - 7)
     
 //    MARK: Vars
     @Environment(\.colorScheme) var colorScheme

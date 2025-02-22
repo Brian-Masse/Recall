@@ -83,12 +83,20 @@ class OnboardingViewModel: ObservableObject {
                 self.setSceneStatus(to: .incomplete)
                 self.currentSceneProgress =  Double(scene.rawValue) / Double(OnBoardingScene.allCases.count - 1)
             }
+            
+            if let _ = RecallModel.realmManager.realm {
+                RecallModel.index.setOnboardingScene(to: self.scene.rawValue)
+            }
         }
     }
     
 //    MARK: startOnboarding
     func startOnboarding() {
         self.scene = .overview
+        if let _ = RecallModel.realmManager.realm {
+            self.scene = OnBoardingScene(rawValue: RecallModel.index.onBoardingState ) ?? .overview
+        }
+        
         self.setOnboardingStatus(to: true)
     }
     
@@ -118,6 +126,13 @@ class OnboardingViewModel: ObservableObject {
         if goals.count >= minimumGoalTemplates {
             self.setSceneStatus(to: .complete)
         }
+        
+        let goalTemplates: [TemplateGoal] = TemplateManager().getGoalTemplates()
+        for goal in goals {
+            if let index = goalTemplates.firstIndex(where: { template in template.title == goal.label }) {
+                self.selectedTemplateGoals.append(goalTemplates[index])
+            }
+        }
     }
     
     func toggleTemplateGoal(_ templateGoal: TemplateGoal) {
@@ -139,17 +154,21 @@ class OnboardingViewModel: ObservableObject {
     func goalSceneSubmitted( _ selectedTemplates: [TemplateGoal] ) {
         if inDev { return }
         
+        let goals: [RecallGoal] = RealmManager.retrieveObjectsInList()
+        
         for templateGoal in selectedTemplates {
-            let goal = RecallGoal(ownerID: RecallModel.ownerID,
-                                  label: templateGoal.title,
-                                  description: "",
-                                  frequency: templateGoal.frequency,
-                                  targetHours: Int(templateGoal.targetHours),
-                                  priority: RecallGoal.Priority(rawValue: templateGoal.priority) ?? .low,
-                                  type: .hourly,
-                                  targetTag: nil)
-            
-            RealmManager.addObject(goal)
+            if !goals.contains(where: { goal in templateGoal.title == goal.label }) {
+                let goal = RecallGoal(ownerID: RecallModel.ownerID,
+                                      label: templateGoal.title,
+                                      description: "",
+                                      frequency: templateGoal.frequency,
+                                      targetHours: Int(templateGoal.targetHours),
+                                      priority: RecallGoal.Priority(rawValue: templateGoal.priority) ?? .low,
+                                      type: .hourly,
+                                      targetTag: nil)
+                
+                RealmManager.addObject(goal)
+            }
         }
     }
     
@@ -166,6 +185,13 @@ class OnboardingViewModel: ObservableObject {
         let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
         if tags.count >= minimumTagTemplates {
             self.setSceneStatus(to: .complete)
+        }
+        
+        let tagTemplates: [TemplateTag] = TemplateManager().getTagTemplates()
+        for tag in tags {
+            if let index = tagTemplates.firstIndex(where: { template in template.title == tag.label }) {
+                self.selectedTemplateTags.append(tagTemplates[index])
+            }
         }
     }
     
@@ -198,16 +224,20 @@ class OnboardingViewModel: ObservableObject {
     func tagSceneSubmitted( _ selectedTags: [TemplateTag] ) async {
         if inDev { return }
         
+        let tags: [RecallCategory] = RealmManager.retrieveObjectsInList()
+        
         for tagTemplate in selectedTags {
             
-            let goalRatings = await getGoalRatings(for: tagTemplate)
-            
-            let tag = RecallCategory(ownerID: RecallModel.ownerID,
-                                     label: tagTemplate.title,
-                                     goalRatings: goalRatings,
-                                     color: tagTemplate.color)
-            
-            RealmManager.addObject(tag)
+            if !tags.contains(where: { tag in tag.label == tagTemplate.title }) {
+                let goalRatings = await getGoalRatings(for: tagTemplate)
+                
+                let tag = RecallCategory(ownerID: RecallModel.ownerID,
+                                         label: tagTemplate.title,
+                                         goalRatings: goalRatings,
+                                         color: tagTemplate.color)
+                
+                RealmManager.addObject(tag)
+            }
         }
     }
     
