@@ -257,19 +257,28 @@ struct CalendarEventCreationView: View {
     }
     
 //    MARK: TimeSelector
+    @State private var showingTimeSelectors: Bool = false
+    
     @ViewBuilder
     private func makeTimeSelector() -> some View {
-        if editing {
-            StyledDatePicker($day, title: "Change Event Date", fontSize: Constants.formQuestionTitleSize)
-                .padding(.bottom)
-        }
+        UniversalButton {
+            HStack {
+                UniversalText( "Date & Time", size: Constants.UIDefaultTextSize, font: Constants.titleFont)
+                
+                Spacer()
+                    
+                RecallIcon( showingTimeSelectors ? "chevron.up" : "chevron.down").font(.callout)
+            }.contentShape(Rectangle())
+        } action: { showingTimeSelectors.toggle() }
+            .onTapGesture { showingTimeSelectors = !editing }
         
-        if recallByLength {
-            LengthSelector("How long is this event?", length: $eventLength) { length in
-                let maxEndTime = endTime.resetToStartOfDay() + Constants.DayTime
-                endTime = min( startTime + length, maxEndTime )
+        
+        if showingTimeSelectors {
+            if editing {
+                StyledDatePicker($day, title: "Change Event Date", fontSize: Constants.formQuestionTitleSize)
+                    .padding(.bottom)
             }
-        } else {
+            
             CactusTimeDial(time: $startTime, title: "Event start time")
             CactusTimeDial(time: $endTime, title: "Event end time")
         }
