@@ -64,6 +64,10 @@ class OnboardingViewModel: ObservableObject {
     
     var sceneComplete: Bool { sceneStatus == .complete }
     
+    let minimumEvents: Int = 1
+    let minimumGoalTemplates: Int = 3
+    let minimumTagTemplates: Int = 3
+    
     @Published var currentSceneProgress: Double = 0
     
 //    MARK: setSceneStatus
@@ -114,10 +118,6 @@ class OnboardingViewModel: ObservableObject {
     
     //    MARK: - OnboardingGoalScene
     @Published var selectedTemplateGoals: [TemplateGoal] = []
-    
-    let minimumGoalTemplates: Int = 3
-    
-//    if the user already has 3+ goals, allow them to continue
     @MainActor
     func checkInitialGoals() {
         if inDev { return }
@@ -174,10 +174,7 @@ class OnboardingViewModel: ObservableObject {
     
     //    MARK: - OnboardingTagScene
     @Published var selectedTemplateTags: [TemplateTag] = []
-    
-    let minimumTagTemplates: Int = 3
-    
-//    if the user already has 3+ goals, allow them to continue
+
     @MainActor
     func checkInitialTags() {
         if inDev { return }

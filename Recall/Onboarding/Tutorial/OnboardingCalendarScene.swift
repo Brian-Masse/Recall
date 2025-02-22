@@ -132,8 +132,6 @@ struct OnboardingCalendarScene: View {
     
     @State private var showingHelpView: Bool = false
     
-    private let minimumEvents: Int = 3
-    
 //    MARK: ViewMethods
     @MainActor
     private func onAppear() async {
@@ -144,7 +142,7 @@ struct OnboardingCalendarScene: View {
     }
     
     private func checkCompletion() {
-        if viewModel.recentRecalledEventCount >= minimumEvents {
+        if viewModel.recentRecalledEventCount >= viewModel.minimumEvents {
             viewModel.setSceneStatus(to: .complete)
         }
     }
@@ -170,7 +168,7 @@ struct OnboardingCalendarScene: View {
 //    MARK: makeMinimumEventCounter
     @ViewBuilder
     private func makeMinimumEventCounter() -> some View {
-        UniversalText( "\(viewModel.recentRecalledEventCount) / \(minimumEvents)",
+        UniversalText( "\(viewModel.recentRecalledEventCount) / \(viewModel.minimumEvents)",
                        size: Constants.UIDefaultTextSize,
                        font: Constants.mainFont)
         .rectangularBackground(style: .secondary)
