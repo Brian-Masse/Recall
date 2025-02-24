@@ -267,10 +267,10 @@ struct CalendarEventCreationView: View {
                 
                 Spacer()
                     
-                RecallIcon( showingTimeSelectors ? "chevron.up" : "chevron.down").font(.callout)
+                if editing { RecallIcon( showingTimeSelectors ? "chevron.up" : "chevron.down").font(.caption) }
             }.contentShape(Rectangle())
         } action: { showingTimeSelectors.toggle() }
-            .onTapGesture { showingTimeSelectors = !editing }
+            .onAppear { showingTimeSelectors = !editing }
         
         
         if showingTimeSelectors {
