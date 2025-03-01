@@ -218,6 +218,8 @@ struct CalendarEventPreviewView: View {
                 .opacity(beingDeleted ? 0 : 1)
                 .opacity(resizing || moving ? 0.65 : 1)
             
+                .padding(2)
+            
                 .background(alignment: resizeDirection == .up ? .bottom : .top) {
                     if resizing || moving {
                         ZStack {
@@ -230,7 +232,7 @@ struct CalendarEventPreviewView: View {
                             .overlay(makeLengthHandles())
                         
                             .offset(y: getPreviewOffset(in: geo) )
-                            .frame(height: getPreviewHeight(in: geo) )
+                            .frame(height: getPreviewHeight(in: geo) - 4)
                     }
                 }
                 .onChange(of: viewModel.gestureInProgress) {
@@ -277,7 +279,6 @@ struct CalendarEventPreviewView: View {
                 } }
                 .onTapGesture { if includeGestures { onTap() }}
             
-                .padding(2)
                 .simultaneousGesture(drag, including: includeGestures ? .all : .none)
                 .task { await findEvent() }
 
