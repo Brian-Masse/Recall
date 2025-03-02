@@ -66,7 +66,6 @@ struct TabBar: View {
             .background {
                 RoundedRectangle(cornerRadius: 55)
                     .foregroundStyle(.thinMaterial)
-                    .shadow(radius: 5)
             }
     }
     
@@ -84,7 +83,6 @@ struct TabBar: View {
             .background {
                 RoundedRectangle(cornerRadius: 55)
                     .foregroundStyle(.thinMaterial)
-                    .shadow(radius: 5)
             }
         }
         .frame(height: (buttonRadius * 2) + (surroundingPadding * 2) )
