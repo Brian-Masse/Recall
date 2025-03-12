@@ -43,7 +43,7 @@ class RecallCalendarContainerViewModel: ObservableObject {
 //    MARK: - setCurrentDay
     func setCurrentDay(to day: Date, scrollToDay: Bool = true) {
     
-        withAnimation { self.currentDay = day }
+        withAnimation { self.currentDay = day.resetToStartOfDay() + Constants.HourTime * 3 }
         objectWillChange.send()
         
         if scrollToDay { scrollCalendar.toggle() }

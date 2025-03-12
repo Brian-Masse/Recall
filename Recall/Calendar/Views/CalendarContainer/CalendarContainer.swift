@@ -308,7 +308,7 @@ struct CalendarContainer: View {
     
 //    MARK: CalendarCarousel
     private func calculateSubDayIndex(on day: Date) -> Int {
-        let difference = abs(viewModel.currentDay.timeIntervalSince(day))
+        let difference = abs(viewModel.currentDay.timeIntervalSince(day) )
         let proposedIndex = Int(floor( difference / Constants.DayTime ))
         return  viewModel.daysPerView - proposedIndex - 1
     }
@@ -319,14 +319,13 @@ struct CalendarContainer: View {
         
         CalendarContainerScrollView(itemCount: dayCount) { index in
             
-            let day = Date.now.resetToStartOfDay() - Double(index) * Constants.DayTime
+            let day = Date.now.resetToStartOfDay() + (2 * Constants.HourTime) - (Double(index) * Constants.DayTime)
             
             ZStack(alignment: .top) {
                 CalendarView(events: viewModel.getEvents(on: day), on: day)
                 
                 makeEventCreationPreview(on: calculateSubDayIndex(on: day) )
                     .padding(.leading, 2)
-                
             }
             .task {
                 await viewModel.loadEvents(for: day, in: events)
